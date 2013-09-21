@@ -1,0 +1,17 @@
+<?php
+
+/**
+ * @file
+ * Install/uninstall file for term relations vocab.
+ */
+
+/**
+ * Implementation of hook_uninstall().
+ * Deletes all variables set by this module.
+ */
+function term_relations_vocab_uninstall() {
+  $result = db_query("SELECT name FROM {variable} WHERE name LIKE 'term_relations_vocab_%'");
+  while ($name = db_result($result)) {
+    variable_del($name);
+  }
+}

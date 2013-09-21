@@ -1,0 +1,70 @@
+<?php
+
+/**
+ * @file
+ * Based on the Taxonomy Vocabulary Relate module.
+ */
+
+/**
+ * Implementation of hook_form_FROM_ID_alter() for taxonomy_form_vocabulary.
+ */
+function term_relations_vocab_form_taxonomy_form_vocabulary_alter(&$form, &$form_state) {
+  module_load_include('inc', 'term_relations_vocab', 'term_relations_vocab.admin');
+  _term_relations_vocab_form_taxonomy_form_vocabulary_alter($form, $form_state);
+}
+
+/**
+ * Implementation of hook_form_FROM_ID_alter() for taxonomy_form_term.
+ */
+function term_relations_vocab_form_taxonomy_form_term_alter(&$form, &$form_state) {
+  module_load_include('inc', 'term_relations_vocab', 'term_relations_vocab');
+  _term_relations_vocab_form_taxonomy_form_term_alter($form, $form_state);
+}
+
+/**
+ * Implementation of hook_taxonomy().
+ * If a vocabulary is removed - remove it's related vocabularies setting.
+ */
+function term_relations_vocab_taxonomy($op, $type, $array = NULL) {
+  if ($op == 'delete' && $type == 'vocabulary') {
+    variable_del('term_relations_vocab_'. $array['vid']);
+  }
+}
+
+/**
+ * Get the set of vocabularies that are configured to relate their terms to given vocabulary.
+ */
+function term_relations_vocab_get_relationships($for_vid = NULL, $direction = NULL) {
+  static $relationships;
+
+  if (!$relationships) {
+    $relationships = array();
+    $vocabs = taxonomy_get_vocabularies();
+    foreach ($vocabs as $vid => $vocab) {
+      $relationships[$vid] = array('l2r' => array(), 'r2l' => array());
+    }
+
+    foreach ($vocabs as $vid => $vocab) {
+      // default to being able to relate terms in the same vocabulary.
+      $relations = variable_get('term_relations_vocab_'. $vid, array($vid => $vid));
+      if ($relations) {
+        foreach ($relations as $rvid => $rvid_set) {
+          if ($rvid_set) {
+            $relationships[$vid]['l2r'][$rvid] = $vocabs[$rvid];
+            $relationships[$rvid]['r2l'][$vid] = $vocab;
+          }
+        }
+      }
+    }
+  }
+
+  if (!is_null($for_vid) && !is_null($direction)) {
+    return $relationships[$for_vid]['l2r'];
+  }
+  elseif (!is_null($for_vid)) {
+    return $relationships[$for_vid];
+  }
+  else {
+    return $relationships;
+  }
+}

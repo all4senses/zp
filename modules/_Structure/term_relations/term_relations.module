@@ -1,0 +1,148 @@
+<?php
+
+/**
+ * @file
+ * This module enhances support for related terms. It recognises term relationships
+ * as a first class feature of a taxonomy that deserves special treatment.
+ */
+
+/**
+ * Implementation of hook_menu().
+ */
+function term_relations_menu() {
+  $items = array();
+
+  $items['admin/config/term_relations'] = array(
+    'title' => 'Term Relations',
+    'description' => 'Settings for Term Relations',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('term_relations_admin_settings'),
+    'access arguments' => array('administer site configuration'),
+    'file' => 'term_relations.admin.inc',
+  );
+
+  return $items;
+}
+
+/**
+ * This is a direct replacement for the core taxonomy_get_related() function which
+ * respects directional relationships if configured. For directional relationships
+ * can return either left-to-right or right-to-left relationships. It also supports
+ * restricting related term search to a specified vocabulary.
+ *
+ * @param $direction
+ *  Either 'l2r' for left-to-right or 'r2l' for right-to-left. Only effective if
+ *  directional relationships have been set via Term Relations settings.
+ * @param $vid
+ *  Limit the search for related terms to those in the vocabulary identified by vid. Other valid values are:
+ *  - 'all' or NULL: to match related terms in any vocabulary.
+ */
+function term_relations_get_related($tid, $key = 'tid', $vid = 'all', $direction = NULL) {
+  if ($tid) {
+    $query = db_select('taxonomy_term_data', 't');
+    if (term_relations_is_directed() || !is_null($direction)) {
+      if ($direction == 'r2l') {
+        $query->join('taxonomy_term_relation', 'tr', 'tr.tid1 = t.tid AND tr.tid2 = :tid', array('tid' => $tid));
+      }
+      else {
+        $query->join('taxonomy_term_relation', 'tr', 'tr.tid2 = t.tid AND tr.tid1 = :tid', array('tid' => $tid));
+      }
+
+    }
+    else {
+      // this sql taken from taxonomy_get_related - gets all relationships irrespective of direction.
+      $query->join('taxonomy_term_relation', 'tr', '(t.tid = tid1 OR t.tid = tid2) AND (tid1 = :tid OR tid2 = :tid) AND t.tid != :tid', array('tid' => $tid));
+    }
+
+    // just need the tid
+    $query->addField('t', 'tid');
+
+    if (!is_null($vid) && is_numeric($vid)) {
+      // add vid filter
+      $query->condition('t.vid', $vid);
+    }
+
+    $query->addTag('term_access');
+
+    // add order by clause
+    $query->orderBy('t.weight');
+    $query->orderBy('t.name');
+
+    $tids = $query->execute()->fetchCol();
+    $related_terms = taxonomy_term_load_multiple($tids);
+
+    return $related_terms;
+  }
+  else {
+    return array();
+  }
+}
+
+/**
+ * Find all term objects related to a given term ID.
+ * Right to left directed version of core taxonomy_get_related().
+ *
+ * @param $vid
+ *  Limit relation terms to terms in the specified vocabulary.
+ *
+ * @return An associative array with the following elements:
+ * - 'l2r' => An array of terms only related left-to-right.
+ * - 'r2l' => An array of terms only related right-to-left.
+ * - 'bi' => An array of terms releated in both directions.
+ * The terms in the returned arrays are mutually exclusive.
+ */
+function term_relations_get_related_by_direction($tid, $vid = NULL, $key = 'tid') {
+  if ($tid) {
+    $sql = 'SELECT t.*, tr_l2r.tid2 AS l2r, tr_r2l.tid1 AS r2l
+      FROM {taxonomy_term_data} t
+      LEFT JOIN {taxonomy_term_relation} tr_l2r ON tr_l2r.tid2 = t.tid AND tr_l2r.tid1 = %d
+      LEFT JOIN {taxonomy_term_relation} tr_r2l ON tr_r2l.tid1 = t.tid AND tr_r2l.tid2 = %d
+      WHERE (tr_l2r.tid2 IS NOT NULL OR tr_r2l.tid1 IS NOT NULL)';
+
+    $sql_args = array($tid, $tid);
+
+    if ($vid) {
+      // if vid supplied - add to where clause and add vid to arguments
+      $sql .= ' AND t.vid = %d';
+      $sql_args[] = $vid;
+    }
+
+    $result = db_query($sql, $sql_args);
+    $related = array();
+    while ($term = db_fetch_object($result)) {
+      if ($term->l2r && $term->r2l) {
+        $direction = 'bi';
+      }
+      elseif ($term->l2r) {
+        $direction = 'l2r';
+      }
+      elseif ($term->r2l) {
+        $direction = 'r2l';
+      }
+
+      if (!$related[$direction]) {
+        $related[$direction] = array();
+      }
+
+      $related[$direction][$term->$key] = $term;
+    }
+    return $related;
+  }
+  else {
+    return array();
+  }
+}
+
+/**
+ * Get the whether directional relationships have been enabled or not.
+ */
+function term_relations_is_directed() {
+  return variable_get('term_relations_directional', FALSE);
+}
+
+
+
+
+
+
+

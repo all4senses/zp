@@ -1,0 +1,85 @@
+<?php
+
+/**
+ * @file
+ * Term Relations TM is a module based implementation of the patch found here:
+ * http://drupal.org/node/842734. Requires making heavy
+ * use of form_alter, menu_alter, and JS prototype overrides.
+ */
+
+/**
+ * Implementation of hook_form_FORM_ID_alter() for form id 'taxonomy_manager_double_tree_form'.
+ */
+function term_relations_tm_form_taxonomy_manager_double_tree_form_alter(&$form, &$form_state) {
+  module_load_include('inc', 'term_relations_tm', 'term_relations_tm.forms');
+  _term_relations_tm_form_taxonomy_manager_double_tree_form_alter($form, $form_state);
+}
+
+/**
+ * Implementation of hook_taxonomy_manager_term_data_submit().
+ */
+function term_relations_tm_taxonomy_manager_term_data_submit($param, $values) {
+  module_load_include('inc', 'term_relations_tm', 'term_relations_tm');
+  return _term_relations_tm_taxonomy_manager_term_data_submit($param, $values);
+}
+
+/**
+ * Implementation of hook_form_FORM_ID_alter() for form id 'taxonomy_manager_settings'.
+ */
+function term_relations_tm_form_taxonomy_manager_settings_alter(&$form, &$form_state) {
+  module_load_include('inc', 'term_relations_tm', 'term_relations_tm.admin');
+  _term_relations_tm_form_taxonomy_manager_settings_alter($form, $form_state);
+}
+
+/**
+ * Implementation of hook_form_FORM_ID_alter() for form id 'taxonomy_manager_form'.
+ * Add cross vocabulary relationships to Taxonomy Manager term edit form.
+ */
+function term_relations_tm_form_taxonomy_manager_form_alter(&$form, &$form_state) {
+  if (module_exists('term_relations_vocab')) {
+    module_load_include('inc', 'term_relations_tm', 'term_relations_tm.vocab');
+    _term_relations_tm_form_taxonomy_manager_form_alter($form, $form_state);
+  }
+}
+
+/**
+ * Implementation of hook_menu_alter().
+ * Heavy-handed intervention here due to lack of any hooks in callbacks.
+ */
+function term_relations_tm_menu_alter(&$items) {
+  // Override double tree edit callback.
+  $overridden_menu_item = $items['admin/content/taxonomy_manager/double-tree/edit'];
+  $items['admin/content/taxonomy_manager/double-tree/edit']['page callback'] = 'term_relations_tm_double_tree_edit';
+  $items['admin/content/taxonomy_manager/double-tree/edit']['page arguments'][] = $overridden_menu_item;
+  $items['admin/content/taxonomy_manager/double-tree/edit']['file'] = 'term_relations_tm.forms.inc';
+
+  $module_path = drupal_get_path('module', 'term_relations_tm');
+
+  $items['admin/content/taxonomy_manager/double-tree/edit']['file path'] = $module_path;
+
+  // Override child form callback
+  $items['admin/content/taxonomy_manager/childform']['page callback'] = 'term_relations_tm_tree_build_child_form';
+  $items['admin/content/taxonomy_manager/childform']['file'] = 'term_relations_tm.forms.inc';
+  $items['admin/content/taxonomy_manager/childform']['file path'] = $module_path;
+
+  // Override term edit callback
+  $items['admin/content/taxonomy_manager/termdata/edit']['page callback'] = 'term_relations_tm_term_data_edit';
+  $items['admin/content/taxonomy_manager/termdata/edit']['file'] = 'term_relations_tm.vocab.inc';
+  $items['admin/content/taxonomy_manager/termdata/edit']['file path'] = $module_path;
+}
+
+/**
+ * Callback to process tree.
+ */
+function term_relations_tm_tree_process_elements($element) {
+  module_load_include('inc', 'term_relations_tm', 'term_relations_tm.tree');
+  return _term_relations_tm_tree_process_elements($element);
+}
+
+/**
+ * Callback to do extra processing to the tree.
+ */
+function term_relations_tm_tree_process_elements_add_relationships($element) {
+  module_load_include('inc', 'term_relations_tm', 'term_relations_tm');
+  return _term_relations_tm_tree_process_elements_add_relationships($element);
+}

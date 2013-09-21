@@ -1,0 +1,42 @@
+<?php
+
+/**
+ * @file
+ * Replicate Drupal 6 related terms functionality.
+ */
+
+/**
+ * Implementation of hook_form_FROM_ID_alter() for taxonomy_form_term.
+ */
+function term_relations_core_form_taxonomy_form_term_alter(&$form, &$form_state) {
+  module_load_include('inc', 'term_relations_core', 'term_relations_core');
+  _term_relations_core_form_taxonomy_form_term_alter($form, $form_state);
+}
+
+/**
+ * Implementation of hook_taxonomy_term_insert().
+ * Saves term relations.
+ */
+function term_relations_taxonomy_term_insert($term) {
+  module_load_include('inc', 'term_relations_core', 'term_relations_core');
+  _term_relations_taxonomy_term_insert($term);
+}
+
+/**
+ * Implementation of hook_taxonomy_term_update().
+ * Saves term relations. Respects directed relationships setting.
+ */
+function term_relations_taxonomy_term_update($term) {
+  module_load_include('inc', 'term_relations_core', 'term_relations_core');
+  _term_relations_taxonomy_term_update($term);
+}
+
+/**
+ * Find all term objects related to a given term ID.
+ * Replacement implementation of the D6 taxonomy_get_related() function.
+ */
+function taxonomy_get_related($tid, $key = 'tid') {
+  return term_relations_get_related($tid, $key);
+}
+
+

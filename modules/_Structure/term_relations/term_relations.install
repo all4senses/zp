@@ -1,0 +1,14 @@
+<?php
+
+/**
+ * @file
+ * Install/uninstall file for term relations.
+ */
+
+/**
+ * Implementation of hook_uninstall().
+ * Deletes all variables set by this module.
+ */
+function term_relations_uninstall() {
+  variable_del('term_relations_directional');
+}

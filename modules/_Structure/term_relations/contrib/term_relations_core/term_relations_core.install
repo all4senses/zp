@@ -1,0 +1,42 @@
+<?php
+
+/**
+ * Implementation of hook_schema().
+ * This is taken from the Drupal 6 taxonomy.install file.
+ */
+function term_relations_core_schema() {
+  $schema['taxonomy_term_relation'] = array(
+    'description' => 'Stores non-hierarchical relationships between terms.',
+    'fields' => array(
+      'trid' => array(
+        'type' => 'serial',
+        'not null' => TRUE,
+        'description' => 'Primary Key: Unique term relation ID.',
+      ),
+      'tid1' => array(
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+        'description' => 'The {term_data}.tid of the first term in a relationship.',
+      ),
+      'tid2' => array(
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+        'description' => 'The {term_data}.tid of the second term in a relationship.',
+      ),
+    ),
+    'unique keys' => array(
+      'tid1_tid2' => array('tid1', 'tid2'),
+    ),
+    'indexes' => array(
+      'tid2' => array('tid2'),
+    ),
+    'primary key' => array('trid'),
+  );
+
+  return $schema;
+}
+

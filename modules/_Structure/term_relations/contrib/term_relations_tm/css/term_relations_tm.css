@@ -1,0 +1,8 @@
+
+#taxonomy-manager .treeview li.has-related > .term-line label .has-related-flag {
+  margin-left: .5em;
+  margin-right: .5em;
+  padding-left: .2em;
+  padding-right: .2em;
+  background-color: yellow;
+}

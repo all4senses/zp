@@ -1,0 +1,12 @@
+name = Term Relations TM
+description = Adds support for directed and cross vocabulary relationships to Taxonomy Manager.
+core = "6.x"
+dependencies[] = taxonomy
+dependencies[] = taxonomy_manager
+dependencies[] = term_relations
+; Information added by drupal.org packaging script on 2011-02-25
+version = "7.x-1.x-dev"
+core = "7.x"
+project = "term_relations"
+datestamp = "1298620381"
+

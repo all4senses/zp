@@ -1,0 +1,11 @@
+name = Term Relations Vocab
+description = Adds support for cross vocabulary relationships.
+core = "6.x"
+dependencies[] = taxonomy
+dependencies[] = term_relations
+; Information added by drupal.org packaging script on 2011-02-25
+version = "7.x-1.x-dev"
+core = "7.x"
+project = "term_relations"
+datestamp = "1298620381"
+
