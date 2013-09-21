@@ -39,8 +39,10 @@ function tvi_load_settings($xid, $type = TVI_TYPE_TERM, $return_default = TRUE) 
   }
 
   // Avoid loss during tid/uuid conversion.
-  $settings->xid = $xid;
-  $settings->type = $type;
+  if (!empty($settings)) {
+    $settings->xid = $xid;
+    $settings->type = $type;
+  }
 
   return $settings;
 }
@@ -113,7 +115,8 @@ function _tvi_get_xid($xid, $type = TVI_TYPE_TERM) {
     }
   }
   elseif ($type == TVI_TYPE_TERM && module_exists('uuid')) {
-    $uuid = reset(entity_get_uuid_by_id('taxonomy_term', array($xid)));
+    $uuids = entity_get_uuid_by_id('taxonomy_term', array($xid));
+    $uuid = reset($uuids);
     if (!empty($uuid)) {
       $xid = $uuid;
     }
