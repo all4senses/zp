@@ -5,7 +5,7 @@
  * Implements hook_preprocess_user_profile();
  */
 /*
-function gv_preprocess_user_profile(&$profile) {
+function zp_preprocess_user_profile(&$profile) {
   //dpm($profile);
 }
 */
@@ -16,10 +16,10 @@ function gv_preprocess_user_profile(&$profile) {
  * 
  * Add rel=nofollow to external links.
  */
-function gv_link($variables) {
+function zp_link($variables) {
   //global $user;
-  //if ($user->uid == 1 && $variables['path'] == 'http://click.websitegear.com/track/1883449' && strpos($variables['path'], 'ttp://') && !strpos($variables['path'], 'ttp://getvoip.com')) {
-  if (strpos($variables['path'], '://') && !strpos($variables['path'], 'ttp://getvoip.com')) {
+  //if ($user->uid == 1 && $variables['path'] == 'http://click.websitegear.com/track/1883449' && strpos($variables['path'], 'ttp://') && !strpos($variables['path'], 'ttp://www.zapokupkami.com')) {
+  if (strpos($variables['path'], '://') && !strpos($variables['path'], 'ttp://www.zapokupkami.com')) {
     //dpm($variables['path']);
     //dpm($variables);
     if (empty($variables['options']['attributes']['rel'])) {
@@ -48,7 +48,7 @@ function gv_link($variables) {
 /**
  * Implements hook_preprocess_user_picture();
  */
-function gv_preprocess_user_picture(&$picture) {
+function zp_preprocess_user_picture(&$picture) {
   // Remove a link from a picture.
   if (!isset($picture['account']->picture->uri)) {
     return;
@@ -57,7 +57,7 @@ function gv_preprocess_user_picture(&$picture) {
     $realname = $picture['account']->realname;
   }
   else {
-    $userExtendedData = gv_misc_loadUserExtendedData($picture['account']->uid);
+    $userExtendedData = zp_misc_loadUserExtendedData($picture['account']->uid);
     $realname = $userExtendedData->realname;
   }
   $picture['user_picture'] = theme('image_style', array( 'path' =>  $picture['account']->picture->uri, 'style_name' => 'avatar_profile_page', 'alt' => $realname, 'title' => $realname, 'attributes' => array('rel' => 'v:photo')));
@@ -78,7 +78,7 @@ function gv_preprocess_user_picture(&$picture) {
  *
  * @ingroup themeable
  */
-function gv_pager_next($variables) {
+function zp_pager_next($variables) {
   // Add a next rel metatag.
   $out = theme_pager_next($variables);
   if ($out) {
@@ -89,7 +89,7 @@ function gv_pager_next($variables) {
       //dpm($matches);
 
       if ($matches[2] == 'Go to next page') {
-        gv_misc_addMetatag('next', NULL, $href = 'http://getvoip.com' . $matches[1]);
+        zp_misc_addMetatag('next', NULL, $href = 'http://www.zapokupkami.com' . $matches[1]);
       }
     }
   }
@@ -111,7 +111,7 @@ function gv_pager_next($variables) {
  *
  * @ingroup themeable
  */
-function gv_pager_previous($variables) {
+function zp_pager_previous($variables) {
   // Add a prev rel metatag.
   $out = theme_pager_previous($variables);
   if ($out) {
@@ -122,7 +122,7 @@ function gv_pager_previous($variables) {
       //dpm($matches);
       
       if ($matches[2] == 'Go to previous page') {
-        gv_misc_addMetatag('prev', NULL, $href = 'http://getvoip.com' . $matches[1]);
+        zp_misc_addMetatag('prev', NULL, $href = 'http://www.zapokupkami.com' . $matches[1]);
       }
       
     }
@@ -149,7 +149,7 @@ function gv_pager_previous($variables) {
  *
  * @ingroup themeable
  */
-function gv_pager($variables) {
+function zp_pager($variables) {
 
   
   
@@ -182,7 +182,7 @@ function gv_pager($variables) {
     $newer_link_title = '‹ Newer Posts';
     $older_link_title = 'Older Posts ›';
   }
-  elseif ( $arg_0 == 'node' && (in_array($arg_1, $altered_pager_reviews) || gv_misc_identifyNodeType($arg_1) == 'provider') ) {
+  elseif ( $arg_0 == 'node' && (in_array($arg_1, $altered_pager_reviews) || zp_misc_identifyNodeType($arg_1) == 'provider') ) {
     $newer_link_title = '‹ Newer Reviews';
     $older_link_title = 'Older Reviews ›';
   }
@@ -216,7 +216,7 @@ function gv_pager($variables) {
     );
     
 //    if(preg_match('|.*href="(.*)"\s.*|', $li_previous, $matches) && !empty($matches[1])) {
-//      gv_misc_addMetatag('prev', NULL, $href = 'http://getvoip.com' . $matches[1]);
+//      zp_misc_addMetatag('prev', NULL, $href = 'http://www.zapokupkami.com' . $matches[1]);
 //    }
     
   }
@@ -228,7 +228,7 @@ function gv_pager($variables) {
     );
     
 //    if(preg_match('|.*href="(.*)"\s.*|', $li_next, $matches) && !empty($matches[1])) {
-//      gv_misc_addMetatag('next', NULL, $href = 'http://getvoip.com' . $matches[1]);
+//      zp_misc_addMetatag('next', NULL, $href = 'http://www.zapokupkami.com' . $matches[1]);
 //    }
 
   }
@@ -359,12 +359,12 @@ function gv_pager($variables) {
 /**
  * Implements hook_preprocess_search_results().
  */
-function gv_preprocess_search_results(&$variables) {
+function zp_preprocess_search_results(&$variables) {
   
 //  // a4s - fix - show lost pager from the results page on some pages.
 //  // need prior actions (hack) in function node_search_execute() at node.module
 //  // v1
-//  //doesn't work correctly - it create bad links like http://getvoip.com/search/node/sip%20trunking?page=0%2C0%2C0%2C0%2C0%2C0%2C0%2C1
+//  //doesn't work correctly - it create bad links like http://www.zapokupkami.com/search/node/sip%20trunking?page=0%2C0%2C0%2C0%2C0%2C0%2C0%2C1
 //  $variables['pager'] = theme('pager', array('tags' => NULL, 'element' => 7));
 
   
@@ -372,15 +372,15 @@ function gv_preprocess_search_results(&$variables) {
   // a4s - fix - show lost pager from the results page on some pages.
   // need prior actions (hack) in function node_search_execute() at node.module
   // v2
-  global $gv_num_rows, $gv_limit_rows;
+  global $zp_num_rows, $zp_limit_rows;
   
-  if (!$gv_limit_rows) {
-    $gv_limit_rows = 15;
+  if (!$zp_limit_rows) {
+    $zp_limit_rows = 15;
   }
-//  dpm('$gv_num_rows =' . $gv_num_rows, '$gv_limit_rows = ' . $gv_limit_rows);
-//  dpm($_SESSION['gv_node_search_data']);
-//  $page = pager_default_initialize($_SESSION['gv_node_search_data']['gv_num_rows'], $_SESSION['gv_node_search_data']['gv_limit_rows']);
-  $page = pager_default_initialize($gv_num_rows, $gv_limit_rows);
+//  dpm('$zp_num_rows =' . $zp_num_rows, '$zp_limit_rows = ' . $zp_limit_rows);
+//  dpm($_SESSION['zp_node_search_data']);
+//  $page = pager_default_initialize($_SESSION['zp_node_search_data']['zp_num_rows'], $_SESSION['zp_node_search_data']['zp_limit_rows']);
+  $page = pager_default_initialize($zp_num_rows, $zp_limit_rows);
   $variables['pager'] = theme('pager', array('tags' => NULL));
  
 }
@@ -390,7 +390,7 @@ function gv_preprocess_search_results(&$variables) {
  * Implements hook_html_head_alter().
  * We are overwriting the default meta character type tag with HTML5 version.
  */
-function gv_html_head_alter(&$head_elements) {
+function zp_html_head_alter(&$head_elements) {
   $head_elements['system_meta_content_type']['#attributes'] = array(
     'charset' => 'utf-8'
   );
@@ -478,12 +478,12 @@ function gv_html_head_alter(&$head_elements) {
         $current_title = drupal_get_title();
       }
 
-      $current_title = str_replace(' - GetVoIP', '', $current_title);
+      $current_title = str_replace(' - За Покупками!', '', $current_title);
 
       // Will be used in html.tpl.php
       global $altered_head_title;
       
-      $altered_head_title = $current_title . ' - Page ' . $current_page . ' - GetVoIP';
+      $altered_head_title = $current_title . ' - Page ' . $current_page . ' - За Покупками!';
       
       if (isset($head_elements['metatag_description'])) {
         $head_elements['metatag_description']['#value'] = 'Page ' . $current_page . ' - ' . $head_elements['metatag_description']['#value'];
@@ -494,7 +494,7 @@ function gv_html_head_alter(&$head_elements) {
       //dpm('$altered_head_title = ' . $altered_head_title);
 //      global $user;
 //      if ($user->uid == 1) {
-//        gv_misc_addMetatag('title', $altered_head_title);
+//        zp_misc_addMetatag('title', $altered_head_title);
 //      }
     }
   }
@@ -523,15 +523,6 @@ function gv_html_head_alter(&$head_elements) {
     );
   }
   
- // <meta name="verify-a" value="5c21728cee5f71b74ae4"> 
-  $head_elements['verify-a'] = array(
-    '#type' => 'html_tag',
-    '#tag' => 'meta',
-    '#attributes' => array(
-        'name' => 'verify-a',
-        'value' => '5c21728cee5f71b74ae4',
-    ),
-  );
   
   // Remove tags 'dc:title' and 'sioc:num_replies' from pages
   if (isset($head_elements['rdf_node_title'])) {
@@ -560,7 +551,7 @@ function gv_html_head_alter(&$head_elements) {
 /**
  * Duplicate of theme_menu_local_tasks() but adds clearfix to tabs.
  */
-function gv_menu_local_tasks(&$variables) {
+function zp_menu_local_tasks(&$variables) {
   $output = '';
 
   if (!empty($variables['primary'])) {
@@ -580,7 +571,7 @@ function gv_menu_local_tasks(&$variables) {
 
 
 /*
-function gv_preprocess_breadcrumb(&$variables) {
+function zp_preprocess_breadcrumb(&$variables) {
   dpm($variables);
 }
 */
@@ -593,7 +584,7 @@ function gv_preprocess_breadcrumb(&$variables) {
  *   An array containing the breadcrumb links.
  * @return a string containing the breadcrumb output.
  */
-function gv_breadcrumb($variables) {
+function zp_breadcrumb($variables) {
   $breadcrumb = $variables['breadcrumb'];
 
   if (!empty($breadcrumb)) {
@@ -610,7 +601,7 @@ function gv_breadcrumb($variables) {
 /**
  * Override or insert variables into the page template.
  */
-function gv_process_page(&$variables) {
+function zp_process_page(&$variables) {
   
   //$variables['breadcrumb'] = theme('breadcrumb', array('breadcrumb' => drupal_get_breadcrumb()));
   //array(l(t('Home'), NULL), l(t('Blogs'), 'blog'), l(t("!name's blog", array('!name' => format_username($node))), 'blog/' . $node->uid))
@@ -619,60 +610,45 @@ function gv_process_page(&$variables) {
     $variables['theme_hook_suggestions'][] = 'page__' . $variables['node']->type;
     
     if ($variables['node']->type == 'preface') {
-      $pages_with_separate_tpl = array('page-compare-business-voip-providers', 'page-compare-pbx-voip-providers', 'page-compare-residential-voip-providers');
-      if (in_array(@$variables['node']->field_preface_key['und'][0]['value'], $pages_with_separate_tpl) && arg(2) != 'edit') {
-        $variables['theme_hook_suggestions'][] = 'page__compare_providers';
-      }
+//      $pages_with_separate_tpl = array('page-compare-business-voip-providers', 'page-compare-pbx-voip-providers', 'page-compare-residential-voip-providers');
+//      if (in_array(@$variables['node']->field_preface_key['und'][0]['value'], $pages_with_separate_tpl) && arg(2) != 'edit') {
+//        $variables['theme_hook_suggestions'][] = 'page__compare_providers';
+//      }
     }
     
-    if ($variables['node']->type == 'quote') {
-      drupal_add_css(path_to_theme() . '/css/iframes-n-quotes.css', array('group' => CSS_DEFAULT, 'every_page' => TRUE));
-    }
+//    if ($variables['node']->type == 'quote') {
+//      drupal_add_css(path_to_theme() . '/css/iframes-n-quotes.css', array('group' => CSS_DEFAULT, 'every_page' => TRUE));
+//    }
     
-  }
-  elseif (arg(0) == 'get' && @arg(1) == 'iframe') {
-    module_invoke('admin_menu', 'suppress');
-    $variables['theme_hook_suggestions'][] = 'page__url__iframe';
-    drupal_add_css(path_to_theme() . '/css/iframes-n-quotes.css', array('group' => CSS_DEFAULT, 'every_page' => TRUE));
   }
   
   
   // Set breadcrumb
-  gv_misc_setBreadcrumbs($variables);
+  zp_misc_setBreadcrumbs($variables);
   
   
   
   // Add js to pages.
   
   // set a user referer on every page.
-  $module_path_misc = drupal_get_path('module', 'gv_misc');
-  drupal_add_js( $module_path_misc . '/js/gv_setReferer.js'); 
+//  $module_path_misc = drupal_get_path('module', 'zp_misc');
+//  drupal_add_js( $module_path_misc . '/js/zp_setReferer.js'); 
   
-  //drupal_add_js( $module_path_misc . '/js/gv_add_adroll.js'); 
-  //drupal_add_js( $module_path_misc . '/js/gv_add_fb.js'); 
-  
-  
-  // JS for comparing providers functionality on pages ehere appropriate views are cached and therefore have not loaded js itselves within views.
-  $pages_with_compare_provider_functionality = array('/providers/reviews');
-  if ($_SERVER['REQUEST_URI'] == '/' || in_array(@$_SERVER['REDIRECT_URL'], $pages_with_compare_provider_functionality)) {
-    $module_path_pages = drupal_get_path('module', 'gv_misc');
-    drupal_add_js( $module_path_pages . '/js/gv_compareProviders.js'); 
-  }
   
   
   /* Add Google's fonts */
-  //gv_misc_addMetatag('stylesheet', NULL, 'http://fonts.googleapis.com/css?family=Open+Sans', 'NA', 'text/css');
-  //gv_misc_addMetatag('stylesheet', NULL, 'http://fonts.googleapis.com/css?family=Open+Sans|Ubuntu:500italic', 'NA', 'text/css');
+  //zp_misc_addMetatag('stylesheet', NULL, 'http://fonts.googleapis.com/css?family=Open+Sans', 'NA', 'text/css');
+  //zp_misc_addMetatag('stylesheet', NULL, 'http://fonts.googleapis.com/css?family=Open+Sans|Ubuntu:500italic', 'NA', 'text/css');
   // Cufon's, via font-face
   //drupal_add_css(path_to_theme() . '/css/remote-fonts.css', array('group' => CSS_DEFAULT, 'every_page' => TRUE));
-  gv_misc_addMetatag('stylesheet', NULL, 'http://fonts.googleapis.com/css?family=Open+Sans|Ubuntu:500', 'NA', 'text/css');
+  ////zp_misc_addMetatag('stylesheet', NULL, 'http://fonts.googleapis.com/css?family=Open+Sans|Ubuntu:500', 'NA', 'text/css');
 }
 
 
 /**
  * Override or insert variables into the node template.
  */
-function gv_preprocess_node(&$variables) {
+function zp_preprocess_node(&$variables) {
   $variables['submitted'] = t('Published by !username on !datetime', array('!username' => $variables['name'], '!datetime' => $variables['date']));
   if ($variables['view_mode'] == 'full' && node_is_page($variables['node'])) {
     $variables['classes_array'][] = 'node-full';
@@ -684,27 +660,6 @@ function gv_preprocess_node(&$variables) {
     }
     elseif($variables['node']->type == 'webform') {
       $variables['theme_hook_suggestions'][] = 'node__admin_page';
-    }
-    elseif($variables['node']->type == 'quote' && ($variables['node']->title == 'Request a Quote page v2' || $variables['node']->title == 'Request a Quote page v2 Final') ) {
-      $variables['theme_hook_suggestions'][] = 'node__quote__v2';
-    }
-    elseif($variables['node']->type == 'quote' && ($variables['node']->title == 'Request a Quote page v3' || $variables['node']->title == 'Request a Quote page v3 Final') ) {
-        
-//        global $user;
-//        if ($user->uid != 1) {
-        global $body_classes_add;
-        $body_classes_add['quote_page'] = 'quote-page v33';
-        $variables['theme_hook_suggestions'][] = 'node__quote__v33';
-//        }
-//        else {
-//        $variables['theme_hook_suggestions'][] = 'node__quote__v3';
-//        }
-
-    }
-    
-    // Speed test page have its own template
-    elseif($variables['node']->type == 'preface' && @$variables['node']->field_preface_key['und'][0]['value'] == 'voip-speed-test') {
-      $variables['theme_hook_suggestions'][] = 'node__preface__voip_speed_test';
     }
     // Custom 404 page.
     elseif($variables['node']->type == 'preface' && @$variables['node']->field_preface_key['und'][0]['value'] == 'page-not-found') {
@@ -724,7 +679,7 @@ function gv_preprocess_node(&$variables) {
  * @param $hook
  *   The name of the template being rendered ("region" in this case.)
  */
-function gv_preprocess_region(&$variables, $hook) {
+function zp_preprocess_region(&$variables, $hook) {
   // Use a bare template for the content region.
   if ($variables['region'] == 'content') {
     $variables['theme_hook_suggestions'][] = 'region__bare';
@@ -740,13 +695,19 @@ function gv_preprocess_region(&$variables, $hook) {
  * @param $hook
  *   The name of the template being rendered ("block" in this case.)
  */
-function gv_preprocess_block(&$variables, $hook) {
+function zp_preprocess_block(&$variables, $hook) {
   // Use a bare template for the page's main content.
   if ($variables['block_html_id'] == 'block-system-main') {
     $variables['theme_hook_suggestions'][] = 'block__bare';
   }
 
   $variables['title_attributes_array']['class'][] = 'block-title';
+  
+  // add odd/even zebra classes into the array of classes
+  $vars['classes_array'][] = $vars['block_zebra'];
+  if ($vars['block_id'] == 1) {
+    $vars['classes_array'][] = 'first';
+  }
 }
 
 
@@ -758,7 +719,7 @@ function gv_preprocess_block(&$variables, $hook) {
  * @param $hook
  *   The name of the template being rendered ("block" in this case.)
  */
-function gv_process_block(&$variables, $hook) {
+function zp_process_block(&$variables, $hook) {
   // Drupal 7 should use a $title variable instead of $block->subject.
   $variables['title'] = $variables['block']->subject;
 }
@@ -766,14 +727,14 @@ function gv_process_block(&$variables, $hook) {
 /**
  * Changes the search form to use the "search" input element of HTML5.
  */
-function gv_preprocess_search_block_form(&$vars) {
+function zp_preprocess_search_block_form(&$vars) {
   $vars['search_form'] = str_replace('type="text"', 'type="search"', $vars['search_form']);
 }
 
 /**
  * Changes the search button label. Here... because it doesn't work via module hook.
  */
-function gv_form_alter(&$form, &$form_state, $form_id) {
+function zp_form_alter(&$form, &$form_state, $form_id) {
   if ($form_id == 'search_block_form') {
     
     $form['actions']['submit']['#value'] = '';
@@ -797,7 +758,7 @@ function gv_form_alter(&$form, &$form_state, $form_id) {
 }
 
 
-function gv_username($object) {
+function zp_username($object) {
   return str_replace(' ('. t('not verified') .')', '', theme_username($object));
 }
 
@@ -805,7 +766,7 @@ function gv_username($object) {
 /**
 * Default theme function for all RSS rows.
 */
-function gv_preprocess_views_view_rss(&$vars) {
+function zp_preprocess_views_view_rss(&$vars) {
   $namespaces = $vars['view']->style_plugin->namespaces;
   
   // Clear doubled xmlns
@@ -834,16 +795,16 @@ function gv_preprocess_views_view_rss(&$vars) {
 /**
 * Default theme function for all RSS rows.
 */
-function gv_preprocess_views_view_row_rss(&$vars) {
+function zp_preprocess_views_view_row_rss(&$vars) {
   
   $node = $vars['view']->style_plugin->row_plugin->nodes[$vars['row']->nid];
   //$vars['description'] = check_plain(htmlspecialchars_decode($node->field_a_teaser['und'][0]['value']));
   if (isset($node->body['und'][0]['value'])) {
-    $rss_teaser = gv_misc_getArticleTeaserData('all', $node->body['und'][0]['value'], $vars['row']->nid, 400, TRUE);
+    $rss_teaser = zp_misc_getArticleTeaserData('all', $node->body['und'][0]['value'], $vars['row']->nid, 400, TRUE);
     // Clear attribute typeof="foaf:Image" from the img tag (which iss added by the core rdf module via hook_preprocess_image).
     $rss_teaser = preg_replace('|typeof="foaf:Image" |', '', $rss_teaser);
     // Convert relative links to absolute.
-    $rss_teaser = preg_replace('|href="/|', 'href="http://getvoip.com/', $rss_teaser);
+    $rss_teaser = preg_replace('|href="/|', 'href="http://www.zapokupkami.com/', $rss_teaser);
     // Restore a normal state of a YouTube url from a token.
     // [video: http://www.youtube.com/watch?v=SoMS77zE7iE]
     $rss_teaser =   preg_replace('|\[video:.*(http.*)\]|', '<a href="$1"> [Watch a video] </a>', $rss_teaser);
@@ -851,7 +812,7 @@ function gv_preprocess_views_view_row_rss(&$vars) {
   }
   
   // Replace username with real user name for <dc:creator>
-  $vars['item_elements'] = preg_replace('|<dc:creator>.*</dc:creator>|', '<dc:creator>' . gv_misc_getUserRealName($node->uid) . '</dc:creator>', $vars['item_elements']);
+  $vars['item_elements'] = preg_replace('|<dc:creator>.*</dc:creator>|', '<dc:creator>' . zp_misc_getUserRealName($node->uid) . '</dc:creator>', $vars['item_elements']);
 }
 
 
@@ -859,7 +820,7 @@ function gv_preprocess_views_view_row_rss(&$vars) {
  * Display the simple view of rows one after another
  */
 /*
-function gv_preprocess_views_view_unformatted(&$vars) {
+function zp_preprocess_views_view_unformatted(&$vars) {
   
   if( ($vars['view']->name == 'blog' || $vars['view']->name == 'news') && $vars['view']->current_display == 'page') {
     $vars['theme_hook_suggestions'][] = 'views-view-unformatted__blog__page';
@@ -881,7 +842,7 @@ function gv_preprocess_views_view_unformatted(&$vars) {
  * is available. Render it as is otherwise.
  */
 /*
-function gv_captcha($variables) {
+function zp_captcha($variables) {
   $element = $variables['element'];
   if (!empty($element['#description']) && isset($element['captcha_widgets'])) {
     $fieldset = array(
@@ -904,9 +865,9 @@ function gv_captcha($variables) {
  * Preprocess the primary theme implementation for a view.
  */
 /*
-function gv_preprocess_views_view(&$vars) {
+function zp_preprocess_views_view(&$vars) {
   
-  // I set title for preface (at gv_misc_views_pre_render(&$view)) instead of a view itself.
+  // I set title for preface (at zp_misc_views_pre_render(&$view)) instead of a view itself.
 //  if ($vars['view']->current_display == 'page_by_tag') {
 //    if (!$vars['title']) {
 //      $vars['title'] = '<h1>' . $vars['view']->get_title() . '</h1>'; //str_replace('%1', $vars['view']->build_info['substitutions']['%1'], $vars['view']->build_info['title']); 
@@ -916,7 +877,7 @@ function gv_preprocess_views_view(&$vars) {
   // hasn't worked out to make use one temlate for different views unformatted
   
   if (isset($vars['view']->name) && ($vars['view']->name == 'blog' || $vars['view']->name == 'news') ) {
-    $function = 'gv_preprocess_views_view_unformatted'; 
+    $function = 'zp_preprocess_views_view_unformatted'; 
     if (function_exists($function)) {
      $function($vars);
     }
@@ -926,21 +887,67 @@ function gv_preprocess_views_view(&$vars) {
 */
 
 
-/*
-function gv_preprocess_html(&$variables) {
-  //dpm($variables);
-  //global $user;
-  //if ($user->uid == 1) {
-    foreach ($variables['page']['content']['system_main']['nodes'] as $key => $html) {
-      //dpr($html['body']['#object']->rdf_mapping);
-      if (isset($variables['page']['content']['system_main']['nodes'][$key]['body']['#object']->rdf_mapping['comment_count']['datatype'])) {
-        unset($variables['page']['content']['system_main']['nodes'][$key]['body']['#object']->rdf_mapping['comment_count']['datatype']);
-      }
-      //dpr($variables['page']['content']['system_main']['nodes'][$key]['body']['#object']->rdf_mapping);
-    }
-    //die;
-  //}
+/**
+ * Preprocess and Process Functions SEE: http://drupal.org/node/254940#variables-processor
+ * 2. Uncomment the required function to use.
+ * 3. Read carefully, especially within gv_orange_preprocess_html(), there
+ *    are extra goodies you might want to leverage such as a very simple way of adding
+ *    stylesheets for Internet Explorer and a browser detection script to add body classes.
+ */
+function zp_preprocess_html(&$vars) {
+  // Load the media queries styles
+  // Remember to rename these files to match the names used here - they are
+  // in the CSS directory of your subtheme.
+//  $media_queries_css = array(
+//    'gv_orange.responsive.style.css',
+//    'gv_orange.responsive.gpanels.css'
+//  );
+//  load_subtheme_media_queries($media_queries_css, 'gv_orange');
+
+
+//  * Load IE Stylesheets
+//  *
+//  * AT automates adding IE stylesheets, simply add to the array using
+//  * the conditional comment as the key and the stylesheet name as the value.
+//  *
+//  * See our online help: http://adaptivethemes.com/documentation/working-with-internet-explorer
+//  *
+//  * For example to add a stylesheet for IE8 only use:
+//  *
+//  *  'IE 8' => 'ie-8.css',
+//  *
+//  * Your IE CSS file must be in the /css/ directory in your subtheme.
+  
+//  Uncomment to add a conditional stylesheet for IE 7 or less.
+//  $ie_files = array(
+//    'lte IE 7' => 'ie-lte-7.css',
+//  );
+//  load_subtheme_ie_styles($ie_files, 'gv_orange');
+
+  
+  // Add class for the active theme name
+  // Uncomment to add a class for the active theme name.
+  //$vars['classes_array'][] = drupal_html_class($theme_key);
+  
+  // Works!
+  global $user;
+  if ($user->uid == 1 || ($user->uid && in_array('administrator', $user->roles)) ) {
+    $vars['classes_array'][] = 'admin';
+  }
+  elseif ($user->uid && in_array('writer', $user->roles) ) {
+    $vars['classes_array'][] = 'writer';
+  }
+  else {
+    $vars['classes_array'][] = 'not-admin';
+  }
+  
+  global $body_classes_add;
+  if (!empty($body_classes_add)) {
+    $vars['classes_array'] += $body_classes_add;
+  }
+
+  // Browser/platform sniff - adds body classes such as ipad, webkit, chrome etc.
+  //Uncomment to add a classes for the browser and platform.
+  //$vars['classes_array'][] = css_browser_selector();
 
 }
- 
-*/
