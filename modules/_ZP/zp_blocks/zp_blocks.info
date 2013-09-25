@@ -1,0 +1,6 @@
+name = ZP Blocks
+package = ZP
+description = "Defines different blocks for the site including ones for side bars and MegaMenu"
+core = 7.x
+tags[] = ZP
+files[] = zp_blocks.module

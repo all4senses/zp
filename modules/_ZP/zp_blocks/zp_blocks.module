@@ -1,0 +1,342 @@
+<?php
+
+/**
+ * @file
+ * Module for building and managing site's blocks.
+ */
+
+
+//module_load_include('inc', 'zp_blocks', 'inc/constants');
+
+
+/**
+ * Implements hook_block_info().
+ */
+function zp_blocks_block_info() {
+  
+  /*
+  $blocks['main_menu_om_blog'] = array(
+    'info' => 'OM Blog',
+    'cache' => DRUPAL_NO_CACHE,
+  );
+  
+  $blocks['footer_links'] = array(
+    'info' => 'Footer links',
+    'cache' => DRUPAL_NO_CACHE,
+  );
+  $blocks['footer_menu'] = array(
+    'info' => 'Footer menu',
+    'cache' => DRUPAL_NO_CACHE,
+  );
+  
+  $blocks['social_links'] = array(
+    'info' => 'Social links',
+    'cache' => DRUPAL_NO_CACHE,
+  );
+  */
+  
+  // Aquire blocks for all prefaces with defined bottoms.
+  $query = db_select('node', 'n');
+  $query->leftJoin('field_data_field_preface_bottom', 'pb', 'pb.entity_id = n.nid');
+  $query->fields('pb', array('entity_id'));
+  $query->leftJoin('field_data_field_preface_key', 'pk', 'pk.entity_id = pb.entity_id');
+  $query->fields('pk', array('field_preface_key_value'));
+  $query->condition('pb.delta', 0);
+  $query->condition('pb.field_preface_bottom_value', 1, '>=');
+  $query->isNotNull('pk.field_preface_key_value');
+  
+  $prefaces_v_bottoms = $query->execute()->fetchAllAssoc('entity_id');
+
+  variable_set('zp_prefaces_w_bottoms', serialize($prefaces_v_bottoms));
+ 
+  foreach ($prefaces_v_bottoms as $prefaces_v_bottom) {
+    
+    $blocks['bottom_of_' . $prefaces_v_bottom->field_preface_key_value] = array(
+      'info' => 'Bottom of ' . $prefaces_v_bottom->field_preface_key_value,
+      'cache' => DRUPAL_NO_CACHE,
+    );
+  
+  }
+  
+      
+  return $blocks;
+}
+
+
+/**
+ * Implements hook_block_view().
+ */
+function zp_blocks_block_view($delta = '') {
+  $block = array();
+  switch ($delta) {  
+    /*
+    case 'main_menu_om_blog':
+      $block['subject'] = 'OM Blog';
+      $block['content'] = zp_blocks_get_omMenuBlock_byTitle('Blog', 'zp_blocks_get_omMenuBlock_Blog');
+      break;
+    
+    case 'footer_links':
+      $block['subject'] = 'Footer links';
+      $block['content'] = zp_blocks_get_footerLinks();
+      break; 
+    case 'footer_menu':
+      $block['subject'] = 'Footer menu';
+      $block['content'] = zp_blocks_get_footerMenu();
+      break; 
+    
+    case 'social_links':
+      $block['subject'] = 'Social links';
+      $block['content'] = zp_blocks_get_socialLinks();
+      break; 
+    */
+    
+    default:
+      
+      // Aquire blocks for all prefaces with defined bottoms.
+      $prefaces_v_bottoms = unserialize(variable_get('zp_prefaces_w_bottoms'));
+      foreach ($prefaces_v_bottoms as $prefaces_v_bottom) {
+
+        if ($delta == 'bottom_of_' . $prefaces_v_bottom->field_preface_key_value) {
+          $block['subject'] = '';
+          $block['content'] = zp_misc_getPrefaceBottomSection(NULL, $prefaces_v_bottom->entity_id);
+        }
+        
+      }
+      
+      break;
+
+    
+  }
+
+  return $block;
+}
+
+
+/**
+ * Implements hook_block_configure().
+ */
+function zp_blocks_block_configure($delta = '') {
+  
+  $form = array();
+  
+  switch ($delta) {
+  }
+  
+  return $form;
+}
+
+
+/**
+ * Implements hook_block_save().
+ */
+function zp_blocks_block_save($delta = '', $edit = array()) {
+
+  switch ($delta) {
+    
+  }
+  
+}
+
+
+
+
+/**
+ * Returns a themed Footer menu (with submenus).
+ */
+function zp_blocks_get_footerMenu() {
+  
+  $cid = 'zp_footer_menu';
+  $cache = cache_get($cid, 'cache');
+
+  if ($cache && !empty($cache->data) && $cache->expire > time()) {
+    $out = $cache->data;
+  }
+  else 
+    {
+    $menu = menu_build_tree('menu-footer-menu');
+    $out = theme('zp_misc_submenuSimple_byColumns', array('submenu' => array('below' => $menu)/*, 'class' => 'menu'*/, 'delimiter' => '<li> | </li>')); // . '<div class="c">В© 2013 cloudhostinghq.com | All Rights Reserved</div>';
+    cache_set($cid, $out, 'cache', strtotime('+31 day'));
+  } 
+  
+  return $out;
+}
+
+
+/**
+ * Returns a themed Footer simple line links.
+ */
+function zp_blocks_get_footerLinks() {
+  
+  $cid = 'zp_footer_links';
+  $cache = cache_get($cid, 'cache');
+
+  if ($cache && !empty($cache->data) && $cache->expire > time()) {
+    $out = $cache->data;
+  }
+  else {
+    $menu = menu_build_tree('menu-footer-links');
+    $out = theme('zp_misc_submenuSimple', array('submenu' => array('below' => $menu), 'class' => 'menu', 'delimiter' => '<li> | </li>')); // . '<div class="c">В© 2012 GetVoIP.com | All Rights Reserved</div>';
+    cache_set($cid, $out, 'cache', strtotime('+31 day'));
+  } 
+    
+  return $out;
+}
+
+
+/**
+ * Dispatcher for getting themed block for MegaMenu by a block title.
+ */
+function zp_blocks_get_omMenuBlock_byTitle($title, $function) {
+
+  // global $language;
+  // $types = cache_get('types_' . $language->language);
+  // Expire = current time + 2 hours.
+  // cache_set('types_' . $language->language, $types, 'cache', time() + 7200);
+  
+  // Get main menu wireframe menu.
+  $submenu = zp_blocks_getSubmenuByTitle('main-menu', $title);
+  //return '<div class="om-btitle">' . $title . '</div>' . $function($submenu);
+  return $function($submenu);
+}
+
+
+/**
+ * Returns a themed VoIP Blog block content for MegaMenu.
+ */
+function zp_blocks_get_omMenuBlock_Blog($submenu) {
+  $block_data = array('module' => 'zp_blocks', 'delta' => 'blog_post_topics', 'subject_visible' => FALSE);
+  $out = zp_blocks_getBlockThemed($block_data);
+  return $out;  
+  //return theme('zp_misc_submenuSimple', array('submenu' => $submenu, 'class' => 'block'));
+}
+
+
+/**
+ * Returns a submenu from a menu.
+ */
+function zp_blocks_getSubmenuByTitle($menu_name, $submenu_title) {
+  $menu = menu_build_tree($menu_name);
+  if(!$menu) {
+    return NULL;
+  }
+  foreach ($menu as $submenu) {
+    if ($submenu['link']['link_title'] == $submenu_title) {
+      return $submenu;
+    }
+  }
+  return NULL;
+}
+
+
+/**
+ * Wrap a block content in proper block's divs.
+ */
+function zp_blocks_wrapInBlockThemed($block_data, $block)
+{
+  if(!isset($block['content']) || !$block['content']) {
+      return null;
+  }
+  if (is_array($block['content'])) {
+    $block['content'] = render($block);
+  }
+  if(isset($block_data['subjectTag']) && $block_data['subjectTag']) {
+    $subjectTag = $block_data['subjectTag'];
+  }
+  else {
+    $subjectTag = 'h2';
+  }
+  if(isset($block_data['replaceUnderlinesWithDashesInID']) && $block_data['replaceUnderlinesWithDashesInID']) {
+    $block_data['module'] = str_replace('_', '-', $block_data['module']);
+    $block_data['delta'] = str_replace('_', '-', $block_data['delta']);
+  }
+  if (isset($block_data['shadow']) && $block_data['shadow']) {
+    return 
+      '<section id="block-' . $block_data['module'] . '-' . $block_data['delta'] . '" class="block ch block-' . $block_data['module'] . (isset($block_data['class']) ? ' ' . $block_data['class'] : '') . '">' 
+        . '<div class="inside">'
+            . ( ($block['subject'] && (!isset($block_data['subject_visible']) || $block_data['subject_visible']) )
+                ? 
+                '<div class="block-icon pngfix"></div><' . $subjectTag . ' class="block-title">' . $block['subject'] . '</' . $subjectTag . '>'
+                :
+                '') 
+            . '<div class="content">' . $block['content'] . '</div>
+          </div> <!-- /.inside -->
+          <div class="shadow"></div>
+      </section>';
+  }
+  else {
+    return 
+      '<section id="block-' . $block_data['module'] . '-' . $block_data['delta'] . '" class="block ch block-' . $block_data['module'] . (isset($block_data['class']) ? ' ' . $block_data['class'] : '') . '">' 
+         . ( ($block['subject'] && (!isset($block_data['subject_visible']) || $block_data['subject_visible']) )
+            ? 
+            '<div class="block-icon pngfix"></div><' . $subjectTag . ' class="block-title">' . $block['subject'] . '</' . $subjectTag . '>'
+            :
+            '') 
+         . '<div class="content">' . $block['content'] . '</div>
+      </section>';
+  }
+}
+
+
+/**
+ * Returns a content of a block wrapped in proper divs.
+ */
+function zp_blocks_getBlockThemed_noCache($block_data){
+  
+  // No caching version.
+  
+  $block = module_invoke($block_data['module'], 'block_view', $block_data['delta']);
+
+  if ($block) {
+    if (isset($block_data['subject'])) {
+      $block['subject'] = $block_data['subject'];
+    }
+    elseif (@$block_data['no_subject']) {
+      $block['subject'] = '';
+    }
+    return zp_blocks_wrapInBlockThemed($block_data, $block);
+  }
+  return NULL;
+  
+}
+
+
+/**
+ * Returns a content of a block wrapped in proper divs.
+ */
+function zp_blocks_getBlockThemed($block_data, $cache_on = FALSE, $cache_expire_str = FALSE, $suffix = NULL) {
+
+  
+  
+  // No caching version.
+  
+  if (!$cache_on) {
+    return zp_blocks_getBlockThemed_noCache($block_data);
+  }
+
+  
+  
+  // Caching system version.
+  
+  $cid = 'ch-block-cache---' . $block_data['module'] . '-' . $block_data['delta'] . $suffix;
+  $cache = cache_get($cid, 'cache');
+
+  if ($cache && !empty($cache->data) && $cache->expire > time()) {
+    $out = $cache->data;
+  }
+  else {
+
+    if ($out = zp_blocks_getBlockThemed_noCache($block_data)) {
+      if ($cache_expire_str) {
+        cache_set($cid, $out, 'cache', strtotime($cache_expire_str));
+      }
+      else {
+        cache_set($cid, $out, 'cache');
+      }
+      
+    }
+
+  } // End of else of if ($cache && !empty($cache->data) && $cache->expire > time()) {
+
+  return $out;
+}
+
