@@ -20,10 +20,7 @@ function zp_blocks_block_info() {
     'cache' => DRUPAL_NO_CACHE,
   );
   
-  $blocks['footer_links'] = array(
-    'info' => 'Footer links',
-    'cache' => DRUPAL_NO_CACHE,
-  );
+  
   $blocks['footer_menu'] = array(
     'info' => 'Footer menu',
     'cache' => DRUPAL_NO_CACHE,
@@ -34,6 +31,11 @@ function zp_blocks_block_info() {
     'cache' => DRUPAL_NO_CACHE,
   );
   */
+  
+  $blocks['footer_links'] = array(
+    'info' => 'Footer links',
+    'cache' => DRUPAL_NO_CACHE,
+  );
   
   // Aquire blocks for all prefaces with defined bottoms.
   $query = db_select('node', 'n');
