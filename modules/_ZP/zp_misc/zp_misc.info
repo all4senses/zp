@@ -1,0 +1,6 @@
+name = ZP Misc
+package = ZP
+description = "Miscelanious helper functions and hooks implementations"
+core = 7.x
+tags[] = ZP
+files[] = zp_misc.module

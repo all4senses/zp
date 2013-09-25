@@ -1,0 +1,6 @@
+name = ZP Pages
+package = ZP
+description = "Various functions and forms for pages"
+core = 7.x
+tags[] = ZP
+files[] = zp_pages.module

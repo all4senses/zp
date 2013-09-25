@@ -1,0 +1,315 @@
+<?php
+
+/**
+ * @file
+ * Module for building and managing site's pages.
+ */
+
+/**
+ * Constants for ratins titles, etc.
+ */
+module_load_include('inc', 'zp_misc', 'inc/constants');
+
+
+/**
+ * Implements hook_menu().
+ */
+function zp_pages_menu() {
+  
+  
+  //return $items;
+}
+
+
+/**
+ * Implements hook_form_alter().
+ *
+ * @param array &$form
+ *   Array with declared form.
+ *
+ * @param array &$form_state
+ *   Array with current form state.
+ *
+ * @param string $form_id
+ *   Form ID.
+ *
+ * @return void
+ *   Return nothing.
+ */
+function zp_pages_form_alter(&$form, &$form_state, $form_id) {
+  
+  //dpm($form_id);  dpm($form);
+  // $conf['locale_custom_strings_en']['old string'] = 'new string'
+  
+  switch ($form_id) {
+    /*
+    case 'taxonomy_form_term':
+      //dpm($form);
+
+      // Restore the Metatag fields data.
+      $query = db_select('metatag', 'm');
+      $query->fields('m', array('data'))
+            ->condition('entity_type', 'taxonomy_term')
+            ->condition('entity_id', $form['#term']['tid']); 
+      $metatags = $query->execute()->fetchField(); 
+      if ($metatags) {
+        $metatags = unserialize($metatags);
+        foreach ($metatags as $key => $value) {
+          $form['metatags'][$key]['value']['#default_value'] = $value['value'];
+        }
+      }
+      break;
+      */
+    
+    
+    case 'user_login_block':
+    case 'user_login':
+      
+      // Disable login for disabled users
+      $form['#validate'][] = 'zp_pages_validateForm_disableUserLoginForDisabled';
+                
+      break;
+    
+    
+    
+    
+    
+    case 'news_post_node_form':
+    case 'blog_post_node_form':
+    case 'article_node_form':
+           
+      
+        
+        $form['#validate'][] = 'zp_pages_validateForm_article';
+                
+      break;
+    
+    
+    
+    
+    
+    
+    case 'user_profile_form':
+      
+      // Disallow edit own profile for a Guest user.
+      global $user;
+      if($user->name == 'guest') {
+        drupal_goto('');
+      }
+      
+      $form['field_u_bio']['und'][0]['#format'] = 'full_html';
+      
+      break;
+      
+      
+      
+    
+    
+  
+       
+    case 'preface_node_form':
+      
+      // Hide some options for all.
+      $form['comment_settings']['#access'] = FALSE;
+      $form['revision_information']['#access'] = FALSE;
+      
+      // And leave some options for the root.
+      global $user;
+      if ($user->uid != 1) {
+        $form['field_preface_key']['#access'] = FALSE;
+      }
+      if (!in_array('admin', $user->roles)) {
+        // Deny to change the status of the node (it should always be unpublished).
+        $form['options']['#access'] = FALSE;
+        // Hide url aliasing options.
+        $form['path']['#access'] = FALSE;
+      }
+      
+      
+      // Connect Ckeditor for additional fields.
+      
+      //$form['body']['und'][0]['#format'] = 'zp_full_html'; // link
+      //$form['body']['und'][0]['#format'] = 'filtered_html'; // unlink
+      $keys = element_children($form['field_preface_bottom']['und']);
+      foreach ($keys as $key) {
+        $form['field_preface_bottom']['und'][$key]['field_preface_b_body']['und'][0]['#format'] = 'full_html'; // link Ckeditor
+      }
+      
+    break; // End of case 'preface_node_form':
+
+  
+    
+  } // End of switch ($form_id) {
+  
+  
+  // Add a Save Draft button.
+  switch ($form_id) {
+    
+    case 'news_post_node_form':
+    case 'blog_post_node_form':
+    case 'article_node_form':
+      
+        $form['actions']['save_draft'] = array(
+          '#type' => 'submit',
+          '#value' => 'Save Draft',
+          '#submit' => array('node_form_submit'),
+          '#weight' => 6,
+        );
+      
+        $form['#submit'][] = 'zp_pages_submitForm_saveDraft';
+        
+        break;
+      
+  } // End of switch ($form_id) { // Save Draft button
+  
+}
+
+
+/**
+ * Disable user login for disabled users.
+ *
+ * @param array &$form
+ *   Array with declared form.
+ *
+ * @param array &$form_state
+ *   Array with current form state.
+
+ * @return void
+ *   Return nothing.
+ */
+function zp_pages_validateForm_disableUserLoginForDisabled(&$form, &$form_state) {
+    
+  if (!empty($form_state['uid']) && $u = user_load($form_state['uid'])) {
+    if (in_array('disabled', $u->roles)) {
+      form_set_error('name',t('Sorry, but Your account is blocked. Please contact administrator to unblock it.'));
+    }
+  }
+}
+
+
+/**
+ * Custom validate of article type form.
+ *
+ * @param array &$form
+ *   Array with declared form.
+ *
+ * @param array &$form_state
+ *   Array with current form state.
+
+ * @return void
+ *   Return nothing.
+ */
+function zp_pages_validateForm_article(&$form, &$form_state) {
+}
+
+
+/**
+ * Custom validate of article type form.
+ *
+ * @param array &$form
+ *   Array with declared form.
+ *
+ * @param array &$form_state
+ *   Array with current form state.
+
+ * @return void
+ *   Return nothing.
+ */
+function zp_pages_submitForm_saveDraft(&$form, &$form_state) {
+      
+  if ($form_state['values']['op'] == 'Save' && @$form_state['build_info']['args'][0]->status == 0) {
+    // NOT publish ---> Publish
+    //drupal_set_message('NOT publish ---> Publish', 'warning');
+
+    $form_state['values']['status'] = 1;
+    drupal_set_message(t('This article is now published!'), 'warning');
+    $status_changed = TRUE;
+  }
+  elseif (($form_state['values']['op'] == 'Save Draft' ||  $form_state['values']['status'] == 0) && @$form_state['build_info']['args'][0]->status == 1) {
+    // Publish ---> NOT publish
+    //drupal_set_message('Publish ---> NOT publish', 'warning');
+
+    $form_state['values']['status'] = 0;
+    drupal_set_message(t('Attention! This article is saved as draft and is not published now!'), 'warning');
+    $status_changed = TRUE;
+  }
+  elseif (!$form_state['values']['nid'] || @$form_state['build_info']['args'][0]->field_show_in_block['und'][0]['value'] != @$form_state['values']['field_show_in_block']['und'][0]['value'] || $form_state['values']['op'] == 'Delete') {
+    $status_changed = TRUE;
+  }
+  else {
+    $status_changed = FALSE;
+  }
+  
+  /*
+  //if ($status_changed) 
+  {
+    // Clear the views cache.
+    //drupal_flush_all_caches(); // This would clear a Boost cache as well, but we have a Boost Expire module that do it itself.
+    // So we clear here only a views caches.
+    cache_clear_all('*', 'cache_views', TRUE);
+    cache_clear_all('*', 'cache_views_data', TRUE);
+    drupal_set_message(t('A cache has been flushed.'), 'warning');
+  }
+  */
+}
+
+
+/**
+ * Implements hook_node_view().
+ *
+ * @return void
+ *   Return nothing.
+ */
+function zp_pages_node_view($node, $view_mode) {
+
+  switch ($node->type) {
+    
+    case 'preface':
+      
+      $preface_key = @$node->field_preface_key['und'][0]['value'];
+      
+      // Disable ?page* links for /sitemap.
+      if (@$_SERVER['REDIRECT_URL'] == '/sitemap' && $_SERVER['REQUEST_URI'] != '/sitemap') {
+        zp_misc_drupal_not_found();
+        drupal_exit();
+      }
+      
+      
+      // Set metatags from the preface to a page where the preface is placed
+      // Except of the front page, where it can be set via admin interface of the Metatags.
+      // AND except of published prefaces, because thier metatags will be pulled automatically!
+
+      if (isset($node->metatags) && count($node->metatags) && !$node->status) {
+        foreach($node->metatags as $metatag_title => $metatag_data) {
+
+          zp_misc_addMetatag($metatag_title, $metatag_data['value']);
+
+        }
+    
+      }
+        
+      
+    break; // End of Preface
+    
+  } // End of switch ($node->type) {
+  
+  if ($view_mode == 'full') {
+    zp_misc_addSocialShareData_toPage($node);
+  }
+}
+
+
+/**
+ * Implements hook_node_delete().
+ *
+ * @return void
+ *   Return nothing.
+ */
+function zp_pages_node_delete($node) {
+  /* 
+  cache_clear_all('*', 'cache_views', TRUE);
+  cache_clear_all('*', 'cache_views_data', TRUE);
+  drupal_set_message(t('A cache has been flushed.'), 'warning');
+  */
+}
+
