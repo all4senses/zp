@@ -2282,7 +2282,7 @@ function zp_misc_votingapi_metadata_alter(&$data) {
  * Implements hook_views_pre_render().
  */
 function zp_misc_views_pre_render(&$view) {
-  
+  dpm('xxx');
   dpm($view);
   
   //dpm($view->name); dpm($view->current_display);
