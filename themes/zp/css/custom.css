@@ -11,6 +11,17 @@ body.one-sidebar.sidebar-second #main {background: white; padding: 5px 10px 10px
 a, a:focus{ -webkit-appearance: none; outline: none;}
 
 
+#logo-block a {
+position: absolute;
+z-index: 10;
+width: 320px;
+height: 100px;
+left: 0px;
+top: 0px;
+background: url("http://zapokupkami.com/sites/all/themes/zp-themes/zp-two/img4/header_logo1.jpg") no-repeat;
+}
+
+
 /* Make caption narrower */
 h1{margin-top: 5px; margin-bottom: 5px; line-height: 40px;}
 

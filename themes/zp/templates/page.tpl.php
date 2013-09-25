@@ -19,8 +19,13 @@
         <a href="<?php print $front_page; ?>" title="<?php print 'За Покупками!'; ?>" id="logo">
           <?php
 
-              echo '<img src="http://getvoip.com/sites/all/themes/gv_orange/css/images/getvoip-logo4.png" alt="GetVoIP" title="GetVoIP" />';
+              //echo '<img src="http://getvoip.com/sites/all/themes/gv_orange/css/images/getvoip-logo4.png" alt="GetVoIP" title="GetVoIP" />';
           ?>
+          <div class="text1">Удобная Служба Доставки</div>
+          <div id="test">За Покупками!</div>
+          <div class="text2">в Ваши любимые магазины!</div>
+
+
         </a>
       </div>
       
