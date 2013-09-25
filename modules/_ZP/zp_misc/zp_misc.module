@@ -240,7 +240,7 @@ function zp_misc_flush_caches() {
  */
 function zp_misc_userIsAdmin() {
   global $user;
-  if (in_array('admin', $user->roles)) {
+  if (in_array('administrator', $user->roles)) {
     return TRUE;
   }
   else {
@@ -1713,7 +1713,7 @@ function zp_misc_getAdmins() {
         ->fields('u');
   $query->leftJoin('users_roles', 'ur', 'ur.uid = u.uid');
   $query->leftJoin('role', 'r', 'r.rid = ur.rid');
-  $query->condition('r.name', 'admin');
+  $query->condition('r.name', 'administrator');
   $admins = $query->execute()->fetchAllAssoc('uid');
 
   return $admins;
