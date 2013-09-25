@@ -624,7 +624,7 @@ function zp_process_page(&$variables) {
   
   
   // Set breadcrumb
-  zp_misc_setBreadcrumbs($variables);
+  //zp_misc_setBreadcrumbs($variables);
   
   
   
