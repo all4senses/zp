@@ -885,14 +885,13 @@ function zp_misc_html_head_alter(&$object) {
  * @return array
  *   Views api definition.
  */
-/*
 function zp_misc_views_api() {
   return array(
     'api' => 3,
     'path' => drupal_get_path('module', 'zp_misc') . '/inc',
   );
 } 
-*/
+
 
 
 /**
