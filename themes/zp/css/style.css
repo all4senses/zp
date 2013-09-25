@@ -1,4 +1,4 @@
-/* Drupal 7 Gv theme, based on Framework - Created by André Griffin
+/* Drupal 7 ZP theme, based on Framework - Created by André Griffin
 ------------------------------------------------
 [Table of contents]
 
@@ -46,8 +46,7 @@ Equation for font sizing:
 body {
   background: #fff;
   color: #222;
-  /*font-family: "Lucida Grande", "Lucida Sans Unicode", "Lucida Sans", Geneva, Verdana, sans-serif;*/
-  font-family: 'Open Sans', arial;
+  font-family: "Lucida Grande", "Lucida Sans Unicode", "Lucida Sans", Geneva, Verdana, sans-serif;
   font-size: 100%;
   line-height: 1.5;
   margin: 0;
@@ -55,14 +54,13 @@ body {
 }
 
 h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
-  /*font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;*/
-  font-family: ubuntu, arial;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-style: normal;
   font-weight: normal;
 }
 
 .ui-widget, .ui-widget input, .ui-widget select, .ui-widget textarea, .ui-widget button {
-  font-family: 'Open Sans';
+  /*font-family: 'Open Sans';*/
 }
 
 h1, .h1 {
