@@ -110,7 +110,7 @@ function zp_pages_form_alter(&$form, &$form_state, $form_id) {
     case 'preface_node_form':
       
       // Hide some options for all.
-      $form['comment_settings']['#access'] = FALSE;
+      ////$form['comment_settings']['#access'] = FALSE;
       $form['revision_information']['#access'] = FALSE;
       
       // And leave some options for the root.
