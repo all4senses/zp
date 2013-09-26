@@ -136,7 +136,7 @@ function zp_misc_taxonomy_menu_menu_link_prepare($term, $menu_name) {
   $menu_link['options']['attributes']['title'] = (isset($term_description) && $term_description == 1) ? trim($term->description) : '';
   // Path.
   $link_path = taxonomy_menu_path_get($term->vid, $term->tid);
-  $menu_link['link_path'] = 'content/produkty'; //drupal_get_normal_path($link_path, $langcode);
+  $menu_link['link_path'] = 'node/1'; //drupal_get_normal_path($link_path, $langcode);
 
   return $menu_link;
 }
