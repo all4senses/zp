@@ -2691,6 +2691,14 @@ function zp_misc_validate_email($element, &$form_state) {
  */
 function zp_misc_setBreadcrumbs(&$variables) {
   
+  
+  // If we are on the Page Not Found, hide breadcumbs.
+  // node/2 - custom ZP Page Not Found.
+  if ($_GET['q'] == 'node/2') {
+    $variables['breadcrumb'] = NULL;
+  }
+  
+  
   /*
   $tags_cloud_pages = array('/articles/tags', '/blog/tags', '/news/tags');
   $not_teasers_types = array('preface', 'admin_page', 'page', 'quote', 'webform');

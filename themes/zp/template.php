@@ -570,13 +570,10 @@ function zp_menu_local_tasks(&$variables) {
 }
 
 
-
+/*
 function zp_preprocess_breadcrumb(&$variables) {
-  dpm($variables);
-  dpm($_GET);
-  dpm($_SERVER);
 }
-
+*/
 
 
 /**
@@ -626,7 +623,7 @@ function zp_process_page(&$variables) {
   
   
   // Set breadcrumb
-  //zp_misc_setBreadcrumbs($variables);
+  zp_misc_setBreadcrumbs($variables);
   
   
   
