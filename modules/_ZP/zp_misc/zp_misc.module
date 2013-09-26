@@ -55,7 +55,90 @@ function zp_misc_taxonomy_menu_save($term, $menu_link, $mlid) {
   if ($term->name == 'Продукты') {
     dpm($term);
     dpm($menu_link);
+    
+    $menu_link = zp_misc_taxonomy_menu_menu_link_prepare($term, 'menu-catalog-menu');
+    $mlid = menu_link_save($menu_link);
+    
+    dpm($menu_link);
   }
+}
+
+
+ /**
+ * Prepares a taxonomy item to be saved as a menu link.
+ *
+ * A menu item has the following properties:
+ *  - link_path: (required)
+ *  - link_title: (required)
+ *  - router_path: (required)
+ *  - menu_name: (optional)
+ *  - weight: (optional)
+ *  - expanded: (optional)
+ *  - options: (optional)
+ *  - mlid: (optional)
+ *  - plid: (optional)
+ *
+ * @param $term
+ *   A taxonomy term used to save a respective menu item.
+ * @param $menu_name
+ *   The machine name of the menu in which the menu link should be saved.
+ *
+ * @return
+ *   A menu link built upon a taxonomy term, to be saved in the menu.
+ */
+function zp_misc_taxonomy_menu_menu_link_prepare($term, $menu_name) {
+  static $weight = 0;
+  $langcode = isset($term->language) ? $term->language : LANGUAGE_NONE;
+  $recursive_count = FALSE;
+
+  // Count nodes attached to a taxonomy term if the settings require it.
+  // TODO Make the recursivity of node count optional.
+  $display_count = taxonomy_menu_variable_get('display_num', $term->vid, FALSE);
+  $hide_term = taxonomy_menu_variable_get('hide_empty_terms', $term->vid, FALSE);
+  if ($hide_term || $display_count) {
+    $nodes_count = taxonomy_menu_term_count_nodes($term->tid, $recursive_count);
+    $is_hidden = ($nodes_count && $nodes_count > 0) ? 0 : 1;
+  }
+
+  // Load or create a menu link corresponding the taxonomy term being processed.
+  $menu_link = taxonomy_menu_menu_link_load($term, $langcode);
+
+  // Menu to be attached to.
+  $menu_link['menu_name'] = $menu_name;
+  // Expanded.
+  $menu_link['expanded'] = taxonomy_menu_variable_get('expanded', $term->vid, 0);
+  // Has children.
+  $has_children = taxonomy_get_children($term->tid, $term->vid);
+  $menu_link['has_children'] = empty($has_children) ? 0 : 1;
+  // Flatten.
+  $flatten_menu = taxonomy_menu_variable_get('flat', $term->vid, 0);
+  if ($flatten_menu) {
+    $menu_link['weight'] = $weight++;
+    $menu_link['has_children'] = 0;
+    $menu_link['plid'] = taxonomy_menu_variable_get('vocab_parent', $term->vid, NULL);
+    $menu_link['expanded'] = 0;
+  }
+  else {
+    $menu_link['plid'] = taxonomy_menu_term_get_plid($term, $langcode);
+  }
+  // Empty terms.
+  $menu_link['hidden'] = isset($is_hidden) ? $is_hidden : 0;
+
+  // Menu link title.
+  $menu_link['link_title'] = $term->name;
+  if ($display_count && $nodes_count > 0) {
+    $menu_link['link_title'] .= " (" . $nodes_count . ")";
+  }
+  // HTML title attribute.
+  if (taxonomy_menu_variable_get('display_title_attr', $term->vid, TRUE)) {
+    $term_description = taxonomy_menu_variable_get('term_item_description', $term->vid, 0);
+  }
+  $menu_link['options']['attributes']['title'] = (isset($term_description) && $term_description == 1) ? trim($term->description) : '';
+  // Path.
+  $link_path = taxonomy_menu_path_get($term->vid, $term->tid);
+  $menu_link['link_path'] = 'xxx'; //drupal_get_normal_path($link_path, $langcode);
+
+  return $menu_link;
 }
 
 
