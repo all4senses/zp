@@ -51,8 +51,11 @@ function zp_misc_menu() {
 function zp_misc_taxonomy_menu_save($term, $menu_link, $mlid) {
   // For example, we could process all the translated taxonomy terms of this
   // term here, in order to save their respective translated menu links.
-  dpm($term);
-  dpm($menu_link);
+  
+  if ($term->name == 'Продукты') {
+    dpm($term);
+    dpm($menu_link);
+  }
 }
 
 
