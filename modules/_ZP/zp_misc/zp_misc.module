@@ -2433,7 +2433,7 @@ function zp_misc_views_pre_render(&$view) {
   // Add a prefaces for the some views pages.
   $key = 'view-' . $view->name . '-' . $view->current_display;
   
-  dpm($key);
+  //dpm($key);
   
   $do_attach_preface = FALSE;
   
@@ -2442,9 +2442,9 @@ function zp_misc_views_pre_render(&$view) {
       
     case 'view-taxonomy_term-page':
       $args = arg();
-      dpm($args);
+      //dpm($args);
       $term = taxonomy_term_load($args[2]);
-      dpm($term);
+      //dpm($term);
       if (isset($args[3]) || $term->vocabulary_machine_name == 'catalog') {
         zp_misc_drupal_not_found();
         drupal_exit();
