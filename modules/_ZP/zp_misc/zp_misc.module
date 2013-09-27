@@ -105,7 +105,10 @@ function zp_misc_findDeptConnectedToTerm($term) {
   //dpm($term);
   $dept_nid = zp_misc_fieldRead_idByValue_single('zp_id', $term->field_zp_id['und'][0]['value'], 'node', 'department');
 
+  //$node = node_load($dept_nid);
   if ($dept_nid) {
+    
+    zp_misc_fieldTermReferenceSave('catalog', $dept_nid, $term->tid, 'node', 'department');
     
     // Check wether the node is connected to the term.
     /*
@@ -185,9 +188,6 @@ function zp_misc_findDeptConnectedToTerm($term) {
   field_cache_clear();
   
   */
-  
-  
-  
   
   }
   
@@ -867,9 +867,9 @@ function zp_misc_fieldSave($field_name, $entity_id, $data, $entity_type = 'node'
     // Need update an existing field.
     db_update('field_data_field_' . $field_name)
       ->fields(array(
-        'entity_id' => $entity_id,
-        'delta' => 0,  
-        'revision_id'=> $entity_id,    
+        //'entity_id' => $entity_id,
+        //'delta' => 0,  
+        //'revision_id'=> $entity_id,    
         'field_' . $field_name . '_value' => $data,
       ))
       ->condition('entity_id', $entity_id)
@@ -878,9 +878,9 @@ function zp_misc_fieldSave($field_name, $entity_id, $data, $entity_type = 'node'
 
     db_update('field_revision_field_' . $field_name)
       ->fields(array(
-        'entity_id' => $entity_id,
-        'delta' => 0,  
-        'revision_id'=> $entity_id,     
+        //'entity_id' => $entity_id,
+        //'delta' => 0,  
+        //'revision_id'=> $entity_id,     
         'field_' . $field_name . '_value' => $data,
       ))
       ->condition('entity_id', $entity_id)
@@ -917,6 +917,84 @@ function zp_misc_fieldSave($field_name, $entity_id, $data, $entity_type = 'node'
   }
 
   field_cache_clear();
+}
+
+
+/**
+ * Saves or updates a Term Reference field.
+ */
+function zp_misc_fieldTermReferenceSave($field_name, $entity_id, $data, $entity_type = 'node', $bundle = NULL, $clear_cache = TRUE) {
+  
+  if(!$bundle) {
+    $bundle = $entity_type;
+  }
+  
+  $query = db_select('field_data_field_' . $field_name, 'f');
+  $query->fields('f', array('field_' . $field_name . '_tid'))
+        ->condition('f.entity_id', $entity_id)
+        ->condition('f.entity_type', $entity_type)
+        ->condition('f.bundle', $bundle);
+  $result = $query->execute(); //->fetchField();
+  
+  if ($result->rowCount()) {
+    // Need update an existing field.
+    db_update('field_data_field_' . $field_name)
+      ->fields(array(
+        //'entity_id' => $entity_id,
+        //'delta' => 0,  
+        //'revision_id'=> $entity_id,    
+        'field_' . $field_name . '_tid' => $data,
+      ))
+      ->condition('entity_id', $entity_id)
+      ->condition('entity_type', $entity_type)
+      ->condition('bundle', $bundle)
+      ->execute();
+
+    db_update('field_revision_field_' . $field_name)
+      ->fields(array(
+        //'entity_id' => $entity_id,
+        //'delta' => 0,  
+        //'revision_id'=> $entity_id,     
+        'field_' . $field_name . '_tid' => $data,
+      ))
+      ->condition('entity_id', $entity_id)
+      ->condition('entity_type', $entity_type)
+      ->condition('bundle', $bundle)
+      ->execute();
+  }
+  else {
+    // Need create a new field.
+    db_insert('field_data_field_' . $field_name) 
+      ->fields(array(
+        'entity_type'=> $entity_type,
+        'bundle'=> $bundle,
+        'deleted'=> 0,                
+        'entity_id' => $entity_id,
+        'delta' => 0,  
+        'revision_id'=> $entity_id,
+        'language'=> 'und',  
+        'field_' . $field_name . '_tid' => $data,
+      ))
+      ->execute();
+
+    db_insert('field_revision_field_' . $field_name)
+      ->fields(array(
+        'entity_type'=> $entity_type,
+        'bundle'=> $bundle,
+        'deleted'=> 0,                
+        'entity_id' => $entity_id,
+        'delta' => 0,  
+        'revision_id'=> $entity_id,
+        'language'=> 'und',  
+        'field_' . $field_name . '_tid' => $data,
+      ))
+      ->execute();
+  }
+
+  if ($clear_cache) {
+    field_cache_clear();
+  }
+  
 }
 
 
