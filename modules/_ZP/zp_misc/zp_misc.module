@@ -1931,14 +1931,17 @@ function zp_misc_addNewDeptAndMenuItem($dept) {
  */
 function zp_misc_node_delete($node) {
   
-  //if ($term_tid = zp_misc_fieldRead_idByValue_single('zp_id', $node->field_zp_id['und'][0]['value'], 'taxonomy_term', 'catalog')) 
+  if ($term_tid = zp_misc_fieldRead_idByValue_single('zp_id', $node->field_zp_id['und'][0]['value'], 'taxonomy_term', 'catalog')) 
   {
-    //$term = taxonomy_term_load($term_tid);
-    //taxonomy_term_save($term);
+    $term = taxonomy_term_load($term_tid);
+    taxonomy_term_save($term);
+    
+    dpm($term);
     
     $result = db_query("SELECT mlid FROM {menu_links} WHERE link_path = :path AND module = 'menu'", array(':path' => 'node/' . $node->nid), array('fetch' => PDO::FETCH_ASSOC));
     foreach ($result as $m) {
       $menu_item = menu_link_load($m['mlid']);
+      dpm('xxx');
       // Show a menu item without a link.
       // Depends on the module 'Special menu items'.
       $menu_link['link_path'] = '<nolink>';
