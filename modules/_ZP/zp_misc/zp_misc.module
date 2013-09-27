@@ -60,7 +60,7 @@ function zp_misc_taxonomy_menu_save($term, $menu_link, $mlid) {
     // a4s rewrite menu item path, attribute title.
     
     // Calculate it again... just testing, no need for this.
-    $menu_link = taxonomy_menu_menu_link_prepare($term, 'menu-catalog-menu');
+    ////$menu_link = taxonomy_menu_menu_link_prepare($term, 'menu-catalog-menu');
             
     // Original from taxonomy_menu_menu_link_prepare($term, $menu_name).
     
@@ -74,13 +74,13 @@ function zp_misc_taxonomy_menu_save($term, $menu_link, $mlid) {
 //    $menu_link['link_path'] = drupal_get_normal_path($link_path, $langcode);
 
     
+    // Allow manually change and delete the menu item by a user.
+    unset($menu_link['module']);
+      
     // If there is a dept connected to this term, show link to this dept instead the link to the term.
     if ($dept_nid = zp_misc_findDeptConnectedToTerm($term->tid)) {
       // And save the renewed item again, as in taxonomy_menu_menu_link_prepare($term, $menu_name).
       $menu_link['link_path'] = '<nolink>';//'node/' . $dept_nid;
-      
-      // Allow manually change and delete the menu item by a user.
-      unset($menu_link['module']);
       
       $mlid = menu_link_save($menu_link);
     }
@@ -96,10 +96,18 @@ function zp_misc_taxonomy_menu_save($term, $menu_link, $mlid) {
 
 
 
-
+/**
+ * Find a dept connected to a catalog term.
+ */
 function zp_misc_findDeptConnectedToTerm($tid) {
   
-  return 1;
+  $query = db_select('taxonomy_index', 'ti')
+    ->fields('ti', array('nid'));
+  $query->condition('tid', $tid);
+  $query->join('node', 'n', 'n.nid = ti.nid AND n.type = "department"');
+  $dept_nid = $query->execute()->fetchField();
+        
+  return $dept_nid;
 }
 
 
