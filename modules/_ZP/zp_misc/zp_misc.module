@@ -1827,6 +1827,10 @@ function zp_misc_addNewDeptAndMenuItem($zp_id, $parent_zp_id, $dept) {
   
   // Creat a node for the department.
   global $user;
+  global $language;
+  
+  dpm($language);
+  dpm($user);
   
   $node = new stdClass();
   $node->type = 'department';
@@ -1865,7 +1869,7 @@ function zp_misc_addNewDeptAndMenuItem($zp_id, $parent_zp_id, $dept) {
 
   /*
   $node->path = array(
-    'alias' => $form_state['values']['url_alias'],
+    'alias' => $dept['url_alias'],
     'language' => $node->language,
     'pathauto' => 0,
   );
