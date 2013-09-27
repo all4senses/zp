@@ -103,6 +103,12 @@ function zp_misc_taxonomy_menu_save($term, $menu_link, $mlid) {
 function zp_misc_findDeptConnectedToTerm($term) {
   
   dpm($term);
+  
+  // If the $term->field_zp_id field is not loaded to the term object, load it now.
+  if (!isset($term->field_zp_id)) {
+    $term2 = taxonomy_term_load($term->tid);
+    dpm($term2);
+  }
   $dept_nid = zp_misc_fieldRead_idByValue_single('zp_id', $term->field_zp_id['und'][0]['value'], 'node', 'department');
 
   //$node = node_load($dept_nid);
