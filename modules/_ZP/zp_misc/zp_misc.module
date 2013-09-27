@@ -1816,10 +1816,95 @@ function zp_misc_getYoutubeVideoThumb($video_id) {
 /**
  * Test page function for url /test.
  */
+function zp_misc_addNewDeptAndMenuItem($zp_id, $parent_zp_id, $dept) {
+ 
+  $dept = array(
+    'title' => 'Тест 3',
+    'description' => 'Описание отдела 3', 
+    'summary' => 'Краткое описание отдела 3',
+    'zp_id' => 'z003',
+  );
+  
+  // Creat a node for the department.
+  global $user;
+  
+  $node = new stdClass();
+  $node->type = 'department';
+  node_object_prepare($node);
+  
+  $current_time = time();
+  $node->date = $current_time;
+  $node->created = $current_time;
+  $node->changed = $current_time;
+  
+          
+  $node->title = $dept['title'];
+  $node->language = LANGUAGE_NONE;
+  $node->uid = $user->uid;
+  $node->status = 1;
+  $node->promote = 0;
+  $node->sticky = 0;
+  $node->comment = 0;
+  
+  $node->body[$node->language][0]['format'] = 'full_html';
+  $node->body[$node->language][0]['value'] = $dept['description'];
+  $node->body[$node->language][0]['summary'] = $dept['summary'];
+  $node->body[$node->language][0]['safe_value'] = check_plain($dept['description']);
+  $node->body[$node->language][0]['safe_summary'] = check_plain($dept['summary']);
+  
+  
+  /*
+  $node->field_zp_id[$node->language][0] = array(
+    'value' => $dept['zp_id'],
+    'safe_value' => check_plain($dept['zp_id']),
+    'format' => 'full_html',
+  );
+  */
+  
+  $node->field_zp_id[$node->language][0]['value'] = $dept['zp_id'];
+
+  /*
+  $node->path = array(
+    'alias' => $form_state['values']['url_alias'],
+    'language' => $node->language,
+    'pathauto' => 0,
+  );
+  */
+  
+  //dpm($node);
+  //return;
+  
+  if (!$node = node_submit($node)) {
+    drupal_set_message('1.Error has occured while saving a Department ' . $dept['title'], 'error');
+    return FALSE;
+  }
+
+  node_save($node);
+  if (empty($node->nid)) {
+    drupal_set_message('2.Error has occured while saving a Department ' . $dept['title'], 'error');
+    return FALSE;
+  }
+  
+  dpm($node);
+  drupal_set_message('A new department was created, Ok!', 'warning');
+
+  
+  // Create a term in the menu Catalog and connect it to the just created department node.
+  // ..
+  
+  
+}
+
+
+/**
+ * Test page function for url /test.
+ */
 function zp_misc_testPage() {
   
   $out = '<div>Start test...</div><br/>';
 
+  zp_misc_addNewDeptAndMenuItem('z003', 'z001', NULL);
+  /*
   $catalog_voc = taxonomy_vocabulary_machine_name_load('catalog');
   
   $parent_tid = 6;
@@ -1838,6 +1923,8 @@ function zp_misc_testPage() {
   dpm($menu_item_term);
   
   taxonomy_term_save($menu_item_term);
+  */
+  
   
   return $out . '<br>End of Test';
 }
