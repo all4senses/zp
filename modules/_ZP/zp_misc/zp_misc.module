@@ -109,7 +109,7 @@ function zp_misc_findDeptConnectedToTerm($term) {
     $term_short = $term;
     $term = taxonomy_term_load($term->tid);
     $term->parents = $term_short->parents;
-    $term->parents = $term_short->depth;
+    $term->depth = $term_short->depth;
     dpm($term);
   }
   $dept_nid = zp_misc_fieldRead_idByValue_single('zp_id', $term->field_zp_id['und'][0]['value'], 'node', 'department');
