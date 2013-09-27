@@ -103,7 +103,7 @@ function zp_misc_taxonomy_menu_save($term, $menu_link, $mlid) {
 function zp_misc_findDeptConnectedToTerm($term) {
   
   //dpm($term);
-  $dept_nid = zp_misc_fieldRead_idByValue_single('zp_id', $term->field_zp_id['und'][0]['value'], 'node');
+  $dept_nid = zp_misc_fieldRead_idByValue_single('zp_id', $term->field_zp_id['und'][0]['value'], 'node', 'department');
     
 //  $query = db_select('taxonomy_index', 'ti')
 //    ->fields('ti', array('nid'));
@@ -740,7 +740,8 @@ function zp_misc_fieldRead_valueById_single($field_name, $entity_id, $entity_typ
   $query = db_select('field_data_field_' . $field_name, 'f');
   $query->fields('f', array('field_' . $field_name . '_value'))
         ->condition('f.entity_id', $entity_id)
-        ->condition('f.entity_type', $entity_type);
+        ->condition('f.entity_type', $entity_type)
+        ->condition('f.bundle', $bundle);
   $result = $query->execute()->fetchField();
   return $result;
 }
@@ -749,11 +750,12 @@ function zp_misc_fieldRead_valueById_single($field_name, $entity_id, $entity_typ
 /**
  * Read  a field entity_id by value.
  */
-function zp_misc_fieldRead_idByValue_single($field_name, $field_value, $entity_type = 'node') {
+function zp_misc_fieldRead_idByValue_single($field_name, $field_value, $entity_type = 'node', $bundle) {
   $query = db_select('field_data_field_' . $field_name, 'f');
   $query->fields('f', array('entity_id'))
         ->condition('field_' . $field_name . '_value', $field_value)
-        ->condition('f.entity_type', $entity_type);
+        ->condition('f.entity_type', $entity_type)
+        ->condition('f.bundle', $bundle);
   $result = $query->execute()->fetchField();
   return $result;
 }
