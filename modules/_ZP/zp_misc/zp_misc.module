@@ -1705,8 +1705,18 @@ function zp_misc_testPage() {
   
   $out = '<div>Start test...</div><br/>';
 
-  $vid = taxonomy_vocabulary_machine_name_load('catalog');
-  dpm($vid);
+  $catalog_voc = taxonomy_vocabulary_machine_name_load('catalog');
+  
+  $parent_tid = 6;
+  $menu_item_title = 'Тест 1';
+  
+  $menu_item_term = (object) array(
+    'name' => $menu_item_title,
+    'vid' => $catalog_voc->vid,
+    'parent' => array($parent_tid),
+  );
+  
+  dpm($menu_item_term);
   
   //taxonomy_term_save();
   
