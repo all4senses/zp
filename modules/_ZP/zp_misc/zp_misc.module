@@ -107,7 +107,7 @@ function zp_misc_findDeptConnectedToTerm($term) {
   // If the $term->field_zp_id field is not loaded to the term object, load it now.
   if (!isset($term->field_zp_id)) {
     $term_short = $term;
-    $term = (array) taxonomy_term_load($term->tid);
+    $term = taxonomy_term_load($term->tid);
     $term->parents = $term_short->parents;
     $term->parents = $term_short->depth;
     dpm($term);
