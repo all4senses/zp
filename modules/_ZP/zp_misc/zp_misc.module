@@ -104,7 +104,7 @@ function zp_misc_findDeptConnectedToTerm($tid) {
   $query = db_select('taxonomy_index', 'ti')
     ->fields('ti', array('nid'));
   $query->condition('tid', $tid);
-  $query->join('node', 'n', 'n.nid = ti.nid AND n.type = "department"');
+  $query->join('node', 'n', "n.nid = ti.nid AND n.type = 'department'");
   $dept_nid = $query->execute()->fetchField();
         
   return $dept_nid;
