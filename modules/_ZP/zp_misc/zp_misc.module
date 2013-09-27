@@ -1703,9 +1703,12 @@ function zp_misc_getYoutubeVideoThumb($video_id) {
  */
 function zp_misc_testPage() {
   
-  $out = '<div>Start test...</div>';
+  $out = '<div>Start test...</div><br/>';
 
+  $vid = taxonomy_vocabulary_machine_name_load('catalog');
+  dpm($vid);
   
+  //taxonomy_term_save();
   
   return $out . '<br>End of Test';
 }
