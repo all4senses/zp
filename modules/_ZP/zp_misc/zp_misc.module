@@ -1912,7 +1912,7 @@ function zp_misc_addNewDeptAndMenuItem($dept) {
     'vid' => $catalog_voc->vid,
     'parent' => array($parent_tid),
     'weight' => $dept['weight'],
-    'field_zp_id' => array('und' => array(0 => array('value' => $zp_id))),
+    'field_zp_id' => array('und' => array(0 => array('value' => $dept['zp_id']))),
   );
   
   taxonomy_term_save($menu_item_term);
