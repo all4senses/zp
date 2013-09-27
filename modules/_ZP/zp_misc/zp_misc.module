@@ -1929,7 +1929,7 @@ function zp_misc_addNewDeptAndMenuItem($dept) {
  *
  * @TODO Update the menu items count, empty terms.
  */
-function zp_misc_node_delete($node) {
+function zp_misc_entity_delete($node, $type) {
   
   if ($term_tid = zp_misc_fieldRead_idByValue_single('zp_id', $node->field_zp_id['und'][0]['value'], 'taxonomy_term', 'catalog')) {
     $term = taxonomy_term_load($term_tid);
