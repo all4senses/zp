@@ -1929,11 +1929,24 @@ function zp_misc_addNewDeptAndMenuItem($dept) {
  *
  * @TODO Update the menu items count, empty terms.
  */
-function zp_misc_entity_delete($node, $type) {
+function zp_misc_node_delete($node) {
   
-  if ($term_tid = zp_misc_fieldRead_idByValue_single('zp_id', $node->field_zp_id['und'][0]['value'], 'taxonomy_term', 'catalog')) {
-    $term = taxonomy_term_load($term_tid);
-    taxonomy_term_save($term);
+  //if ($term_tid = zp_misc_fieldRead_idByValue_single('zp_id', $node->field_zp_id['und'][0]['value'], 'taxonomy_term', 'catalog')) 
+  {
+    //$term = taxonomy_term_load($term_tid);
+    //taxonomy_term_save($term);
+    
+    $result = db_query("SELECT mlid FROM {menu_links} WHERE link_path = :path AND module = 'menu'", array(':path' => 'node/' . $node->nid), array('fetch' => PDO::FETCH_ASSOC));
+    foreach ($result as $m) {
+      $menu_item = menu_link_load($m['mlid']);
+      // Show a menu item without a link.
+      // Depends on the module 'Special menu items'.
+      $menu_link['link_path'] = '<nolink>';
+      $mlid = menu_link_save($menu_link);
+      dpm($menu_item);
+    }
+  
+  
     drupal_set_message('ZP. Taxonomy menu "' .  $term->name . '" has been updated to set empty item after the node ' . $node->nid . ' deletion!', 'warning');
   }
 }
