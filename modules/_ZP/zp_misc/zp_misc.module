@@ -104,7 +104,94 @@ function zp_misc_findDeptConnectedToTerm($term) {
   
   //dpm($term);
   $dept_nid = zp_misc_fieldRead_idByValue_single('zp_id', $term->field_zp_id['und'][0]['value'], 'node', 'department');
+
+  if ($dept_nid) {
     
+    // Check wether the node is connected to the term.
+    /*
+      $query = db_insert('taxonomy_index')->fields(array('nid', 'tid', 'sticky', 'created'));
+      foreach ($tid_all as $tid) {
+        $query->values(array(
+          'nid' => $node->nid,
+          'tid' => $tid,
+          'sticky' => $sticky,
+          'created' => $node->created,
+        ));
+      }
+      $query->execute();
+      
+      
+      
+    
+  $query = db_select('field_data_field_' . $field_name, 'f');
+  $query->fields('f', array('field_' . $field_name . '_value'))
+        ->condition('f.entity_id', $entity_id)
+        ->condition('f.entity_type', $entity_type);
+  $result = $query->execute(); //->fetchField();
+  
+  if ($result->rowCount()) {
+    // Need update an existing field.
+    db_update('field_data_field_' . $field_name)
+      ->fields(array(
+        'entity_id' => $entity_id,
+        'delta' => 0,  
+        'revision_id'=> $entity_id,    
+        'field_' . $field_name . '_value' => $data,
+      ))
+      ->condition('entity_id', $entity_id)
+      ->condition('entity_type', $entity_type)
+      ->execute();
+
+    db_update('field_revision_field_' . $field_name)
+      ->fields(array(
+        'entity_id' => $entity_id,
+        'delta' => 0,  
+        'revision_id'=> $entity_id,     
+        'field_' . $field_name . '_value' => $data,
+      ))
+      ->condition('entity_id', $entity_id)
+      ->condition('entity_type', $entity_type)
+      ->execute();
+  }
+  else {
+    // Need create a new field.
+    db_insert('field_data_field_' . $field_name) 
+      ->fields(array(
+        'entity_type'=> $entity_type,
+        'bundle'=> $bundle,
+        'deleted'=> 0,                
+        'entity_id' => $entity_id,
+        'delta' => 0,  
+        'revision_id'=> $entity_id,
+        'language'=> 'und',  
+        'field_' . $field_name . '_value' => $data,
+      ))
+      ->execute();
+
+    db_insert('field_revision_field_' . $field_name)
+      ->fields(array(
+        'entity_type'=> $entity_type,
+        'bundle'=> $bundle,
+        'deleted'=> 0,                
+        'entity_id' => $entity_id,
+        'delta' => 0,  
+        'revision_id'=> $entity_id,
+        'language'=> 'und',  
+        'field_' . $field_name . '_value' => $data,
+      ))
+      ->execute();
+  }
+
+  field_cache_clear();
+  
+  */
+  
+  
+  
+  
+  }
+  
+  
 //  $query = db_select('taxonomy_index', 'ti')
 //    ->fields('ti', array('nid'));
 //  $query->condition('tid', $term->tid);
@@ -1738,14 +1825,16 @@ function zp_misc_testPage() {
   $catalog_voc = taxonomy_vocabulary_machine_name_load('catalog');
   
   $parent_tid = 6;
-  $menu_item_title = 'Тест 1';
+  $menu_item_title = 'Тест 2';
   $menu_item_weight = 5;
+  $menu_item_zp_id = 'z002';
   
   $menu_item_term = (object) array(
     'name' => $menu_item_title,
     'vid' => $catalog_voc->vid,
     'parent' => array($parent_tid),
     'weight' => $menu_item_weight,
+    'field_zp_id' => array('und' => array(0 => array('value' => $menu_item_zp_id))),
   );
   
   dpm($menu_item_term);
