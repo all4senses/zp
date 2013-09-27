@@ -52,9 +52,8 @@ function zp_misc_taxonomy_menu_save($term, $menu_link, $mlid) {
   // For example, we could process all the translated taxonomy terms of this
   // term here, in order to save their respective translated menu links.
   
-  if ($term->name == 'Продукты') {
-    dpm($term);
-    dpm($menu_link);
+    //dpm($term);
+    //dpm($menu_link);
     
     
     // a4s rewrite menu item path, attribute title.
@@ -90,8 +89,8 @@ function zp_misc_taxonomy_menu_save($term, $menu_link, $mlid) {
       $menu_link['link_path'] = '<nolink>';
     }
     
-    dpm($menu_link);
-  }
+    //dpm($menu_link);
+
 }
 
 
