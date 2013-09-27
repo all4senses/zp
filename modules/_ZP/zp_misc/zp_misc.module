@@ -1940,13 +1940,13 @@ function zp_misc_node_delete($node) {
     
     $result = db_query("SELECT mlid FROM {menu_links} WHERE link_path = :path AND module = 'menu'", array(':path' => 'node/' . $node->nid), array('fetch' => PDO::FETCH_ASSOC));
     foreach ($result as $m) {
-      $menu_item = menu_link_load($m['mlid']);
+      $menu_link = menu_link_load($m['mlid']);
       dpm('xxx');
       // Show a menu item without a link.
       // Depends on the module 'Special menu items'.
       $menu_link['link_path'] = '<nolink>';
       $mlid = menu_link_save($menu_link);
-      dpm($menu_item);
+      dpm($menu_link);
     }
   
   
