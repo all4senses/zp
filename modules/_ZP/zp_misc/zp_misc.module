@@ -1843,7 +1843,7 @@ function zp_misc_addNewDeptAndMenuItem($zp_id, $parent_zp_id, $dept) {
   
           
   $node->title = $dept['title'];
-  $node->language = LANGUAGE_NONE;
+  $node->language = $language->language; //LANGUAGE_NONE;
   $node->uid = $user->uid;
   $node->status = 1;
   $node->promote = 0;
