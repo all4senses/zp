@@ -442,6 +442,7 @@ function _taxonomy_menu_termapi_helper($term, $operation) {
 
     if ($operation == 'delete') {
       $mlid = _taxonomy_menu_get_mlid($term->tid, $term->vid);
+      dpm('$mlid = ......' . $mlid);
       _taxonomy_menu_delete_item($term->vid, $term->tid);
       menu_link_delete($mlid);
     }
