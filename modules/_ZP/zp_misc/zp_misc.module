@@ -1718,7 +1718,7 @@ function zp_misc_testPage() {
   
   dpm($menu_item_term);
   
-  //taxonomy_term_save();
+  taxonomy_term_save($menu_item_term);
   
   return $out . '<br>End of Test';
 }
