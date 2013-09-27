@@ -1933,7 +1933,7 @@ function zp_misc_node_delete($node) {
   
   if ($term_tid = zp_misc_fieldRead_idByValue_single('zp_id', $node->field_zp_id['und'][0]['value'], 'taxonomy_term', 'catalog')) {
     $term = taxonomy_term_load($term_tid);
-    taxonomy_term_save($term_tid);
+    taxonomy_term_save($term);
     drupal_set_message('ZP. Taxonomy menu "' .  $term->name . '" has been updated to set empty item after the node ' . $node->nid . ' deletion!', 'warning');
   }
 }
