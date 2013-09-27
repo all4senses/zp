@@ -103,15 +103,14 @@ function zp_misc_taxonomy_menu_save($term, $menu_link, $mlid) {
 function zp_misc_findDeptConnectedToTerm($term) {
   
   //dpm($term);
-  //$term->zp_id = '';
-  //$dept_nid = zp_misc_fieldRead_idByValue_single('zp_id', $term->zp_id, 'node');
-  
-  $query = db_select('taxonomy_index', 'ti')
-    ->fields('ti', array('nid'));
-  $query->condition('tid', $term->tid);
-  $query->join('node', 'n', "n.nid = ti.nid AND n.type = 'department'");
-  $dept_nid = $query->execute()->fetchField();
-        
+  $dept_nid = zp_misc_fieldRead_idByValue_single('zp_id', $term->field_zp_id['und'][0]['value'], 'node');
+    
+//  $query = db_select('taxonomy_index', 'ti')
+//    ->fields('ti', array('nid'));
+//  $query->condition('tid', $term->tid);
+//  $query->join('node', 'n', "n.nid = ti.nid AND n.type = 'department'");
+//  $dept_nid = $query->execute()->fetchField();
+//        
   dpm('$dept_nid = ' . $dept_nid);
   return $dept_nid;
 }
