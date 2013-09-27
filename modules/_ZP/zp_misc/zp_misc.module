@@ -78,7 +78,7 @@ function zp_misc_taxonomy_menu_save($term, $menu_link, $mlid) {
       
     // If there is a dept connected to this term, show link to this dept instead the link to the term.
     if ($dept_nid = zp_misc_findDeptConnectedToTerm($term)) {
-      dpm($term);
+      //dpm($term);
       // And save the renewed item again, as in taxonomy_menu_menu_link_prepare($term, $menu_name).
       $menu_link['link_path'] = 'node/' . $dept_nid;
     }
@@ -102,7 +102,7 @@ function zp_misc_taxonomy_menu_save($term, $menu_link, $mlid) {
  */
 function zp_misc_findDeptConnectedToTerm($term) {
   
-  dpm($term);
+  //dpm($term);
   
   // If the $term->field_zp_id field is not loaded to the term object, load it now.
   if (!isset($term->field_zp_id)) {
@@ -110,104 +110,15 @@ function zp_misc_findDeptConnectedToTerm($term) {
     $term = taxonomy_term_load($term->tid);
     $term->parents = $term_short->parents;
     $term->depth = $term_short->depth;
-    dpm($term);
   }
   $dept_nid = zp_misc_fieldRead_idByValue_single('zp_id', $term->field_zp_id['und'][0]['value'], 'node', 'department');
 
-  //$node = node_load($dept_nid);
   if ($dept_nid) {
-    
+    // Connect or update the term to the node.
     zp_misc_fieldTermReferenceSave('catalog', $dept_nid, $term->tid, 'node', 'department');
-    
-    // Check wether the node is connected to the term.
-    /*
-      $query = db_insert('taxonomy_index')->fields(array('nid', 'tid', 'sticky', 'created'));
-      foreach ($tid_all as $tid) {
-        $query->values(array(
-          'nid' => $node->nid,
-          'tid' => $tid,
-          'sticky' => $sticky,
-          'created' => $node->created,
-        ));
-      }
-      $query->execute();
-      
-      
-      
-    
-  $query = db_select('field_data_field_' . $field_name, 'f');
-  $query->fields('f', array('field_' . $field_name . '_value'))
-        ->condition('f.entity_id', $entity_id)
-        ->condition('f.entity_type', $entity_type);
-  $result = $query->execute(); //->fetchField();
-  
-  if ($result->rowCount()) {
-    // Need update an existing field.
-    db_update('field_data_field_' . $field_name)
-      ->fields(array(
-        'entity_id' => $entity_id,
-        'delta' => 0,  
-        'revision_id'=> $entity_id,    
-        'field_' . $field_name . '_value' => $data,
-      ))
-      ->condition('entity_id', $entity_id)
-      ->condition('entity_type', $entity_type)
-      ->execute();
-
-    db_update('field_revision_field_' . $field_name)
-      ->fields(array(
-        'entity_id' => $entity_id,
-        'delta' => 0,  
-        'revision_id'=> $entity_id,     
-        'field_' . $field_name . '_value' => $data,
-      ))
-      ->condition('entity_id', $entity_id)
-      ->condition('entity_type', $entity_type)
-      ->execute();
-  }
-  else {
-    // Need create a new field.
-    db_insert('field_data_field_' . $field_name) 
-      ->fields(array(
-        'entity_type'=> $entity_type,
-        'bundle'=> $bundle,
-        'deleted'=> 0,                
-        'entity_id' => $entity_id,
-        'delta' => 0,  
-        'revision_id'=> $entity_id,
-        'language'=> 'und',  
-        'field_' . $field_name . '_value' => $data,
-      ))
-      ->execute();
-
-    db_insert('field_revision_field_' . $field_name)
-      ->fields(array(
-        'entity_type'=> $entity_type,
-        'bundle'=> $bundle,
-        'deleted'=> 0,                
-        'entity_id' => $entity_id,
-        'delta' => 0,  
-        'revision_id'=> $entity_id,
-        'language'=> 'und',  
-        'field_' . $field_name . '_value' => $data,
-      ))
-      ->execute();
-  }
-
-  field_cache_clear();
-  
-  */
-  
   }
   
-  
-//  $query = db_select('taxonomy_index', 'ti')
-//    ->fields('ti', array('nid'));
-//  $query->condition('tid', $term->tid);
-//  $query->join('node', 'n', "n.nid = ti.nid AND n.type = 'department'");
-//  $dept_nid = $query->execute()->fetchField();
-//        
-  dpm('$dept_nid = ' . $dept_nid);
+  //dpm('$dept_nid = ' . $dept_nid);
   return $dept_nid;
 }
 
