@@ -125,6 +125,8 @@ function zp_misc_findDeptConnectedToTerm($term) {
 
  /**
  * Prepares a taxonomy item to be saved as a menu link.
+ * 
+ * a4s altered from original function taxonomy_menu_menu_link_prepare()
  *
  * A menu item has the following properties:
  *  - link_path: (required)
@@ -761,6 +763,19 @@ function zp_misc_fieldRead_idByValue_single($field_name, $field_value, $entity_t
   $query = db_select('field_data_field_' . $field_name, 'f');
   $query->fields('f', array('entity_id'))
         ->condition('field_' . $field_name . '_value', $field_value)
+        ->condition('f.entity_type', $entity_type)
+        ->condition('f.bundle', $bundle);
+  $result = $query->execute()->fetchField();
+  return $result;
+}
+
+/**
+ * Read  a field term reference entity_id by value.
+ */
+function zp_misc_fieldTermReferenceRead_idByValue_single($field_name, $field_value, $entity_type = 'node', $bundle) {
+  $query = db_select('field_data_field_' . $field_name, 'f');
+  $query->fields('f', array('entity_id'))
+        ->condition('field_' . $field_name . '_tid', $field_value)
         ->condition('f.entity_type', $entity_type)
         ->condition('f.bundle', $bundle);
   $result = $query->execute()->fetchField();
@@ -1816,21 +1831,13 @@ function zp_misc_getYoutubeVideoThumb($video_id) {
 /**
  * Test page function for url /test.
  */
-function zp_misc_addNewDeptAndMenuItem($zp_id, $parent_zp_id, $dept) {
+function zp_misc_addNewDeptAndMenuItem($zp_id, $parent_zp_id, $dept, $menu_item_title = NULL) {
  
-  $dept = array(
-    'title' => 'Тест 3',
-    'description' => 'Описание отдела 3', 
-    'summary' => 'Краткое описание отдела 3',
-    'zp_id' => 'z003',
-  );
-  
   // Creat a node for the department.
+  // ---------------------------------------------------------------------------------------------------
+  
   global $user;
   global $language;
-  
-  dpm($language);
-  dpm($user);
   
   $node = new stdClass();
   $node->type = 'department';
@@ -1841,9 +1848,8 @@ function zp_misc_addNewDeptAndMenuItem($zp_id, $parent_zp_id, $dept) {
   $node->created = $current_time;
   $node->changed = $current_time;
   
-          
   $node->title = $dept['title'];
-  $node->language = $language->language; //LANGUAGE_NONE;
+  $node->language = LANGUAGE_NONE; //$language->language; 
   $node->uid = $user->uid;
   $node->status = 1;
   $node->promote = 0;
@@ -1856,7 +1862,8 @@ function zp_misc_addNewDeptAndMenuItem($zp_id, $parent_zp_id, $dept) {
   $node->body[$node->language][0]['safe_value'] = check_plain($dept['description']);
   $node->body[$node->language][0]['safe_summary'] = check_plain($dept['summary']);
   
-  
+  $node->field_zp_id[$node->language][0]['value'] = $dept['zp_id'];
+
   /*
   $node->field_zp_id[$node->language][0] = array(
     'value' => $dept['zp_id'],
@@ -1865,8 +1872,6 @@ function zp_misc_addNewDeptAndMenuItem($zp_id, $parent_zp_id, $dept) {
   );
   */
   
-  $node->field_zp_id[$node->language][0]['value'] = $dept['zp_id'];
-
   /*
   $node->path = array(
     'alias' => $dept['url_alias'],
@@ -1874,9 +1879,6 @@ function zp_misc_addNewDeptAndMenuItem($zp_id, $parent_zp_id, $dept) {
     'pathauto' => 0,
   );
   */
-  
-  //dpm($node);
-  //return;
   
   if (!$node = node_submit($node)) {
     drupal_set_message('1.Error has occured while saving a Department ' . $dept['title'], 'error');
@@ -1889,12 +1891,34 @@ function zp_misc_addNewDeptAndMenuItem($zp_id, $parent_zp_id, $dept) {
     return FALSE;
   }
   
-  dpm($node);
-  drupal_set_message('A new department was created, Ok!', 'warning');
+  drupal_set_message('A new department was created, Success!', 'warning');
 
   
+  
+  
   // Create a term in the menu Catalog and connect it to the just created department node.
-  // ..
+  // ---------------------------------------------------------------------------------------------------
+  
+  static $catalog_voc;
+  if (!$catalog_voc) {
+    $catalog_voc = taxonomy_vocabulary_machine_name_load('catalog');
+  }
+  
+  // Find parent term tid by zp_id.
+  $parent_tid = zp_misc_fieldRead_idByValue_single('zp_id', $dept['parent_zp_id'], 'taxonomy_term', 'catalog');
+  
+  $menu_item_term = (object) array(
+    'name' => !empty($dept['menu_item_title']) ? $dept['menu_item_title'] : $dept['title'],
+    'vid' => $catalog_voc->vid,
+    'parent' => array($parent_tid),
+    'weight' => $dept['weight'],
+    'field_zp_id' => array('und' => array(0 => array('value' => $zp_id))),
+  );
+  
+  taxonomy_term_save($menu_item_term);
+  dpm($menu_item_term);
+  
+  // Taxonomy term itself will be assigned to this node automatically on taxonomy_menu item creation via hook zp_misc_taxonomy_menu_save.
   
   
 }
@@ -1907,27 +1931,16 @@ function zp_misc_testPage() {
   
   $out = '<div>Start test...</div><br/>';
 
-  zp_misc_addNewDeptAndMenuItem('z003', 'z001', NULL);
-  /*
-  $catalog_voc = taxonomy_vocabulary_machine_name_load('catalog');
-  
-  $parent_tid = 6;
-  $menu_item_title = 'Тест 2';
-  $menu_item_weight = 5;
-  $menu_item_zp_id = 'z002';
-  
-  $menu_item_term = (object) array(
-    'name' => $menu_item_title,
-    'vid' => $catalog_voc->vid,
-    'parent' => array($parent_tid),
-    'weight' => $menu_item_weight,
-    'field_zp_id' => array('und' => array(0 => array('value' => $menu_item_zp_id))),
+  $dept = array(
+    'title' => 'Тест 3',
+    'description' => 'Описание отдела 3', 
+    'summary' => 'Краткое описание отдела 3',
+    'zp_id' => 'z003',
+    'parent_zp_id' => 'z001',
+    'weight' => 5,
   );
   
-  dpm($menu_item_term);
-  
-  taxonomy_term_save($menu_item_term);
-  */
+  zp_misc_addNewDeptAndMenuItem($dept);
   
   
   return $out . '<br>End of Test';
