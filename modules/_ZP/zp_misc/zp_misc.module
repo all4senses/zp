@@ -1916,11 +1916,26 @@ function zp_misc_addNewDeptAndMenuItem($dept) {
   );
   
   taxonomy_term_save($menu_item_term);
-  dpm($menu_item_term);
+  //dpm($menu_item_term);
   
   // Taxonomy term itself will be assigned to this node automatically on taxonomy_menu item creation via hook zp_misc_taxonomy_menu_save.
   
   
+}
+
+
+/**
+ * Implements hook_node_delete().
+ *
+ * @TODO Update the menu items count, empty terms.
+ */
+function zp_misc_node_delete($node) {
+  
+  if ($term_tid = zp_misc_fieldRead_idByValue_single('zp_id', $node->field_zp_id['und'][0]['value'], 'taxonomy_term', 'catalog')) {
+    $term = taxonomy_term_load($term_tid);
+    taxonomy_term_save($term_tid);
+    drupal_set_message('ZP. Taxonomy menu "' .  $term->name . '" has been updated to set empty item after the node ' . $node->nid . ' deletion!', 'warning');
+  }
 }
 
 
