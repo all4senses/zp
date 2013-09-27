@@ -84,12 +84,13 @@ function zp_misc_taxonomy_menu_save($term, $menu_link, $mlid) {
       $mlid = menu_link_save($menu_link);
     }
     else {
+      dpm('not found dept');
       // Show a menu item without a link.
       // Depends on the module 'Special menu items'.
       $menu_link['link_path'] = '<nolink>';
     }
     
-    //dpm($menu_link);
+    dpm($menu_link);
 
 }
 
