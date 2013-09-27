@@ -77,7 +77,7 @@ function zp_misc_taxonomy_menu_save($term, $menu_link, $mlid) {
     unset($menu_link['module']);
       
     // If there is a dept connected to this term, show link to this dept instead the link to the term.
-    if ($dept_nid = zp_misc_findDeptConnectedToTerm($term->tid)) {
+    if ($dept_nid = zp_misc_findDeptConnectedToTerm($term)) {
       dpm($term);
       // And save the renewed item again, as in taxonomy_menu_menu_link_prepare($term, $menu_name).
       $menu_link['link_path'] = 'node/' . $dept_nid;
@@ -100,11 +100,15 @@ function zp_misc_taxonomy_menu_save($term, $menu_link, $mlid) {
 /**
  * Find a dept connected to a catalog term.
  */
-function zp_misc_findDeptConnectedToTerm($tid) {
+function zp_misc_findDeptConnectedToTerm($term) {
+  
+  //dpm($term);
+  //$term->zp_id = '';
+  //$dept_nid = zp_misc_fieldRead_idByValue_single('zp_id', $term->zp_id, 'node');
   
   $query = db_select('taxonomy_index', 'ti')
     ->fields('ti', array('nid'));
-  $query->condition('tid', $tid);
+  $query->condition('tid', $term->tid);
   $query->join('node', 'n', "n.nid = ti.nid AND n.type = 'department'");
   $dept_nid = $query->execute()->fetchField();
         
@@ -728,6 +732,31 @@ function zp_misc_fieldDelete($field_name, $entity_id, $target_field_name = NULL,
   
   
   field_cache_clear();
+}
+
+/**
+ * Read  a field value by entity_id.
+ */
+function zp_misc_fieldRead_valueById_single($field_name, $entity_id, $entity_type = 'node') {
+  $query = db_select('field_data_field_' . $field_name, 'f');
+  $query->fields('f', array('field_' . $field_name . '_value'))
+        ->condition('f.entity_id', $entity_id)
+        ->condition('f.entity_type', $entity_type);
+  $result = $query->execute()->fetchField();
+  return $result;
+}
+
+
+/**
+ * Read  a field entity_id by value.
+ */
+function zp_misc_fieldRead_idByValue_single($field_name, $field_value, $entity_type = 'node') {
+  $query = db_select('field_data_field_' . $field_name, 'f');
+  $query->fields('f', array('entity_id'))
+        ->condition('field_' . $field_name . '_value', $field_value)
+        ->condition('f.entity_type', $entity_type);
+  $result = $query->execute()->fetchField();
+  return $result;
 }
 
 
@@ -1709,11 +1738,13 @@ function zp_misc_testPage() {
   
   $parent_tid = 6;
   $menu_item_title = 'Тест 1';
+  $menu_item_weight = 5;
   
   $menu_item_term = (object) array(
     'name' => $menu_item_title,
     'vid' => $catalog_voc->vid,
     'parent' => array($parent_tid),
+    'weight' => $menu_item_weight,
   );
   
   dpm($menu_item_term);
