@@ -1831,7 +1831,7 @@ function zp_misc_getYoutubeVideoThumb($video_id) {
 /**
  * Test page function for url /test.
  */
-function zp_misc_addNewDeptAndMenuItem($zp_id, $parent_zp_id, $dept, $menu_item_title = NULL) {
+function zp_misc_addNewDeptAndMenuItem($dept) {
  
   // Creat a node for the department.
   // ---------------------------------------------------------------------------------------------------
