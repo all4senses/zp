@@ -447,7 +447,7 @@ function _taxonomy_menu_termapi_helper($term, $operation) {
       $mlid = _taxonomy_menu_get_mlid($term->tid, $term->vid);
       
       // a4s
-      $menu_link = menu_link_load($m['mlid']);
+      $menu_link = menu_link_load($mlid);
       dpm('$mlid = ......' . $mlid);
       dpm($menu_link);
       
