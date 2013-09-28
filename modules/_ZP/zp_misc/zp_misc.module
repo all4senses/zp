@@ -1861,9 +1861,51 @@ function zp_misc_node_delete($node) {
     if (!$catalog_voc) {
       $catalog_voc = taxonomy_vocabulary_machine_name_load('catalog');
     }
-    taxonomy_menu_rebuild($catalog_voc->vid);
+    
+    // After deletion of ant node, module Menu will delete it's menu link as well.
+    // But it doesn't affect/correct taxonomy menu table to delete this menu link from there.
+    // So we have to delete such an orphaned tid/mlid from the taxonomy menu table.
+    
+    // Find the catalog menu tid by the deleted node zp_id which is the same in corresponding term from the catalog menu.
+    $term_tid = zp_misc_fieldRead_idByValue_single('zp_id', $node->field_zp_id['und'][0]['value'], 'taxonomy_term', 'catalog');
+    // Delete the row with this tid from the taxonomy menu table.
+    _taxonomy_menu_delete_item($catalog_voc->vid, $term_tid);
+    
+    // And now, as we, in fact, have a new term without a corresponding menu item, we create it, by calling taxonomy menu function...
+    // It has to find any orphaned terms and create for them menu items.
+    // 
+    // But in our case, using our zp hook zp_misc_taxonomy_menu_save we will set <nolink> for such menu items.
+    // 
+    //taxonomy_menu_rebuild($catalog_voc->vid);
+    taxonomy_menu_menu_links_insert($catalog_voc->vid);
   }
   
+  /*
+  if ($term_tid = zp_misc_fieldRead_idByValue_single('zp_id', $node->field_zp_id['und'][0]['value'], 'taxonomy_term', 'catalog')) 
+  {
+    
+    $term = taxonomy_term_load($term_tid);
+    //taxonomy_term_save($term);
+    dpm('xxx');
+    dpm($term);
+    
+    $result = db_query("SELECT mlid FROM {menu_links} WHERE link_path = :path AND module = 'menu'", array(':path' => 'node/' . $node->nid), array('fetch' => PDO::FETCH_ASSOC));
+    foreach ($result as $m) {
+
+      $menu_link = menu_link_load($m['mlid']);
+      dpm('yyy');
+      dpm($menu_link);
+      
+      // Show a menu item without a link.
+      // Depends on the module 'Special menu items'.
+      $menu_link['link_path'] = '<nolink>';
+      $mlid = menu_link_save($menu_link);
+    }
+  
+  
+    //drupal_set_message('ZP. Taxonomy menu "' .  $term->name . '" has been updated to set empty item after the node ' . $node->nid . ' deletion!', 'warning');
+  }
+  */
 }
 
 
@@ -1884,6 +1926,7 @@ function zp_misc_testPage() {
   );
   
   zp_misc_addNewDeptAndMenuItem($dept);
+  
   
   $dept = array(
     'title' => 'Тест 4',
