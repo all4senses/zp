@@ -1577,6 +1577,10 @@ function zp_misc_getYoutubeVideoThumb($video_id) {
 }
 
 
+
+
+
+
 /**
  * Test page function for url /test.
  */
@@ -1851,6 +1855,16 @@ function zp_misc_taxonomy_menu_menu_link_prepare($term, $menu_name) {
  */
 function zp_misc_node_delete($node) {
   
+  static $catalog_voc;
+  
+  if ($node->type == 'department') {
+    if (!$catalog_voc) {
+      $catalog_voc = taxonomy_vocabulary_machine_name_load('catalog');
+    }
+    taxonomy_menu_rebuild($catalog_voc->vid);
+  }
+  
+  /*
   if ($term_tid = zp_misc_fieldRead_idByValue_single('zp_id', $node->field_zp_id['und'][0]['value'], 'taxonomy_term', 'catalog')) 
   {
     
@@ -1875,6 +1889,7 @@ function zp_misc_node_delete($node) {
   
     //drupal_set_message('ZP. Taxonomy menu "' .  $term->name . '" has been updated to set empty item after the node ' . $node->nid . ' deletion!', 'warning');
   }
+  */
 }
 
 
