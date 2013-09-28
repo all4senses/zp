@@ -1695,7 +1695,7 @@ function zp_misc_taxonomy_menu_save($term, $menu_link, $mlid) {
   // term here, in order to save their respective translated menu links.
   
     //dpm($term);
-    dpm($menu_link);
+    //dpm($menu_link);
     
     
     // a4s rewrite menu item path, attribute title.
@@ -1864,32 +1864,6 @@ function zp_misc_node_delete($node) {
     taxonomy_menu_rebuild($catalog_voc->vid);
   }
   
-  /*
-  if ($term_tid = zp_misc_fieldRead_idByValue_single('zp_id', $node->field_zp_id['und'][0]['value'], 'taxonomy_term', 'catalog')) 
-  {
-    
-    $term = taxonomy_term_load($term_tid);
-    //taxonomy_term_save($term);
-    dpm('xxx');
-    dpm($term);
-    
-    $result = db_query("SELECT mlid FROM {menu_links} WHERE link_path = :path AND module = 'menu'", array(':path' => 'node/' . $node->nid), array('fetch' => PDO::FETCH_ASSOC));
-    foreach ($result as $m) {
-
-      $menu_link = menu_link_load($m['mlid']);
-      dpm('yyy');
-      dpm($menu_link);
-      
-      // Show a menu item without a link.
-      // Depends on the module 'Special menu items'.
-      $menu_link['link_path'] = '<nolink>';
-      $mlid = menu_link_save($menu_link);
-    }
-  
-  
-    //drupal_set_message('ZP. Taxonomy menu "' .  $term->name . '" has been updated to set empty item after the node ' . $node->nid . ' deletion!', 'warning');
-  }
-  */
 }
 
 
@@ -1911,6 +1885,16 @@ function zp_misc_testPage() {
   
   zp_misc_addNewDeptAndMenuItem($dept);
   
+  $dept = array(
+    'title' => 'Тест 4',
+    'description' => 'Описание отдела 4', 
+    'summary' => 'Краткое описание отдела 4',
+    'zp_id' => 'z004',
+    'parent_zp_id' => 'z003',
+    'weight' => 5,
+  );
+  
+  zp_misc_addNewDeptAndMenuItem($dept);
   
   return $out . '<br>End of Test';
 }
