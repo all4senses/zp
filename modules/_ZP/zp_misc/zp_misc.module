@@ -53,7 +53,7 @@ function zp_misc_taxonomy_menu_save($term, $menu_link, $mlid) {
   // term here, in order to save their respective translated menu links.
   
     //dpm($term);
-    //dpm($menu_link);
+    dpm($menu_link);
     
     
     // a4s rewrite menu item path, attribute title.
@@ -63,15 +63,16 @@ function zp_misc_taxonomy_menu_save($term, $menu_link, $mlid) {
             
     // Original from taxonomy_menu_menu_link_prepare($term, $menu_name).
     
-//    // HTML title attribute.
-//    if (taxonomy_menu_variable_get('display_title_attr', $term->vid, TRUE)) {
-//      $term_description = taxonomy_menu_variable_get('term_item_description', $term->vid, 0);
-//    }
-//    $menu_link['options']['attributes']['title'] = (isset($term_description) && $term_description == 1) ? trim($term->description) : '';
-//    // Path.
-//    $link_path = taxonomy_menu_path_get($term->vid, $term->tid);
-//    $menu_link['link_path'] = drupal_get_normal_path($link_path, $langcode);
-
+    // HTML title attribute.
+     /*
+    if (taxonomy_menu_variable_get('display_title_attr', $term->vid, TRUE)) {
+      $term_description = taxonomy_menu_variable_get('term_item_description', $term->vid, 0);
+    }
+    $menu_link['options']['attributes']['title'] = (isset($term_description) && $term_description == 1) ? trim($term->description) : '';
+    // Path.
+    $link_path = taxonomy_menu_path_get($term->vid, $term->tid);
+    $menu_link['link_path'] = drupal_get_normal_path($link_path, $langcode);
+    */
     
     // Allow manually change and delete the menu item by a user.
     unset($menu_link['module']);
@@ -148,6 +149,7 @@ function zp_misc_findDeptConnectedToTerm($term) {
  *   A menu link built upon a taxonomy term, to be saved in the menu.
  */
 function zp_misc_taxonomy_menu_menu_link_prepare($term, $menu_name) {
+  /*
   static $weight = 0;
   $langcode = isset($term->language) ? $term->language : LANGUAGE_NONE;
   $recursive_count = FALSE;
@@ -200,6 +202,7 @@ function zp_misc_taxonomy_menu_menu_link_prepare($term, $menu_name) {
   $menu_link['link_path'] = drupal_get_normal_path($link_path, $langcode);
 
   return $menu_link;
+  */
 }
 
 
@@ -232,45 +235,6 @@ function zp_misc_menu_alter(&$items) {
 
 
 
-/**
- * Returns recommendations counts for pos and neg.
- */
-function zp_misc_getVotesRecommendPosVsNeg($nid) {
-  
-    $query = db_select('votingapi_vote', 'v')
-      ->fields('v', array('value'));
-    $query->condition('entity_id', $nid);
-    $query->condition('value_type', 'percent');
-    $query->condition('tag', 'recommend');
-    
-    $results = $query->execute()->fetchCol();
-
-    $recommend = array('positive' => 0, 'negative' => 0);
-    foreach ($results as $result) {
-      if ($result) {
-        $recommend['positive'] += 1;
-      }
-      else {
-        $recommend['negative'] += 1;
-      }
-    }
-        
-    return $recommend;
-}
-
-
-function zp_misc_securimage_show_ajax() {
-
-  //require_once dirname(__FILE__) . '/securimage.php';
-  
-  require_once '/home/chadmin/public_html/sites/all/libraries/jquery.plugins/securimage/securimage.php';
-
-  
-  
-  $img = new Securimage();
-
-  $img->show();  // outputs the image and content headers to the browser
-}
 
 
 /**
@@ -930,52 +894,6 @@ function zp_misc_fieldTermReferenceSave($field_name, $entity_id, $data, $entity_
     field_cache_clear();
   }
   
-}
-
-
-/**
- * Set (if bigger then 12 hours period) and returns a last updated time stamp
- *
- */
-function zp_misc_lastUpdatedStamp($min_hours = 24, $relative_path = NULL) {
-
-  if (!$relative_path) {
-    $relative_path = $_SERVER['REQUEST_URI'];
-    if ($relative_path == '/home') {
-      $relative_path = '/';
-    }
-  }
-  
-  $query = db_select('zp_last_updated', 'lu')
-      ->fields('lu', array('timestamp'));
-  $query->condition('lu.path', $relative_path);
-  $last_updated = $query->execute()->fetchfield();
-  
-  $current_time = time();
-  
-  if (!$last_updated || ($current_time - $last_updated) > $min_hours * 3600 ) {
-    // Update or insert new timestamp
-    if ($last_updated) {
-      $result = db_update('zp_last_updated')
-        ->fields(array(
-          'timestamp' => $current_time,
-        ))
-        ->condition('path', $relative_path)
-        ->execute();
-    }
-    else {
-      $result = db_insert('zp_last_updated')
-        ->fields(array(
-          'path' => $relative_path,
-          'timestamp' => $current_time,
-        ))
-        ->execute();
-    }
-    return '<div class="ts">' . t('Last Updated: ') . date('F d, Y \a\t g:ia', $current_time) . '</div>';
-  }
-  else {
-    return '<div class="ts">' . t('Last Updated: ') . date('F d, Y \a\t g:ia', $last_updated) . '</div>';
-  }
 }
 
 
@@ -1933,26 +1851,23 @@ function zp_misc_node_delete($node) {
   
   if ($term_tid = zp_misc_fieldRead_idByValue_single('zp_id', $node->field_zp_id['und'][0]['value'], 'taxonomy_term', 'catalog')) 
   {
-    dpm('xxx');
-    $term = taxonomy_term_load($term_tid);
-    dpm($term);
-    taxonomy_term_save($term);
     
+    $term = taxonomy_term_load($term_tid);
+    taxonomy_term_save($term);
+    dpm('xxx');
     dpm($term);
     
     $result = db_query("SELECT mlid FROM {menu_links} WHERE link_path = :path AND module = 'menu'", array(':path' => 'node/' . $node->nid), array('fetch' => PDO::FETCH_ASSOC));
     foreach ($result as $m) {
-      dpm('yyy');
-      dpm($m);
+
       $menu_link = menu_link_load($m['mlid']);
+      dpm('yyy');
       dpm($menu_link);
       
       // Show a menu item without a link.
       // Depends on the module 'Special menu items'.
       $menu_link['link_path'] = '<nolink>';
       $mlid = menu_link_save($menu_link);
-      dpm($mlid);
-      dpm($menu_link);
     }
   
   
