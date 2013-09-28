@@ -205,6 +205,9 @@ function taxonomy_menu_menu_link_load($term, $langcode){
   // Try to get an existing menu link, else initialize a new one with the right
   // settings.
   $mlid = _taxonomy_menu_get_mlid($term->tid, $term->vid, $langcode);
+  
+  dpm('i menu_link_load $mlid = ' . $mlid);
+  
   if ($mlid) {
     $menu_link = menu_link_load($mlid);
     // Flag that we want to update a reference in {taxonomy_menu} table later.

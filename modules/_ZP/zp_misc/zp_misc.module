@@ -1855,7 +1855,7 @@ function zp_misc_node_delete($node) {
   {
     
     $term = taxonomy_term_load($term_tid);
-    taxonomy_term_save($term);
+    //taxonomy_term_save($term);
     dpm('xxx');
     dpm($term);
     
