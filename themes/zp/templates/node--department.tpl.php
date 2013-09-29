@@ -121,6 +121,8 @@
 
 if ($page) {
   
+    dpm(taxonomy_get_parents_all($node->field_catalog['und'][0]['tid']));
+  
     echo 'Подотделы'; 
 
     $term_children = taxonomy_get_children($node->field_catalog['und'][0]['tid']);//, $node->field_category['und'][0]['taxonomy_term']->vid);
