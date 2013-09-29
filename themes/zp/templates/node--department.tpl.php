@@ -148,27 +148,14 @@ if ($page) {
     if ($product_nid) {
       // We have a dept with products here.
       $views_title = 'Товары';
+      $display = 'bl_prods_of_dpt';
     }
     else {
       // We have a dept with subdepts here.
       $views_title = 'Подотделы';
-    }
-    
-    $child = NULL;
-    foreach ($tids as $tid) {
-      if($nodes = taxonomy_select_nodes($tid)) {
-        $child = node_load($nodes[0]);
-        break;
-      }
-    }
-
-    if (!$child || $child->type == 'department') {
       $display = 'bl_subdpts_of_dpt';
     }
-    else {
-      $display = 'bl_prods_of_dpt';
-    }
-
+    
     $view = views_get_view('zp_catalog');
     //dpm($view);
 
