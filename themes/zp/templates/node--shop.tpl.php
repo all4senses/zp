@@ -121,7 +121,7 @@
 
 if ($page) {
   
-    echo 'Магазины'; 
+    echo 'Отделы'; 
 
     $term_children = taxonomy_get_children($node->field_catalog['und'][0]['tid']);//, $node->field_category['und'][0]['taxonomy_term']->vid);
     //dpm($term_children);
