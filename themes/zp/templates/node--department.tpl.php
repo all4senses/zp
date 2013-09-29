@@ -121,7 +121,8 @@
 
 if ($page) {
   
-    dpm(taxonomy_get_parents_all($node->field_catalog['und'][0]['tid']));
+    //$catalog_parents_tids = taxonomy_get_parents_all($node->field_catalog['und'][0]['tid']);
+    //dpm($catalog_parents_tids);
   
     echo 'Подотделы'; 
 
