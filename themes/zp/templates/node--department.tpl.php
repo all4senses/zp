@@ -140,7 +140,7 @@ if ($page) {
     foreach($term_children as $term_child) {
       $tids[$term_child->tid] = $term_child->tid;
     }
-    dpm($tids);
+
     if ($tids) {
       $child = NULL;
       foreach ($tids as $tid) {
@@ -157,17 +157,22 @@ if ($page) {
         $display = 'bl_prod_of_dpt';
       }
 
+      dpm($display);
+      
       $view = views_get_view('zp_catalog');
-      $options = array(
-        'id' => 'tid',
-        'value' => $tids, 
-        'type' => 'select',
-        'vid' =>  'catalog',
-        'hierarchy' => 1,
-        'reduce_duplicates' => 1,
-        'group' => 0,
-      );
-      $view->add_item($display, 'filter', 'taxonomy_index', 'tid', $options);
+      
+      dpm($view);
+      
+//      $options = array(
+//        'id' => 'tid',
+//        'value' => $tids, 
+//        'type' => 'select',
+//        'vid' =>  'catalog',
+//        'hierarchy' => 1,
+//        'reduce_duplicates' => 1,
+//        'group' => 0,
+//      );
+//      $view->add_item($display, 'filter', 'taxonomy_index', 'tid', $options);
       
       echo $view->preview($display);
     }
