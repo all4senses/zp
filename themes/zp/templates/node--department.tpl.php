@@ -79,10 +79,11 @@
           hide($content['field_topics']);
           
           if (!$page) {
-              hide($content['body']);
-              
-              dpm($content);
-              echo 'summary...';
+            //dpm($content);
+
+            //hide($content['body']);
+            echo render($content['body']);
+            echo 'summary...';
           }
           
           echo render($content);
@@ -91,14 +92,14 @@
 
       <?php if ($page): ?>
     
-                  <footer>
-                    <div class="share">
-                      <?php 
-                        echo zp_blocks_getSidebarShareStaticBlock($node, '<span>Share:</span>');
-                      ?>  
-                    </div>
-                  </footer>
-    
+          <footer>
+            <div class="share">
+              <?php 
+                echo zp_blocks_getSidebarShareStaticBlock($node, '<span>Share:</span>');
+              ?>  
+            </div>
+          </footer>
+
     
       <?php endif; ?>
     
@@ -156,16 +157,21 @@ if ($page) {
       
       dpm($view);
       
-//      $options = array(
+      $options = array(
 //        'id' => 'tid',
-//        'value' => $tids, 
-//        'type' => 'select',
+        'id' => 'field_catalog_tid',
+//        
+        'value' => $tids, 
+        'type' => 'select',
 //        'vid' =>  'catalog',
-//        'hierarchy' => 1,
-//        'reduce_duplicates' => 1,
-//        'group' => 0,
-//      );
+        'vocabulary' => 'catalog',
+        'hierarchy' => 1,
+        'reduce_duplicates' => 1,
+        'group' => 0,
+      );
 //      $view->add_item($display, 'filter', 'taxonomy_index', 'tid', $options);
+      $view->add_item($display, 'filter', 'field_data_field_catalog', 'field_catalog_tid', $options);
+      
       
       echo $view->preview($display);
     }
