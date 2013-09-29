@@ -139,7 +139,7 @@ if ($page) {
     }
     
     $query = db_select('field_data_field_catalog', 'c');
-    $query->fields('ti', array('entity_id'));
+    $query->fields('c', array('entity_id'));
     $query->join('node', 'n', "n.nid = c.entity_id"); 
     $query->condition('field_catalog_tid', $node->field_catalog['und'][0]['tid'])
           ->condition('n.type', 'product_a'); 
