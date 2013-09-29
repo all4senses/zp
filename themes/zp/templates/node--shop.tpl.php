@@ -121,7 +121,7 @@
 
 if ($page) {
   
-    echo 'Подотделы'; 
+    echo 'Магазины'; 
 
     $term_children = taxonomy_get_children($node->field_catalog['und'][0]['tid']);//, $node->field_category['und'][0]['taxonomy_term']->vid);
     //dpm($term_children);
@@ -134,25 +134,10 @@ if ($page) {
     if (!$tids) {
       return;
     }
-    
-    
-    $child = NULL;
-    foreach ($tids as $tid) {
-      if($nodes = taxonomy_select_nodes($tid)) {
-        $child = node_load($nodes[0]);
-        break;
-      }
-    }
 
-    if (!$child || $child->type == 'department') {
-      $display = 'bl_subdpts_of_dpt';
-    }
-    else {
-      $display = 'bl_prod_of_dpt';
-    }
+    $display =  'bl_subdpts_of_dpt'; //'bl_dpts_of_shop';
 
     $view = views_get_view('zp_catalog');
-    //dpm($view);
 
     $options = array('id' => 'field_catalog_tid', 'value' => $tids, 'type' => 'select', 'vocabulary' => 'catalog', 'hierarchy' => 1, 'reduce_duplicates' => 1, 'group' => 0,);
     $view->add_item($display, 'filter', 'field_data_field_catalog', 'field_catalog_tid', $options);
