@@ -1,5 +1,5 @@
 <?php if (!$page): ?>
-  <article id="node-<?php print $node->nid; ?>" class="<?php print $classes . $class_thumb_presented; ?> clearfix"<?php print $attributes; ?>>
+  <article id="node-<?php print $node->nid; ?>" class="<?php print $classes; ?> clearfix"<?php print $attributes; ?>>
 <?php else: ?>
   
     <?php 
@@ -79,17 +79,10 @@
           hide($content['field_topics']);
           
           if (!$page) {
-
               hide($content['body']);
               
-              if ($class_thumb_presented) {
-                echo $extra_data['teaser_main_image'] . '<div class="teaser-content">' . $extra_data['teaser_only'] . '</div>';
-              }
-              else {
-                dpm($content);
-                echo 'summary...';
-              }
-            
+              dpm($content);
+              echo 'summary...';
           }
           
           echo render($content);
