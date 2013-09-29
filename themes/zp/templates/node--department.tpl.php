@@ -121,3 +121,55 @@
 <?php endif; ?>
 
 
+  
+  
+<?php 
+
+if ($page) {
+  
+    echo 'Test Dept'; 
+
+
+    //dpm($node);
+
+    $term_children = taxonomy_get_children($node->field_catalog['und'][0]['tid']);//, $node->field_category['und'][0]['taxonomy_term']->vid);
+
+    dpm($term_children);
+    
+    $tids = NULL;
+    foreach($term_children as $term_child) {
+      $tids[$term_child->tid] = $term_child->tid;
+    }
+    dpm($tids);
+    if ($tids) {
+      $child = NULL;
+      foreach ($tids as $tid) {
+        if($nodes = taxonomy_select_nodes($tid)) {
+          $child = node_load($nodes[0]);
+          break;
+        }
+      }
+
+      if (!$child || $child->type == 'department') {
+        $display = 'bl_subdpts_of_dpt';
+      }
+      else {
+        $display = 'bl_prod_of_dpt';
+      }
+
+      $view = views_get_view('zp_catalog');
+      $options = array(
+        'id' => 'tid',
+        'value' => $tids, 
+        'type' => 'select',
+        'vid' =>  'catalog',
+        'hierarchy' => 1,
+        'reduce_duplicates' => 1,
+        'group' => 0,
+      );
+      $view->add_item($display, 'filter', 'taxonomy_index', 'tid', $options);
+      
+      echo $view->preview($display);
+    }
+}
+?>
