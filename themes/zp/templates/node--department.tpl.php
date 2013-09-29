@@ -124,20 +124,7 @@ if ($page) {
     //$catalog_parents_tids = taxonomy_get_parents_all($node->field_catalog['und'][0]['tid']);
     //dpm($catalog_parents_tids);
   
-    
-
-    $term_children = taxonomy_get_children($node->field_catalog['und'][0]['tid']);//, $node->field_category['und'][0]['taxonomy_term']->vid);
-    //dpm($term_children);
-    
-    $tids = NULL;
-    foreach($term_children as $term_child) {
-      $tids[$term_child->tid] = $term_child->tid;
-    }
-
-    if (!$tids) {
-      return;
-    }
-    
+    // We have a list of subdepts or products in this dept?
     $query = db_select('field_data_field_catalog', 'c');
     $query->fields('c', array('entity_id'));
     $query->join('node', 'n', "n.nid = c.entity_id"); 
@@ -149,19 +136,36 @@ if ($page) {
       // We have a dept with products here.
       $views_title = 'Товары';
       $display = 'bl_prods_of_dpt';
+      
+      $view = views_get_view('zp_catalog');
+      //dpm($view);
+
+      $options = array('id' => 'field_catalog_tid', 'value' => array($node->field_catalog['und'][0]['tid'] => $node->field_catalog['und'][0]['tid']), 'type' => 'select', 'vocabulary' => 'catalog', 'hierarchy' => 1, 'reduce_duplicates' => 1, 'group' => 0,);
+      $view->add_item($display, 'filter', 'field_data_field_catalog', 'field_catalog_tid', $options);
     }
     else {
       // We have a dept with subdepts here.
       $views_title = 'Подотделы';
       $display = 'bl_subdpts_of_dpt';
+      
+      $term_children = taxonomy_get_children($node->field_catalog['und'][0]['tid']);//, $node->field_category['und'][0]['taxonomy_term']->vid);
+      //dpm($term_children);
+
+      $tids = NULL;
+      foreach($term_children as $term_child) {
+        $tids[$term_child->tid] = $term_child->tid;
+      }
+
+      if (!$tids) {
+        return;
+      }
+
+      $view = views_get_view('zp_catalog');
+
+      $options = array('id' => 'field_catalog_tid', 'value' => $tids, 'type' => 'select', 'vocabulary' => 'catalog', 'hierarchy' => 1, 'reduce_duplicates' => 1, 'group' => 0,);
+      $view->add_item($display, 'filter', 'field_data_field_catalog', 'field_catalog_tid', $options);
     }
     
-    $view = views_get_view('zp_catalog');
-    //dpm($view);
-
-    $options = array('id' => 'field_catalog_tid', 'value' => $tids, 'type' => 'select', 'vocabulary' => 'catalog', 'hierarchy' => 1, 'reduce_duplicates' => 1, 'group' => 0,);
-    $view->add_item($display, 'filter', 'field_data_field_catalog', 'field_catalog_tid', $options);
-
     echo '<div class="title">' . $views_title . '</div>' . $view->preview($display);
 }
 ?>
