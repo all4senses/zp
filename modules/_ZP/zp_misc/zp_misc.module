@@ -1591,7 +1591,7 @@ function zp_misc_getYoutubeVideoThumb($video_id) {
 /**
  * Test page function for url /test.
  */
-function zp_misc_addNewDeptAndMenuItem($dept) {
+function zp_misc_addNewDeptAndMenuItem($object) {
  
   // Creat a node for the department.
   // ---------------------------------------------------------------------------------------------------
@@ -1608,7 +1608,7 @@ function zp_misc_addNewDeptAndMenuItem($dept) {
   $node->created = $current_time;
   $node->changed = $current_time;
   
-  $node->title = $dept['title'];
+  $node->title = $object['title'];
   $node->language = LANGUAGE_NONE; //$language->language; 
   $node->uid = $user->uid;
   $node->status = 1;
@@ -1617,38 +1617,38 @@ function zp_misc_addNewDeptAndMenuItem($dept) {
   $node->comment = 0;
   
   $node->body[$node->language][0]['format'] = 'full_html';
-  $node->body[$node->language][0]['value'] = $dept['description'];
-  $node->body[$node->language][0]['summary'] = $dept['summary'];
-  $node->body[$node->language][0]['safe_value'] = check_plain($dept['description']);
-  $node->body[$node->language][0]['safe_summary'] = check_plain($dept['summary']);
+  $node->body[$node->language][0]['value'] = $object['description'];
+  $node->body[$node->language][0]['summary'] = $object['summary'];
+  $node->body[$node->language][0]['safe_value'] = check_plain($object['description']);
+  $node->body[$node->language][0]['safe_summary'] = check_plain($object['summary']);
   
-  $node->field_zp_id[$node->language][0]['value'] = $dept['zp_id'];
-  $node->field_c_weight[$node->language][0]['value'] = $dept['weight'];
+  $node->field_zp_id[$node->language][0]['value'] = $object['zp_id'];
+  $node->field_c_weight[$node->language][0]['value'] = $object['weight'];
 
   /*
   $node->field_zp_id[$node->language][0] = array(
-    'value' => $dept['zp_id'],
-    'safe_value' => check_plain($dept['zp_id']),
+    'value' => $object['zp_id'],
+    'safe_value' => check_plain($object['zp_id']),
     'format' => 'full_html',
   );
   */
   
   /*
   $node->path = array(
-    'alias' => $dept['url_alias'],
+    'alias' => $object['url_alias'],
     'language' => $node->language,
     'pathauto' => 0,
   );
   */
   
   if (!$node = node_submit($node)) {
-    drupal_set_message('1.Error has occured while saving a Department ' . $dept['title'], 'error');
+    drupal_set_message('1.Error has occured while saving a Department ' . $object['title'], 'error');
     return FALSE;
   }
 
   node_save($node);
   if (empty($node->nid)) {
-    drupal_set_message('2.Error has occured while saving a Department ' . $dept['title'], 'error');
+    drupal_set_message('2.Error has occured while saving a Department ' . $object['title'], 'error');
     return FALSE;
   }
   
@@ -1666,14 +1666,14 @@ function zp_misc_addNewDeptAndMenuItem($dept) {
   }
   
   // Find parent term tid by zp_id.
-  $parent_tid = zp_misc_fieldRead_idByValue_single('zp_id', $dept['parent_zp_id'], 'taxonomy_term', 'catalog');
+  $parent_tid = zp_misc_fieldRead_idByValue_single('zp_id', $object['parent_zp_id'], 'taxonomy_term', 'catalog');
   
   $menu_item_term = (object) array(
-    'name' => !empty($dept['menu_item_title']) ? $dept['menu_item_title'] : $dept['title'],
+    'name' => !empty($object['menu_item_title']) ? $object['menu_item_title'] : $object['title'],
     'vid' => $catalog_voc->vid,
     'parent' => array($parent_tid),
-    'weight' => $dept['weight'],
-    'field_zp_id' => array('und' => array(0 => array('value' => $dept['zp_id']))),
+    'weight' => $object['weight'],
+    'field_zp_id' => array('und' => array(0 => array('value' => $object['zp_id']))),
   );
   
   taxonomy_term_save($menu_item_term);
@@ -1685,6 +1685,85 @@ function zp_misc_addNewDeptAndMenuItem($dept) {
 }
 
 
+
+/**
+ * Create a new product and connect it to the Catalog term by zp_id.
+ */
+function zp_misc_addNewProductAndConnectItToCatalogTerm($object) {
+ 
+  // Create a node for the product.
+  // ---------------------------------------------------------------------------------------------------
+  
+  global $user;
+  global $language;
+  $object_type = empty($object['type']) ? 'product_a' : $object['type']; 
+  $node = new stdClass();
+  $node->type = $object_type;
+  node_object_prepare($node);
+  
+  $current_time = time();
+  $node->date = $current_time;
+  $node->created = $current_time;
+  $node->changed = $current_time;
+  
+  $node->title = $object['title'];
+  $node->language = LANGUAGE_NONE; //$language->language; 
+  $node->uid = $user->uid;
+  $node->status = 1;
+  $node->promote = 0;
+  $node->sticky = 0;
+  $node->comment = 0;
+  
+  $node->body[$node->language][0]['format'] = 'full_html';
+  $node->body[$node->language][0]['value'] = $object['description'];
+  $node->body[$node->language][0]['summary'] = $object['summary'];
+  $node->body[$node->language][0]['safe_value'] = check_plain($object['description']);
+  $node->body[$node->language][0]['safe_summary'] = check_plain($object['summary']);
+  
+  $node->field_zp_id[$node->language][0]['value'] = $object['zp_id'];
+  $node->field_c_weight[$node->language][0]['value'] = $object['weight'];
+
+  /*
+  $node->field_zp_id[$node->language][0] = array(
+    'value' => $object['zp_id'],
+    'safe_value' => check_plain($object['zp_id']),
+    'format' => 'full_html',
+  );
+  */
+  
+  /*
+  $node->path = array(
+    'alias' => $object['url_alias'],
+    'language' => $node->language,
+    'pathauto' => 0,
+  );
+  */
+  
+  if (!$node = node_submit($node)) {
+    drupal_set_message('1.Error has occured while saving a Product ' . $object['title'], 'error');
+    return FALSE;
+  }
+
+  node_save($node);
+  if (empty($node->nid)) {
+    drupal_set_message('2.Error has occured while saving a Product ' . $object['title'], 'error');
+    return FALSE;
+  }
+  
+  drupal_set_message('A new Product "' . $object['title'] . '" was created, Success!', 'warning');
+
+  // Find this product Catalog term by zp_id.
+  $term_tid = zp_misc_fieldRead_idByValue_single('zp_id', $object['zp_id'], 'taxonomy_term', 'catalog');
+  if ($term_tid) {
+    // Connect or update the term to the node.
+    zp_misc_fieldTermReferenceSave('catalog', $node->nid, $term_tid, 'node', $object_type);
+    drupal_set_message('The product "' . $object['title'] . '" has been connected to the term "' . $term_tid . '".', 'warning');
+  }
+  else {
+    drupal_set_message('There is no correcponding Catalog term with zp_id "' . '" for this product "' . $object['title'] . '".', 'error');
+  }
+  
+}
 
 
 /**
@@ -1728,7 +1807,7 @@ function zp_misc_taxonomy_menu_save($term, $menu_link, $mlid) {
     unset($menu_link['module']);
       
     // If there is a dept connected to this term, show link to this dept instead the link to the term.
-    if ($dept_nid = zp_misc_findDeptConnectedToTerm($term)) {
+    if ($dept_nid = zp_misc_findDeptByZPIDofTerm_andConnectedItToTerm($term)) {
       // dpm($term);
       // And save the renewed item again, as in taxonomy_menu_menu_link_prepare($term, $menu_name).
       $menu_link['link_path'] = 'node/' . $dept_nid;
@@ -1751,7 +1830,8 @@ function zp_misc_taxonomy_menu_save($term, $menu_link, $mlid) {
 /**
  * Find a dept connected to a catalog term.
  */
-function zp_misc_findDeptConnectedToTerm($term) {
+function zp_misc_findDeptByZPIDofTerm_andConnectedItToTerm($term) {
+
   
   //dpm($term);
   
@@ -1898,7 +1978,7 @@ function zp_misc_node_delete($node) {
 function zp_misc_testPage() {
   
   $out = '<div>Start test...</div><br/>';
-
+  /*
   $dept = array(
     'title' => 'Напитки',
     'description' => 'Описание отдела Напитки', 
@@ -1932,6 +2012,42 @@ function zp_misc_testPage() {
   );
   
   zp_misc_addNewDeptAndMenuItem($dept);
+  */
+  
+  
+  $product = array(
+    'title' => 'Вино 1',
+    'description' => 'Описание продукта Вино 1', 
+    'summary' => 'Краткое описание продукта Вино 1',
+    'zp_id' => 'z004',
+    'weight' => 1,
+  );
+  
+  zp_misc_addNewProductAndConnectItToCatalogTerm($product);
+  
+  
+  
+  $product = array(
+    'title' => 'Вино 2',
+    'description' => 'Описание продукта Вино 2', 
+    'summary' => 'Краткое описание продукта Вино 2',
+    'zp_id' => 'z004',
+    'weight' => 3,
+  );
+  
+  zp_misc_addNewProductAndConnectItToCatalogTerm($product);
+  
+  
+  
+  $product = array(
+    'title' => 'Вино 3',
+    'description' => 'Описание продукта Вино 3', 
+    'summary' => 'Краткое описание продукта Вино 3',
+    'zp_id' => 'z004',
+    'weight' => 2,
+  );
+  
+  zp_misc_addNewProductAndConnectItToCatalogTerm($product);
   
   return $out . '<br>End of Test';
 }
