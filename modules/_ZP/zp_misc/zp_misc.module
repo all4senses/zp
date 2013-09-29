@@ -1900,9 +1900,9 @@ function zp_misc_testPage() {
   $out = '<div>Start test...</div><br/>';
 
   $dept = array(
-    'title' => 'Тест 3',
-    'description' => 'Описание отдела 3', 
-    'summary' => 'Краткое описание отдела 3',
+    'title' => 'Напитки',
+    'description' => 'Описание отдела Напитки', 
+    'summary' => 'Краткое описание отдела Напитки',
     'zp_id' => 'z003',
     'parent_zp_id' => 'z001',
     'weight' => 5,
@@ -1912,12 +1912,23 @@ function zp_misc_testPage() {
   
   
   $dept = array(
-    'title' => 'Тест 4',
-    'description' => 'Описание отдела 4', 
-    'summary' => 'Краткое описание отдела 4',
+    'title' => 'Алкогольные напитки',
+    'description' => 'Описание отдела Алкогольные напитки', 
+    'summary' => 'Краткое описание отдела Алкогольные напитки',
     'zp_id' => 'z004',
     'parent_zp_id' => 'z003',
     'weight' => 5,
+  );
+  
+  zp_misc_addNewDeptAndMenuItem($dept);
+  
+  $dept = array(
+    'title' => 'Безалкогольные напитки',
+    'description' => 'Описание отдела Безлкогольные напитки', 
+    'summary' => 'Краткое описание отдела Безалкогольные напитки',
+    'zp_id' => 'z005',
+    'parent_zp_id' => 'z003',
+    'weight' => 6,
   );
   
   zp_misc_addNewDeptAndMenuItem($dept);
