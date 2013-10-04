@@ -1812,12 +1812,27 @@ function zp_misc_taxonomy_menu_save($term, $menu_link, $mlid) {
       // And save the renewed item again, as in taxonomy_menu_menu_link_prepare($term, $menu_name).
       $menu_link['link_path'] = 'node/' . $dept_nid;
     }
+    
+    // Let's create a menu item only for existing dept node.
+    // And completely remove already created menu item (originally connected to taxonomy/term/xxx) from the menu.
+    else {
+      static $catalog_voc;
+      if (!$catalog_voc) {
+        $catalog_voc = taxonomy_vocabulary_machine_name_load('catalog');
+      }
+      menu_link_delete($menu_link['mlid']);
+      _taxonomy_menu_delete_item($catalog_voc->vid, $term->tid);
+      return FALSE;
+    }
+    
+    /*
     else {
       //dpm('not found dept');
       // Show a menu item without a link.
       // Depends on the module 'Special menu items'.
       $menu_link['link_path'] = '<nolink>';
     }
+    */
     
     $mlid = menu_link_save($menu_link);
     
@@ -1833,8 +1848,6 @@ function zp_misc_createMenuItemForTerm($term) {
 
     // Original functipn from taxonomy_menu module.
     $menu_link = taxonomy_menu_menu_link_prepare($term, 'menu-catalog-menu');
-          
-    dpm($menu_link);
     
     // Then we can correct some values...
     
@@ -1856,17 +1869,20 @@ function zp_misc_createMenuItemForTerm($term) {
       
     // If there is a dept connected to this term, show link to this dept instead the link to the term.
     if ($dept_nid = zp_misc_findDeptByZPIDofTerm_andConnectedItToTerm($term)) {
-      // dpm($term);
       // And save the renewed item again, as in taxonomy_menu_menu_link_prepare($term, $menu_name).
       $menu_link['link_path'] = 'node/' . $dept_nid;
     }
+    
+    // Let's create a menu item only for existing dept node.
+    else {
+      return FALSE;
+    }
+    /*
     // If there is no dept connected to the term but there is a product with the same zp_id, 
     // find it's parent dept and create a menu link for this term node/parent_dept_nid?tf=term_id
     elseif ($parent_dept_nid = zp_misc_findParentDeptByZPIDofTerm($term)) {
-      // dpm($term);
       // And save the renewed item again, as in taxonomy_menu_menu_link_prepare($term, $menu_name).
-      $menu_link['link_path'] = 'node/' . $parent_dept_nid . '?tf=' . $term->tid;
-      dpm($menu_link);
+      $menu_link['link_path'] = 'node/' . $parent_dept_nid . '/' . $term->tid;
     }
     else {
       //dpm('not found dept');
@@ -1874,10 +1890,9 @@ function zp_misc_createMenuItemForTerm($term) {
       // Depends on the module 'Special menu items'.
       $menu_link['link_path'] = '<nolink>';
     }
+    */
     
     $mlid = menu_link_save($menu_link);
-    dpm($mlid);
-    
 }
 
 
@@ -1939,7 +1954,6 @@ function zp_misc_findDeptByZPIDofTerm_andConnectedItToTerm($term) {
 /**
  * Implements hook_node_delete().
  *
- * @TODO Update the menu items count, empty terms.
  */
 function zp_misc_node_delete($node) {
   
@@ -1965,6 +1979,7 @@ function zp_misc_node_delete($node) {
     // But in our case, using our zp hook zp_misc_taxonomy_menu_save we will set <nolink> for such menu items.
     // 
     //taxonomy_menu_rebuild($catalog_voc->vid);
+    // Rebuild menu for only inserted items.
     taxonomy_menu_menu_links_insert($catalog_voc->vid);
     drupal_set_message('ZP. Taxonomy menu item for "' .  $node->title . '" has been updated to set empty item after the node ' . $node->nid . ' deletion!', 'warning');
   }
