@@ -1896,7 +1896,7 @@ function zp_misc_findParentDeptByZPIDofTerm_andConnectedItToTerm($term) {
   $query = db_select('taxonomy_term_hierarchy', 'th');
   $query->fields('th', array('parent'))
         ->condition('tid', $term_tid);
-  $query->leftJoin('field_data_field_' . $taxonomy_reference_term_field_for_catalog, 'tc', 'tc.field_' . $taxonomy_reference_term_field_for_catalog . "_tid = th.parent AND tc.entity_type = 'department'");
+  $query->leftJoin('field_data_field_' . $taxonomy_reference_term_field_for_catalog, 'tc', 'tc.field_' . $taxonomy_reference_term_field_for_catalog . "_tid = th.parent AND tc.bundle = 'department'");
   $query->fields('tc', array('entity_id'));
   $result = $query->execute()->fetchObject();
   
