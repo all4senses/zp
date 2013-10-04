@@ -1941,6 +1941,11 @@ function zp_misc_findDeptByZPIDofTerm_andConnectedItToTerm($term) {
     $term->parents = $term_short->parents;
     $term->depth = $term_short->depth;
   }
+  
+  if (empty($term->field_zp_id['und'][0]['value'])) {
+    return NULL;
+  }
+  
   $dept_nid = zp_misc_fieldRead_idByValue_single('zp_id', $term->field_zp_id['und'][0]['value'], 'node', 'department');
 
   if ($dept_nid) {
