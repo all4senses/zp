@@ -2054,7 +2054,7 @@ function zp_misc_testPage() {
   $term_tid = 35; // алкогольные напитки
   //zp_misc_findParentDeptByZPIDofTerm($term_tid);
   
-  $term_ = taxonomy_term_load($term_tid);
+  $term = taxonomy_term_load($term_tid);
   zp_misc_createMenuItemForTerm($term);
   
   return $out . '<br>End of Test';
