@@ -1665,7 +1665,7 @@ function zp_misc_addNewDeptAndMenuItem($object) {
     $catalog_voc = taxonomy_vocabulary_machine_name_load('catalog');
   }
   
-  // Find parent term tid by zp_id.
+  // Find parent term tid by parent_zp_id.
   $parent_tid = zp_misc_fieldRead_idByValue_single('zp_id', $object['parent_zp_id'], 'taxonomy_term', 'catalog');
   
   $menu_item_term = (object) array(
@@ -1752,15 +1752,15 @@ function zp_misc_addNewProductAndConnectItToCatalogTerm($object) {
   
   drupal_set_message('A new Product "' . $object['title'] . '" was created, Success!', 'warning');
 
-  // Find this product Catalog term by zp_id.
-  $term_tid = zp_misc_fieldRead_idByValue_single('zp_id', $object['zp_id'], 'taxonomy_term', 'catalog');
+  // Find this product Catalog term by parent_zp_id.
+  $term_tid = zp_misc_fieldRead_idByValue_single('zp_id', $object['parent_zp_id'], 'taxonomy_term', 'catalog');
   if ($term_tid) {
     // Connect or update the term to the node.
     zp_misc_fieldTermReferenceSave('catalog', $node->nid, $term_tid, 'node', $object_type);
     drupal_set_message('The product "' . $object['title'] . '" has been connected to the term "' . $term_tid . '".', 'warning');
   }
   else {
-    drupal_set_message('There is no correcponding Catalog term with zp_id "' . '" for this product "' . $object['title'] . '".', 'error');
+    drupal_set_message('There is no correcponding Catalog term with parent_zp_id "' . $object['parent_zp_id'] . '" for this product "' . $object['title'] . '".', 'error');
   }
   
 }
@@ -1826,9 +1826,116 @@ function zp_misc_taxonomy_menu_save($term, $menu_link, $mlid) {
 }
 
 
+/**
+ * Creates a menu item for a catalog term. For dept node/x or for product node/x?tf=term_id
+ */
+function zp_misc_createMenuItemForTerm($term) {
+
+    // Original functipn from taxonomy_menu module.
+    $menu_link = taxonomy_menu_menu_link_prepare($term, 'menu-catalog-menu');
+            
+    // Then we can correct some values...
+    
+    // Original from taxonomy_menu_menu_link_prepare($term, $menu_name).
+    
+    // HTML title attribute.
+     /*
+    if (taxonomy_menu_variable_get('display_title_attr', $term->vid, TRUE)) {
+      $term_description = taxonomy_menu_variable_get('term_item_description', $term->vid, 0);
+    }
+    $menu_link['options']['attributes']['title'] = (isset($term_description) && $term_description == 1) ? trim($term->description) : '';
+    // Path.
+    $link_path = taxonomy_menu_path_get($term->vid, $term->tid);
+    $menu_link['link_path'] = drupal_get_normal_path($link_path, $langcode);
+    */
+    
+    // Allow manually change and delete the menu item by a user.
+    unset($menu_link['module']);
+      
+    // If there is a dept connected to this term, show link to this dept instead the link to the term.
+    if ($dept_nid = zp_misc_findDeptByZPIDofTerm_andConnectedItToTerm($term)) {
+      // dpm($term);
+      // And save the renewed item again, as in taxonomy_menu_menu_link_prepare($term, $menu_name).
+      $menu_link['link_path'] = 'node/' . $dept_nid;
+    }
+    // If there is no dept connected to the term but there is a product with the same zp_id, 
+    // find it's parent dept and create a menu link for this term node/parent_dept_nid?tf=term_id
+    elseif ($parent_dept_nid = zp_misc_findParentDeptByZPIDofTerm_andConnectedItToTerm($term)) {
+      // dpm($term);
+      // And save the renewed item again, as in taxonomy_menu_menu_link_prepare($term, $menu_name).
+      $menu_link['link_path'] = 'node/' . $dept_nid;
+    }
+    else {
+      //dpm('not found dept');
+      // Show a menu item without a link.
+      // Depends on the module 'Special menu items'.
+      $menu_link['link_path'] = '<nolink>';
+    }
+    
+    $mlid = menu_link_save($menu_link);
+    
+}
+
 
 /**
- * Find a dept connected to a catalog term.
+ * Find a parent term and dept connected to it.
+ */
+function zp_misc_findParentDeptByZPIDofTerm_andConnectedItToTerm($term) {
+
+  // If term_id provided instead of a term object, load an object.
+  if (is_object($term)) {
+    $term_tid = $term->tid;
+  }
+  else {
+    $term_tid = $term;
+  }
+  //dpm($term);
+  
+  // Find parent term.
+  $taxonomy_reference_term_field_for_catalog = 'catalog';
+  $query = db_select('taxonomy_term_hierarchy', 'th');
+  $query->fields('th', array('parent'))
+        ->condition('tid', $term_tid);
+  $query->leftJoin('field_data_field_' . $taxonomy_reference_term_field_for_catalog, 'tc', 'tc.field_' . $taxonomy_reference_term_field_for_catalog . "_tid = th.parent AND tc.enity_type = 'department'");
+  $query->fields('tc', array('entity_id'));
+  $result = $query->execute()->fetchObject();
+  
+  dpm($result);
+  
+  return;
+  
+  $query = db_select('field_data_field_' . $field_name, 'f');
+  $query->fields('f', array('field_' . $field_name . '_tid'))
+        ->condition('f.entity_id', $entity_id)
+        ->condition('f.entity_type', $entity_type)
+        ->condition('f.bundle', $bundle);
+  $result = $query->execute(); //->fetchField();
+  
+  
+  
+  // If the $term->field_zp_id field is not loaded to the term object, load it now.
+  if (!isset($term->field_zp_id)) {
+    $term_short = $term;
+    $term = taxonomy_term_load($term->tid);
+    $term->parents = $term_short->parents;
+    $term->depth = $term_short->depth;
+  }
+  
+  
+  $dept_nid = zp_misc_fieldRead_idByValue_single('zp_id', $term->field_zp_id['und'][0]['value'], 'node', 'department');
+
+  if ($dept_nid) {
+    // Connect or update the term to the node.
+    zp_misc_fieldTermReferenceSave('catalog', $dept_nid, $term->tid, 'node', 'department');
+  }
+  
+  //dpm('$dept_nid = ' . $dept_nid);
+  return $dept_nid;
+}
+
+
+/**
+ * Find a dept connected by zp_id to a catalog term and assign this dept to this term via reference term field catalog voc.
  */
 function zp_misc_findDeptByZPIDofTerm_andConnectedItToTerm($term) {
 
@@ -2015,11 +2122,14 @@ function zp_misc_testPage() {
   */
   
   
+  
+  /*
   $product = array(
     'title' => 'Вино 1',
     'description' => 'Описание продукта Вино 1', 
     'summary' => 'Краткое описание продукта Вино 1',
-    'zp_id' => 'z004',
+    'zp_id' => 'z005',
+    'parent_zp_id' => 'z004',
     'weight' => 1,
   );
   
@@ -2031,7 +2141,8 @@ function zp_misc_testPage() {
     'title' => 'Вино 2',
     'description' => 'Описание продукта Вино 2', 
     'summary' => 'Краткое описание продукта Вино 2',
-    'zp_id' => 'z004',
+    'zp_id' => 'z006',
+    'parent_zp_id' => 'z004',
     'weight' => 3,
   );
   
@@ -2043,11 +2154,16 @@ function zp_misc_testPage() {
     'title' => 'Вино 3',
     'description' => 'Описание продукта Вино 3', 
     'summary' => 'Краткое описание продукта Вино 3',
-    'zp_id' => 'z004',
+    'zp_id' => 'z007',
+    'parent_zp_id' => 'z004',
     'weight' => 2,
   );
   
   zp_misc_addNewProductAndConnectItToCatalogTerm($product);
+  */
+  
+  $term = 35; // алкогольные напитки
+  zp_misc_findParentDeptByZPIDofTerm_andConnectedItToTerm($term);
   
   return $out . '<br>End of Test';
 }

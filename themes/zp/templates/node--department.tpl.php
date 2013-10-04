@@ -120,7 +120,7 @@
 <?php 
 
 if ($page) {
-  
+  //drupal_get_breadcrumb();
     //$catalog_parents_tids = taxonomy_get_parents_all($node->field_catalog['und'][0]['tid']);
     //dpm($catalog_parents_tids);
   
@@ -130,6 +130,7 @@ if ($page) {
     $query->join('node', 'n', "n.nid = c.entity_id"); 
     $query->condition('field_catalog_tid', $node->field_catalog['und'][0]['tid'])
           ->condition('n.type', 'product_a'); 
+    $query->range(0, 1);
     $product_nid = $query->execute()->fetchField(); 
     
     if ($product_nid) {
