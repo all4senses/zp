@@ -1813,6 +1813,7 @@ function zp_misc_taxonomy_menu_save($term, $menu_link, $mlid) {
       $menu_link['link_path'] = 'node/' . $dept_nid;
     }
     
+    /*
     // Let's create a menu item only for existing dept node.
     // And completely remove already created menu item (originally connected to taxonomy/term/xxx) from the menu.
     else {
@@ -1824,15 +1825,15 @@ function zp_misc_taxonomy_menu_save($term, $menu_link, $mlid) {
       _taxonomy_menu_delete_item($catalog_voc->vid, $term->tid);
       return FALSE;
     }
-    
-    /*
+    */
+    /**/
     else {
       //dpm('not found dept');
       // Show a menu item without a link.
       // Depends on the module 'Special menu items'.
       $menu_link['link_path'] = '<nolink>';
     }
-    */
+    /**/
     
     $mlid = menu_link_save($menu_link);
     
