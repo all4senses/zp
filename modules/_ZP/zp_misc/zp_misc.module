@@ -1833,7 +1833,9 @@ function zp_misc_createMenuItemForTerm($term) {
 
     // Original functipn from taxonomy_menu module.
     $menu_link = taxonomy_menu_menu_link_prepare($term, 'menu-catalog-menu');
-            
+          
+    dpm($menu_link);
+    
     // Then we can correct some values...
     
     // Original from taxonomy_menu_menu_link_prepare($term, $menu_name).
@@ -1864,6 +1866,7 @@ function zp_misc_createMenuItemForTerm($term) {
       // dpm($term);
       // And save the renewed item again, as in taxonomy_menu_menu_link_prepare($term, $menu_name).
       $menu_link['link_path'] = 'node/' . $dept_nid . '?tf=' . $term->tid;
+      dpm($menu_link);
     }
     else {
       //dpm('not found dept');
@@ -1873,6 +1876,7 @@ function zp_misc_createMenuItemForTerm($term) {
     }
     
     $mlid = menu_link_save($menu_link);
+    dpm($mlid);
     
 }
 
@@ -2051,7 +2055,7 @@ function zp_misc_testPage() {
   zp_misc_addNewProductAndConnectItToCatalogTerm($product);
   */
   
-  $term_tid = 35; // алкогольные напитки
+  $term_tid = 36; // алкогольные напитки
   //zp_misc_findParentDeptByZPIDofTerm($term_tid);
   
   $term = taxonomy_term_load($term_tid);
