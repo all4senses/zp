@@ -1703,6 +1703,22 @@ function zp_misc_addNewCatalogTerm($object) {
  */
 function zp_misc_addNewProductAndConnectItToSubgroupCatalogTerm($object) {
  
+  
+  
+  // Find parent term tid by parent_zp_id.
+  $parent_tid = zp_misc_fieldRead_idByValue_single('zp_id', $object['parent_zp_id'], 'taxonomy_term', 'catalog');
+  
+  // Search for term which is a child of this product parent dept (and just found parent term) and has a name of subgroup which is set in object
+  $query = db_select('taxonomy_term_data', 'td');
+  $query->fields('td', array('tid'))
+        ->condition('name', $object['subgroup']);
+  $query->join('taxonomy_term_hierarchy', 'th', 'th.tid = td.tid AND th.parent = ' . $parent_tid);
+  $subgroup_term_tid = $query->execute()->fetchField();
+  
+  dpm($subgroup_term_tid);
+  
+  return;
+  
   // Create a node for the product.
   // ---------------------------------------------------------------------------------------------------
   
@@ -1733,6 +1749,8 @@ function zp_misc_addNewProductAndConnectItToSubgroupCatalogTerm($object) {
   $node->body[$node->language][0]['safe_summary'] = check_plain($object['summary']);
   
   $node->field_zp_id[$node->language][0]['value'] = $object['zp_id'];
+  $node->field_zp_id[$node->language][0]['value'] = $object['parent_zp_id'];
+  
   $node->field_c_weight[$node->language][0]['value'] = $object['weight'];
 
   /*
@@ -1764,6 +1782,9 @@ function zp_misc_addNewProductAndConnectItToSubgroupCatalogTerm($object) {
   
   drupal_set_message('A new Product "' . $object['title'] . '" was created, Success!', 'warning');
 
+  
+  
+  /*
   // Find this product Catalog term by parent_zp_id.
   $term_tid = zp_misc_fieldRead_idByValue_single('zp_id', $object['parent_zp_id'], 'taxonomy_term', 'catalog');
   if ($term_tid) {
@@ -1774,6 +1795,7 @@ function zp_misc_addNewProductAndConnectItToSubgroupCatalogTerm($object) {
   else {
     drupal_set_message('There is no correcponding Catalog term with parent_zp_id "' . $object['parent_zp_id'] . '" for this product "' . $object['title'] . '".', 'error');
   }
+  */
   
 }
 
@@ -2054,7 +2076,7 @@ function zp_misc_testPage() {
   
   zp_misc_addNewZpObject($dept);
   */
-  
+  /*
   $dept = array(
     'type' => 'department',
     'title' => 'Алкогольные напитки',
@@ -2066,6 +2088,8 @@ function zp_misc_testPage() {
   );
   
   zp_misc_addNewZpObject($dept);
+  */
+  
   /*
   $dept = array(
     'title' => 'Безалкогольные напитки',
@@ -2079,7 +2103,7 @@ function zp_misc_testPage() {
   zp_misc_addNewDeptAndMenuItem($dept);
   */
   
-  
+  /*
   // Create a catalog term for subgroup (to connect products to it).
   $object = array(
     'type' => 'subgroup',
@@ -2090,10 +2114,10 @@ function zp_misc_testPage() {
     'weight' => 2,
   );
   zp_misc_addNewZpObject($object);
-
+*/
   
   
-  
+  /*
   $product = array(
     'type' => 'product_a',
     'title' => 'Вино 1',
@@ -2104,6 +2128,7 @@ function zp_misc_testPage() {
     'subgroup' => 'подгруппа Вино',
     'weight' => 1,
   );
+  
   
   zp_misc_addNewZpObject($product);
   
@@ -2122,7 +2147,7 @@ function zp_misc_testPage() {
   
   zp_misc_addNewZpObject($product);
   
-  
+  */
   
   $product = array(
     'type' => 'product_a',
@@ -2130,7 +2155,7 @@ function zp_misc_testPage() {
     'description' => 'Описание продукта Вино 3', 
     'summary' => 'Краткое описание продукта Вино 3',
     'zp_id' => 'z008',
-    'parent_zp_id' => 'z007',
+    'parent_zp_id' => 'z004',
     'subgroup' => 'подгруппа Вино',
     'weight' => 2,
   );

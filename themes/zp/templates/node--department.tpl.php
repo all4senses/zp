@@ -135,6 +135,15 @@ if ($page) {
     
     if ($product_nid) {
       // We have a dept with products here.
+      
+      
+      
+      // Search for all terms which are children of the term with parent_zp_id
+      // In this case it's term with the same zp_id as parent (for this product) dept.
+      // And so we search for all subgroups terms for this dept.
+
+      
+      
       $views_title = 'Товары';
       $display = 'bl_prods_of_dpt';
       
