@@ -1706,7 +1706,10 @@ function zp_misc_addNewProductAndConnectItToSubgroupCatalogTerm($object) {
   
   
   // Find parent term tid by parent_zp_id.
-  $parent_tid = zp_misc_fieldRead_idByValue_single('zp_id', $object['parent_zp_id'], 'taxonomy_term', 'catalog');
+  if (!$parent_tid = zp_misc_fieldRead_idByValue_single('zp_id', $object['parent_zp_id'], 'taxonomy_term', 'catalog')) {
+    drupal_set_message('There is no dept with zp_id ' . $object['parent_zp_id'], 'warning');
+    return;
+  }
   
   // Search for term which is a child of this product parent dept (and just found parent term) and has a name of subgroup which is set in object
   $query = db_select('taxonomy_term_data', 'td');
