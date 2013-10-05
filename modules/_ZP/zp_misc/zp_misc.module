@@ -2048,7 +2048,7 @@ function zp_misc_testPage() {
   
   
   // Create a catalog term for subgroup (to connect products to it).
-  $product = array(
+  $object = array(
     'title' => 'подгруппа Вино',
     'description' => 'Описание подгруппы Вино', 
     'zp_id' => 'z007',
