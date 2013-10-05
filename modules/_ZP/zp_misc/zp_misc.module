@@ -1682,25 +1682,26 @@ function zp_misc_addNewCatalogTerm($object) {
   // Find parent term tid by parent_zp_id.
   $parent_tid = zp_misc_fieldRead_idByValue_single('zp_id', $object['parent_zp_id'], 'taxonomy_term', 'catalog');
   
-  $menu_item_term = (object) array(
+  $catalog_term = (object) array(
     'name' => !empty($object['menu_item_title']) ? $object['menu_item_title'] : $object['title'],
     'vid' => $catalog_voc->vid,
     'parent' => array($parent_tid),
     'weight' => $object['weight'],
-    'field_zp_id' => array('und' => array(0 => array('value' => $object['zp_id']))),
+    'field_zp_id' => !empty($object['zp_id']) ? array('und' => array(0 => array('value' => $object['zp_id']))) : NULL,
   );
   
-  taxonomy_term_save($menu_item_term);
+  taxonomy_term_save($catalog_term);
   //dpm($menu_item_term);
   
-  // Taxonomy term itself will be assigned to dept node automatically on taxonomy_menu item creation via hook zp_misc_taxonomy_menu_save.
+  // If there is a dept/shop/etc connectd to this term by zp_id, this term will be assigned to that node automatically on taxonomy_menu item creation via hook zp_misc_taxonomy_menu_save.
+  // If this term doesn't have zp_id - this is subgroup and will not be assigned to anything.
 
 }
 
 /**
  * Create a new product and connect it to the Catalog term by zp_id.
  */
-function zp_misc_addNewProductAndConnectItToCatalogTerm($object) {
+function zp_misc_addNewProductAndConnectItToSubgroupCatalogTerm($object) {
  
   // Create a node for the product.
   // ---------------------------------------------------------------------------------------------------
@@ -1817,15 +1818,15 @@ function zp_misc_taxonomy_menu_save($term, $menu_link, $mlid) {
     // Allow manually change and delete the menu item by a user.
     unset($menu_link['module']);
       
-    // If there is a dept connected to this term, show link to this dept instead the link to the term.
-    if ($dept_nid = zp_misc_findDeptByZPIDofTerm_andConnectedItToTerm($term)) {
+    // If there is a dept/shop/etc connected to this term, show link to this dept instead the link to the term.
+    if ($object_nid = zp_misc_findDeptOrShopOrCityByZpIDofTerm_andConnectItToTerm($term)) {
       // dpm($term);
       // And save the renewed item again, as in taxonomy_menu_menu_link_prepare($term, $menu_name).
-      $menu_link['link_path'] = 'node/' . $dept_nid;
+      $menu_link['link_path'] = 'node/' . $object_nid;
     }
     
     
-    // Let's create a menu item only for existing dept node.
+    // Let's create a menu item only for existing dept/shop/etc node.
     // And completely remove already created menu item (originally connected to taxonomy/term/xxx) from the menu.
     else {
       static $catalog_voc;
@@ -1879,13 +1880,13 @@ function zp_misc_createMenuItemForTerm($term) {
     // Allow manually change and delete the menu item by a user.
     unset($menu_link['module']);
       
-    // If there is a dept connected to this term, show link to this dept instead the link to the term.
-    if ($dept_nid = zp_misc_findDeptByZPIDofTerm_andConnectedItToTerm($term)) {
+    // If there is a dept/shop/city connected to this term, show link to this dept instead the link to the term.
+    if ($object_nid = zp_misc_findDeptOrShopOrCityByZpIDofTerm_andConnectItToTerm($term)) {
       // And save the renewed item again, as in taxonomy_menu_menu_link_prepare($term, $menu_name).
-      $menu_link['link_path'] = 'node/' . $dept_nid;
+      $menu_link['link_path'] = 'node/' . $object_nid;
     }
     
-    // Let's create a menu item only for existing dept node.
+    // Let's create a menu item only for existing dept/shop/city node.
     else {
       return FALSE;
     }
@@ -1897,7 +1898,7 @@ function zp_misc_createMenuItemForTerm($term) {
       $menu_link['link_path'] = 'node/' . $parent_dept_nid . '/' . $term->tid;
     }
     else {
-      //dpm('not found dept');
+      //dpm('not found dept/shop/city');
       // Show a menu item without a link.
       // Depends on the module 'Special menu items'.
       $menu_link['link_path'] = '<nolink>';
@@ -1940,7 +1941,7 @@ function zp_misc_findParentDeptByZPIDofTerm($term) {
 /**
  * Find a dept connected by zp_id to a catalog term and assign this dept to this term via reference term field catalog voc.
  */
-function zp_misc_findDeptByZPIDofTerm_andConnectedItToTerm($term) {
+function zp_misc_findDeptOrShopOrCityByZpIDofTerm_andConnectItToTerm($term) {
 
   
   //dpm($term);
@@ -1953,6 +1954,7 @@ function zp_misc_findDeptByZPIDofTerm_andConnectedItToTerm($term) {
     $term->depth = $term_short->depth;
   }
   
+  // Term with empty zp_id - subgroup.
   if (empty($term->field_zp_id['und'][0]['value'])) {
     return NULL;
   }
@@ -1960,22 +1962,23 @@ function zp_misc_findDeptByZPIDofTerm_andConnectedItToTerm($term) {
   
   // Connect not only depts but also shops to corresponding catalog term.
   $object_type = 'department';
-  if(!$dept_nid = zp_misc_fieldRead_idByValue_single('zp_id', $term->field_zp_id['und'][0]['value'], 'node', 'department')) {
-    if(!$dept_nid = zp_misc_fieldRead_idByValue_single('zp_id', $term->field_zp_id['und'][0]['value'], 'node', 'shop')) {
-      return NULL;
-    }
-    else {
-      $object_type = 'shop';
+  if(!$object_nid = zp_misc_fieldRead_idByValue_single('zp_id', $term->field_zp_id['und'][0]['value'], 'node', $object_type)) {
+    $object_type = 'shop';
+    if(!$object_nid = zp_misc_fieldRead_idByValue_single('zp_id', $term->field_zp_id['und'][0]['value'], 'node', $object_type)) {
+      $object_type = 'city';
+      if(!$object_nid = zp_misc_fieldRead_idByValue_single('zp_id', $term->field_zp_id['und'][0]['value'], 'node', $object_type)) {
+        return NULL;
+      }
     }
   }
 
 
   // Connect or update the term to the node.
-  zp_misc_fieldTermReferenceSave('catalog', $dept_nid, $term->tid, 'node', $object_type);
+  zp_misc_fieldTermReferenceSave('catalog', $object_nid, $term->tid, 'node', $object_type);
 
   
-  //dpm('$dept_nid = ' . $dept_nid);
-  return $dept_nid;
+  //dpm('$object_nid = ' . $object_nid);
+  return $object_nid;
 }
 
 /**
@@ -2015,6 +2018,24 @@ function zp_misc_node_delete($node) {
 
 
 /**
+ * Creates new ZP object: dept, subgroup, product, etc.
+ */
+function zp_misc_addNewZpObject($object){
+  switch ($object['type']) {
+    case 'department':
+      zp_misc_addNewDeptAndMenuItem($object);
+      break;
+    case 'subgroup':
+      zp_misc_addNewCatalogTerm($object);
+      break;
+    case 'product_a':
+      zp_misc_addNewProductAndConnectItToSubgroupCatalogTerm($object);
+      break;
+      
+  }
+}
+
+/**
  * Test page function for url /test.
  */
 function zp_misc_testPage() {
@@ -2022,6 +2043,7 @@ function zp_misc_testPage() {
   $out = '<div>Start test...</div><br/>';
   /*
   $dept = array(
+    'type' => 'department',
     'title' => 'Напитки',
     'description' => 'Описание отдела Напитки', 
     'summary' => 'Краткое описание отдела Напитки',
@@ -2030,10 +2052,11 @@ function zp_misc_testPage() {
     'weight' => 5,
   );
   
-  zp_misc_addNewDeptAndMenuItem($dept);
+  zp_misc_addNewZpObject($dept);
   */
   
   $dept = array(
+    'type' => 'department',
     'title' => 'Алкогольные напитки',
     'description' => 'Описание отдела Алкогольные напитки', 
     'summary' => 'Краткое описание отдела Алкогольные напитки',
@@ -2042,7 +2065,7 @@ function zp_misc_testPage() {
     'weight' => 5,
   );
   
-  zp_misc_addNewDeptAndMenuItem($dept);
+  zp_misc_addNewZpObject($dept);
   /*
   $dept = array(
     'title' => 'Безалкогольные напитки',
@@ -2059,52 +2082,60 @@ function zp_misc_testPage() {
   
   // Create a catalog term for subgroup (to connect products to it).
   $object = array(
+    'type' => 'subgroup',
     'title' => 'подгруппа Вино',
     'description' => 'Описание подгруппы Вино', 
-    'zp_id' => 'z007',
+    //'zp_id' => 'z007',
     'parent_zp_id' => 'z004',
     'weight' => 2,
   );
-  zp_misc_addNewCatalogTerm($object);
+  zp_misc_addNewZpObject($object);
+
   
   
   
   $product = array(
+    'type' => 'product_a',
     'title' => 'Вино 1',
     'description' => 'Описание продукта Вино 1', 
     'summary' => 'Краткое описание продукта Вино 1',
     'zp_id' => 'z010',
     'parent_zp_id' => 'z007',
+    'subgroup' => 'подгруппа Вино',
     'weight' => 1,
   );
   
-  zp_misc_addNewProductAndConnectItToCatalogTerm($product);
+  zp_misc_addNewZpObject($product);
   
   
   
   $product = array(
+    'type' => 'product_a',
     'title' => 'Вино 2',
     'description' => 'Описание продукта Вино 2', 
     'summary' => 'Краткое описание продукта Вино 2',
     'zp_id' => 'z009',
     'parent_zp_id' => 'z007',
+    'subgroup' => 'подгруппа Вино',
     'weight' => 3,
   );
   
-  zp_misc_addNewProductAndConnectItToCatalogTerm($product);
+  zp_misc_addNewZpObject($product);
   
   
   
   $product = array(
+    'type' => 'product_a',
     'title' => 'Вино 3',
     'description' => 'Описание продукта Вино 3', 
     'summary' => 'Краткое описание продукта Вино 3',
     'zp_id' => 'z008',
     'parent_zp_id' => 'z007',
+    'subgroup' => 'подгруппа Вино',
     'weight' => 2,
   );
   
-  zp_misc_addNewProductAndConnectItToCatalogTerm($product);
+  zp_misc_addNewZpObject($product);
   
   
   
