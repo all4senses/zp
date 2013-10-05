@@ -1659,6 +1659,20 @@ function zp_misc_addNewDeptAndMenuItem($object) {
   
   // Create a term in the menu Catalog and connect it to the just created department node.
   // ---------------------------------------------------------------------------------------------------
+  zp_misc_addNewCatalogTerm($object);
+  
+  // Taxonomy term itself will be assigned to this node automatically on taxonomy_menu item creation via hook zp_misc_taxonomy_menu_save.
+  
+  
+}
+
+
+/**
+ * Create a new Catalog term by zp_id.
+ * If there is a dept with such a zp_id, it will be connected to that dept, 
+ * or else no menu item will be created at all.
+ */
+function zp_misc_addNewCatalogTerm($object) {
   
   static $catalog_voc;
   if (!$catalog_voc) {
@@ -1679,12 +1693,9 @@ function zp_misc_addNewDeptAndMenuItem($object) {
   taxonomy_term_save($menu_item_term);
   //dpm($menu_item_term);
   
-  // Taxonomy term itself will be assigned to this node automatically on taxonomy_menu item creation via hook zp_misc_taxonomy_menu_save.
-  
-  
+  // Taxonomy term itself will be assigned to dept node automatically on taxonomy_menu item creation via hook zp_misc_taxonomy_menu_save.
+
 }
-
-
 
 /**
  * Create a new product and connect it to the Catalog term by zp_id.
@@ -2011,7 +2022,7 @@ function zp_misc_testPage() {
   
   zp_misc_addNewDeptAndMenuItem($dept);
   */
-  /*
+  
   $dept = array(
     'title' => 'Алкогольные напитки',
     'description' => 'Описание отдела Алкогольные напитки', 
@@ -2022,7 +2033,7 @@ function zp_misc_testPage() {
   );
   
   zp_misc_addNewDeptAndMenuItem($dept);
-  
+  /*
   $dept = array(
     'title' => 'Безалкогольные напитки',
     'description' => 'Описание отдела Безлкогольные напитки', 
@@ -2036,14 +2047,24 @@ function zp_misc_testPage() {
   */
   
   
+  // Create a catalog term for subgroup (to connect products to it).
+  $product = array(
+    'title' => 'подгруппа Вино',
+    'description' => 'Описание подгруппы Вино', 
+    'zp_id' => 'z007',
+    'parent_zp_id' => 'z004',
+    'weight' => 2,
+  );
+  zp_misc_addNewCatalogTerm($object);
   
-  /*
+  
+  
   $product = array(
     'title' => 'Вино 1',
     'description' => 'Описание продукта Вино 1', 
     'summary' => 'Краткое описание продукта Вино 1',
-    'zp_id' => 'z005',
-    'parent_zp_id' => 'z004',
+    'zp_id' => 'z010',
+    'parent_zp_id' => 'z007',
     'weight' => 1,
   );
   
@@ -2055,8 +2076,8 @@ function zp_misc_testPage() {
     'title' => 'Вино 2',
     'description' => 'Описание продукта Вино 2', 
     'summary' => 'Краткое описание продукта Вино 2',
-    'zp_id' => 'z006',
-    'parent_zp_id' => 'z004',
+    'zp_id' => 'z009',
+    'parent_zp_id' => 'z007',
     'weight' => 3,
   );
   
@@ -2068,19 +2089,14 @@ function zp_misc_testPage() {
     'title' => 'Вино 3',
     'description' => 'Описание продукта Вино 3', 
     'summary' => 'Краткое описание продукта Вино 3',
-    'zp_id' => 'z007',
-    'parent_zp_id' => 'z004',
+    'zp_id' => 'z008',
+    'parent_zp_id' => 'z007',
     'weight' => 2,
   );
   
   zp_misc_addNewProductAndConnectItToCatalogTerm($product);
-  */
   
-  $term_tid = 41; // алкогольные напитки
-  //zp_misc_findParentDeptByZPIDofTerm($term_tid);
   
-  $term = taxonomy_term_load($term_tid);
-  zp_misc_createMenuItemForTerm($term);
   
   return $out . '<br>End of Test';
 }
