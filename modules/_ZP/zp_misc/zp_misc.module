@@ -1957,12 +1957,18 @@ function zp_misc_findDeptByZPIDofTerm_andConnectedItToTerm($term) {
     return NULL;
   }
   
-  $dept_nid = zp_misc_fieldRead_idByValue_single('zp_id', $term->field_zp_id['und'][0]['value'], 'node', 'department');
-
-  if ($dept_nid) {
-    // Connect or update the term to the node.
-    zp_misc_fieldTermReferenceSave('catalog', $dept_nid, $term->tid, 'node', 'department');
+  
+  // Connect not only depts but also shops to corresponding catalog term.
+  if(!$dept_nid = zp_misc_fieldRead_idByValue_single('zp_id', $term->field_zp_id['und'][0]['value'], 'node', 'department')) {
+    if(!$dept_nid = zp_misc_fieldRead_idByValue_single('zp_id', $term->field_zp_id['und'][0]['value'], 'node', 'shop')) {
+      return NULL;
+    }
   }
+
+
+  // Connect or update the term to the node.
+  zp_misc_fieldTermReferenceSave('catalog', $dept_nid, $term->tid, 'node', 'department');
+
   
   //dpm('$dept_nid = ' . $dept_nid);
   return $dept_nid;
