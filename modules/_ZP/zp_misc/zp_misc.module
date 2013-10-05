@@ -1713,11 +1713,13 @@ function zp_misc_addNewProductAndConnectItToSubgroupCatalogTerm($object) {
   $query->fields('td', array('tid'))
         ->condition('name', $object['subgroup']);
   $query->join('taxonomy_term_hierarchy', 'th', 'th.tid = td.tid AND th.parent = ' . $parent_tid);
-  $subgroup_term_tid = $query->execute()->fetchField();
   
-  dpm($subgroup_term_tid);
+  if (!$subgroup_term_tid = $query->execute()->fetchField()) {
+    drupal_set_message('No subgroup ' . $object['subgroup'] . ' in the dept with zp_id ' . $object['parent_zp_id'], 'warning');
+    return;
+  }
   
-  return;
+  //dpm($subgroup_term_tid);
   
   // Create a node for the product.
   // ---------------------------------------------------------------------------------------------------
@@ -1782,6 +1784,10 @@ function zp_misc_addNewProductAndConnectItToSubgroupCatalogTerm($object) {
   
   drupal_set_message('A new Product "' . $object['title'] . '" was created, Success!', 'warning');
 
+  
+  // Connect the subgroup term (found above) to this product node.
+  zp_misc_fieldTermReferenceSave('catalog', $node->nid, $term_tid, 'node', $object_type);
+  drupal_set_message('The product "' . $object['title'] . '" has been connected to the subgroup term "' . $term_tid . '".', 'warning');
   
   
   /*
