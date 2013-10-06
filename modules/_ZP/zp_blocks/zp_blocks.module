@@ -171,7 +171,13 @@ function zp_blocks_getCurrentDeptSubgroups() {
   
   global $zp_global_data;
   
-  return $zp_global_data;
+  $out = NULL;
+  
+  if (!empty($zp_global_data['current_dept_subgroups'])) {
+    $out = $zp_global_data['current_dept_subgroups'];
+  }
+  
+  return $out;
 }
 
 

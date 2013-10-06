@@ -265,6 +265,8 @@ function zp_pages_node_view($node, $view_mode) {
   switch ($node->type) {
     
     case 'department':
+      
+      global $zp_global_data;
 
       // We have a list of subdepts or products in this dept?
       $query = db_select('field_data_field_parent_zp_id', 'pzp');
@@ -286,8 +288,8 @@ function zp_pages_node_view($node, $view_mode) {
       if ($product_nid) {
         // We have a dept with products here.
 
-
-
+      
+      
         // Search for all terms which are children of the term with parent_zp_id
         // In this case it's term with the same zp_id as parent (for this product) dept.
         // And so we search for all subgroups terms for this dept.
@@ -300,23 +302,24 @@ function zp_pages_node_view($node, $view_mode) {
         $query->condition('th.parent', $current_catalog_tid);
         $query->leftJoin('taxonomy_term_data', 'td', 'td.tid = th.tid');
         $query->fields('td', array('tid', 'name'));
-        $subgroups_tids = $query->execute()->fetchAll();
+        $subgroups_terms = $query->execute()->fetchAll();
         
-        dpm($subgroups_tids);
-//        
-//        if (!empty($subgroups_tids)) {
-//          dpm($subgroups_tids);
-//          $sidebar_filter_by_subgroups = array();
-//          $sidebar_filter_by_subgroups['subgroups'] = array(
-//            '#type' => 'container',
-//          );
-//          foreach ($subgroups_tids as $tid) {
-//            $sidebar_filter_by_subgroups['subgroups']['sg_' . $tid] = array(
-//              '#type' => 'checkmark',
-//              '#title' => '',
-//            );
-//          }
-//        }
+        if (!empty($subgroups_terms)) {
+          dpm($subgroups_terms);
+          $sidebar_filter_by_subgroups = array();
+          $sidebar_filter_by_subgroups['subgroups'] = array(
+            '#type' => 'container',
+          );
+          foreach ($subgroups_terms as $key => $subgroup_term) {
+            $sidebar_filter_by_subgroups['subgroups'][$subgroup_term['tid']] = array(
+              '#type' => 'checkmark',
+              '#title' => $subgroup_term['name'],
+              '#defaule_value' => !empty($_GET['tf']) && $_GET['tf'] == $subgroup_term['tid'] ? TRUE : FALSE,
+            );
+          }
+         
+          $zp_global_data['current_dept_subgroups'] = render($sidebar_filter_by_subgroups);
+        }
 
 
 
@@ -415,8 +418,6 @@ function zp_pages_node_view($node, $view_mode) {
       $node->zp_template_data = array('views_title' => $views_title, 'display' => $view->preview($display));
       //echo '<div class="title">' . $views_title . '</div>' . $view->preview($display);
       
-      global $zp_global_data;
-      $zp_global_data = 'xxx';
       
       break;
     
