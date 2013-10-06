@@ -125,6 +125,13 @@ if ($page) {
     //dpm($catalog_parents_tids);
   
     // We have a list of subdepts or products in this dept?
+    $query = db_select('field_data_field_parent_zp_id', 'pzp');
+    $query->fields('pzp', array('entity_id'));
+    $query->condition('field_parent_zp_id_value', $node->field_zp_id['und'][0]['value'])
+          ->condition('bundle', 'product_a'); 
+    $query->range(0, 1);
+    $product_nid = $query->execute()->fetchField(); 
+    /*
     $query = db_select('field_data_field_catalog', 'c');
     $query->fields('c', array('entity_id'));
     $query->join('node', 'n', "n.nid = c.entity_id"); 
@@ -132,6 +139,7 @@ if ($page) {
           ->condition('n.type', 'product_a'); 
     $query->range(0, 1);
     $product_nid = $query->execute()->fetchField(); 
+    */
     
     if ($product_nid) {
       // We have a dept with products here.
@@ -141,7 +149,20 @@ if ($page) {
       // Search for all terms which are children of the term with parent_zp_id
       // In this case it's term with the same zp_id as parent (for this product) dept.
       // And so we search for all subgroups terms for this dept.
-
+      
+      // Find current catalog term tid by zp_id
+      $current_catalog_tid = zp_misc_fieldRead_idByValue_single('zp_id', $node->field_zp_id['und'][0]['value'], 'taxonomy_term', 'catalog');
+      
+      
+      $query = db_select('taxonomy_term_hierarchy', 'th');
+      $query->fields('th', array('tid'))
+            ->condition('th.parent', $current_catalog_tid);
+      $subgroups_tids = $query->execute()->fetchAssoc();
+      
+      if (!empty($subgroups_tids)) {
+        dpm($subgroups_tids);
+      }
+  
       
       
       $views_title = 'Товары';
