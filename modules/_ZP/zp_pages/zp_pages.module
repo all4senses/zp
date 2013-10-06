@@ -306,7 +306,9 @@ function zp_pages_node_view($node, $view_mode) {
         
         if (!empty($subgroups_terms)) {
           dpm($subgroups_terms);
-          $zp_global_data['current_dept_subgroups'] = 'xxx ' . render(drupal_get_form('zp_misc_buildSidebarFilter_form', array('subgroups_terms' => $subgroups_terms, 'tf' => @$_GET['tf'])));
+          $f = drupal_get_form('zp_misc_buildSidebarFilter_form', array('subgroups_terms' => $subgroups_terms, 'tf' => @$_GET['tf']));
+          dpm($f);
+          $zp_global_data['current_dept_subgroups'] = 'xxx ' . render($f);
         }
 
 
