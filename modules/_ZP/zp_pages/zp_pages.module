@@ -302,13 +302,26 @@ function zp_pages_node_view($node, $view_mode) {
         $query->condition('th.parent', $current_catalog_tid);
         $query->leftJoin('taxonomy_term_data', 'td', 'td.tid = th.tid');
         $query->fields('td', array('tid', 'name'));
-        $subgroups_terms = $query->execute()->fetchAll();
+        $subgroups_terms = $query->execute()->fetchAll('tid');
         
         if (!empty($subgroups_terms)) {
           dpm($subgroups_terms);
-          $f = drupal_get_form('zp_misc_buildSidebarFilter_form', array('subgroups_terms' => $subgroups_terms, 'tf' => @$_GET['tf']));
-          dpm($f);
-          $zp_global_data['current_dept_subgroups'] = 'xxx ' . render($f);
+          if (!empty($_GET['tf'])) {
+            if (strpos($_GET['tf'], ';' !== FALSE)) {
+              $tfs = explode(';', $_GET['tf']);
+            }
+            else {
+              $tfs = array($_GET['tf']);
+            }
+            foreach ($tfs as $key => $value) {
+              if (!isset($subgroups_terms[$value])) {
+                unset($tfs[$key]);
+              }
+            }
+            dpm($tfs);
+          }
+          
+          $zp_global_data['current_dept_subgroups'] = render(drupal_get_form('zp_misc_buildSidebarFilter_form', array('subgroups_terms' => $subgroups_terms, 'tf' => @$_GET['tf'])));
         }
 
 
