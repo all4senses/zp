@@ -306,19 +306,7 @@ function zp_pages_node_view($node, $view_mode) {
         
         if (!empty($subgroups_terms)) {
           dpm($subgroups_terms);
-          $sidebar_filter_by_subgroups = array();
-//          $sidebar_filter_by_subgroups['subgroups'] = array(
-//            '#type' => 'container',
-//          );
-          foreach ($subgroups_terms as $key => $subgroup_term) {
-            $sidebar_filter_by_subgroups[$subgroup_term->tid] = array(
-              '#type' => 'checkmark',
-              '#title' => $subgroup_term->name,
-              '#defaule_value' => !empty($_GET['tf']) && $_GET['tf'] == $subgroup_term->tid ? TRUE : FALSE,
-            );
-          }
-         
-          $zp_global_data['current_dept_subgroups'] = 'xxx ' . render($sidebar_filter_by_subgroups);
+          $zp_global_data['current_dept_subgroups'] = 'xxx ' . drupal_get_form('zp_misc_buildSidebarFilter_form', array('subgroups_terms' => $subgroups_terms, 'tf' => @$_GET['tf']));
         }
 
 

@@ -3317,3 +3317,26 @@ function zp_misc_setBreadcrumbs(&$variables) {
   }
   */
 } 
+
+
+/**
+ * Form with a fieldset of Add content section for Admin Content page (by Views).
+ */
+function zp_misc_buildSidebarFilter_form($form, &$form_state, $data) {
+  
+  
+  $form['subgroups'] = array(
+    '#type' => 'container',
+  );
+  
+  foreach ($data['subgroups_terms'] as $subgroup_term) {
+    $form['subgroups']['select_type'] = array(
+      '#type' => 'checkmark',
+      '#title' => $subgroup_term->name,
+      '#default_value' => !empty($data['tf']) && $data['tf'] == $subgroup_term->tid ? TRUE : FALSE,
+      //'#attributes' => array('id' => 'select_type',  'onChange' => "top.location.href='/node/add/" . "' + document.getElementById('select_type').options[document.getElementById('select_type').selectedIndex].value"),
+    );
+  }
+  
+  return $form;
+}
