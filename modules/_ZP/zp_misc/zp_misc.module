@@ -3327,7 +3327,7 @@ function zp_misc_buildSidebarFilter_form($form, &$form_state, $data) {
   
   $form['subgroups'] = array(
     '#type' => 'container',
-    '#tree' => TRUE,
+    //'#tree' => TRUE,
   );
   
   foreach ($data['subgroups_terms'] as $subgroup_term) {
@@ -3363,7 +3363,7 @@ function zp_misc_buildSidebarFilter_form_submit(&$form, &$form_state) {
  
   dpm($form_state['values']);
   dpm($_GET);
-  exit;
+  //exit;
   
   // Redirect back to the current page.
   $get = $_GET;
