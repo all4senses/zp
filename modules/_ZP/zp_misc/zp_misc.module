@@ -3361,13 +3361,13 @@ function zp_misc_buildSidebarFilter_form($form, &$form_state, $data) {
  */
 function zp_misc_buildSidebarFilter_form_submit(&$form, &$form_state) {
  
-  dpr($form_state['values']);
-  //dpm($_GET);
-  exit;
+  dpm($form_state['values']);
+  dpm($_GET);
+  //exit;
   
   // Redirect back to the current page.
-//  $get = $_GET;
-//  unset($get['q']);
-//  //$get['filter'] = $form_state['values']['filter'];
-//  drupal_goto($_GET['q'], array('query' => $get));
+  $get = $_GET;
+  unset($get['q']);
+  //$get['filter'] = $form_state['values']['filter'];
+  drupal_goto($_GET['q'], array('query' => $get));
 }
