@@ -172,18 +172,15 @@ if ($page) {
       //dpm($view);
       
       // Show products with parent_zp_id equal to this dept zp_id.
-      
-//      $handler->display->display_options['filters']['field_parent_zp_id_value']['id'] = 'field_parent_zp_id_value';
-//      $handler->display->display_options['filters']['field_parent_zp_id_value']['table'] = 'field_data_field_parent_zp_id';
-//      $handler->display->display_options['filters']['field_parent_zp_id_value']['field'] = 'field_parent_zp_id_value';
-//      $handler->display->display_options['filters']['field_parent_zp_id_value']['value'] = 'z004';
-      
       $options = array('id' => 'field_parent_zp_id_value', 'value' => $node->field_zp_id['und'][0]['value']);
       $view->add_item($display, 'filter', 'field_data_field_parent_zp_id', 'field_parent_zp_id_value', $options);
 
-
-      //$options = array('id' => 'field_catalog_tid', 'value' => array($node->field_catalog['und'][0]['tid'] => $node->field_catalog['und'][0]['tid']), 'type' => 'select', 'vocabulary' => 'catalog', 'hierarchy' => 1, 'reduce_duplicates' => 1, 'group' => 0,);
-      //$view->add_item($display, 'filter', 'field_data_field_catalog', 'field_catalog_tid', $options);
+      // Show only products of subgroup from url params.
+      if (!empty($_GET['tf'])) {
+        $options = array('id' => 'field_catalog_tid', 'value' => array($_GET['tf'] => $_GET['tf']), 'type' => 'select', 'vocabulary' => 'catalog', 'hierarchy' => 1, 'reduce_duplicates' => 1, 'group' => 0,);
+        $view->add_item($display, 'filter', 'field_data_field_catalog', 'field_catalog_tid', $options);
+      }
+      
     }
     else {
       // We have a dept with subdepts here.
