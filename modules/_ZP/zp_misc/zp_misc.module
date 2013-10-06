@@ -3341,17 +3341,42 @@ function zp_misc_buildSidebarFilter_form($form, &$form_state, $data) {
   }
     
     
-  $form['actions'] = array('#type' => 'actions');
-  $form['actions']['submit'] = array(
-    '#type' => 'submit',
-    '#value' => 'Submit',
-    //'#submit' => array('gv_misc_sendCapturedQuotesToProviders_form_submit'),
-    //'#base' => 'gv_misc_sendCapturedQuotesToProviders_form',
-    //'#disabled' => $class_submitted == 'all-submitted' ? TRUE : FALSE,
-  ); 
+//  $form['actions'] = array('#type' => 'actions');
+//  $form['actions']['submit'] = array(
+//    '#type' => 'submit',
+//    '#value' => 'Submit',
+//    //'#submit' => array('gv_misc_sendCapturedQuotesToProviders_form_submit'),
+//    //'#base' => 'gv_misc_sendCapturedQuotesToProviders_form',
+//    //'#disabled' => $class_submitted == 'all-submitted' ? TRUE : FALSE,
+//  ); 
   
   return $form;
 }
+
+
+/**
+ * Implements hook_form_validate().
+ *
+ * @return $form
+ *   Return nothing.
+ */
+function zp_misc_buildSidebarFilter_form_validate(&$form, &$form_state) {
+  
+  //drupal_set_message('In Validate!', 'warning');
+  //dpm($form_state['values']);
+  //dpm($form);
+    
+  //global $user;
+  
+  
+//  if (!$form_state['values']['message']) {
+//    form_set_error('message', 'You have to enter a Message, if don\'t want to just subscribe to newsletters');
+//  }
+
+  global $form_button_counter;
+  $form_button_counter=array(0,1);
+}
+
 
 /**
  * Implements hook_form_submit().
