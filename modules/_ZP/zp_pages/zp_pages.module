@@ -309,7 +309,7 @@ function zp_pages_node_view($node, $view_mode) {
           dpm($subgroups_terms);
           dpm($_GET);
           if (!empty($_GET['tf'])) {
-            if (strpos($_GET['tf'], ';' !== FALSE)) {
+            if (strpos($_GET['tf'], ';') !== FALSE) {
               $tfs = explode(';', $_GET['tf']);
             }
             else {
