@@ -3337,7 +3337,18 @@ function zp_misc_buildSidebarFilter_form($form, &$form_state, $data) {
       //'#attributes' => array('id' => 'select_type',  'onChange' => "top.location.href='/node/add/" . "' + document.getElementById('select_type').options[document.getElementById('select_type').selectedIndex].value"),
         '#attributes' =>  array('class' =>array('filter_by_subgroup'), 'onClick' => array('javascript:this.form.submit();')),
     );
-  }
+  
+    
+    //$form['remoteSubmittions']['actions'] = array('#type' => 'actions');
+    //$form['remoteSubmittions']['actions']['submit'] = array(
+    $form['actions'] = array('#type' => 'actions');
+    $form['actions']['submit'] = array(
+      '#type' => 'submit',
+      '#value' => 'Submit',
+      //'#submit' => array('gv_misc_sendCapturedQuotesToProviders_form_submit'),
+      //'#base' => 'gv_misc_sendCapturedQuotesToProviders_form',
+      //'#disabled' => $class_submitted == 'all-submitted' ? TRUE : FALSE,
+    ); 
   
   return $form;
 }
