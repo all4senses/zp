@@ -3337,7 +3337,7 @@ function zp_misc_buildSidebarFilter_form($form, &$form_state, $data) {
       //'#attributes' => array('id' => 'select_type',  'onChange' => "top.location.href='/node/add/" . "' + document.getElementById('select_type').options[document.getElementById('select_type').selectedIndex].value"),
         '#attributes' =>  array('class' =>array('filter_by_subgroup'), 'onClick' => array('javascript:this.form.submit();')),
     );
-  
+  }
     
     //$form['remoteSubmittions']['actions'] = array('#type' => 'actions');
     //$form['remoteSubmittions']['actions']['submit'] = array(
@@ -3363,7 +3363,7 @@ function zp_misc_buildSidebarFilter_form_submit(&$form, &$form_state) {
  
   dpr($form_state['values']);
   //dpm($_GET);
-  exit();
+  exit;
   
   // Redirect back to the current page.
 //  $get = $_GET;
