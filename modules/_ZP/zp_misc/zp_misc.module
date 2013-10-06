@@ -3373,9 +3373,8 @@ function zp_misc_buildSidebarFilter_form_validate(&$form, &$form_state) {
 //    form_set_error('message', 'You have to enter a Message, if don\'t want to just subscribe to newsletters');
 //  }
 
-  global $form_button_counter;
-  $form_button_counter=array(0,1);
-  //$form_state['submitted'] = TRUE;
+  
+  $form_state['submitted'] = TRUE;
 }
 
 
