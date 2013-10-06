@@ -1652,7 +1652,7 @@ function zp_misc_addNewDeptAndMenuItem($object) {
     return FALSE;
   }
   
-  drupal_set_message('A new department was created, Success!', 'warning');
+  drupal_set_message('A new department "' . $object['title']. '" was created, Success!', 'warning');
 
   
   
@@ -1789,8 +1789,8 @@ function zp_misc_addNewProductAndConnectItToSubgroupCatalogTerm($object) {
 
   
   // Connect the subgroup term (found above) to this product node.
-  zp_misc_fieldTermReferenceSave('catalog', $node->nid, $term_tid, 'node', $object_type);
-  drupal_set_message('The product "' . $object['title'] . '" has been connected to the subgroup term "' . $term_tid . '".', 'warning');
+  zp_misc_fieldTermReferenceSave('catalog', $node->nid, $subgroup_term_tid, 'node', $object_type);
+  drupal_set_message('The product "' . $object['title'] . '" has been connected to the subgroup term "' . $subgroup_term_tid . '".', 'warning');
   
   
   /*
@@ -1981,8 +1981,8 @@ function zp_misc_findDeptOrShopOrCityByZpIDofTerm_andConnectItToTerm($term) {
   if (!isset($term->field_zp_id)) {
     $term_short = $term;
     $term = taxonomy_term_load($term->tid);
-    $term->parents = $term_short->parents;
-    $term->depth = $term_short->depth;
+    $term->parents = @$term_short->parents;
+    $term->depth = @$term_short->depth;
   }
   
   // Term with empty zp_id - subgroup.
