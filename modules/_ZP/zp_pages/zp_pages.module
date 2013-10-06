@@ -304,6 +304,7 @@ function zp_pages_node_view($node, $view_mode) {
         $query->fields('td', array('tid', 'name'));
         $subgroups_terms = $query->execute()->fetchAllAssoc('tid');
         
+        $tf = array();
         if (!empty($subgroups_terms)) {
           dpm($subgroups_terms);
           if (!empty($_GET['tf'])) {
@@ -314,14 +315,14 @@ function zp_pages_node_view($node, $view_mode) {
               $tfs = array($_GET['tf']);
             }
             foreach ($tfs as $key => $value) {
-              if (!isset($subgroups_terms[$value])) {
-                unset($tfs[$key]);
+              if (isset($subgroups_terms[$value])) {
+                $tf[$value] = $value;
               }
             }
-            dpm($tfs);
+            dpm($tf);
           }
           
-          $zp_global_data['current_dept_subgroups'] = render(drupal_get_form('zp_misc_buildSidebarFilter_form', array('subgroups_terms' => $subgroups_terms, 'tf' => @$_GET['tf'])));
+          $zp_global_data['current_dept_subgroups'] = render(drupal_get_form('zp_misc_buildSidebarFilter_form', array('subgroups_terms' => $subgroups_terms, 'tf' => $tf)));
         }
 
 
@@ -337,8 +338,8 @@ function zp_pages_node_view($node, $view_mode) {
         $view->add_item($display, 'filter', 'field_data_field_parent_zp_id', 'field_parent_zp_id_value', $options);
 
         // Show only products of subgroup from url params.
-        if (!empty($_GET['tf']) && in_array($_GET['tf'], $subgroups_tids)) {
-          $options = array('id' => 'field_catalog_tid', 'value' => array($_GET['tf'] => $_GET['tf']), 'type' => 'select', 'vocabulary' => 'catalog', 'hierarchy' => 1, 'reduce_duplicates' => 1, 'group' => 0,);
+        if (!empty($tf)) {
+          $options = array('id' => 'field_catalog_tid', 'value' => $tf, 'type' => 'select', 'vocabulary' => 'catalog', 'hierarchy' => 1, 'reduce_duplicates' => 1, 'group' => 0,);
           $view->add_item($display, 'filter', 'field_data_field_catalog', 'field_catalog_tid', $options);
         }
         /*
