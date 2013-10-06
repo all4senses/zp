@@ -3370,6 +3370,15 @@ function zp_misc_buildSidebarFilter_form_submit(&$form, &$form_state) {
   
   unset($get['q'], $get['tf']);
   
+  $tf = NULL;
+  foreach ($form_state['values']['subgroups'] as $tid => $checked) {
+    if ($checked) {
+      $tf .= ($tf ? ';' : '') . $tid;
+    }
+  }
+  if ($tf) {
+    $get['tf'] = $tf;
+  }
   //$get['filter'] = $form_state['values']['filter'];
   drupal_goto($_GET['q'], array('query' => $get));
 }
