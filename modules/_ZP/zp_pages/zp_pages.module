@@ -306,8 +306,8 @@ function zp_pages_node_view($node, $view_mode) {
         
         $tf = array();
         if (!empty($subgroups_terms)) {
-          dpm($subgroups_terms);
-          dpm($_GET);
+          //dpm($subgroups_terms);
+          //dpm($_GET);
           if (!empty($_GET['tf'])) {
             if (strpos($_GET['tf'], ';') !== FALSE) {
               $tfs = explode(';', $_GET['tf']);
@@ -320,7 +320,7 @@ function zp_pages_node_view($node, $view_mode) {
                 $tf[$value] = $value;
               }
             }
-            dpm($tf);
+            //dpm($tf);
           }
           
           $zp_global_data['current_dept_subgroups'] = render(drupal_get_form('zp_misc_buildSidebarFilter_form', array('subgroups_terms' => $subgroups_terms, 'tf' => $tf)));
