@@ -3327,7 +3327,7 @@ function zp_misc_buildSidebarFilter_form($form, &$form_state, $data) {
   
   $form['subgroups'] = array(
     '#type' => 'container',
-    //'#tree' => TRUE,
+    '#tree' => TRUE,
   );
   
   foreach ($data['subgroups_terms'] as $subgroup_term) {
@@ -3341,14 +3341,14 @@ function zp_misc_buildSidebarFilter_form($form, &$form_state, $data) {
   }
     
     
-//  $form['actions'] = array('#type' => 'actions');
-//  $form['actions']['submit'] = array(
-//    '#type' => 'submit',
-//    '#value' => 'Submit',
-//    //'#submit' => array('gv_misc_sendCapturedQuotesToProviders_form_submit'),
-//    //'#base' => 'gv_misc_sendCapturedQuotesToProviders_form',
-//    //'#disabled' => $class_submitted == 'all-submitted' ? TRUE : FALSE,
-//  ); 
+  $form['actions'] = array('#type' => 'actions');
+  $form['actions']['submit'] = array(
+    '#type' => 'submit',
+    '#value' => 'Submit',
+    //'#submit' => array('gv_misc_sendCapturedQuotesToProviders_form_submit'),
+    //'#base' => 'gv_misc_sendCapturedQuotesToProviders_form',
+    //'#disabled' => $class_submitted == 'all-submitted' ? TRUE : FALSE,
+  ); 
   
   return $form;
 }
@@ -3367,8 +3367,9 @@ function zp_misc_buildSidebarFilter_form_submit(&$form, &$form_state) {
   
   // Redirect back to the current page.
   $get = $_GET;
-  //unset($get['q'], $get['tf']);
-  unset($get['q']);
+  
+  unset($get['q'], $get['tf']);
+  
   //$get['filter'] = $form_state['values']['filter'];
   drupal_goto($_GET['q'], array('query' => $get));
 }
