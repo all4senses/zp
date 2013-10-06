@@ -3374,6 +3374,9 @@ function zp_misc_buildSidebarFilter_form_validate(&$form, &$form_state) {
 //  }
 
   
+  // a4s fix.
+  // When a form doesn't have a submit button  (like autosubmitted form)
+  // it won't get to the _submit function until i set this string below:
   $form_state['submitted'] = TRUE;
 }
 
@@ -3386,15 +3389,12 @@ function zp_misc_buildSidebarFilter_form_validate(&$form, &$form_state) {
  */
 function zp_misc_buildSidebarFilter_form_submit(&$form, &$form_state) {
  
-  dpm($form_state['values']);
-  dpm($_GET);
-  //exit;
+  //dpm($form_state['values']);
   
   // Redirect back to the current page.
+  // But befotr Put selected by user (in the sidebar) subgroups to the url params.
   $get = $_GET;
-  
   unset($get['q'], $get['tf']);
-  
   $tf = NULL;
   foreach ($form_state['values']['subgroups'] as $tid => $checked) {
     if ($checked) {
@@ -3404,6 +3404,6 @@ function zp_misc_buildSidebarFilter_form_submit(&$form, &$form_state) {
   if ($tf) {
     $get['tf'] = $tf;
   }
-  //$get['filter'] = $form_state['values']['filter'];
+
   drupal_goto($_GET['q'], array('query' => $get));
 }
