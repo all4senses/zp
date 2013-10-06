@@ -180,7 +180,11 @@ if ($page) {
         $options = array('id' => 'field_catalog_tid', 'value' => array($_GET['tf'] => $_GET['tf']), 'type' => 'select', 'vocabulary' => 'catalog', 'hierarchy' => 1, 'reduce_duplicates' => 1, 'group' => 0,);
         $view->add_item($display, 'filter', 'field_data_field_catalog', 'field_catalog_tid', $options);
       }
-      else {
+      elseif (!empty($subgroups_tids)) {
+        
+        foreach ($subgroups_tids as $tid) {
+          $subgroups_tids_filter[$tid] = $tid;
+        }
 //        $handler->display->display_options['filters']['field_catalog_tid']['id'] = 'field_catalog_tid';
 //        $handler->display->display_options['filters']['field_catalog_tid']['table'] = 'field_data_field_catalog';
 //        $handler->display->display_options['filters']['field_catalog_tid']['field'] = 'field_catalog_tid';
@@ -200,10 +204,32 @@ if ($page) {
 //          3 => 0,
 //        );
 //        $handler->display->display_options['filters']['field_catalog_tid']['expose']['reduce'] = TRUE;
+//        
 //        $handler->display->display_options['filters']['field_catalog_tid']['reduce_duplicates'] = TRUE;
 //        $handler->display->display_options['filters']['field_catalog_tid']['type'] = 'select';
 //        $handler->display->display_options['filters']['field_catalog_tid']['vocabulary'] = 'catalog';
 //        $handler->display->display_options['filters']['field_catalog_tid']['hierarchy'] = 1;
+        
+        $options = array(
+          'id' => 'field_catalog_tid', 
+          'value' => $subgroups_tids_filter, 
+          'type' => 'select', 
+          'exposed' => TRUE,
+          'vocabulary' => 'catalog', 
+          ////'hierarchy' => 1, 
+          'reduce_duplicates' => 1, 
+          'expose' => array(
+              'operator_id' => 'field_catalog_tid_op',
+              'operator' => 'field_catalog_tid_op',
+              'label' => 'Подгруппа',
+              'identifier' => 'field_catalog_tid',
+              'multiple' => TRUE,
+              'reduce' => TRUE,
+              'remember_roles' => array(2 => 2, 1 => 0, 3 => 0),
+            ),
+
+        );
+        $view->add_item($display, 'filter', 'field_data_field_catalog', 'field_catalog_tid', $options);
       }
       
     }
