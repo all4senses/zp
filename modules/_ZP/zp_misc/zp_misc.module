@@ -2085,7 +2085,7 @@ function zp_misc_testPage() {
   
   zp_misc_addNewZpObject($dept);
   */
-  
+  /*
   $dept = array(
     'type' => 'department',
     'title' => 'Алкогольные напитки',
@@ -2097,7 +2097,7 @@ function zp_misc_testPage() {
   );
   
   zp_misc_addNewZpObject($dept);
-  
+  */
   
   /*
   $dept = array(
