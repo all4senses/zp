@@ -3330,7 +3330,7 @@ function zp_misc_buildSidebarFilter_form($form, &$form_state, $data) {
   );
   
   foreach ($data['subgroups_terms'] as $subgroup_term) {
-    $form['subgroups']['select_type'] = array(
+    $form['subgroups'][$subgroup_term->tid] = array(
       '#type' => 'checkbox',
       '#title' => $subgroup_term->name,
       '#default_value' => !empty($data['tf']) && $data['tf'] == $subgroup_term->tid ? TRUE : FALSE,
