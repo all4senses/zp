@@ -157,7 +157,7 @@ if ($page) {
       $query = db_select('taxonomy_term_hierarchy', 'th');
       $query->fields('th', array('tid'))
             ->condition('th.parent', $current_catalog_tid);
-      $subgroups_tids = $query->execute()->fetchAllAssoc();
+      $subgroups_tids = $query->execute()->fetchCol();
       
       if (!empty($subgroups_tids)) {
         dpm($subgroups_tids);
