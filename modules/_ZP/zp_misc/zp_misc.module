@@ -3354,8 +3354,8 @@ function zp_misc_buildSidebarFilter_form_submit(&$form, &$form_state) {
   dpm($_GET);
   
   // Redirect back to the current page.
-  $get = $_GET;
-  unset($get['q']);
-  //$get['filter'] = $form_state['values']['filter'];
-  drupal_goto($_GET['q'], array('query' => $get));
+//  $get = $_GET;
+//  unset($get['q']);
+//  //$get['filter'] = $form_state['values']['filter'];
+//  drupal_goto($_GET['q'], array('query' => $get));
 }
