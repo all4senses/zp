@@ -2112,7 +2112,7 @@ function zp_misc_testPage() {
   zp_misc_addNewDeptAndMenuItem($dept);
   */
   
-  /*
+  
   // Create a catalog term for subgroup (to connect products to it).
   $object = array(
     'type' => 'subgroup',
@@ -2123,7 +2123,7 @@ function zp_misc_testPage() {
     'weight' => 2,
   );
   zp_misc_addNewZpObject($object);
-*/
+
   
   
   /*
