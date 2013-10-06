@@ -180,6 +180,31 @@ if ($page) {
         $options = array('id' => 'field_catalog_tid', 'value' => array($_GET['tf'] => $_GET['tf']), 'type' => 'select', 'vocabulary' => 'catalog', 'hierarchy' => 1, 'reduce_duplicates' => 1, 'group' => 0,);
         $view->add_item($display, 'filter', 'field_data_field_catalog', 'field_catalog_tid', $options);
       }
+      else {
+//        $handler->display->display_options['filters']['field_catalog_tid']['id'] = 'field_catalog_tid';
+//        $handler->display->display_options['filters']['field_catalog_tid']['table'] = 'field_data_field_catalog';
+//        $handler->display->display_options['filters']['field_catalog_tid']['field'] = 'field_catalog_tid';
+//        $handler->display->display_options['filters']['field_catalog_tid']['value'] = array(
+//          55 => '55',
+//          54 => '54',
+//        );
+//        $handler->display->display_options['filters']['field_catalog_tid']['exposed'] = TRUE;
+//        $handler->display->display_options['filters']['field_catalog_tid']['expose']['operator_id'] = 'field_catalog_tid_op';
+//        $handler->display->display_options['filters']['field_catalog_tid']['expose']['label'] = 'Catalog (field_catalog)';
+//        $handler->display->display_options['filters']['field_catalog_tid']['expose']['operator'] = 'field_catalog_tid_op';
+//        $handler->display->display_options['filters']['field_catalog_tid']['expose']['identifier'] = 'field_catalog_tid';
+//        $handler->display->display_options['filters']['field_catalog_tid']['expose']['multiple'] = TRUE;
+//        $handler->display->display_options['filters']['field_catalog_tid']['expose']['remember_roles'] = array(
+//          2 => '2',
+//          1 => 0,
+//          3 => 0,
+//        );
+//        $handler->display->display_options['filters']['field_catalog_tid']['expose']['reduce'] = TRUE;
+//        $handler->display->display_options['filters']['field_catalog_tid']['reduce_duplicates'] = TRUE;
+//        $handler->display->display_options['filters']['field_catalog_tid']['type'] = 'select';
+//        $handler->display->display_options['filters']['field_catalog_tid']['vocabulary'] = 'catalog';
+//        $handler->display->display_options['filters']['field_catalog_tid']['hierarchy'] = 1;
+      }
       
     }
     else {
