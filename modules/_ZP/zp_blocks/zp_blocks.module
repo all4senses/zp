@@ -42,6 +42,11 @@ function zp_blocks_block_info() {
     'cache' => DRUPAL_NO_CACHE,
   );
   
+  $blocks['zp_cur_dpt_subgroups'] = array(
+    'info' => 'Current department subgroups',
+    'cache' => DRUPAL_NO_CACHE,
+  );
+  
   // Aquire blocks for all prefaces with defined bottoms.
   $query = db_select('node', 'n');
   $query->leftJoin('field_data_field_preface_bottom', 'pb', 'pb.entity_id = n.nid');
@@ -103,6 +108,14 @@ function zp_blocks_block_view($delta = '') {
       $block['content'] = zp_blocks_getSidebarShareStaticBlock();
       break;
     
+    case 'zp_cur_dpt_subgroups':
+      $block['subject'] = 'Подгруппы:';
+      $block['content'] = zp_blocks_getCurrentDeptSubgroups();
+      break;
+    
+    
+  
+    
     default:
       
       // Aquire blocks for all prefaces with defined bottoms.
@@ -148,6 +161,17 @@ function zp_blocks_block_save($delta = '', $edit = array()) {
     
   }
   
+}
+
+
+/**
+ * Current dept subgroups (if any)
+ */
+function zp_blocks_getCurrentDeptSubgroups() {
+  
+  global $zp_global_data;
+  
+  return $zp_global_data;
 }
 
 

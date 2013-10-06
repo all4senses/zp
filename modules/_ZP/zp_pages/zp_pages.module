@@ -402,6 +402,9 @@ function zp_pages_node_view($node, $view_mode) {
       $node->zp_template_data = array('views_title' => $views_title, 'display' => $view->preview($display));
       //echo '<div class="title">' . $views_title . '</div>' . $view->preview($display);
       
+      global $zp_global_data;
+      $zp_global_data = 'xxx';
+      
       break;
     
     
