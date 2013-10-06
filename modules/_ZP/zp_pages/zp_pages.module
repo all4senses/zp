@@ -318,7 +318,7 @@ function zp_pages_node_view($node, $view_mode) {
             );
           }
          
-          $zp_global_data['current_dept_subgroups'] = render($sidebar_filter_by_subgroups);
+          $zp_global_data['current_dept_subgroups'] = 'xxx ' . render($sidebar_filter_by_subgroups);
         }
 
 
