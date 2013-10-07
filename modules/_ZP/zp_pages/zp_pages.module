@@ -274,13 +274,24 @@ function zp_pages_node_view($node, $view_mode) {
         $shop_zp_id = 'z01';//drupal_substr($text, $start, $length);
         
         $node->field_parent_zp_id['und'][0]['value'];
-                
+        
+        
+//        $query = db_select('node', 'n_dept');
+//        $query->condition('n_deptdept.field_zp_id_value', $node->field_parent_zp_id['und'][0]['value']);
+//        $query->leftJoin('field_data_field_zp_id', 'shop', "shop.field_zp_id_value = '$shop_zp_id'");
+//        $query->fields('dept', array('entity_id'));
+//        $query->fields('shop', array('entity_id'));
+//        $parents = $query->execute()->fetchAll();
+        
+        
         $query = db_select('field_data_field_zp_id', 'dept');
         $query->condition('dept.field_zp_id_value', $node->field_parent_zp_id['und'][0]['value']);
+        $query->leftJoin('node', 'n_dept', "n_dept.nid = dept.entity_id AND n_dept.type = 'department'");
+        $query->fields('n_dept', array('nid', 'title'));
         $query->leftJoin('field_data_field_zp_id', 'shop', "shop.field_zp_id_value = '$shop_zp_id'");
-        $query->fields('dept', array('entity_id'));
-        $query->fields('shop', array('entity_id'));
-        $parents = $query->execute()->fetchAll();
+        $query->leftJoin('node', 'n_shop', "n_shop.nid = shop.entity_id AND n_shop.type = 'shop'");
+        $query->fields('n_shop', array('nid', 'title'));
+        $parents = $query->execute()->fetchAll('type');
         
         dpm($parents);
         
