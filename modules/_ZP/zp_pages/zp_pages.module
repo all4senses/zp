@@ -269,7 +269,7 @@ function zp_pages_node_view($node, $view_mode) {
       $breadcrumb = array(
           0 => '<a href="/">Homeeeeeeee</a>',
       );
-      drupal_set_breadcrumb($breadcrumb);
+      //drupal_set_breadcrumb($breadcrumb);
       
       break;
     
