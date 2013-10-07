@@ -268,8 +268,23 @@ function zp_pages_node_view($node, $view_mode) {
     case 'product_a':
       
       if ($view_mode == 'full') {
+        
+        dpm($node);
+        
+        $shop_zp_id = 'z01';//drupal_substr($text, $start, $length);
+        
+        $node->field_parent_zp_id['und'][0]['value'];
+                
+        $query = db_select('field_data_field_zp_id', 'dept')
+              ->fields('dept', 'entity_id');
+        $query->condition('dept.field_zp_id_value', $node->field_parent_zp_id['und'][0]['value']);
+        $query->leftJoin('field_data_field_zp_id', 'shop', 'shop.field_zp_id_value = ' . $shop_zp_id);
+        $parents = $query->execute()->fetchAllAssoc('field_data_field_zp_id');
+        
+        dpm($parents);
+        
         $breadcrumb = array(
-            0 => '<a href="/">Homeeeeeeee</a>',
+            0 => '<a href="/">Home</a>',
         );
         drupal_set_breadcrumb($breadcrumb);
       }
