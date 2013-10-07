@@ -290,8 +290,13 @@ function zp_pages_node_view($node, $view_mode) {
         $query->leftJoin('node', 'n_dept', "n_dept.nid = dept.entity_id");
         $query->fields('n_dept', array('nid', 'title'));
         $query->leftJoin('field_data_field_zp_id', 'shop', "shop.field_zp_id_value = '$shop_zp_id' AND shop.bundle = 'shop'");
-        $query->leftJoin('node', 'n_shop', "n_shop.nid = shop.entity_id");
+        $query->leftJoin('node', 'n_shop', 'n_shop.nid = shop.entity_id');
         $query->fields('n_shop', array('nid', 'title'));
+        $query->leftJoin('taxonomy_term_data', 'term', 'term.tid = ' . $node->field_catalog['und'][0]['tid']);
+        $query->field('term', 'name', 'subgroup_name');
+        
+        
+        
         $parents = $query->execute()->fetchObject();
         
         dpm($parents);
