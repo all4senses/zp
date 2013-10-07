@@ -264,15 +264,21 @@ function zp_pages_node_view($node, $view_mode) {
 
   switch ($node->type) {
     
+    
     case 'product_a':
       
-      $breadcrumb = array(
-          0 => '<a href="/">Homeeeeeeee</a>',
-      );
-      //drupal_set_breadcrumb($breadcrumb);
+      if ($view_mode == 'full') {
+        $breadcrumb = array(
+            0 => '<a href="/">Homeeeeeeee</a>',
+        );
+        drupal_set_breadcrumb($breadcrumb);
+      }
       
       break;
     
+      
+      
+      
     case 'department':
       
       global $zp_global_data;
