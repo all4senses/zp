@@ -291,7 +291,7 @@ function zp_pages_node_view($node, $view_mode) {
         $query->leftJoin('field_data_field_zp_id', 'shop', "shop.field_zp_id_value = '$shop_zp_id'");
         $query->leftJoin('node', 'n_shop', "n_shop.nid = shop.entity_id AND n_shop.type = 'shop'");
         $query->fields('n_shop', array('nid', 'title'));
-        $parents = $query->execute()->fetchAll('type');
+        $parents = $query->execute()->fetchAllAssoc('type');
         
         dpm($parents);
         
