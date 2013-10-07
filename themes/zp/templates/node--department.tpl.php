@@ -120,6 +120,7 @@
 <?php 
 
 if ($page) {
+  dpm(menu_get_active_trail());
   //drupal_get_breadcrumb();
     //$catalog_parents_tids = taxonomy_get_parents_all($node->field_catalog['und'][0]['tid']);
     //dpm($catalog_parents_tids);
