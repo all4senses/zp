@@ -125,6 +125,8 @@ if ($page) {
     //$catalog_parents_tids = taxonomy_get_parents_all($node->field_catalog['und'][0]['tid']);
     //dpm($catalog_parents_tids);
   
-    echo '<div class="title">' . $node->zp_template_data['views_title'] . '</div>' . $node->zp_template_data['display'];
+  if (!empty($node->zp_template_data['view_display'])) {
+    echo '<div class="title">' . $node->zp_template_data['views_title'] . '</div>' . $node->zp_template_data['view_display'];
+  }
 }
 ?>

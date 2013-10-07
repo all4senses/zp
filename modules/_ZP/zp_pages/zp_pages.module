@@ -474,7 +474,7 @@ function zp_pages_node_view($node, $view_mode) {
         $options = array('id' => 'field_catalog_tid', 'value' => $tids, 'type' => 'select', 'vocabulary' => 'catalog', 'hierarchy' => 1, 'reduce_duplicates' => 1, 'group' => 0,);
         $view->add_item($display, 'filter', 'field_data_field_catalog', 'field_catalog_tid', $options);
       }
-      $node->zp_template_data = array('views_title' => $views_title, 'display' => $view->preview($display));
+      $node->zp_template_data = array('views_title' => $views_title, 'view_display' => $view->preview($display));
       //echo '<div class="title">' . $views_title . '</div>' . $view->preview($display);
       
       
