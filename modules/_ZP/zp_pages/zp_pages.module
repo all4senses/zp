@@ -293,7 +293,7 @@ function zp_pages_node_view($node, $view_mode) {
         $query->leftJoin('node', 'n_shop', 'n_shop.nid = shop.entity_id');
         $query->fields('n_shop', array('nid', 'title'));
         $query->leftJoin('taxonomy_term_data', 'term', 'term.tid = ' . $node->field_catalog['und'][0]['tid']);
-        $query->field('term', 'name', 'subgroup_name');
+        $query->addField('term', 'name', 'subgroup_name');
         
         
         
