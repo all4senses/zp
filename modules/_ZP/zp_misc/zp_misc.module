@@ -2124,7 +2124,9 @@ function zp_misc_testPage() {
   );
   zp_misc_addNewZpObject($object);
   */
+  
   // Create a catalog term for subgroup (to connect products to it).
+  /*
   $object = array(
     'type' => 'subgroup',
     'title' => 'подгруппа Бормотуха',
@@ -2134,7 +2136,7 @@ function zp_misc_testPage() {
     'weight' => 1,
   );
   zp_misc_addNewZpObject($object);
-  
+  */
   
   /*
   $product = array(
@@ -2182,6 +2184,7 @@ function zp_misc_testPage() {
   zp_misc_addNewZpObject($product);
   */
   
+  /*
   $product = array(
     'type' => 'product_a',
     'title' => 'Бормотуха 1',
@@ -2192,8 +2195,8 @@ function zp_misc_testPage() {
     'subgroup' => 'подгруппа Бормотуха',
     'weight' => 2,
   );
-  
   zp_misc_addNewZpObject($product);
+  */
   
   return $out . '<br>End of Test';
 }
