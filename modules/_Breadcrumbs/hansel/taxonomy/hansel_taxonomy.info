@@ -1,0 +1,12 @@
+name = Hansel Taxonomy
+description = Taxonomy related switches and actions
+package = Hansel
+core = 7.x
+dependencies[] = hansel
+dependencies[] = taxonomy
+; Information added by drupal.org packaging script on 2013-09-30
+version = "7.x-1.3+37-dev"
+core = "7.x"
+project = "hansel"
+datestamp = "1380581695"
+
