@@ -165,8 +165,11 @@ function zp_misc_js_alter(&$javascript) {
             if ($minOutput = JSMin::minify($source_content)) {
               
               if (strpos($source_fpath_short, 'http') !== FALSE) {
+                dpm($source_remote_js_filename);
                 $source_remote_js_filename = explode('//', $source_fpath_short);
+                dpm($source_remote_js_filename);
                 $source_remote_js_filename = $source_remote_js_filename[1];
+                dpm($source_remote_js_filename);
                 $target_path_short = 'f/jsmin-zp/' . str_replace('/', '-', $source_remote_js_filename);
               }
               else {
