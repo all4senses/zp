@@ -116,8 +116,8 @@ function zp_misc_js_alter(&$javascript) {
     $zp_minified_js = variable_get('zp_minified_js');
     
     
-    dpm($javascript);
-    dpm($zp_minified_js);
+    //dpm($javascript);
+    //dpm($zp_minified_js);
     
     if ($zp_minified_js) {
       foreach($javascript as $filename => $attr){
@@ -140,7 +140,7 @@ function zp_misc_js_alter(&$javascript) {
 
       include_once DRUPAL_ROOT . '/sites/all/libraries/minify/min/lib/JSMin.php';
     
-      dpm($add_to_minified);
+      //dpm($add_to_minified);
       
       foreach($add_to_minified as $filename => $attr){
 
@@ -165,11 +165,8 @@ function zp_misc_js_alter(&$javascript) {
             if ($minOutput = JSMin::minify($source_content)) {
               
               if (strpos($source_fpath_short, 'http') !== FALSE) {
-                dpm($source_remote_js_filename);
                 $source_remote_js_filename = explode('//', $source_fpath_short);
-                dpm($source_remote_js_filename);
                 $source_remote_js_filename = $source_remote_js_filename[1];
-                dpm($source_remote_js_filename);
                 $target_path_short = 'f/jsmin-zp/' . str_replace('/', '-', $source_remote_js_filename);
               }
               else {
@@ -189,7 +186,7 @@ function zp_misc_js_alter(&$javascript) {
 
       } // End of foreach($javascript as $filename => $attr){
       
-      dpm($zp_minified_js);
+      //dpm($zp_minified_js);
       
       variable_set('zp_minified_js', $zp_minified_js);
     } // End of if($add_to_minified) {
