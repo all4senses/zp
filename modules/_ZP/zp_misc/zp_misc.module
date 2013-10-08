@@ -115,6 +115,10 @@ function zp_misc_js_alter(&$javascript) {
     
     $zp_minified_js = variable_get('zp_minified_js');
     
+    
+    dpm($javascript);
+    dpm($zp_minified_js);
+    
     if ($zp_minified_js) {
       foreach($javascript as $filename => $attr){
         
@@ -136,16 +140,36 @@ function zp_misc_js_alter(&$javascript) {
 
       include_once DRUPAL_ROOT . '/sites/all/libraries/minify/min/lib/JSMin.php';
     
+      dpm($add_to_minified);
+      
       foreach($add_to_minified as $filename => $attr){
 
         if(!$from_scratch || (strpos($filename, '.js') && !strpos($attr['data'], 'min.js') && !strpos($attr['data'], 'jsmin-zp'))) {
 
           $source_fpath_short = $attr['data'];
-          $source_fpath = DRUPAL_ROOT . '/' . $source_fpath_short;
+          
 
+          if (strpos($source_fpath_short, 'http') !== FALSE) {
+            $source_fpath = $source_fpath_short;
+          }
+          else {
+            $source_fpath = DRUPAL_ROOT . '/' . $source_fpath_short;
+          }
+          
           if ($source_content = file_get_contents($source_fpath)) {
             if ($minOutput = JSMin::minify($source_content)) {
-              $target_path_short = 'f/jsmin-zp/' . str_replace('/', '-', $source_fpath_short);
+              
+              if (strpos($source_fpath_short, 'http') !== FALSE) {
+                $source_remote_js_filename = explode('/', $source_fpath_short);
+                $source_remote_js_filename = $source_remote_js_filename[count($source_remote_js_filename-1)];
+                $target_path_short = 'f/jsmin-zp/' . str_replace('/', '-', $source_remote_js_filename);
+              }
+              else {
+                $target_path_short = 'f/jsmin-zp/' . str_replace('/', '-', $source_fpath_short);
+              }
+              
+              
+              
               if (file_put_contents(DRUPAL_ROOT . '/' . $target_path_short, $minOutput)) {
                 $zp_minified_js[$filename] = $target_path_short;
                 $javascript[$filename]['data'] = $zp_minified_js[$filename];
@@ -156,6 +180,8 @@ function zp_misc_js_alter(&$javascript) {
         } // End of if(strpos($filename, '.js') && !strpos($attr['data'], "min.js") && !strpos($attr['data'], "jsmin-zp")) {
 
       } // End of foreach($javascript as $filename => $attr){
+      
+      dpm($zp_minified_js);
       
       variable_set('zp_minified_js', $zp_minified_js);
     } // End of if($add_to_minified) {
