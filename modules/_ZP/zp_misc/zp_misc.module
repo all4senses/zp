@@ -151,12 +151,17 @@ function zp_misc_js_alter(&$javascript) {
 
           if (strpos($source_fpath_short, 'http') !== FALSE) {
             $source_fpath = $source_fpath_short;
+            $source_content = zp_misc_curl_file_from_remote_site_likeBrowser($source_fpath, NULL, TRUE);
           }
           else {
             $source_fpath = DRUPAL_ROOT . '/' . $source_fpath_short;
+            $source_content = file_get_contents($source_fpath);
           }
           
-          if ($source_content = file_get_contents($source_fpath)) {
+          
+          
+          
+          if ($source_content) {
             if ($minOutput = JSMin::minify($source_content)) {
               
               if (strpos($source_fpath_short, 'http') !== FALSE) {
@@ -991,7 +996,7 @@ function zp_misc_AddContentSection_form() {
 /**
  * Get a picture from a remote server.
  */
-function zp_misc_curl_file_from_remote_site_likeBrowser($url, $file_local_abs)
+function zp_misc_curl_file_from_remote_site_likeBrowser($url, $file_local_abs = NULL, $return_content = FALSE)
 {
 	
     $curl = curl_init();
@@ -1034,16 +1039,28 @@ function zp_misc_curl_file_from_remote_site_likeBrowser($url, $file_local_abs)
       $data = curl_error($curl);
       // close the connection
       curl_close($curl);
-      return $data;
+      // Error
+      if ($return_content) {
+        return NULL;
+      }
+      else {
+        return $data;
+      }
     }
 
     // close the connection
     curl_close($curl);
 
-    // write content to a file
-    file_put_contents($file_local_abs, $data);
+    
+    if ($return_content) {
+      return $data;
+    }
+    else {
+      // write content to a file
+      file_put_contents($file_local_abs, $data);
 
-    return null; //OK
+      return null; //OK
+    }
 }
 
 
