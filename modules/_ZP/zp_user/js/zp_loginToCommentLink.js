@@ -1,6 +1,6 @@
 (function ($) {
 
-  Drupal.behaviors.dmm_loginToCommentLink = {
+  Drupal.behaviors.zp_loginToCommentLink = {
     attach: function (context, settings) {
        
        $( ".login-to-comment a" ).click(function(event){
@@ -26,7 +26,7 @@
         
         
         
-        $( ".user-header a.dmm-login" ).click(function(event){
+        $( ".user-header a.zp-login" ).click(function(event){
          
          
           $.ajax({
