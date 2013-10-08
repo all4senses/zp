@@ -213,14 +213,14 @@ function zp_misc_flush_caches() {
   // Remove all minified files from jsmin-zp folder.
   // Uncomment in case ov changing any js
   
-//  $dir = 'f/jsmin-zp';
-//  $objects = scandir($dir);
-//  foreach ($objects as $object) {
-//    if ($object != "." && $object != "..") {
-//      unlink($dir . "/" . $object);
-//    }
-//  }
-//  variable_del('zp_minified_js');
+  $dir = 'f/jsmin-zp';
+  $objects = scandir($dir);
+  foreach ($objects as $object) {
+    if ($object != "." && $object != "..") {
+      unlink($dir . "/" . $object);
+    }
+  }
+  variable_del('zp_minified_js');
     
 }
 
