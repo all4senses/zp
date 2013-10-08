@@ -1,0 +1,1087 @@
+<?php
+
+/**
+ * Implementation of hook_menu().
+ */
+function zp_user_menu() {
+  
+  $items = array();
+  
+  $items['hc-notify'] = array(
+    'page callback' => 'zp_user_hcNotifyGet_ajax',
+    'access arguments' => array('access content'),
+    'type' => MENU_CALLBACK,
+  );
+  
+  $items['comments-fragment'] = array(
+    'page callback' => 'zp_user_addFragmentForCommentForm_ajax',
+    'access arguments' => array('access content'),
+    'type' => MENU_CALLBACK,
+  );
+  
+    
+  
+ /* 
+  $items['user/%user/blog'] = array( 
+      'title' => t('User blog'),
+      //'title callback' => '_guestbook_info',
+      //'title arguments' => array(1, 'title'),
+      'page callback' => 'zp_user_getUserContent', //'wdg_user_blog_page',
+      'page arguments' => array(1, 'blog_post', 'blog post', 'blog posts'),
+      //'access callback' => 'guestbook_menu_access_user_guestbook',
+      //'access arguments' => array(1, 'access user guestbooks'),
+      'access arguments' => array('access content'),
+      'type' => MENU_LOCAL_TASK,
+    );
+*/
+
+  $user_pages = array('blog' => 'blog_post', 'articles' => 'article', 'master-classes' => 'master_class', 'albums' => 'album');
+  foreach ($user_pages as $url_part => $content_type) {
+    $items['user/%user/' . $url_part] = array( 
+      'title' => t("User's $url_part"),
+      'title callback' => 'zp_user_getUserTabTitle',
+      'title arguments' => array(1, $url_part),
+      'page callback' => 'zp_user_getUserContent',
+      'page arguments' => array(1, $url_part, $content_type),
+      //'access callback' => 'guestbook_menu_access_user_guestbook',
+      //'access arguments' => array(1, 'access user guestbooks'),
+      'access arguments' => array('access content'),
+      'type' => MENU_LOCAL_TASK,
+    );
+  }
+    
+  return $items;
+  
+}
+
+
+/**
+ * Implements hook drupal_alter for comment_view.
+ */
+function zp_user_comment_view_alter(&$comment) {
+  
+  //dpm($comment);
+  
+/*  
+  global $user;
+  if (!$user->uid) {
+    unset($comment['links']['comment']['#links']['comment_forbidden']);
+  }
+  
+  
+  // Get the current user's social accounts.
+
+  $query = db_select('zp_comment', 'dc');
+  $query->fields('dc', array('data'))  
+        ->condition('dc.cid', $comment['#node']->cid);
+  $comment_user_social_data = $query->execute()->fetchField();
+  
+  if ($comment_user_social_data) {
+    $comment_user_social_data = unserialize($comment_user_social_data);
+    
+    
+    $comment['logged_via'] = array(
+      '#markup' => '<div>' . $comment_user_social_data['provider'] . '</div>',
+      '#weight' => -1,
+    );
+    $comment['picture'] = array(
+      '#markup' => '<div>' . $comment_user_social_data['photo'] . '</div>',
+      '#weight' => -1,
+    );
+    $comment['author'] = array(
+      '#markup' => '<div>' . $comment_user_social_data['nickname'] . '---</div>',
+      '#weight' => -2,
+    );
+  }
+*/           
+}
+
+
+/**
+ * Process variables for comment.tpl.php.
+ *
+ * @see comment.tpl.php
+ */
+function zp_user_preprocess_comment(&$variables) {
+  $comment = $variables['elements']['#comment'];
+  //dpm($comment); 
+  //dpm($variables);
+  $author_uid = $variables['elements']['#comment']->uid;
+  //$node = $variables['elements']['#node'];
+  
+  
+  global $user;
+  if (!$user->uid) {
+    // Hide links "login or register" for each comment, for anonymous
+    unset($variables['elements']['links']['comment']['#links']['comment_forbidden'], $variables['content']['links']['comment']['#links']['comment_forbidden']);
+  }
+  
+  // Get a current comment's social data, if any.
+  $query = db_select('zp_comment', 'dc');
+  $query->fields('dc', array('data'))  
+        ->condition('dc.cid', $comment->cid);
+  $comment_user_social_data = $query->execute()->fetchField();
+  
+  if ($comment_user_social_data) {
+    $comment_user_social_data = unserialize($comment_user_social_data);
+    //dpm($comment_user_social_data);
+    $variables['author'] = '<div><span>' . l($comment_user_social_data['full_name'], $comment_user_social_data['identity'], array('external' => TRUE, 'attributes' => array('target' => '_blank'))) . '</span><span> via ' . $comment_user_social_data['provider'] . '</span><span> (' . l('local profile', 'user/' . $author_uid) . ')</span></div>';
+    if (isset($comment_user_social_data['photo_local_uri'])) {
+      $variables['picture'] = '<div class="comment-avatar">' . theme('image_style', array( 'path' =>  $comment_user_social_data['photo_local_uri'], 'style_name' => 'comment_avatar', 'alt' => $comment_user_social_data['full_name'], 'title' => $comment_user_social_data['full_name'], 'attributes' => array('rel' => 'v:photo'))) . '</div>';
+    }
+    else {
+      // Show the main account picture, if no social picture is presented.
+      if (isset($comment->picture->fid)) {
+        $picture = file_load($comment->picture->fid);
+        if (!empty($picture->uri)) {
+          $variables['picture'] = '<div class="comment-avatar">' . theme('image_style', array( 'path' =>  $picture->uri, 'style_name' => 'comment_avatar'/*, 'alt' => $comment_user_social_data['full_name'], 'title' => $comment_user_social_data['full_name']*/, 'attributes' => array('rel' => 'v:photo'))) . '</div>';
+        }
+      }
+      
+    }
+  }
+  else {
+    // Show the main account picture, if no social data is presented.
+    if (isset($comment->picture->fid)) {
+      $picture = file_load($comment->picture->fid);
+      if (!empty($picture->uri)) {
+        $variables['picture'] = '<div class="comment-avatar">' . theme('image_style', array( 'path' =>  $picture->uri, 'style_name' => 'comment_avatar'/*, 'alt' => $comment_user_social_data['full_name'], 'title' => $comment_user_social_data['full_name']*/, 'attributes' => array('rel' => 'v:photo'))) . '</div>';
+      }
+    }
+  }
+
+  // Original code from comment.module
+/*  
+  $variables['comment']   = $comment;
+  $variables['node']      = $node;
+  $variables['author']    = theme('username', array('account' => $comment));
+  $variables['created']   = format_date($comment->created);
+  $variables['changed']   = format_date($comment->changed);
+
+  $variables['new']       = !empty($comment->new) ? t('new') : '';
+  $variables['picture']   = theme_get_setting('toggle_comment_user_picture') ? theme('user_picture', array('account' => $comment)) : '';
+  $variables['signature'] = $comment->signature;
+
+  $uri = entity_uri('comment', $comment);
+  $uri['options'] += array('attributes' => array('class' => 'permalink', 'rel' => 'bookmark'));
+
+  $variables['title']     = l($comment->subject, $uri['path'], $uri['options']);
+  $variables['permalink'] = l(t('Permalink'), $uri['path'], $uri['options']);
+  $variables['submitted'] = t('Submitted by !username on !datetime', array('!username' => $variables['author'], '!datetime' => $variables['created']));
+
+  // Preprocess fields.
+  field_attach_preprocess('comment', $comment, $variables['elements'], $variables);
+
+  // Helpful $content variable for templates.
+  foreach (element_children($variables['elements']) as $key) {
+    $variables['content'][$key] = $variables['elements'][$key];
+  }
+
+  // Set status to a string representation of comment->status.
+  if (isset($comment->in_preview)) {
+    $variables['status'] = 'comment-preview';
+  }
+  else {
+    $variables['status'] = ($comment->status == COMMENT_NOT_PUBLISHED) ? 'comment-unpublished' : 'comment-published';
+  }
+
+  // Gather comment classes.
+  // 'comment-published' class is not needed, it is either 'comment-preview' or
+  // 'comment-unpublished'.
+  if ($variables['status'] != 'comment-published') {
+    $variables['classes_array'][] = $variables['status'];
+  }
+  if ($variables['new']) {
+    $variables['classes_array'][] = 'comment-new';
+  }
+  if (!$comment->uid) {
+    $variables['classes_array'][] = 'comment-by-anonymous';
+  }
+  else {
+    if ($comment->uid == $variables['node']->uid) {
+      $variables['classes_array'][] = 'comment-by-node-author';
+    }
+    if ($comment->uid == $variables['user']->uid) {
+      $variables['classes_array'][] = 'comment-by-viewer';
+    }
+  }
+*/  
+}
+
+
+/**
+ * Implements hook form_alter.
+ */
+function zp_user_form_alter(&$form, &$form_state, $form_id) {
+  
+  //dpm($form_id); dpm($form);
+  
+  switch($form['#id']) {
+    
+    case 'user-profile-form':
+      
+      $form['field_social_loginza']['#access'] = FALSE;
+      $form['field_social_credentials']['#access'] = FALSE;
+      
+      break;
+    
+    case 'comment-form':
+      
+        //dpm($form);
+        global $user;
+        //dpm($user);
+        
+        if (isset($_SESSION['zp_user_loginza_logged_as'])) {
+            
+            $current_logged_as = $_SESSION['zp_user_loginza_logged_as'];
+
+            //dpm($comment_user_social_data);
+
+            if (isset($current_logged_as['photo_local_uri'])) {
+              $form['picture'] = array(
+                '#markup' => '<div class="comment-avatar">' . theme('image_style', array( 'path' =>  $current_logged_as['photo_local_uri'], 'style_name' => 'comment_avatar', 'alt' => $current_logged_as['name']['full_name'], 'title' => $current_logged_as['name']['full_name'], 'attributes' => array('rel' => 'v:photo'))) . '</div>',
+                '#weight' => -5,
+              );
+            }
+            else {
+              // Show the main account picture, if no social data is presented.
+              if (isset($user->picture) && is_numeric($user->picture)) {
+                $picture = file_load($user->picture);
+                if (!empty($picture->uri)) {
+                  $form['picture'] = array(
+                    '#markup' => '<div class="comment-avatar">' . theme('image_style', array( 'path' =>  $picture->uri, 'style_name' => 'comment_avatar'/*, 'alt' => $comment_user_social_data['full_name'], 'title' => $comment_user_social_data['full_name']*/, 'attributes' => array('rel' => 'v:photo'))) . '</div>',
+                    '#weight' => -5,
+                  );
+                }
+              }
+            }
+            
+            $form['author']['_author'] = array(
+              '#markup' => '<div><span>' . l($current_logged_as['name']['full_name'], $current_logged_as['identity'], array('external' => TRUE, 'attributes' => array('target' => '_blank'))) . '</span><span> via ' . $current_logged_as['provider'] . '</span><span> (' . l('local profile', 'user/' . $user->uid) . ')</span></div>',
+            );
+            $form['author']['#weight'] = -2;
+
+            
+            
+        } // End of if (isset($_SESSION['zp_user_loginza_logged_as'])) {
+        else {
+          // Show the main account picture, if no social data is presented.
+          if (isset($user->picture)) {
+            $picture = file_load($user->picture);
+            if (!empty($picture->uri)) {
+              $form['picture'] = array(
+                '#markup' => '<div class="comment-avatar">' . theme('image_style', array( 'path' =>  $picture->uri, 'style_name' => 'comment_avatar'/*, 'alt' => $comment_user_social_data['full_name'], 'title' => $comment_user_social_data['full_name']*/, 'attributes' => array('rel' => 'v:photo'))) . '</div>',
+                '#weight' => -5,
+              );
+            }
+          }
+        }
+        
+        
+        // Show autoposting options checkboxes.
+        if ($connectedAccounts = zp_social_getUserConnectedAccounts($user->uid)) {
+          
+          module_load_include('inc', 'zp_social', 'inc/zp_social');
+          
+          $socialDefaults = SocialInit::$connect_to;
+          $autopostingCommentsChecked = array();
+          
+          foreach($connectedAccounts as $account_key => $connectedAccount) {
+            if (isset($socialDefaults[$connectedAccount['service']]['autoposting'])) {
+
+              $account_title = ucfirst($connectedAccount['service']) . ' ' . ($connectedAccount['nick']?$connectedAccount['nick']:$connectedAccount['id']);
+
+              $commentOption = !empty($connectedAccount['autoposting']['comment']) ? TRUE : FALSE;
+              $autopostingComments[$account_key] = $account_title;
+              if ($commentOption) {
+                $autopostingCommentsChecked[] = $account_key;
+              }
+
+            }
+          }
+          
+          if (!empty($autopostingComments)) {
+            $form['autopostingOptions'] = array(
+              '#type' => 'checkboxes',
+              '#options' => $autopostingComments,
+              '#default_value' => $autopostingCommentsChecked,
+              '#title' => t('Comments autoposting to:'),
+              '#weight' => 10,
+            );
+            $form['connectAccountsLink'] = array(
+              '#markup' => '<div class="link">' . l('Connect your other social accounts for comments autoposting', 'user/' . $user->uid . '/social', array('attributes' => array('target' => '_blank'))) . '</div>',
+              '#weight' => 11,
+            );
+            $form['user_uid'] = array(
+              '#type' => 'hidden',
+              '#value' => $user->uid,
+            );
+            $form['node_title'] = array(
+              '#type' => 'hidden',
+              '#value' => $form['#node']->title . ' | Дом Моей Мечты',
+            );
+          }
+          else {
+            $form['connectAccountsLink'] = array(
+              '#markup' => '<div class="link">' . l('Connect your other social accounts for comments autoposting', 'user/' . $user->uid . '/social', array('attributes' => array('target' => '_blank'))) . '</div>',
+              '#weight' => 11,
+            );
+          }
+        }
+        else {
+          $form['connectAccountsLink'] = array(
+            '#markup' => '<div class="link">' . l('Connect your social accounts for comments autoposting', 'user/' . $user->uid . '/social', array('attributes' => array('target' => '_blank'))) . '</div>',
+            '#weight' => 11,
+          );
+        }
+        
+        $form['#submit'][] = 'zp_user_submitForm_comment';
+        $form['#validate'][] = 'zp_user_validateForm_comment';
+        
+        $form['actions']['submit']['#value'] = t('Comment it!');
+
+        //dpm($form);
+        
+        break;
+  }
+  
+
+}
+
+
+/**
+ * Custom validate of article type form.
+ *
+ * @param array &$form
+ *   Array with declared form.
+ *
+ * @param array &$form_state
+ *   Array with current form state.
+
+ * @return void
+ *   Return nothing.
+ */
+function zp_user_validateForm_comment(&$form, &$form_state) {
+  //dpm($form_state['values']);
+  
+//  if (isset($_SESSION['zp_user_loginza_logged_as'])) {
+//    //dpm($_SESSION['zp_user_loginza_logged_as']);
+//  }
+}
+
+
+/**
+ * Custom validate of article type form.
+ *
+ * @param array &$form
+ *   Array with declared form.
+ *
+ * @param array &$form_state
+ *   Array with current form state.
+
+ * @return void
+ *   Return nothing.
+ */
+function zp_user_submitForm_comment(&$form, &$form_state) {
+
+  //dpm($form_state);
+  //dpm($form_state['values']);
+  
+  
+  
+  if (isset($_SESSION['zp_user_loginza_logged_as'])) {
+    //dpm($_SESSION['zp_user_loginza_logged_as']);
+    $zp_logged_as = $_SESSION['zp_user_loginza_logged_as'];
+    $comment_remote_acc_data = array(
+      'provider' => $zp_logged_as['provider'],
+      'identity' => $zp_logged_as['identity'],
+      'uid' => $zp_logged_as['uid'],
+      'nickname' => empty($zp_logged_as['nickname']) ? $zp_logged_as['name']['full_name'] : $zp_logged_as['nickname'],
+      'full_name' => $zp_logged_as['name']['full_name'],
+      'photo_local_uri' => $zp_logged_as['photo_local_uri'],
+    );
+    
+    $result = db_insert('zp_comment')
+      ->fields(array(
+        'cid' => $form_state['values']['cid'],
+        'data' => serialize($comment_remote_acc_data),
+      ))
+      ->execute();
+  }
+  
+  // Autoposting.
+  if (isset($form_state['values']['autopostingOptions'])) {
+      
+      global $user;
+      
+      $connectedAccounts = zp_social_getUserConnectedAccounts($user->uid);
+
+      $autopostIsChanged = FALSE;
+      foreach ($connectedAccounts as $account_key => $connectedAccount) {
+        if (!isset($form_state['values']['autopostingOptions'][$account_key])) {
+          continue;
+        }
+
+        $oldValue = (isset($connectedAccount['autoposting']['comment']) && $connectedAccount['autoposting']['comment']) ? 1 : 0;
+        $newValue = $form_state['values']['autopostingOptions'][$account_key] ? 1 : 0;
+        if ($newValue != $oldValue) {
+          $connectedAccounts[$account_key]['autoposting']['comment'] = $newValue;
+          $autopostIsChanged = TRUE;
+        }
+        
+        if ($newValue) {
+          $accountsToAutoposting[$account_key] = $connectedAccount;
+        }
+
+      }
+
+      if ($autopostIsChanged) {
+        zp_misc_fieldSave('social_credentials', $user->uid, serialize($connectedAccounts), 'user');
+        drupal_set_message('Autoposting settings are changed!', 'warning');
+      }
+      
+      if (!empty($accountsToAutoposting)) {
+        zp_social_postToSocials($form_state['values']['comment_body']['und'][0]['value'], $form_state['values']['cid'], $form_state['values']['nid'], $form_state['values']['node_title'], $user->uid, $connectedAccounts, $accountsToAutoposting);
+      }
+
+  }
+  
+}
+
+
+/**
+ * Implements hook_user_delete().
+ */
+function zp_user_user_delete($account) {
+//  db_delete('zp_users_social')
+//    ->condition('uid', $account->uid)
+//    ->execute();
+}
+
+
+/**
+ * Implements hook_comment_delete().
+ */
+function zp_user_comment_delete($comment) {
+  db_delete('zp_comment')
+    ->condition('cid', $comment->cid)
+    ->execute();
+}
+
+/**
+ * Themed user block for the header.
+ */
+function zp_user_userBlock() {
+  
+  global $user;
+  
+  if (!$user->uid) {
+    
+    zp_user_initLogin();
+    // V1, no need to launch drupal_add_library('system', 'drupal.ajax');
+    //$out = ctools_modal_text_button(t('Login'), 'ajax_register/login/nojs', t('Login'), 'ctools-modal-ctools-ajax-register-style');
+    // V2, need to launch drupal_add_library('system', 'drupal.ajax') in zp_user_initLogin(), but possible to set more params in l()...
+    $out = l(t('Login'), 'ajax_register/login/nojs', array('html' => TRUE, 'attributes' => array('rel' => 'nofollow', 'class' => array('dmm-login', 'ctools-use-modal', 'ctools-modal-ctools-ajax-register-style'), 'title' => t('Login'))));
+  }
+  else {
+    $out = '<span class="user-profile">Hello, ' . theme('username', array('account' => $user, 'link_path' => 'user/' . $user->uid))  . '</span><span class="user-logout">' . l('Logout', 'user/logout', array('query' => array('destination' => ltrim(str_replace('#comment-form', '', $_SERVER['REQUEST_URI']), '/')))) . '</span>';
+  }
+  
+  return $out;
+}
+
+
+/**
+ * Themed log in to comment block.
+ */
+function zp_user_loginToComment() {
+  
+  // modal_forms doesn't work both for loginza and a usual login PLUS doesn't understand GET params in the url
+  //echo '<div class="login-to-comment"><a class="ctools-use-modal ctools-modal-modal-popup-medium" href="/modal_forms/nojs/login?destination=' . urlencode(ltrim(str_replace('#comment-form', '', $_SERVER['REQUEST_URI']), '/') . '#comment-form') . '">Modal Login</a></div>';
+  
+  // Use with ajax_login module.
+  zp_user_initLogin();
+  
+  // V1, no need to launch drupal_add_library('system', 'drupal.ajax');
+  //$out = '<div class="login-to-comment">' . ctools_modal_text_button(t('Login to comment'), 'ajax_register/login/nojs', t('Login to comment'), 'ctools-modal-ctools-ajax-register-style')  . '</div>';
+  // V2, need to launch drupal_add_library('system', 'drupal.ajax') in zp_user_initLogin(), but possible to set more params in l()...
+  $out = '<div class="login-to-comment">' . l(t('Login to comment'), 'ajax_register/login/nojs', array('html' => TRUE, 'attributes' => array('rel' => 'nofollow', 'class' => array('ctools-use-modal', 'ctools-modal-ctools-ajax-register-style'), 'title' => t('Login to comment'))))  . '</div>';
+  
+  return $out;
+}
+
+
+/**
+ * Add fragment #comment-form to destination if used loginza, popup and was clicked login-to-comment link.
+ */
+function zp_user_addFragmentForCommentForm_ajax() {
+  
+  $from = check_plain($_POST['from']);
+  
+  switch ($from) {
+    
+    case 'login-to-comment':
+        $_SESSION['zp_user_loginza_login_destination']['fragment'] = 'comment-form';
+    case 'login':
+        // Prevent a module login_destination from redefining the destination based on the $GLOBALS['destination'] param.
+        unset($GLOBALS['destination']);
+        // Tell a hook function zp_user_drupal_goto_alter to set the right destination params for logging in via loginza.
+        $_SESSION['zp_user_loginza_login'] = TRUE;
+        break;
+  }
+  
+  drupal_json_output(array('status' => TRUE));
+}
+
+
+/**
+ * Prepare login data for poopup and loginza.
+ */
+function zp_user_initLogin() {
+  
+  global $zp_login_initiated;
+  
+  if (!$zp_login_initiated) {
+    
+    $zp_login_initiated = TRUE;
+    
+    // ajax_login module functionality for popup ajax login.
+    _ajax_register_include_modal();
+    
+    
+    // V1, no need to launch drupal_add_library('system', 'drupal.ajax');
+    //$out = ctools_modal_text_button(t('Login'), 'ajax_register/login/nojs', t('Login'), 'ctools-modal-ctools-ajax-register-style');
+    // V2, need to launch drupal_add_library('system', 'drupal.ajax') in zp_user_initLogin(), but possible to set more params in l()...
+    //$out = l(t('Login'), 'ajax_register/login/nojs', array('html' => TRUE, 'attributes' => array('class' => array('ctools-use-modal', 'ctools-modal-ctools-ajax-register-style'), 'title' => t('Login'))));
+    
+    // So, comment if plan to use without ctools_modal_text_button()
+    drupal_add_library('system', 'drupal.ajax');
+    
+    // Prepare the destination param for log in via loginza. 
+    $query = $_GET;
+    unset($query['q']);
+    $_SESSION['zp_user_loginza_login_destination'] = array(
+      'destination' => ltrim(url($_GET['q']), '/'),
+      'query' => $query,
+      //'fragment' => 'comment-form',
+    );
+    
+    $path_to_custom_js = drupal_get_path('module', 'zp_user') . '/js/';
+    drupal_add_js($path_to_custom_js . 'zp_loginToCommentLink.js');
+    
+  }
+}
+
+
+/**
+ * Action upon login via loginza, refine data.
+ */
+function zp_user_loginza_data_refine(&$data, $account, $registration = FALSE) {
+  
+  // Get a provider zp_pid (existing before or just set).
+  $query = db_select('zp_social_providers', 'sp');
+  $query->fields('sp', array('zp_pid'))  
+        ->condition('sp.loginza_pid', $data['provider']);
+  
+  if(!$zp_provider_id = $query->execute()->fetchField()) {
+    // Add a new provider to a list of providers (if does not exist).
+    db_merge('zp_social_providers')
+        ->key(array('loginza_pid' => $data['provider']))
+        //->fields(array('data' => NULL))
+        ->execute();
+
+    // Get a provider zp_pid (existing before or just set).
+    $query = db_select('zp_social_providers', 'sp');
+    $query->fields('sp', array('zp_pid'))  
+          ->condition('sp.loginza_pid', $data['provider']);
+    $zp_provider_id = $query->execute()->fetchField();
+  }
+  
+  
+  
+  // Get the current user's accounts.
+  if (isset($account->field_social_loginza['und'][0]['value']) && $account->field_social_loginza['und'][0]['value']) {
+    $user_social_data = unserialize($account->field_social_loginza['und'][0]['value']);
+//    dpm('saved social 1');
+//    dpm($user_social_data);
+//    dpm('saved social 2');
+  }
+  
+  
+  
+  // Add a new (or replace existing) account data by a provider name (loginza_pid).
+  // Before adding we append an inner zp_pid provider id to a source loginza array.
+  $data['zp_pid'] = $zp_provider_id;
+  
+  // Get user's avatar, if it's not pulled yet.
+  //if (empty($user_social_data['accounts'][$data['provider']]['photo_local'])) {
+  if (empty($user_social_data[$data['provider']]['photo_local_url'])) {
+    zp_user_loginza_getUserAvatar($data, $account, $registration);
+  }
+  else {
+    $data['photo_local_url'] = $user_social_data[$data['provider']]['photo_local_url'];
+    $data['photo_local_uri'] = $user_social_data[$data['provider']]['photo_local_uri'];
+  }
+  
+  if (!isset($data['name']['full_name'])) {
+    $data['name']['full_name'] = zp_user_loginza_fullname($data);
+  }
+  
+  // Set a full_name if it's not set.
+  
+  $user_social_data[$data['provider']] = $data;
+  
+  // Put updated user social accounts data arrat back to the db.
+  zp_misc_fieldSave('social_loginza', $account->uid, serialize($user_social_data), 'user');
+  
+  $_SESSION['zp_user_loginza_logged_as'] = $data;
+  
+  //dpm('in zp_user_loginza_data');
+  //dpm($data);
+  //dpm($account);
+}
+
+
+/**
+ * Action upon login via loginza.
+ */
+function zp_user_loginza_data($data, $account) {
+  // Prevent a module login_destination from redefining the destination based on the $GLOBALS['destination'] param.
+  unset($GLOBALS['destination']);
+  // Tell a hook function zp_user_drupal_goto_alter to set the right destination params for logging in via loginza.
+  $_SESSION['zp_user_loginza_login'] = TRUE;
+  
+  // It could be initialized in hook_user_register_alter().
+  if(!isset($_SESSION['zp_user_loginza_logged_as'])) {
+    zp_user_loginza_data_refine($data, $account);
+  }
+  
+}
+
+
+/**
+ * Implements hook_drupal_goto_alter
+ */
+function zp_user_drupal_goto_alter(&$path, &$options, &$http_response_code) {
+  // Makes sure a user will be redirected to the source page after login via loginza, initiated in a popup window by ajax_login module.
+  // A destination (source) page should define a destination params in $_SESSION['zp_user_loginza_login_destination'],
+  // and the param $_SESSION['zp_user_loginza_login'] should be set in hook_loginza_data, informing us that we are in the process of logtinza login.
+  if (isset($_SESSION['zp_user_loginza_login'])) {
+    unset($_SESSION['zp_user_loginza_login']);
+    if (is_array($_SESSION['zp_user_loginza_login_destination'])) {
+      $path = $_SESSION['zp_user_loginza_login_destination']['destination'];
+      $options['query'] = $_SESSION['zp_user_loginza_login_destination']['query'];
+      $options['fragment'] = @$_SESSION['zp_user_loginza_login_destination']['fragment'];
+    }
+    else {
+      $path = $_SESSION['zp_user_loginza_login_destination'];
+      $options = NULL;
+    }
+  }
+  
+}
+
+
+/**
+ * Returns user's content.
+ */
+function zp_user_hcNotifyGet_ajax() {
+   $status = TRUE;
+  //$output = 'gv_misc_testPage_requestTest()----';
+  
+  $post = array();
+  foreach ($_POST as $key => $value) {
+    $post[$key] = check_plain(strip_tags($value));
+  }
+  
+  global $language;
+  $params['hcNotify_data'] = $post;
+
+  drupal_mail('zp_user', 'hcNotify_data', 'all4senses@gmail.com', $language->language, $params);
+
+  drupal_json_output(array('status' => $status, /*'data' => $output, 'post' => $_POST, 'token' => $post['token'], 'test_token' => $test_token, 'valid_token' => $valid_token, 'letter' => $letter*/));
+}
+
+
+/**
+ * Implements hook_mail().
+ */
+function zp_user_mail($key, &$message, $params) {
+  switch ($key) {
+    case 'hcNotify_data':
+
+        foreach ($params['hcNotify_data'] as $k => $value) {
+          if ($k == 'data') {
+            $notify[$k] = json_decode(urldecode(str_replace('%26quot%3B', '%22', urlencode($value))));
+          }
+          else {
+            $notify[$k] = $value;
+          }
+        }
+ 
+      $message['subject'] = t('HC comments notify');
+      $message['body'][] = serialize($notify); //$string;
+      break;
+  }
+  
+}  
+
+
+/**
+ * Returns user's content.
+ */
+function zp_user_getUserTabTitle($account, $content_title){
+  return t("@name's " . $content_title, array('@name' => format_username($account)));
+}
+
+
+/**
+ * Returns user's content.
+ */
+function zp_user_getUserContent($account, $content_title, $content_type){
+  
+  $preface = NULL;
+  $user_content = NULL;
+  
+  
+  // Get specific user page preface by a preface key.
+  
+  // An other method, does the same as below.
+  /*
+  $wrapper = entity_metadata_wrapper('user', $account);
+  foreach ($wrapper->field_user_prefaces as $field_collection){
+    //$prefaces[] = array('field_collection' => $field_collection->view(), 'field_collection_rendered' => render($field_collection), 'key' => $field_collection->field_key_list->value());
+    if ($i->field_key_list->value() == $content_type) {
+      $preface = render($field_collection->view());
+      break;
+    }
+  }
+  */
+  
+  
+  if($field_prefaces_ids = field_get_items('user', $account, 'field_user_prefaces')) {
+  
+    foreach ($field_prefaces_ids as $field_prefaces_id) {
+      $field_collection = field_collection_field_get_entity($field_prefaces_id);
+      // Almost the same.
+      //$field_collection = field_collection_item_load($field_prefaces_id['value']);
+      //$prefaces[] = $field_collection->view();
+      if ($field_collection->field_key_list['und'][0]['value'] == $content_type) {
+        $preface = render($field_collection->view());
+        break;
+      }
+    }
+  } // End of if($field_prefaces_ids = field_get_items('user', $account, 'field_user_prefaces')) {
+  
+  $user_content = zp_pages_getContentFeedWithControls($content_type, $account->uid);
+  drupal_set_title($title = t("@name's " . $content_title, array('@name' => format_username($account))), PASS_THROUGH);
+  
+  // If a preface is defined, don't show the title (using preface's one).
+  return ($preface ? $preface : '<h1>' . $title . '</h1>') . $user_content;
+}
+
+
+
+
+/**
+ * Implements hook_user_load().
+ */
+function zp_user_user_load($users) {
+  
+  //$users['67']->picture = NULL;
+  //dpm($users);
+}
+
+
+/**
+ * Implements hook_user_view().
+ */
+function zp_user_user_view($account, $view_mode, $langcode) {
+  //dpm($account);
+/*    
+//  $zp_user_mode = variable_get('zp_user_mode', zp_user_SITE_zp_user | zp_user_USER_zp_userS);
+//  if ($zp_user_mode & zp_user_USER_zp_userS) {
+//    if (user_access('access user zp_users') && empty($account->data['zp_user_status'])) {
+//      $title = t("Read @username's zp_user.", array('@username' => $account->name));
+//      $link  = l(t('View recent zp_user entries'), "user/$account->uid/zp_user", array('attributes' => array('title' => $title)));
+   
+
+    
+    
+// Append guestbook on user profile page    
+    
+    
+// TODO: makeown guestbook for each user (on demand?) on user create or by link
+$gbook = node_load(4);
+$gbook_comments = comment_node_page_additions($gbook); 
+////dpm($gbook_comments); //dpm($gbook);
+
+$gbook = node_view($gbook);
+unset($gbook['links']['comment']); // remove link "add new comment as we have a form below"
+      $account->content['zp_guestbook'] = array(
+        '#type' => 'user_profile_item',
+        '#title' => t('The Wall'),
+        '#markup' => render($gbook) . render($gbook_comments['comment_form']) . render($gbook_comments['comments']),
+        //'#attributes' => array('class' => 'zp_user'),
+        '#weight' => 10,
+      );
+*/
+}
+
+
+
+
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function zp_user_form_user_register_form_alter(&$form, &$form_state) {
+    
+  // Set up the right nickname (username) for user registered via loginza
+  // !!!!!!!!!!!!!!!!!!!!!  MUST have weight bigger then loginza in a system table
+  
+  //dpm('reg form start');
+  //dpm($form);
+  //dpm('reg form finish');
+  
+  if (isset($_SESSION['loginza']['data'])) {
+    $data = $_SESSION['loginza']['data'];
+    
+    // It's necessary in hook_user_insert() because $_SESSION['loginza']['data'] will be cleared by loginza before that time.
+    $_SESSION['zp_user_loginza_initial_data'] = $_SESSION['loginza']['data'];
+   
+    
+    $form['account']['name']['#default_value'] = zp_user_loginza_username($data); //strtolower(str_replace(' ', '.', $data['name']['full_name'])); //_loginza_username($data);
+    $form['field_first_name']['und'][0]['value']['#default_value'] = @$data['name']['first_name'];
+    $form['field_last_name']['und'][0]['value']['#default_value'] = @$data['name']['last_name'];
+    
+    // Set a full name.
+    if (!empty($data['name']['full_name'])) {
+      $full_name = $data['name']['full_name'];
+    }
+    else {
+      $name_parts = array();
+      if (!empty($data['name']['first_name'])) {
+        $name_parts[] = $data['name']['first_name'];
+      }
+      if (!empty($data['name']['last_name'])) {
+        $name_parts[] = $data['name']['last_name'];
+      }
+      $full_name = trim(implode(' ', $name_parts));
+    }
+    $form['field_full_name']['und'][0]['value']['#default_value'] = $full_name;
+ }
+
+}
+
+
+
+/**
+ * Implements hook_user_presave().
+ */
+function zp_user_user_presave(&$edit, $account, $category) {
+  /*
+  foreach (array('zp_user_status', 'zp_user_send_email', 'zp_user_intro') as $key) {
+    if (isset($edit[$key])) {
+      $edit['data'][$key] = $edit[$key];
+    }
+  }
+  */
+  
+  // Set a full_name if it's empty.
+  if(!isset($edit['field_full_name']['und'][0]['value']) || !$edit['field_full_name']['und'][0]['value']) {
+    if( (isset($edit['field_first_name']['und'][0]['value']) && $edit['field_first_name']['und'][0]['value']) || (isset($edit['field_last_name']['und'][0]['value']) && $edit['field_last_name']['und'][0]['value'])) {
+      $edit['field_full_name']['und'][0]['value'] = trim(@$edit['field_first_name']['und'][0]['value'] . ' ' . @$edit['field_last_name']['und'][0]['value']);
+    }
+  }
+  
+}
+
+
+
+/**
+ * Get user's remote social avatar.
+ * $registration = TRUE means it's a registration and we have to set a remote picture as a main user picture.
+ */
+function zp_user_loginza_getUserAvatar(&$loginza_data, &$account, $registration = FALSE) {
+  
+  if (!isset($loginza_data['photo'])) {
+    return FALSE;
+  }
+  
+  $success = FALSE;
+  
+  $file_default_scheme = file_default_scheme();
+  $user_picture_path = variable_get('user_picture_path', 'avatars');
+  $picture_directory_uri =  $file_default_scheme . '://' . $user_picture_path;
+  
+  if($picture_result = drupal_http_request($loginza_data['photo'])) {
+    if(isset($picture_result->headers['content-type']) && strpos($picture_result->headers['content-type'], 'mage/') && !$picture_ext = str_replace('image/', '', $picture_result->headers['content-type'])) {
+      $picture_ext = 'jpeg';
+    }
+    $picture_filepath = '/s/u' . $account->uid . '-s' . $loginza_data['zp_pid'] . '.' . $picture_ext;
+    // Build local file path url to return to save it in user's loginza data.
+    $picture_path_url = variable_get('file_' . $file_default_scheme . '_path', '/f') . '/' . $user_picture_path . $picture_filepath;
+  }
+  else {
+    return FALSE;
+  }
+  
+  $picture_path_uri = file_stream_wrapper_uri_normalize($picture_directory_uri . $picture_filepath);
+          
+  if($registration && file_prepare_directory($picture_directory_uri, FILE_CREATE_DIRECTORY)){
+    
+      //$picture_path = file_stream_wrapper_uri_normalize($picture_directory . '/picture-' . $account->uid . '-' . REQUEST_TIME . '.jpg');
+      
+      $picture_file = file_save_data($picture_result->data, $picture_path_uri, FILE_EXISTS_REPLACE);
+
+      // Check to make sure the picture isn't too large for the site settings.
+      $max_dimensions = variable_get('user_picture_dimensions', '85x85');
+      file_validate_image_resolution($picture_file, $max_dimensions);
+
+      // Update the user record.
+      $picture_file->uid = $account->uid;
+      $picture_file = file_save($picture_file);
+      file_usage_add($picture_file, 'user', 'user', $account->uid);
+  
+      db_update('users')
+        ->fields(array(
+        'picture' => $picture_file->fid,
+        ))
+        ->condition('uid', $account->uid)
+        ->execute();
+
+      //$account['picture'] = $picture_file->fid;
+      
+      $success = TRUE;
+      
+  } // End of if($picture_result = drupal_http_request($loginza_data['photo']) && file_prepare_directory($picture_directory_uri, FILE_CREATE_DIRECTORY)){
+  elseif(!$registration) {
+    $file_local_abs = DRUPAL_ROOT . '/' . $picture_path_url;
+    if (!zp_misc_curl_file_from_remote_site_likeBrowser($loginza_data['photo'], $file_local_abs)) {
+      $success = TRUE;
+    }
+  }
+
+  if ($success) {
+    $loginza_data['photo_local_url'] = $picture_path_url;
+    $loginza_data['photo_local_uri'] = $picture_path_uri;
+  }
+}
+
+
+/**
+ * Implements hook_user_insert().
+ */
+function zp_user_user_insert(&$edit, $account) {
+  
+  
+  // Retrieve the user's picture from remote social network.
+
+  // $_SESSION['zp_user_loginza_initial_data'] is set in user_register_folr_alter because before that time the source var from Loginza are cleared by :oginza.
+  if (isset($_SESSION['zp_user_loginza_initial_data'])) {
+    
+    $loginza_data = $_SESSION['zp_user_loginza_initial_data'];
+   
+    zp_user_loginza_data_refine($loginza_data, $account, TRUE); // $registration = TRUE means it's a registration and we have to set remote picture as a main user picture
+    
+    
+  } // End of if (isset($_SESSION['zp_user_loginza_logged_as'])) {
+
+}
+
+
+/**
+ * Get a full_name from loginza data. Corrected version of zp_user_loginza_username($data)
+ */
+function zp_user_loginza_fullname($data) {
+  $name = '';
+  if (isset($data['name'])) {
+    if (!empty($data['name']['full_name'])) {
+      $name = $data['name']['full_name'];
+    }
+    else {
+      $name_parts = array();
+      if (!empty($data['name']['first_name'])) {
+        $name_parts[] = $data['name']['first_name'];
+      }
+      if (!empty($data['name']['last_name'])) {
+        $name_parts[] = $data['name']['last_name'];
+      }
+      $name = trim(implode(' ', $name_parts));
+    }
+  }
+
+  if (empty($name)) {
+    $name = empty($data['nickname']) ? variable_get('loginza_default_name', 'user@dmm') : $data['nickname'];
+  }
+
+  return $name;
+}
+
+
+/**
+ * Corrected replace for _loginza_username($data).
+ */
+function zp_user_loginza_username($data) {
+  $name = '';
+  if (isset($data['name'])) {
+    if (!empty($data['name']['full_name'])) {
+      $name = $data['name']['full_name'];
+    }
+    else {
+      $name_parts = array();
+      if (!empty($data['name']['first_name'])) {
+        $name_parts[] = $data['name']['first_name'];
+      }
+      if (!empty($data['name']['last_name'])) {
+        $name_parts[] = $data['name']['last_name'];
+      }
+      $name = trim(implode(' ', $name_parts));
+    }
+  }
+
+  if (empty($name)) {
+    $name = empty($data['nickname']) ? variable_get('loginza_default_name', 'user@dmm') : $data['nickname'];
+  }
+
+  // check duplicate user name
+  $base_name = $name;
+  $count = NULL;
+  while (TRUE) {
+    $uid = db_query("SELECT uid FROM {users} WHERE name = :name", array(':name' => $name))->fetchField();
+    if (empty($uid)) break;
+    $name = $base_name . ' ' . ++$count;
+  }
+
+  return $name;
+}
+
+
+/**
+ * Implementation of hook_permission().
+ */
+/*
+function zp_user_permission() {
+  return array(
+    'moderate all zp_users' => array(
+      'title' => t('Moderate all zp_users'),
+    ),
+    'moderate own zp_user' => array(
+      'title' => t('Moderate own zp_user'),
+    ),
+    'access site zp_user' => array(
+      'title' => t('View site zp_user'),
+    ),
+    'access user zp_users' => array(
+      'title' => t('View user zp_users'),
+    ),
+    'post in site zp_user' => array(
+      'title' => t('Post in site zp_user'),
+    ),
+    'post in user zp_users' => array(
+      'title' => t('Post in user zp_users'),
+    ),
+  );
+}
+*/
