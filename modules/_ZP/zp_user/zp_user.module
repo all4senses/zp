@@ -7,93 +7,14 @@ function zp_user_menu() {
   
   $items = array();
   
-  $items['hc-notify'] = array(
-    'page callback' => 'zp_user_hcNotifyGet_ajax',
-    'access arguments' => array('access content'),
-    'type' => MENU_CALLBACK,
-  );
-  
   $items['comments-fragment'] = array(
     'page callback' => 'zp_user_addFragmentForCommentForm_ajax',
     'access arguments' => array('access content'),
     'type' => MENU_CALLBACK,
   );
   
-    
-  
- /* 
-  $items['user/%user/blog'] = array( 
-      'title' => t('User blog'),
-      //'title callback' => '_guestbook_info',
-      //'title arguments' => array(1, 'title'),
-      'page callback' => 'zp_user_getUserContent', //'wdg_user_blog_page',
-      'page arguments' => array(1, 'blog_post', 'blog post', 'blog posts'),
-      //'access callback' => 'guestbook_menu_access_user_guestbook',
-      //'access arguments' => array(1, 'access user guestbooks'),
-      'access arguments' => array('access content'),
-      'type' => MENU_LOCAL_TASK,
-    );
-*/
-
-  $user_pages = array('blog' => 'blog_post', 'articles' => 'article', 'master-classes' => 'master_class', 'albums' => 'album');
-  foreach ($user_pages as $url_part => $content_type) {
-    $items['user/%user/' . $url_part] = array( 
-      'title' => t("User's $url_part"),
-      'title callback' => 'zp_user_getUserTabTitle',
-      'title arguments' => array(1, $url_part),
-      'page callback' => 'zp_user_getUserContent',
-      'page arguments' => array(1, $url_part, $content_type),
-      //'access callback' => 'guestbook_menu_access_user_guestbook',
-      //'access arguments' => array(1, 'access user guestbooks'),
-      'access arguments' => array('access content'),
-      'type' => MENU_LOCAL_TASK,
-    );
-  }
-    
+     
   return $items;
-  
-}
-
-
-/**
- * Implements hook drupal_alter for comment_view.
- */
-function zp_user_comment_view_alter(&$comment) {
-  
-  //dpm($comment);
-  
-/*  
-  global $user;
-  if (!$user->uid) {
-    unset($comment['links']['comment']['#links']['comment_forbidden']);
-  }
-  
-  
-  // Get the current user's social accounts.
-
-  $query = db_select('zp_comment', 'dc');
-  $query->fields('dc', array('data'))  
-        ->condition('dc.cid', $comment['#node']->cid);
-  $comment_user_social_data = $query->execute()->fetchField();
-  
-  if ($comment_user_social_data) {
-    $comment_user_social_data = unserialize($comment_user_social_data);
-    
-    
-    $comment['logged_via'] = array(
-      '#markup' => '<div>' . $comment_user_social_data['provider'] . '</div>',
-      '#weight' => -1,
-    );
-    $comment['picture'] = array(
-      '#markup' => '<div>' . $comment_user_social_data['photo'] . '</div>',
-      '#weight' => -1,
-    );
-    $comment['author'] = array(
-      '#markup' => '<div>' . $comment_user_social_data['nickname'] . '---</div>',
-      '#weight' => -2,
-    );
-  }
-*/           
 }
 
 
@@ -117,7 +38,7 @@ function zp_user_preprocess_comment(&$variables) {
   }
   
   // Get a current comment's social data, if any.
-  $query = db_select('zp_comment', 'dc');
+  $query = db_select('zp_social_comment', 'dc');
   $query->fields('dc', array('data'))  
         ->condition('dc.cid', $comment->cid);
   $comment_user_social_data = $query->execute()->fetchField();
@@ -279,6 +200,7 @@ function zp_user_form_alter(&$form, &$form_state, $form_id) {
         
         
         // Show autoposting options checkboxes.
+        /*
         if ($connectedAccounts = zp_social_getUserConnectedAccounts($user->uid)) {
           
           module_load_include('inc', 'zp_social', 'inc/zp_social');
@@ -334,13 +256,14 @@ function zp_user_form_alter(&$form, &$form_state, $form_id) {
             '#weight' => 11,
           );
         }
+        */
         
         $form['#submit'][] = 'zp_user_submitForm_comment';
         $form['#validate'][] = 'zp_user_validateForm_comment';
         
         $form['actions']['submit']['#value'] = t('Comment it!');
 
-        //dpm($form);
+
         
         break;
   }
@@ -401,7 +324,7 @@ function zp_user_submitForm_comment(&$form, &$form_state) {
       'photo_local_uri' => $zp_logged_as['photo_local_uri'],
     );
     
-    $result = db_insert('zp_comment')
+    $result = db_insert('zp_social_comment')
       ->fields(array(
         'cid' => $form_state['values']['cid'],
         'data' => serialize($comment_remote_acc_data),
@@ -410,6 +333,7 @@ function zp_user_submitForm_comment(&$form, &$form_state) {
   }
   
   // Autoposting.
+  /*
   if (isset($form_state['values']['autopostingOptions'])) {
       
       global $user;
@@ -445,7 +369,7 @@ function zp_user_submitForm_comment(&$form, &$form_state) {
       }
 
   }
-  
+  */
 }
 
 
@@ -463,7 +387,7 @@ function zp_user_user_delete($account) {
  * Implements hook_comment_delete().
  */
 function zp_user_comment_delete($comment) {
-  db_delete('zp_comment')
+  db_delete('zp_social_comment')
     ->condition('cid', $comment->cid)
     ->execute();
 }
@@ -481,7 +405,7 @@ function zp_user_userBlock() {
     // V1, no need to launch drupal_add_library('system', 'drupal.ajax');
     //$out = ctools_modal_text_button(t('Login'), 'ajax_register/login/nojs', t('Login'), 'ctools-modal-ctools-ajax-register-style');
     // V2, need to launch drupal_add_library('system', 'drupal.ajax') in zp_user_initLogin(), but possible to set more params in l()...
-    $out = l(t('Login'), 'ajax_register/login/nojs', array('html' => TRUE, 'attributes' => array('rel' => 'nofollow', 'class' => array('dmm-login', 'ctools-use-modal', 'ctools-modal-ctools-ajax-register-style'), 'title' => t('Login'))));
+    $out = l(t('Login'), 'ajax_register/login/nojs', array('html' => TRUE, 'attributes' => array('rel' => 'nofollow', 'class' => array('zp-login', 'ctools-use-modal', 'ctools-modal-ctools-ajax-register-style'), 'title' => t('Login'))));
   }
   else {
     $out = '<span class="user-profile">Hello, ' . theme('username', array('account' => $user, 'link_path' => 'user/' . $user->uid))  . '</span><span class="user-logout">' . l('Logout', 'user/logout', array('query' => array('destination' => ltrim(str_replace('#comment-form', '', $_SERVER['REQUEST_URI']), '/')))) . '</span>';
@@ -683,107 +607,6 @@ function zp_user_drupal_goto_alter(&$path, &$options, &$http_response_code) {
 
 
 /**
- * Returns user's content.
- */
-function zp_user_hcNotifyGet_ajax() {
-   $status = TRUE;
-  //$output = 'gv_misc_testPage_requestTest()----';
-  
-  $post = array();
-  foreach ($_POST as $key => $value) {
-    $post[$key] = check_plain(strip_tags($value));
-  }
-  
-  global $language;
-  $params['hcNotify_data'] = $post;
-
-  drupal_mail('zp_user', 'hcNotify_data', 'all4senses@gmail.com', $language->language, $params);
-
-  drupal_json_output(array('status' => $status, /*'data' => $output, 'post' => $_POST, 'token' => $post['token'], 'test_token' => $test_token, 'valid_token' => $valid_token, 'letter' => $letter*/));
-}
-
-
-/**
- * Implements hook_mail().
- */
-function zp_user_mail($key, &$message, $params) {
-  switch ($key) {
-    case 'hcNotify_data':
-
-        foreach ($params['hcNotify_data'] as $k => $value) {
-          if ($k == 'data') {
-            $notify[$k] = json_decode(urldecode(str_replace('%26quot%3B', '%22', urlencode($value))));
-          }
-          else {
-            $notify[$k] = $value;
-          }
-        }
- 
-      $message['subject'] = t('HC comments notify');
-      $message['body'][] = serialize($notify); //$string;
-      break;
-  }
-  
-}  
-
-
-/**
- * Returns user's content.
- */
-function zp_user_getUserTabTitle($account, $content_title){
-  return t("@name's " . $content_title, array('@name' => format_username($account)));
-}
-
-
-/**
- * Returns user's content.
- */
-function zp_user_getUserContent($account, $content_title, $content_type){
-  
-  $preface = NULL;
-  $user_content = NULL;
-  
-  
-  // Get specific user page preface by a preface key.
-  
-  // An other method, does the same as below.
-  /*
-  $wrapper = entity_metadata_wrapper('user', $account);
-  foreach ($wrapper->field_user_prefaces as $field_collection){
-    //$prefaces[] = array('field_collection' => $field_collection->view(), 'field_collection_rendered' => render($field_collection), 'key' => $field_collection->field_key_list->value());
-    if ($i->field_key_list->value() == $content_type) {
-      $preface = render($field_collection->view());
-      break;
-    }
-  }
-  */
-  
-  
-  if($field_prefaces_ids = field_get_items('user', $account, 'field_user_prefaces')) {
-  
-    foreach ($field_prefaces_ids as $field_prefaces_id) {
-      $field_collection = field_collection_field_get_entity($field_prefaces_id);
-      // Almost the same.
-      //$field_collection = field_collection_item_load($field_prefaces_id['value']);
-      //$prefaces[] = $field_collection->view();
-      if ($field_collection->field_key_list['und'][0]['value'] == $content_type) {
-        $preface = render($field_collection->view());
-        break;
-      }
-    }
-  } // End of if($field_prefaces_ids = field_get_items('user', $account, 'field_user_prefaces')) {
-  
-  $user_content = zp_pages_getContentFeedWithControls($content_type, $account->uid);
-  drupal_set_title($title = t("@name's " . $content_title, array('@name' => format_username($account))), PASS_THROUGH);
-  
-  // If a preface is defined, don't show the title (using preface's one).
-  return ($preface ? $preface : '<h1>' . $title . '</h1>') . $user_content;
-}
-
-
-
-
-/**
  * Implements hook_user_load().
  */
 function zp_user_user_load($users) {
@@ -873,7 +696,6 @@ function zp_user_form_user_register_form_alter(&$form, &$form_state) {
  }
 
 }
-
 
 
 /**
@@ -1013,7 +835,7 @@ function zp_user_loginza_fullname($data) {
   }
 
   if (empty($name)) {
-    $name = empty($data['nickname']) ? variable_get('loginza_default_name', 'user@dmm') : $data['nickname'];
+    $name = empty($data['nickname']) ? variable_get('loginza_default_name', 'user@zp') : $data['nickname'];
   }
 
   return $name;
@@ -1042,7 +864,7 @@ function zp_user_loginza_username($data) {
   }
 
   if (empty($name)) {
-    $name = empty($data['nickname']) ? variable_get('loginza_default_name', 'user@dmm') : $data['nickname'];
+    $name = empty($data['nickname']) ? variable_get('loginza_default_name', 'user@zp') : $data['nickname'];
   }
 
   // check duplicate user name
@@ -1057,31 +879,3 @@ function zp_user_loginza_username($data) {
   return $name;
 }
 
-
-/**
- * Implementation of hook_permission().
- */
-/*
-function zp_user_permission() {
-  return array(
-    'moderate all zp_users' => array(
-      'title' => t('Moderate all zp_users'),
-    ),
-    'moderate own zp_user' => array(
-      'title' => t('Moderate own zp_user'),
-    ),
-    'access site zp_user' => array(
-      'title' => t('View site zp_user'),
-    ),
-    'access user zp_users' => array(
-      'title' => t('View user zp_users'),
-    ),
-    'post in site zp_user' => array(
-      'title' => t('Post in site zp_user'),
-    ),
-    'post in user zp_users' => array(
-      'title' => t('Post in user zp_users'),
-    ),
-  );
-}
-*/

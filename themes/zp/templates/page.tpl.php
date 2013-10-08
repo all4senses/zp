@@ -30,7 +30,8 @@
       </div>
       
       <?php 
-          echo render($page['header']); 
+          echo '<div class="user-header">', zp_user_userBlock(), '</div>',
+              render($page['header']);
       ?>
     </nav> <!-- /#navigation -->
 
