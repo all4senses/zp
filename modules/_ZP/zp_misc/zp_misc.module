@@ -174,7 +174,7 @@ function zp_misc_js_alter(&$javascript) {
                 $target_path_short = 'f/jsmin-zp/' . str_replace(array('/', ':', '//'), '-', $source_remote_js_filename);
               }
               else {
-                $target_path_short = 'f/jsmin-zp/' . str_replace('/', '-', $source_fpath_short);
+                $target_path_short = 'f/jsmin-zp/' . str_replace(array('/', ':', '//'), '-', $source_fpath_short);
               }
               
               
