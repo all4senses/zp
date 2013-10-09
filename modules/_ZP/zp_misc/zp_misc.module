@@ -171,7 +171,7 @@ function zp_misc_js_alter(&$javascript) {
               if (strpos($source_fpath_short, 'http') !== FALSE) {
                 $source_remote_js_filename = explode('//', $source_fpath_short);
                 $source_remote_js_filename = $source_remote_js_filename[1];
-                $target_path_short = 'f/jsmin-zp/' . str_replace('/', '-', $source_remote_js_filename);
+                $target_path_short = 'f/jsmin-zp/' . str_replace(array('/', ':', '//'), '-', $source_remote_js_filename);
               }
               else {
                 $target_path_short = 'f/jsmin-zp/' . str_replace('/', '-', $source_fpath_short);
