@@ -153,6 +153,10 @@ function zp_misc_js_alter(&$javascript) {
             $source_fpath = $source_fpath_short;
             $source_content = zp_misc_curl_file_from_remote_site_likeBrowser($source_fpath, NULL, TRUE);
           }
+          elseif (strpos($source_fpath_short, 'public://') !== FALSE) {
+            $source_fpath = $source_fpath_short;
+            $source_content = file_get_contents(str_replace('public://', DRUPAL_ROOT . '/f/', $source_fpath_short));
+          }
           else {
             $source_fpath = DRUPAL_ROOT . '/' . $source_fpath_short;
             $source_content = file_get_contents($source_fpath);
