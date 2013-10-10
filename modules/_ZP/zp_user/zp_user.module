@@ -440,7 +440,7 @@ function zp_user_loginToComment() {
  */
 function zp_user_addFragmentForCommentForm_ajax() {
   
-  $from = check_plain($_POST['from']);
+  $from = check_plain(@$_POST['from']);
   
   switch ($from) {
     
