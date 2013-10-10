@@ -2,7 +2,7 @@
   Drupal.behaviors.deviceGeolocationCheck = {
     attach: function (context, settings) {
       $.ajax({
-        url:  settings.basePath + '?q=check-geolocation-attempt',
+        url:  settings.basePath + 'check-geolocation-attempt',
         type: 'POST',
         dataType: 'json',
         success: function(data) {

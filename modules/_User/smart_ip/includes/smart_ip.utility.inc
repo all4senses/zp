@@ -5,9 +5,6 @@
  * Utility routines to load the Smart IP database.
  */
 
-/******************************************************************************
- * Maxmind CSV format                                                         *
- ******************************************************************************/
 /**
  * Prepare a batch definition
  *
@@ -398,96 +395,4 @@ function smart_ip_update_db_batch_finished($success, $results, $operations, $ela
     $error_operation = reset($operations);
     drupal_set_message(t('Error occurred while processing @operation with arguments : @args', array('@operation' => $error_operation[0], '@args' => print_r($error_operation[0], TRUE))), 'error');
   }
-}
-
-/******************************************************************************
- * Maxmind binary format                                                      *
- ******************************************************************************/
-/**
- * Download a Maxmind binary database and activate it for use
- */
-function smart_ip_maxmind_bin_db_update($license = '', $cron_run = FALSE, $force = FALSE) {
-  // Only update the binary database when it is out of date or under specific direction
-  if (!$force && smart_ip_maxmind_bin_db_up_to_date()) {
-    return FALSE;
-  }
-
-  $path = file_stream_wrapper_uri_normalize('private://smart_ip');
-  $gz_name = $path . '/' . SMART_IP_BIN_DB_NAME . '.tar.gz';
-
-  if (!file_prepare_directory($path, FILE_CREATE_DIRECTORY | FILE_MODIFY_PERMISSIONS)) {
-    // Private file system path not defined then stop the process
-    drupal_set_message(t('Private file system path not defined. Please define the private file system path !here.',  array('!here' => l('here', 'admin/config/media/file-system'))), 'error');
-    return FALSE;
-  }
-
-  $url = 'http://download.maxmind.com/app/geoip_download?' . http_build_query(array(
-    'edition_id' => '133',
-    'suffix' => 'tar.gz',
-    'license_key' => $license ? $license : variable_get('smart_ip_maxmind_license', ''),
-  ));
-  
-  if (file_put_contents($gz_name, fopen($url, 'r')) === FALSE) {
-  	variable_set('smart_ip_maxmind_bin_db_update_error', 'Maxmind bin DB download failed');
-  	watchdog('smart_ip', 'Maxmind bin DB download failed', array(), WATCHDOG_WARNING);
-  	return FALSE;
-  }
-
-  try {
-    $p = new PharData(drupal_realpath($gz_name));
-    $p->extractTo(drupal_realpath($path . '/db_tmp'));
-    
-    $files = file_scan_directory($path . '/db_tmp', '/^' . SMART_IP_BIN_DB_NAME . '.dat$/');
-    if (count($files) !== 1) {
-      throw new Exception('Unable to determing the contents of the db_tmp directory (' . $path . '/db_tmp)');
-    }
-
-    foreach ($files as $file) {
-      if (rename(drupal_realpath($file->uri), drupal_realpath($path . '/' . SMART_IP_BIN_DB_NAME . '.dat')) === FALSE) {
-        throw new Exception('Failed to activate the downloaded database');
-      }
-    }
-  }
-  catch (Exception $e) {
-    $msg = 'Error during database download/extraction: ' . $e->getMessage();
-    variable_set('smart_ip_maxmind_bin_db_update_error', $msg);
-    watchdog('smart_ip', $msg, array(), WATCHDOG_WARNING);
-    return FALSE;
-  }
-
-  variable_set('smart_ip_maxmind_bin_db_update_error', NULL);
-  variable_set('smart_ip_maxmind_bin_db_last_update', time());
-
-  if ($cron_run) {
-    watchdog('smart_ip', 'The Maxmind binary database has been updated via cron.');   
-  }
-  else {
-    watchdog('smart_ip', 'The Maxmind binary database has been manually updated.');
-  }
-  
-  file_unmanaged_delete($gz_name);
-  file_unmanaged_delete_recursive("$path/db_tmp");
-
-  return TRUE;
-}
-
-/**
- * Maxmind updates the DB every Tuesday, and we download every Wednesday.
- * That means that we only want to download if the current DB was downloaded
- * prior to the most recently available version.
- */
-function smart_ip_maxmind_bin_db_up_to_date() {
-  // backtrack our time calculations
-  $time = strtotime('midnight');
-  $dow = date('w', $time) - 3; // D-day (download day)
-  if ($dow > 0) {
-    $dow += 4;
-  }
-  $time_of_most_recent_db = $time - ($dow * 86400);
-  $bin_last_update_time = strtotime('midnight', variable_get('smart_ip_maxmind_bin_db_last_update', 0));
-
-  if ($bin_last_update_time < $time_of_most_recent_db) {
-    return FALSE;
-  }
-  return TRUE;
 }

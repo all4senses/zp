@@ -14,8 +14,8 @@ define('DEVICE_GEOLOCATION_W3C', 2);
  * Implements hook_init().
  */
 function device_geolocation_init() {
-  $user_allowed = !is_null(smart_ip_session_get('device_geolocation')); // If true, the user has allowed to share his/her location
-  $ajax_check   = !$user_allowed && variable_get('device_geolocation_ajax_check', FALSE);
+  $user_allowed = !is_null(smart_ip_session_get('device_geolocation')); // if true, the user has allowed to share his/her location
+  $ajax_check   = variable_get('device_geolocation_ajax_check', FALSE) & !$user_allowed;
   if ($ajax_check || device_geolocation_check_geolocation_attempt()) {
     device_geolocation_get_coordinates();
     if (!$ajax_check) {

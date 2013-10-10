@@ -228,8 +228,4 @@ function smart_ip_uninstall() {
   variable_del('smart_ip_test_ip_address');
   variable_del('smart_ip_save_user_location_creation');
   variable_del('smart_ip_roles_to_geolocate');
-  variable_del('smart_ip_maxmind_bin_db_last_update');
-  variable_del('smart_ip_maxmind_bin_db_update_error');
-  variable_del('smart_ip_maxmind_license');
-  variable_del('smart_ip_maxmind_bin_db_auto_update');
 }
