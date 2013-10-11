@@ -22,9 +22,9 @@ function zp_user_user_login(&$edit, $account) {
   //dpm($edit);
   //dpm($account);
   $edit['values']['timezone'] = 'Asia/Novokuznetsk';
-  
+  dpm($_SERVER);
   $account_2 = user_load($account->uid);
-  dpm($account_2);
+  //dpm($account_2);
   
   $edit_s = $edit['values'];
   user_save($account, $edit_s);
