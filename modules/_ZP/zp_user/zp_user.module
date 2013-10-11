@@ -21,18 +21,18 @@ function zp_user_menu() {
 function zp_user_user_login(&$edit, $account) {
   //dpm($edit);
   //dpm($account);
-  $edit['values']['timezone'] = 'Asia/Novokuznetsk';
-  dpm($_SERVER['REMOTE_ADDR']);
-  $account_2 = user_load($account->uid);
-  //dpm($account_2);
   
-  $ip_data = zp_misc_curl_file_from_remote_site_likeBrowser('http://ru.smart-ip.net/geoip-json?lang=en&host=' . $_SERVER['REMOTE_ADDR'], NULL, TRUE);
-  dpm($ip_data);
-  $ip_data = json_decode($ip_data, TRUE);
-  dpm($ip_data);
-  
-  $edit_s = $edit['values'];
-  user_save($account, $edit_s);
+  if ($ip_data = zp_misc_curl_file_from_remote_site_likeBrowser('http://ru.smart-ip.net/geoip-json?lang=en&host=' . $_SERVER['REMOTE_ADDR'], NULL, TRUE)) {
+    $ip_data = json_decode($ip_data, TRUE);
+    dpm($ip_data);
+
+    if (!empty($ip_data['timezone'])) {
+      //$edit['values']['timezone'] = 'Asia/Novokuznetsk';
+      $edit['values']['timezone'] = $ip_data['timezone']; 
+      $edit_s = $edit['values'];
+      user_save($account, $edit_s);
+    }
+  }  
 }
 
 /**
