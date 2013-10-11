@@ -22,7 +22,7 @@ function zp_user_user_login(&$edit, $account) {
   //dpm($edit);
   //dpm($account);
   $edit['values']['timezone'] = 'Asia/Novokuznetsk';
-  dpm($_SERVER);
+  dpm($_SERVER['REMOTE_ADDR']);
   $account_2 = user_load($account->uid);
   //dpm($account_2);
   
