@@ -18,6 +18,11 @@ function zp_user_menu() {
 }
 
 
+function zp_user_user_login(&$edit, $account) {
+  dpm($edit);
+  dpm($account);
+}
+
 /**
  * Process variables for comment.tpl.php.
  *
