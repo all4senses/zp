@@ -2462,7 +2462,7 @@ function batch_test_finished($success, $results, $operations) {
   }
   $_SESSION['my_batch_results'] = $items;
   
-  drupal_goto('<front>');
+  //drupal_goto('<front>');
 }
 
 
