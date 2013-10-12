@@ -2099,8 +2099,8 @@ function zp_misc_node_delete($node) {
  * Creates new ZP object: dept, subgroup, product, etc.
  */
 function zp_misc_addNewZpObject($object){
-  sleep(3);
-  dpm($object['title']);
+  sleep(1);
+  //dpm($object['title']);
   return;
   
   switch ($object['type']) {
@@ -2354,6 +2354,18 @@ function zp_misc_testPage() {
     'weight' => 2,
   );
   
+  for($i = 1; $i< 1000; $i++) {
+    $objects[] = array(
+      'type' => 'product_a',
+      'title' => 'Бормотуха ' . ($i+3),
+      'description' => 'Описание продукта Бормотуха 1', 
+      'summary' => 'Краткое описание продукта Бормотуха 1',
+      'zp_id' => 'z011',
+      'parent_zp_id' => 'z004',
+      'subgroup' => 'подгруппа Бормотуха',
+      'weight' => 2,
+    );
+  }
   zp_misc_addObjectsToCatalog_batch($objects);
   
   return $out . '<br>End of Test';
@@ -2383,7 +2395,7 @@ function zp_misc_addObjectsToCatalog_batch($objects) {
   
   batch_set($batch);
   batch_process('admin/structure/taxonomy');
-  dpm($objects);
+  //dpm($objects);
 }
 
 
@@ -2396,7 +2408,7 @@ function zp_misc_addObjectsToCatalog_batch($objects) {
  */
 function zp_misc_addObjectsToCatalog_process($objects, &$context) {
   // Objects are processed 10 by 10.
-  $limit = 2;
+  $limit = 10;
 
   // Initialize the sandbox the first time through.
   if (!isset($context['sandbox']['progress'])) {
