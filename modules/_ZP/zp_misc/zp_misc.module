@@ -2099,6 +2099,11 @@ function zp_misc_node_delete($node) {
  * Creates new ZP object: dept, subgroup, product, etc.
  */
 function zp_misc_addNewZpObject($object){
+  for ($i = 0; $i< 10000000; $i++) {
+    ;// pause
+  }
+  return;
+  
   switch ($object['type']) {
     case 'department':
       zp_misc_addNewDeptAndMenuItem($object);
@@ -2244,9 +2249,213 @@ function zp_misc_testPage() {
   );
   zp_misc_addNewZpObject($product);
   */
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  $objects = array();
+  
+  $objects[] = array(
+    'type' => 'department',
+    'title' => 'Напитки',
+    'description' => 'Описание отдела Напитки', 
+    'summary' => 'Краткое описание отдела Напитки',
+    'zp_id' => 'z003',
+    'parent_zp_id' => 'z001',
+    'weight' => 5,
+  );
+  
+  $objects[] = array(
+    'type' => 'department',
+    'title' => 'Алкогольные напитки',
+    'description' => 'Описание отдела Алкогольные напитки', 
+    'summary' => 'Краткое описание отдела Алкогольные напитки',
+    'zp_id' => 'z004',
+    'parent_zp_id' => 'z003',
+    'weight' => 5,
+  );
+  
+  $objects[] = array(
+    'title' => 'Безалкогольные напитки',
+    'description' => 'Описание отдела Безлкогольные напитки', 
+    'summary' => 'Краткое описание отдела Безалкогольные напитки',
+    'zp_id' => 'z005',
+    'parent_zp_id' => 'z003',
+    'weight' => 6,
+  );
+    
+  $objects[] = array(
+    'type' => 'subgroup',
+    'title' => 'подгруппа Вино',
+    'description' => 'Описание подгруппы Вино', 
+    //'zp_id' => 'z007',
+    'parent_zp_id' => 'z004',
+    'weight' => 2,
+  );  
+
+  $objects[] = array(
+    'type' => 'subgroup',
+    'title' => 'подгруппа Бормотуха',
+    'description' => 'Описание подгруппы Бормотуха', 
+    //'zp_id' => 'z007',
+    'parent_zp_id' => 'z004',
+    'weight' => 1,
+  );
+  
+  $objects[] = array(
+    'type' => 'product_a',
+    'title' => 'Вино 1',
+    'description' => 'Описание продукта Вино 1', 
+    'summary' => 'Краткое описание продукта Вино 1',
+    'zp_id' => 'z010',
+    'parent_zp_id' => 'z007',
+    'subgroup' => 'подгруппа Вино',
+    'weight' => 1,
+  );
+  
+  $objects[] = array(
+    'type' => 'product_a',
+    'title' => 'Вино 2',
+    'description' => 'Описание продукта Вино 2', 
+    'summary' => 'Краткое описание продукта Вино 2',
+    'zp_id' => 'z009',
+    'parent_zp_id' => 'z007',
+    'subgroup' => 'подгруппа Вино',
+    'weight' => 3,
+  );
+  
+  $objects[] = array(
+    'type' => 'product_a',
+    'title' => 'Вино 3',
+    'description' => 'Описание продукта Вино 3', 
+    'summary' => 'Краткое описание продукта Вино 3',
+    'zp_id' => 'z008',
+    'parent_zp_id' => 'z004',
+    'subgroup' => 'подгруппа Вино',
+    'weight' => 2,
+  );
+  
+  
+  $objects[] = array(
+    'type' => 'product_a',
+    'title' => 'Бормотуха 1',
+    'description' => 'Описание продукта Бормотуха 1', 
+    'summary' => 'Краткое описание продукта Бормотуха 1',
+    'zp_id' => 'z011',
+    'parent_zp_id' => 'z004',
+    'subgroup' => 'подгруппа Бормотуха',
+    'weight' => 2,
+  );
+  
+  zp_misc_addObjectsToCatalog_batch($objects);
   
   return $out . '<br>End of Test';
 }
+
+
+
+
+/**
+ * Add objects (depts, subgroups, products) to ZP Catalog.
+ *
+ * @param $objects
+ *   A list of objects to add to ZP Catalog.
+ */
+function zp_misc_addObjectsToCatalog_batch($objects) {
+  $batch = array(
+    'operations' => array(
+      array('zp_misc_addObjectsToCatalog_batch_process', array($objects)),
+    ),
+    'finished' => 'zp_misc_addObjectsToCatalog_batch_finished',
+    'title' => t('Add Objects to ZP Catalog'),
+    'init_message' => t('Catalog objects are about to be added to ZP Catalog.'),
+    'progress_message' => t('Adding objects to ZP Catalog Progress: Completed @current of @total objects adding.'),
+    //'redirect' => 'admin/structure/taxonomy',
+    'error_message' => t('ZP Catalog objects adding process has encountered an error.'),
+  );
+  batch_set($batch);
+}
+
+
+/**
+ * Processes the batch.
+ *
+ * @param $objects
+ *   A list of objects to add to ZP Catalog.
+ * 
+ */
+function zp_misc_addObjectsToCatalog_batch_process($objects, &$context) {
+  // Objects are processed 10 by 10.
+  $limit = 10;
+
+  // Initialize the sandbox the first time through.
+  if (!isset($context['sandbox']['progress'])) {
+    $context['sandbox']['progress'] = 0;
+    $context['sandbox']['max'] = count($objects);
+  }
+
+  // Store all the $objects in the sandbox and retrieve the next
+  // group of $objects to be processed.
+  $context['sandbox']['chunks'] = array_chunk($objects, $limit);
+
+  // Loop through eack chunk and process its $objects.
+  foreach ($context['sandbox']['chunks'] as $chunk) {
+    foreach ($chunk as $object) {
+      // Add $object to ZP Catalog.
+      zp_misc_addNewZpObject($object);
+
+      // Store some result for post-processing in the finished callback.
+      $context['results'][] = check_plain($object['title']);
+      // Update our progress information.
+      $context['sandbox']['progress']++;
+      $context['sandbox']['current_object'] = $object['title'];
+    }
+
+    // Inform the batch engine that we are not finished, and provide an estimation
+    // of the completion level we reached.
+    if ($context['sandbox']['progress'] < $context['sandbox']['max']) {
+      $current_count = $context['sandbox']['max'] - $context['sandbox']['progress'];
+      $context['message'] = t('Remaining %current objects to process out of %count ...', array('%current' => $current_count, '%count' => $context['sandbox']['max']));
+      $context['finished'] = $context['sandbox']['progress'] / $context['sandbox']['max'];
+    }
+    else {
+      $context['finished'] = 1;
+    }
+  }
+}
+
+/**
+ * Batch 'finished' callback.
+ */
+function zp_misc_addObjectsToCatalog_batch_finished($success, $results, $operations) {
+  if ($success) {
+    $message = count($results) . ' objects were processed.</br>';
+    $message .= t('ZP Catalog has been updated with new/changed objects.');
+  }
+  else {
+    // An error occurred.
+    // $operations contains the operations that remained unprocessed.
+    $error_operation = reset($operations);
+    $message = t('An error occurred while processing %error_operation with arguments: @arguments', array('%error_operation' => $error_operation[0], '@arguments' => print_r($error_operation[1], TRUE)));
+  }
+  
+  // Clear caches, etc after adding new ZP Catalog objects.
+  ////menu_cache_clear_all();
+}
+
+
+
+
+
+
 
 
 /**
