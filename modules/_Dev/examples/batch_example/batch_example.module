@@ -187,6 +187,11 @@ function batch_example_op_2($operation_details, &$context) {
     // Save node count for the termination message.
     //$context['sandbox']['max'] = db_query('SELECT COUNT(DISTINCT nid) FROM {node}')->fetchField();
     $context['sandbox']['max'] = 100;
+    
+    for($i = 0; $i < 100; $i++) {
+      $result[] = (object) array('nid' => $i, 'title' => 'object ' . $i);
+    }
+    $context['sandbox']['nodes'] = $result;
   }
 
   // Process nodes by groups of 5 (arbitrary value).
@@ -206,12 +211,10 @@ function batch_example_op_2($operation_details, &$context) {
 //    ->limit($limit)
 //    ->execute();
   
-  for($i = 0; $i < 100; $i++) {
-    $result[] = (object) array('nid' => $i, 'title' => 'object ' . $i);
-  }
+  
   
   for ($i = $context['sandbox']['current_node']; $i < $context['sandbox']['current_node'] + 5; $i++) {
-    $node = $result[$i];
+    $node = $context['sandbox']['nodes'][$i];
     //dpm($node);
   //foreach ($result as $node) {
     // Here we actually perform our dummy 'processing' on the current node.
@@ -220,21 +223,24 @@ function batch_example_op_2($operation_details, &$context) {
     // Store some results for post-processing in the 'finished' callback.
     // The contents of 'results' will be available as $results in the
     // 'finished' function (in this example, batch_example_finished()).
-    $context['results'][] = $node->nid . ' : ' . check_plain($node->title) . ' ' . $operation_details;
+    $context['results'][] = $node->nid . ' : ' . $node->title . ' ' . $operation_details;
 
     // Update our progress information.
     $context['sandbox']['progress']++;
     $context['sandbox']['current_node'] = $i;
-    $context['message'] = check_plain($node->title);
+    $context['message'] = $node->title;
     
   }
   dpm($context['sandbox']['current_node']);
-sleep(1);
+//sleep(1);
 //
   // Inform the batch engine that we are not finished,
   // and provide an estimation of the completion level we reached.
-  if ($context['sandbox']['progress'] != $context['sandbox']['max']) {
+  if ($context['sandbox']['progress'] < $context['sandbox']['max']) {
     $context['finished'] = ($context['sandbox']['progress'] >= $context['sandbox']['max']);
+  }
+  else {
+    $context['finished'] = TRUE;
   }
   _batch_example_update_http_requests();
 }
