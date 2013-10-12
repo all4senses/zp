@@ -2111,7 +2111,12 @@ function zp_misc_node_delete($node) {
 function zp_misc_addNewZpObject($object){
   sleep(1);
   //dpm($object['title']);
-  return;
+  if ($object['zp_id'] == 'z010') {
+    return 'Error with z010';
+  }
+  else {
+    return NULL;
+  }
   
   switch ($object['type']) {
     case 'department':
@@ -2455,6 +2460,7 @@ function zp_misc_addObjectsToCatalog_batch_process($objects, &$context) {
   else {
     $current_object_result_message = 'Error: ' . $current_object_title . ' 
 -> ' . $error_message;
+    $context['results']['errors'][] = $current_object_result_message;
   }
   
   // Store some results for post-processing in the 'finished' callback.
