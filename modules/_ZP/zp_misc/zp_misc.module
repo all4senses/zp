@@ -2378,11 +2378,12 @@ function zp_misc_addObjectsToCatalog_batch($objects) {
     'title' => t('Add Objects to ZP Catalog'),
     'init_message' => t('Catalog objects are about to be added to ZP Catalog.'),
     'progress_message' => t('Adding objects to ZP Catalog Progress: Completed @current of @total objects adding.'),
-    'redirect' => '/',// 'admin/structure/taxonomy',
+    'redirect' => 'admin/structure/taxonomy',
     'error_message' => t('ZP Catalog objects adding process has encountered an error.'),
   );
   
   batch_set($batch);
+  batch_process();
   dpm($objects);
 }
 
