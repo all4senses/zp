@@ -228,8 +228,6 @@ function batch_example_op_2($operation_details, &$context) {
     $context['sandbox']['current_node'] = $node->nid;
 
     $message = check_plain($node->title) . ' ' . $node->nid . '(' . $context['sandbox']['progress'] . ' out of ' . $context['sandbox']['max'] . ')';
-    $context['sandbox']['history'] = $message . '
-' . $context['sandbox']['history']; 
     
     $text_field = array(
       '#type' => 'textarea',
@@ -237,7 +235,10 @@ function batch_example_op_2($operation_details, &$context) {
       '#value' => $context['sandbox']['history'],
     );
 
-    $context['message'] = render($text_field);
+    $context['message'] = $message . ' ' . render($text_field);
+    $context['sandbox']['history'] = $message . '
+' . $context['sandbox']['history']; 
+
   }
 
   sleep(1);
@@ -266,8 +267,8 @@ function batch_example_finished($success, $results, $operations) {
   if ($success) {
     // Here we could do something meaningful with the results.
     // We just display the number of nodes we processed...
-    drupal_set_message(t('@count results processed in @requests HTTP requests.', array('@count' => count($results), '@requests' => _batch_example_get_http_requests())));
-    drupal_set_message(t('The final result was "%final"', array('%final' => end($results))));
+    drupal_set_message(t('@count results processed in @requests HTTP requests.', array('@count' => count($results['items']), '@requests' => _batch_example_get_http_requests())));
+    drupal_set_message(t('The final result was "%final"', array('%final' => end($results['items']))));
   }
   else {
     // An error occurred.
