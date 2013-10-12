@@ -2400,10 +2400,10 @@ function zp_misc_addZpCatalogObjects_form() {
   if (empty($_SESSION['http_request_count'])) {
     dpm($objects);
   }
-  else {
-    // reset counter for debug information.
-    $_SESSION['http_request_count'] = NULL;
-  }
+
+  // reset counter for debug information.
+  $_SESSION['http_request_count'] = NULL;
+
   
   return $form;
 }
