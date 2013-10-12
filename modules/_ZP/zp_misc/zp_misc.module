@@ -2383,7 +2383,7 @@ function zp_misc_addObjectsToCatalog_batch($objects) {
   );
   
   batch_set($batch);
-  batch_process();
+  batch_process('admin/structure/taxonomy');
   dpm($objects);
 }
 
