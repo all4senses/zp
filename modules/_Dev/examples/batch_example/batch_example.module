@@ -211,6 +211,7 @@ function batch_example_op_2($operation_details, &$context) {
   }
   
   for ($i = $context['sandbox']['current_node']; $i < $context['sandbox']['current_node'] + 5; $i++) {
+    $node = $result[$i];
   //foreach ($result as $node) {
     // Here we actually perform our dummy 'processing' on the current node.
     //$node = node_load($row->nid, NULL, TRUE);
@@ -224,9 +225,10 @@ function batch_example_op_2($operation_details, &$context) {
     $context['sandbox']['progress']++;
     $context['sandbox']['current_node'] = $node->nid;
     $context['message'] = check_plain($node->title);
-    //sleep(1);
+    
   }
-
+sleep(1);
+//
   // Inform the batch engine that we are not finished,
   // and provide an estimation of the completion level we reached.
   if ($context['sandbox']['progress'] != $context['sandbox']['max']) {
