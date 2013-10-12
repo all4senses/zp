@@ -2382,6 +2382,13 @@ function zp_misc_addZpCatalogObjects_form() {
     '#type' => 'markup',
     '#markup' => t('Go adding new ZP Catalog objects!'),
   );
+  
+  if (!empty($_SESSION['zp_current_batch_id'])) {
+    $form['continue_interrupted'] = array(
+      '#type' => 'markup',
+      '#markup' => t('Continue the last interrupted @batch', array('@batch' => l('batch with id=' . $_SESSION['zp_current_batch_id'], 'batch', array('query' => array('op' => 'start', 'id' => $_SESSION['zp_current_batch_id']))))),
+    );
+  }
 
   $form['submit'] = array(
     '#type' => 'submit',
@@ -2429,6 +2436,13 @@ function zp_misc_addZpCatalogObjects_form_submit($form, &$form_state) {
   );
   batch_set($batch);
   
+  
+  // if need to set non-progressive execution here is a trick how to set it before batch_process().
+  // from https://drupal.org/node/638712#comment-2289138
+  // 
+  // $batch =& batch_get();
+  // $batch['progressive'] = FALSE;
+  //
   //batch_process();
 }
 
@@ -2491,7 +2505,17 @@ function zp_misc_addObjectsToCatalog_batch_process($objects, &$context) {
     $context['finished'] = ($context['sandbox']['progress'] / $context['sandbox']['max']);
   }
   
-  $context['sandbox']['current_object_id'] += 1;
+  if (!$context['finished']) {
+    $context['sandbox']['current_object_id'] += 1;
+    // We can stop batch and then contimue it using stored id of batch.
+    $_SESSION['zp_current_batch_id'] = $_GET['id'];
+  }
+  elseif ($context['finished'] && !$error_message) {
+    // We don't need to know it anymore.
+    unset($_SESSION['zp_current_batch_id']);
+  }
+  
+  
   
   // Alert the next iteration.
   zp_misc_update_http_requests();
