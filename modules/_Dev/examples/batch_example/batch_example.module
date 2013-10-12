@@ -133,7 +133,7 @@ function batch_example_op_1($nid, $operation_details, &$context) {
   // Store some results for post-processing in the 'finished' callback.
   // The contents of 'results' will be available as $results in the
   // 'finished' function (in this example, batch_example_finished()).
-  $context['results'][] = $node->nid . ' : ' . $node->title;
+  $context['results'][] = $node->nid . ' : ' . $node->title . ' ' . $operation_details;
 
   // Optional message displayed under the progressbar.
   $context['message'] = 'Loading node ' . $node->title . ' ' . $operation_details . ' (prev: ' . $context['results'][count($context['results']) - 1] . ')';
