@@ -242,9 +242,9 @@ function batch_example_op_2($operation_details, &$context) {
   _batch_example_update_http_requests();
   
   
-  if ($node->nid == 49) {
-    $context['finished'] = TRUE;
-  }
+//  if ($node->nid == 49) {
+//    $context['finished'] = TRUE;
+//  }
 }
 
 /**
