@@ -204,6 +204,7 @@ function batch_example_op_2($operation_details, &$context) {
   // the operation itself is interruptible.
   $limit = 1;
 
+  sleep(2);
   // Retrieve the next group of nids.
   $result = db_select('node', 'n')
     ->fields('n', array('nid'))
