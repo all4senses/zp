@@ -262,6 +262,7 @@ function batch_example_op_2($operation_details, &$context) {
  * Batch 'finished' callback used by both batch 1 and batch 2.
  */
 function batch_example_finished($success, $results, $operations) {
+  dpm($results);
   if ($success) {
     // Here we could do something meaningful with the results.
     // We just display the number of nodes we processed...
