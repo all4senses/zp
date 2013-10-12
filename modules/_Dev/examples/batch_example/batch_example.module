@@ -235,7 +235,14 @@ function batch_example_op_2($operation_details, &$context) {
   if ($context['sandbox']['progress'] != $context['sandbox']['max']) {
     $context['finished'] = ($context['sandbox']['progress'] >= $context['sandbox']['max']);
   }
+  
+  
   _batch_example_update_http_requests();
+  
+  
+  if ($node->nid == 49) {
+    $context['finished'] = TRUE;
+  }
 }
 
 /**
