@@ -2372,9 +2372,9 @@ function zp_misc_testPage() {
 function zp_misc_addObjectsToCatalog_batch($objects) {
   $batch = array(
     'operations' => array(
-      array('zp_misc_addObjectsToCatalog_batch_process', array($objects)),
+      array('zp_misc_addObjectsToCatalog_process', array($objects)),
     ),
-    'finished' => 'zp_misc_addObjectsToCatalog_batch_finished',
+    'finished' => 'zp_misc_addObjectsToCatalog_finished',
     'title' => t('Add Objects to ZP Catalog'),
     'init_message' => t('Catalog objects are about to be added to ZP Catalog.'),
     'progress_message' => t('Adding objects to ZP Catalog Progress: Completed @current of @total objects adding.'),
@@ -2394,7 +2394,7 @@ function zp_misc_addObjectsToCatalog_batch($objects) {
  *   A list of objects to add to ZP Catalog.
  * 
  */
-function zp_misc_addObjectsToCatalog_batch_process($objects, &$context) {
+function zp_misc_addObjectsToCatalog_process($objects, &$context) {
   // Objects are processed 10 by 10.
   $limit = 10;
 
@@ -2437,7 +2437,7 @@ function zp_misc_addObjectsToCatalog_batch_process($objects, &$context) {
 /**
  * Batch 'finished' callback.
  */
-function zp_misc_addObjectsToCatalog_batch_finished($success, $results, $operations) {
+function zp_misc_addObjectsToCatalog_finished($success, $results, $operations) {
   if ($success) {
     $message = count($results) . ' objects were processed.</br>';
     $message .= t('ZP Catalog has been updated with new/changed objects.');
