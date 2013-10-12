@@ -2390,16 +2390,17 @@ function zp_misc_addZpCatalogObjects_form() {
       '#markup' => '<div>' . t('Continue the last interrupted ') . l(t('batch with id=') . $_SESSION['zp_current_batch_id'], 'batch', array('query' => array('op' => 'start', 'id' => $_SESSION['zp_current_batch_id']))) . '</div>',
     );
   }
+  else {
+    $objects = zp_misc_prepareZpObjectsToAddToCatalog();
+    dpm($objects);
+  }
 
   $form['submit'] = array(
     '#type' => 'submit',
     '#value' => 'Go',
   );
   
-  $objects = zp_misc_prepareZpObjectsToAddToCatalog();
-  if (empty($_SESSION['http_request_count'])) {
-    dpm($objects);
-  }
+  
 
   // reset counter for debug information.
   $_SESSION['http_request_count'] = NULL;
