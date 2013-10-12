@@ -94,7 +94,7 @@ function batch_example_simple_form_submit($form, &$form_state) {
  */
 function batch_example_batch_1() {
   $nid = batch_example_lowest_nid();
-  $num_operations = 1000;
+  $num_operations = 100;
   drupal_set_message(t('Creating an array of @num operations', array('@num' => $num_operations)));
 
   $operations = array();
@@ -133,10 +133,10 @@ function batch_example_op_1($nid, $operation_details, &$context) {
   // Store some results for post-processing in the 'finished' callback.
   // The contents of 'results' will be available as $results in the
   // 'finished' function (in this example, batch_example_finished()).
-  $context['results'][] = $node->nid . ' : ' . check_plain($node->title);
+  $context['results'][] = $node->nid . ' : ' . $node->title;
 
   // Optional message displayed under the progressbar.
-  $context['message'] = t('Loading node "@title"', array('@title' => $node->title)) . ' ' . $operation_details;
+  $context['message'] = 'Loading node ' . $node->title . ' ' . $operation_details . ' (prev: ' . $context['results'][count($context['results']) - 1] . ')';
 
   _batch_example_update_http_requests();
   
