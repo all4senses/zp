@@ -2461,7 +2461,7 @@ function batch_test_finished($success, $results, $operations) {
     $items[] = t('Loaded node %title.', array('%title' => $result));
   }
   $_SESSION['my_batch_results'] = $items;
-  
+  dpm($items);
   //drupal_goto('<front>');
 }
 
