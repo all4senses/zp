@@ -2099,7 +2099,7 @@ function zp_misc_node_delete($node) {
  * Creates new ZP object: dept, subgroup, product, etc.
  */
 function zp_misc_addNewZpObject($object){
-  sleep(15);
+  sleep(3);
   dpm($object['title']);
   return;
   
