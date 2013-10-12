@@ -158,6 +158,7 @@ function batch_example_batch_2() {
 
   $operations = array();
   // 20 operations, each one loads all nodes.
+  
   for ($i = 0; $i < $num_operations; $i++) {
     $operations[] = array('batch_example_op_2', array(t('(Operation @operation)', array('@operation' => $i))));
   }

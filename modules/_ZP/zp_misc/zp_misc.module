@@ -25,6 +25,16 @@ function zp_misc_menu() {
     'type' => MENU_CALLBACK,
   ); 
   */
+  
+  
+  $items['zp/add_objects'] = array(
+    'title' => 'Add ZP Catalog Objects',
+    'description' => 'Add new ZP Catalog objects: depts, subgroups, products, etc',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('zp_misc_addZpCatalogObjects_form'),
+    'access arguments' => array('administer taxonomy'), 
+  );
+  
   $items['test'] = array(
     'title' => 'Test page',
     'page callback' => 'zp_misc_testPage',
@@ -2163,102 +2173,90 @@ function zp_misc_testPage() {
   zp_misc_addNewDeptAndMenuItem($dept);
   */
   
-  /*
-  // Create a catalog term for subgroup (to connect products to it).
-  $object = array(
-    'type' => 'subgroup',
-    'title' => 'подгруппа Вино',
-    'description' => 'Описание подгруппы Вино', 
-    //'zp_id' => 'z007',
-    'parent_zp_id' => 'z004',
-    'weight' => 2,
-  );
-  zp_misc_addNewZpObject($object);
-  */
-  
-  // Create a catalog term for subgroup (to connect products to it).
-  /*
-  $object = array(
-    'type' => 'subgroup',
-    'title' => 'подгруппа Бормотуха',
-    'description' => 'Описание подгруппы Бормотуха', 
-    //'zp_id' => 'z007',
-    'parent_zp_id' => 'z004',
-    'weight' => 1,
-  );
-  zp_misc_addNewZpObject($object);
-  */
-  
-  /*
-  $product = array(
-    'type' => 'product_a',
-    'title' => 'Вино 1',
-    'description' => 'Описание продукта Вино 1', 
-    'summary' => 'Краткое описание продукта Вино 1',
-    'zp_id' => 'z010',
-    'parent_zp_id' => 'z007',
-    'subgroup' => 'подгруппа Вино',
-    'weight' => 1,
-  );
   
   
-  zp_misc_addNewZpObject($product);
-  
-  
-  
-  $product = array(
-    'type' => 'product_a',
-    'title' => 'Вино 2',
-    'description' => 'Описание продукта Вино 2', 
-    'summary' => 'Краткое описание продукта Вино 2',
-    'zp_id' => 'z009',
-    'parent_zp_id' => 'z007',
-    'subgroup' => 'подгруппа Вино',
-    'weight' => 3,
-  );
-  
-  zp_misc_addNewZpObject($product);
-  
-  */
-  /*
-  $product = array(
-    'type' => 'product_a',
-    'title' => 'Вино 3',
-    'description' => 'Описание продукта Вино 3', 
-    'summary' => 'Краткое описание продукта Вино 3',
-    'zp_id' => 'z008',
-    'parent_zp_id' => 'z004',
-    'subgroup' => 'подгруппа Вино',
-    'weight' => 2,
-  );
-  
-  zp_misc_addNewZpObject($product);
-  */
-  
-  /*
-  $product = array(
-    'type' => 'product_a',
-    'title' => 'Бормотуха 1',
-    'description' => 'Описание продукта Бормотуха 1', 
-    'summary' => 'Краткое описание продукта Бормотуха 1',
-    'zp_id' => 'z011',
-    'parent_zp_id' => 'z004',
-    'subgroup' => 'подгруппа Бормотуха',
-    'weight' => 2,
-  );
-  zp_misc_addNewZpObject($product);
-  */
+  return $out . '<br>End of Test';
+}
 
+
+/**
+ * Add objects (depts, subgroups, products) to ZP Catalog.
+ *
+ * @param $objects
+ *   A list of objects to add to ZP Catalog.
+ */
+/*
+function zp_misc_addObjectsToCatalog_batch($objects) {
+  $batch = array(
+    'operations' => array(
+      array('zp_misc_addObjectsToCatalog_process', array($objects)),
+    ),
+    'finished' => 'zp_misc_addObjectsToCatalog_finished',
+    'title' => t('Add Objects to ZP Catalog'),
+    'init_message' => t('Catalog objects are about to be added to ZP Catalog.'),
+    'progress_message' => t('Adding objects to ZP Catalog Progress: Completed @current of @total objects adding.'),
+    'redirect' => 'admin/structure/taxonomy',
+    'error_message' => t('ZP Catalog objects adding process has encountered an error.'),
+  );
   
-  
-  
-  
-  
-  
-  
-  
-  
-  
+  batch_set($batch);
+  batch_process('admin/structure/taxonomy');
+  //dpm($objects);
+}
+*/
+
+/**
+ * Processes the batch.
+ *
+ * @param $objects
+ *   A list of objects to add to ZP Catalog.
+ * 
+ */
+/*
+function zp_misc_addObjectsToCatalog_batch_process($objects, &$context) {
+  // Objects are processed 10 by 10.
+  $limit = 2;
+
+  // Initialize the sandbox the first time through.
+  if (!isset($context['sandbox']['progress'])) {
+    $context['sandbox']['progress'] = 0;
+    $context['sandbox']['max'] = count($objects);
+  }
+
+  // Store all the $objects in the sandbox and retrieve the next
+  // group of $objects to be processed.
+  $context['sandbox']['chunks'] = array_chunk($objects, $limit);
+
+  // Loop through eack chunk and process its $objects.
+  foreach ($context['sandbox']['chunks'] as $chunk) {
+    foreach ($chunk as $object) {
+      // Add $object to ZP Catalog.
+      zp_misc_addNewZpObject($object);
+
+      // Store some result for post-processing in the finished callback.
+      $context['results'][] = check_plain($object['title']);
+      // Update our progress information.
+      $context['sandbox']['progress']++;
+      $context['sandbox']['current_object'] = $object['title'];
+    }
+
+    // Inform the batch engine that we are not finished, and provide an estimation
+    // of the completion level we reached.
+    if ($context['sandbox']['progress'] < $context['sandbox']['max']) {
+      $current_count = $context['sandbox']['max'] - $context['sandbox']['progress'];
+      $context['message'] = t('Remaining %current objects to process out of %count ...', array('%current' => $current_count, '%count' => $context['sandbox']['max']));
+      $context['finished'] = $context['sandbox']['progress'] / $context['sandbox']['max'];
+    }
+    else {
+      $context['finished'] = 1;
+    }
+  }
+}
+*/
+
+
+
+function zp_misc_prepareZpObjectsToAddToCatalog() {
   
   $objects = array();
   
@@ -2366,212 +2364,183 @@ function zp_misc_testPage() {
 //      'weight' => 2,
 //    );
 //  }
-  //zp_misc_addObjectsToCatalog_batch($objects);
-  
-  
-  
-  $batch = array(
-  'title' => t('Exporting'),
-  'operations' => array(
-    array('my_function_1', array(1, 'story')),
-    array('my_function_2', array()),
-  ),
-  'finished' => 'my_finished_callback',
-  'file' => 'path_to_file_containing_myfunctions',
-);
-batch_set($batch);
-// Only needed if not inside a form _submit handler.
-// Setting redirect in batch_process.
-batch_process('node/1');
-
-  
-  
-  
-  
-  
-  return $out . '<br>End of Test';
+  return $objects;
 }
-
-
-
-
-
-
-// Simple and artificial: load a node of a given type for a given user
-function my_function_1($uid, $type, &$context) {
-  // The $context array gathers batch context information about the execution (read),
-  // as well as 'return values' for the current operation (write)
-  // The following keys are provided :
-  // 'results' (read / write): The array of results gathered so far by
-  //   the batch processing, for the current operation to append its own.
-  // 'message' (write): A text message displayed in the progress page.
-  // The following keys allow for multi-step operations :
-  // 'sandbox' (read / write): An array that can be freely used to
-  //   store persistent data between iterations. It is recommended to
-  //   use this instead of $_SESSION, which is unsafe if the user
-  //   continues browsing in a separate window while the batch is processing.
-  // 'finished' (write): A float number between 0 and 1 informing
-  //   the processing engine of the completion level for the operation.
-  //   1 (or no value explicitly set) means the operation is finished
-  //   and the batch processing can continue to the next operation.
-
-  $node = node_load(1);
-  $context['results'][] = $node->nid . ' : ' . check_plain($node->title);
-  $context['message'] = check_plain($node->title);
-}
-
-// More advanced example: multi-step operation - load all nodes, five by five
-function my_function_2(&$context) {
-  if (empty($context['sandbox'])) {
-    $context['sandbox']['progress'] = 0;
-    $context['sandbox']['current_node'] = 0;
-    $context['sandbox']['max'] = db_query('SELECT COUNT(DISTINCT nid) FROM {node}')->fetchField();
-  }
-  $limit = 2;
-  $result = db_select('node')
-    ->fields('node', array('nid'))
-    ->condition('nid', $context['sandbox']['current_node'], '>')
-    ->orderBy('nid')
-    ->range(0, $limit)
-    ->execute();
-  foreach ($result as $row) {
-    $node = node_load($row->nid, NULL, TRUE);
-    $context['results'][] = $node->nid . ' : ' . check_plain($node->title);
-    $context['sandbox']['progress']++;
-    $context['sandbox']['current_node'] = $node->nid;
-    $context['message'] = check_plain($node->title);
-  }
-  if ($context['sandbox']['progress'] != $context['sandbox']['max']) {
-    $context['finished'] = $context['sandbox']['progress'] / $context['sandbox']['max'];
-  }
-}
-
-function batch_test_finished($success, $results, $operations) {
-  // The 'success' parameter means no fatal PHP errors were detected. All
-  // other error management should be handled using 'results'.
-  if ($success) {
-    $message = format_plural(count($results), 'One post processed.', '@count posts processed.');
-  }
-  else {
-    $message = t('Finished with an error.');
-  }
-  drupal_set_message($message);
-  // Providing data for the redirected page is done through $_SESSION.
-  foreach ($results as $result) {
-    $items[] = t('Loaded node %title.', array('%title' => $result));
-  }
-  $_SESSION['my_batch_results'] = $items;
-  dpm($items);
-  //drupal_goto('<front>');
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 /**
- * Add objects (depts, subgroups, products) to ZP Catalog.
- *
- * @param $objects
- *   A list of objects to add to ZP Catalog.
+ * Form builder function to start adding ZP Catalog Objects.
  */
-function zp_misc_addObjectsToCatalog_batch($objects) {
+function zp_misc_addZpCatalogObjects_form() {
+  
+  $form['description'] = array(
+    '#type' => 'markup',
+    '#markup' => t('Go adding new ZP Catalog objects!'),
+  );
+
+  $form['submit'] = array(
+    '#type' => 'submit',
+    '#value' => 'Go',
+  );
+  
+  $objects = zp_misc_prepareZpObjectsToAddToCatalog();
+  dpm($objects);
+  
+  return $form;
+}
+
+/**
+ * Hook Form submit to start adding ZP Catalog Objects.
+ */
+function zp_misc_addZpCatalogObjects_form_submit($form, &$form_state) {
+  
+  $objects = zp_misc_prepareZpObjectsToAddToCatalog();
+
   $batch = array(
     'operations' => array(
       array('zp_misc_addObjectsToCatalog_process', array($objects)),
     ),
-    'finished' => 'zp_misc_addObjectsToCatalog_finished',
+    'finished' => 'zp_misc_addObjectsToCatalog_batch_finished',
+    // Message displayed while processing the batch. Available placeholders are:
+    // @current, @remaining, @total, @percentage, @estimate and @elapsed.
+    // These placeholders are replaced with actual values in _batch_process(),
+    // using strtr() instead of t(). The values are determined based on the
+    // number of operations in the 'operations' array (above), NOT by the number
+    // of nodes that will be processed. In this example, there are 20
+    // operations, so @total will always be 20, even though there are multiple
+    // nodes per operation.
+    // Defaults to t('Completed @current of @total.').
     'title' => t('Add Objects to ZP Catalog'),
     'init_message' => t('Catalog objects are about to be added to ZP Catalog.'),
     'progress_message' => t('Adding objects to ZP Catalog Progress: Completed @current of @total objects adding.'),
-    'redirect' => 'admin/structure/taxonomy',
+    //'redirect' => 'admin/structure/taxonomy',
     'error_message' => t('ZP Catalog objects adding process has encountered an error.'),
   );
-  
   batch_set($batch);
-  batch_process('admin/structure/taxonomy');
-  //dpm($objects);
+  $_SESSION['http_request_count'] = 0; // reset counter for debug information.
+
+  //batch_process();
 }
 
 
 /**
- * Processes the batch.
- *
- * @param $objects
- *   A list of objects to add to ZP Catalog.
- * 
+ * Batch operation for batch 2 : load all nodes, 5 by five
+ * After each group of 5 control is returned to the batch API for later
+ * continuation.
  */
-function zp_misc_addObjectsToCatalog_process($objects, &$context) {
-  // Objects are processed 10 by 10.
-  $limit = 2;
-
-  // Initialize the sandbox the first time through.
-  if (!isset($context['sandbox']['progress'])) {
+function zp_misc_addObjectsToCatalog_batch_process($objects, &$context) {
+  // Use the $context['sandbox'] at your convenience to store the
+  // information needed to track progression between successive calls.
+  if (empty($context['sandbox'])) {
+    $context['sandbox'] = array();
     $context['sandbox']['progress'] = 0;
-    $context['sandbox']['max'] = count($objects);
+    $context['sandbox']['current_node'] = 0;
+    
+    $context['results']['objects_source'] = $objects;
+
+    // Save node count for the termination message.
+    $context['sandbox']['max'] = db_query('SELECT COUNT(DISTINCT nid) FROM {node}')->fetchField();
   }
 
-  // Store all the $objects in the sandbox and retrieve the next
-  // group of $objects to be processed.
-  $context['sandbox']['chunks'] = array_chunk($objects, $limit);
+  // Process nodes by groups of 5 (arbitrary value).
+  // When a group of five is processed, the batch update engine determines
+  // whether it should continue processing in the same request or provide
+  // progress feedback to the user and wait for the next request.
+  // That way even though we're already processing at the operation level
+  // the operation itself is interruptible.
+  $limit = 1;
 
-  // Loop through eack chunk and process its $objects.
-  foreach ($context['sandbox']['chunks'] as $chunk) {
-    foreach ($chunk as $object) {
-      // Add $object to ZP Catalog.
-      zp_misc_addNewZpObject($object);
+  // Retrieve the next group of nids.
+  $result = db_select('node', 'n')
+    ->fields('n', array('nid'))
+    ->orderBy('n.nid', 'ASC')
+    ->where('n.nid > :nid', array(':nid' => $context['sandbox']['current_node']))
+    ->extend('PagerDefault')
+    ->limit($limit)
+    ->execute();
+  foreach ($result as $row) {
+    // Here we actually perform our dummy 'processing' on the current node.
+    $node = node_load($row->nid, NULL, TRUE);
 
-      // Store some result for post-processing in the finished callback.
-      $context['results'][] = check_plain($object['title']);
-      // Update our progress information.
-      $context['sandbox']['progress']++;
-      $context['sandbox']['current_object'] = $object['title'];
-    }
+    // Store some results for post-processing in the 'finished' callback.
+    // The contents of 'results' will be available as $results in the
+    // 'finished' function (in this example, batch_example_finished()).
+    $context['results']['objects_processed'][] = $node->nid . ' : ' . $node->title;
 
-    // Inform the batch engine that we are not finished, and provide an estimation
-    // of the completion level we reached.
-    if ($context['sandbox']['progress'] < $context['sandbox']['max']) {
-      $current_count = $context['sandbox']['max'] - $context['sandbox']['progress'];
-      $context['message'] = t('Remaining %current objects to process out of %count ...', array('%current' => $current_count, '%count' => $context['sandbox']['max']));
-      $context['finished'] = $context['sandbox']['progress'] / $context['sandbox']['max'];
-    }
-    else {
-      $context['finished'] = 1;
-    }
+    // Update our progress information.
+    $context['sandbox']['progress']++;
+    $context['sandbox']['current_node'] = $node->nid;
+
+    $message = check_plain($node->title) . ' ' . $node->nid . '(' . $context['sandbox']['progress'] . ' out of ' . $context['sandbox']['max'] . ')';
+    
+    $text_field = array(
+      '#type' => 'textarea',
+      '#title' => 'History',
+      '#value' => $context['results']['history'],
+    );
+
+    $context['message'] = $message . ' ' . render($text_field);
+    $context['results']['history'] = $message . '
+' . $context['results']['history']; 
+
   }
+
+  //sleep(1);
+  
+  // Inform the batch engine that we are not finished,
+  // and provide an estimation of the completion level we reached.
+  if ($context['sandbox']['progress'] != $context['sandbox']['max']) {
+    $context['finished'] = ($context['sandbox']['progress'] / $context['sandbox']['max']);
+    //dpm($context);
+  }
+  
+  
+  _batch_example_update_http_requests();
+  
+  
+//  if ($node->nid == 49) {
+//    $context['finished'] = TRUE;
+//  }
 }
+
 
 /**
  * Batch 'finished' callback.
  */
-function zp_misc_addObjectsToCatalog_finished($success, $results, $operations) {
+function zp_misc_addObjectsToCatalog_batch_finished($success, $results, $operations) {
+  dpm($results);
   if ($success) {
-    $message = count($results) . ' objects were processed.</br>';
-    $message .= t('ZP Catalog has been updated with new/changed objects.');
+    drupal_set_message(t('@count objects processed in @requests HTTP requests.', array('@count' => count($results['items']), '@requests' => _batch_example_get_http_requests())));
+    drupal_set_message(t('ZP Catalog has been updated with new/changed objects. The final object was "%final"', array('%final' => end($results['items']))));
   }
   else {
     // An error occurred.
     // $operations contains the operations that remained unprocessed.
     $error_operation = reset($operations);
-    $message = t('An error occurred while processing %error_operation with arguments: @arguments', array('%error_operation' => $error_operation[0], '@arguments' => print_r($error_operation[1], TRUE)));
+    drupal_set_message(t('An error occurred while processing @operation with arguments : @args', array('@operation' => $error_operation[0], '@args' => print_r($error_operation[0], TRUE))));
   }
   
   // Clear caches, etc after adding new ZP Catalog objects.
   ////menu_cache_clear_all();
-  drupal_goto('<front>'); 
+  //drupal_goto('<front>'); 
 }
+
+
+/**
+ * Utility function to count the HTTP requests in a session variable.
+ */
+function _batch_example_update_http_requests() {
+  $_SESSION['http_request_count']++;
+}
+
+function _batch_example_get_http_requests() {
+  return !empty($_SESSION['http_request_count']) ? $_SESSION['http_request_count'] : 0;
+}
+
+
+
+
+
 
 
 
