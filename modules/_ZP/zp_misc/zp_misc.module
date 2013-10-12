@@ -2398,7 +2398,7 @@ function zp_misc_addObjectsToCatalog_batch($objects) {
  */
 function zp_misc_addObjectsToCatalog_process($objects, &$context) {
   // Objects are processed 10 by 10.
-  $limit = 10;
+  $limit = 1;
 
   // Initialize the sandbox the first time through.
   if (!isset($context['sandbox']['progress'])) {
