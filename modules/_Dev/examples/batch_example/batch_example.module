@@ -134,7 +134,7 @@ function batch_example_op_1($nid, $operation_details, &$context) {
   $context['results'][] = $node->nid . ' : ' . check_plain($node->title) . ' ' . $count;
 
   // Optional message displayed under the progressbar.
-  $context['message'] = t('Loading node "@title"', array('@title' => $node->title)) . ' ' . $operation_details;
+  $context['message'] = t('Loading node "@title"', array('@title' => $node->title . ' ' . $count)) . ' ' . $operation_details;
 
   _batch_example_update_http_requests();
 }
