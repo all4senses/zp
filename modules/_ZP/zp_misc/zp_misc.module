@@ -2474,8 +2474,6 @@ function zp_misc_addObjectsToCatalog_batch_process($objects, &$context) {
 
   $context['results']['history'] = $message . '
 ' . $context['results']['history']; 
-
-  sleep(1);
   
   // If no error, Inform the batch engine that we are not finished,
   // and provide an estimation of the completion level we reached.
