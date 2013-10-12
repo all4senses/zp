@@ -237,6 +237,8 @@ function batch_example_op_2($operation_details, &$context) {
     $result[] = 'Op ' . $j;
   }
   
+  dpm($context['sandbox']['current_node']);
+  
   for ($key = $context['sandbox']['current_node']; ($key < $context['sandbox']['current_node'] + 5) && $context['sandbox']['current_node'] < count($result); $key++, $row = $result[$key]) {
     // Here we actually perform our dummy 'processing' on the current node.
     $context['results'][] = $row . ' ' . $operation_details;
@@ -244,11 +246,11 @@ function batch_example_op_2($operation_details, &$context) {
     // Update our progress information.
     $context['sandbox']['progress']++;
     //$context['progress']++;
-    dpm($context['sandbox']['current_node']);
+    
     $context['sandbox']['current_node'] = $key;
     $context['message'] = $row;
     
-    sleep(1);
+    //sleep(1);
   }
   
   
