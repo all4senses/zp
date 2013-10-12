@@ -2439,104 +2439,58 @@ function zp_misc_addObjectsToCatalog_batch_process($objects, &$context) {
   if (empty($context['sandbox'])) {
     $context['sandbox'] = array();
     $context['sandbox']['progress'] = 0;
-    //$context['sandbox']['current_node'] = 0;
     $context['sandbox']['current_object_id'] = 0;
-    
     $context['results']['objects_source'] = $objects;
-
-    // Save node count for the termination message.
-    ////$context['sandbox']['max'] = db_query('SELECT COUNT(DISTINCT nid) FROM {node}')->fetchField();
-    
+    // Save object count for the termination message.
     $context['sandbox']['max'] = count($objects);
   }
 
-  // Process nodes by groups of 5 (arbitrary value).
-  // When a group of five is processed, the batch update engine determines
-  // whether it should continue processing in the same request or provide
-  // progress feedback to the user and wait for the next request.
-  // That way even though we're already processing at the operation level
-  // the operation itself is interruptible.
-
-    // Process object.
-    zp_misc_addNewZpObject($objects[$context['sandbox']['current_object_id']]);
-    
-
-    // Store some results for post-processing in the 'finished' callback.
-    // The contents of 'results' will be available as $results in the
-    // 'finished' function (in this example, batch_example_finished()).
-    $context['results']['objects_processed'][] = $context['sandbox']['current_object_id'] . ' : ' . $objects[$context['sandbox']['current_object_id']]['title'];
-
-    // Update our progress information.
+  // Process object.
+  $current_object_title = 'id: ' . $context['sandbox']['current_object_id'] . ', ' . $objects[$context['sandbox']['current_object_id']]['title'];
+  if (!$error_message = zp_misc_addNewZpObject($objects[$context['sandbox']['current_object_id']])) {
+    $current_object_result_message = 'Success: ' . $current_object_title;
+    // Update progress information.
     $context['sandbox']['progress']++;
-
-    $message = $objects[$context['sandbox']['current_object_id']]['title'] . ' id: ' . $context['sandbox']['current_object_id'] . '(' . $context['sandbox']['progress'] . ' out of ' . $context['sandbox']['max'] . ')';
-    
-    $text_field = array(
-      '#type' => 'textarea',
-      '#title' => 'History',
-      '#value' => $context['results']['history'],
-    );
-
-    $context['message'] = $message . ' ' . render($text_field);
-    $context['results']['history'] = $message . '
-' . $context['results']['history']; 
-
-  
-  /*
-    $limit = 1;
-
-  // Retrieve the next group of nids.
-  $result = db_select('node', 'n')
-    ->fields('n', array('nid'))
-    ->orderBy('n.nid', 'ASC')
-    ->where('n.nid > :nid', array(':nid' => $context['sandbox']['current_node']))
-    ->extend('PagerDefault')
-    ->limit($limit)
-    ->execute();
-  foreach ($result as $row) {
-    // Here we actually perform our dummy 'processing' on the current node.
-    $node = node_load($row->nid, NULL, TRUE);
-
-    // Store some results for post-processing in the 'finished' callback.
-    // The contents of 'results' will be available as $results in the
-    // 'finished' function (in this example, batch_example_finished()).
-    $context['results']['objects_processed'][] = $node->nid . ' : ' . $node->title;
-
-    // Update our progress information.
-    $context['sandbox']['progress']++;
-    $context['sandbox']['current_node'] = $node->nid;
-
-    $message = check_plain($node->title) . ' ' . $node->nid . '(' . $context['sandbox']['progress'] . ' out of ' . $context['sandbox']['max'] . ')';
-    
-    $text_field = array(
-      '#type' => 'textarea',
-      '#title' => 'History',
-      '#value' => $context['results']['history'],
-    );
-
-    $context['message'] = $message . ' ' . render($text_field);
-    $context['results']['history'] = $message . '
-' . $context['results']['history']; 
-
   }
-*/
+  else {
+    $current_object_result_message = 'Error: ' . $current_object_title . ' 
+-> ' . $error_message;
+  }
+  
+  // Store some results for post-processing in the 'finished' callback.
+  // The contents of 'results' will be available as $results in the 'finished' 
+  $context['results']['objects_processed'][] = $current_object_result_message;
+  
+  // Dynamic message block (current processing object and the history in textarea) under the progress bar.
+  $message = $current_object_result_message . '(' . $context['sandbox']['progress'] . ' out of ' . $context['sandbox']['max'] . ')';
+  
+  $text_field = array(
+    '#type' => 'textarea',
+    '#title' => 'History',
+    '#value' => $context['results']['history'],
+  );
+
+  $context['message'] = $message . ' ' . render($text_field);
+
+  $context['results']['history'] = $message . '
+' . $context['results']['history']; 
+
   sleep(1);
   
-  // Inform the batch engine that we are not finished,
+  // If no error, Inform the batch engine that we are not finished,
   // and provide an estimation of the completion level we reached.
-  if ($context['sandbox']['progress'] != $context['sandbox']['max']) {
+  if ($error_message) {
+    // Stop processing because if the error!
+    $context['finished'] = TRUE;
+  }
+  elseif ($context['sandbox']['progress'] != $context['sandbox']['max']) {
     $context['finished'] = ($context['sandbox']['progress'] / $context['sandbox']['max']);
-    //dpm($context);
   }
   
   $context['sandbox']['current_object_id'] += 1;
   
+  // Alert the next iteration.
   zp_misc_update_http_requests();
-  
-  
-//  if ($node->nid == 49) {
-//    $context['finished'] = TRUE;
-//  }
 }
 
 
