@@ -2434,12 +2434,15 @@ function zp_misc_addObjectsToCatalog_batch_process($objects, &$context) {
   if (empty($context['sandbox'])) {
     $context['sandbox'] = array();
     $context['sandbox']['progress'] = 0;
-    $context['sandbox']['current_node'] = 0;
+    //$context['sandbox']['current_node'] = 0;
+    $context['sandbox']['current_object_id'] = 0;
     
     $context['results']['objects_source'] = $objects;
 
     // Save node count for the termination message.
-    $context['sandbox']['max'] = db_query('SELECT COUNT(DISTINCT nid) FROM {node}')->fetchField();
+    ////$context['sandbox']['max'] = db_query('SELECT COUNT(DISTINCT nid) FROM {node}')->fetchField();
+    
+    $context['sandbox']['max'] = count($objects);
   }
 
   // Process nodes by groups of 5 (arbitrary value).
@@ -2448,7 +2451,34 @@ function zp_misc_addObjectsToCatalog_batch_process($objects, &$context) {
   // progress feedback to the user and wait for the next request.
   // That way even though we're already processing at the operation level
   // the operation itself is interruptible.
-  $limit = 1;
+
+    // Process object.
+    zp_misc_addNewZpObject($objects[$context['sandbox']['current_object_id']]);
+    
+
+    // Store some results for post-processing in the 'finished' callback.
+    // The contents of 'results' will be available as $results in the
+    // 'finished' function (in this example, batch_example_finished()).
+    $context['results']['objects_processed'][] = $context['sandbox']['current_object_id'] . ' : ' . $objects[$context['sandbox']['current_object_id']]['title'];
+
+    // Update our progress information.
+    $context['sandbox']['progress']++;
+
+    $message = $objects[$context['sandbox']['current_object_id']]['title'] . ' id: ' . $context['sandbox']['current_object_id'] . '(' . $context['sandbox']['progress'] . ' out of ' . $context['sandbox']['max'] . ')';
+    
+    $text_field = array(
+      '#type' => 'textarea',
+      '#title' => 'History',
+      '#value' => $context['results']['history'],
+    );
+
+    $context['message'] = $message . ' ' . render($text_field);
+    $context['results']['history'] = $message . '
+' . $context['results']['history']; 
+
+  
+  /*
+    $limit = 1;
 
   // Retrieve the next group of nids.
   $result = db_select('node', 'n')
@@ -2484,7 +2514,7 @@ function zp_misc_addObjectsToCatalog_batch_process($objects, &$context) {
 ' . $context['results']['history']; 
 
   }
-
+*/
   sleep(1);
   
   // Inform the batch engine that we are not finished,
@@ -2494,6 +2524,7 @@ function zp_misc_addObjectsToCatalog_batch_process($objects, &$context) {
     //dpm($context);
   }
   
+  $context['sandbox']['current_object_id'] += 1;
   
   zp_misc_update_http_requests();
   
