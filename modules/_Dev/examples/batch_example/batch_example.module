@@ -136,6 +136,8 @@ function batch_example_op_1($nid, $operation_details, &$context) {
   // Optional message displayed under the progressbar.
   $context['message'] = t('Loading node "@title"', array('@title' => $node->title . ' ' . $count)) . ' ' . $operation_details;
 
+  watchdog('ZP Test Batch', $node->title . ' ' . $count, WATCHDOG_WARNING);
+  
   _batch_example_update_http_requests();
 }
 
