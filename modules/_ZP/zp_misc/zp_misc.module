@@ -2393,6 +2393,8 @@ function zp_misc_addZpCatalogObjects_form() {
   else {
     $objects = zp_misc_prepareZpObjectsToAddToCatalog();
     dpm($objects);
+    // reset counter for debug information.
+    $_SESSION['http_request_count'] = NULL;
   }
 
   $form['submit'] = array(
@@ -2402,8 +2404,7 @@ function zp_misc_addZpCatalogObjects_form() {
   
   
 
-  // reset counter for debug information.
-  $_SESSION['http_request_count'] = NULL;
+  
 
   
   return $form;
