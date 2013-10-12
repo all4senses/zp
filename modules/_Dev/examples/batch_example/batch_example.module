@@ -235,7 +235,7 @@ function batch_example_op_2($operation_details, &$context) {
   // Inform the batch engine that we are not finished,
   // and provide an estimation of the completion level we reached.
   if ($context['sandbox']['progress'] != $context['sandbox']['max']) {
-    $context['finished'] = ($context['sandbox']['progress'] >= $context['sandbox']['max']);
+    $context['finished'] = ($context['sandbox']['progress'] / $context['sandbox']['max']);
     dpm($context);
   }
   
