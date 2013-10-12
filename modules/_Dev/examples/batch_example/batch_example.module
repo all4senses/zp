@@ -125,10 +125,13 @@ function batch_example_batch_1() {
 function batch_example_op_1($nid, $operation_details, &$context) {
   $node = node_load($nid, NULL, TRUE);
 
+  static $count;
+  
+  $count++;
   // Store some results for post-processing in the 'finished' callback.
   // The contents of 'results' will be available as $results in the
   // 'finished' function (in this example, batch_example_finished()).
-  $context['results'][] = $node->nid . ' : ' . check_plain($node->title);
+  $context['results'][] = $node->nid . ' : ' . check_plain($node->title) . ' ' . $count;
 
   // Optional message displayed under the progressbar.
   $context['message'] = t('Loading node "@title"', array('@title' => $node->title)) . ' ' . $operation_details;
