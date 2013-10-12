@@ -2492,7 +2492,7 @@ function zp_misc_addObjectsToCatalog_batch_process($objects, &$context) {
     '#value' => $context['results']['history'],
   );
 
-  $context['message'] = $message . ' ' . render($text_field);
+  $context['message'] = $_GET['id'] . ' - - - ' . $message . ' ' . render($text_field);
 
   $context['results']['history'] = $message . '
 ' . $context['results']['history']; 
@@ -2514,7 +2514,7 @@ function zp_misc_addObjectsToCatalog_batch_process($objects, &$context) {
   }
   elseif ($context['finished'] && !$error_message) {
     // We don't need to know it anymore.
-    unset($_SESSION['zp_current_batch_id']);
+    //unset($_SESSION['zp_current_batch_id']);
   }
   
   
