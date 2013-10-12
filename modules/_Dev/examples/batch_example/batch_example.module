@@ -226,6 +226,8 @@ function batch_example_op_2($operation_details, &$context) {
     $context['sandbox']['progress']++;
     $context['sandbox']['current_node'] = $node->nid;
     $context['message'] = check_plain($node->title) . ' ' . $node->nid . '(' . $context['sandbox']['progress'] . ' out of ' . $context['sandbox']['max'] . ')';
+    
+    $context['progress']++;
   }
 
   sleep(1);
