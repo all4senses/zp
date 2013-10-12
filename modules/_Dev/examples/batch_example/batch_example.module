@@ -239,7 +239,7 @@ function batch_example_op_2($operation_details, &$context) {
   
   dpm($context['sandbox']['current_node']);
   
-  for ($key = $context['sandbox']['current_node']; ($key < $context['sandbox']['current_node'] + 5) && $context['sandbox']['current_node'] < count($result); $key++, $row = $result[$key]) {
+  for ($key = $context['sandbox']['current_node']; $key < $context['sandbox']['current_node'] + 5; $key++, $row = $result[$key]) {
     // Here we actually perform our dummy 'processing' on the current node.
     $context['results'][] = $row . ' ' . $operation_details;
 
