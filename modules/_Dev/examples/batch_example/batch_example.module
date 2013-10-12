@@ -140,7 +140,7 @@ function batch_example_op_1($nid, $operation_details, &$context) {
  * Batch 2 : Prepare a batch definition that will load all nodes 20 times.
  */
 function batch_example_batch_2() {
-  $num_operations = 1;
+  $num_operations = 20;
 
   // Give helpful information about how many nodes are being operated on.
   $node_count = db_query('SELECT COUNT(DISTINCT nid) FROM {node}')->fetchField();
@@ -185,13 +185,7 @@ function batch_example_op_2($operation_details, &$context) {
     $context['sandbox']['current_node'] = 0;
 
     // Save node count for the termination message.
-    //$context['sandbox']['max'] = db_query('SELECT COUNT(DISTINCT nid) FROM {node}')->fetchField();
-    $context['sandbox']['max'] = 100;
-    
-    for($i = 0; $i < 100; $i++) {
-      $result[] = (object) array('nid' => $i, 'title' => 'object ' . $i);
-    }
-    $context['sandbox']['nodes'] = $result;
+    $context['sandbox']['max'] = db_query('SELECT COUNT(DISTINCT nid) FROM {node}')->fetchField();
   }
 
   // Process nodes by groups of 5 (arbitrary value).
@@ -203,44 +197,32 @@ function batch_example_op_2($operation_details, &$context) {
   $limit = 5;
 
   // Retrieve the next group of nids.
-//  $result = db_select('node', 'n')
-//    ->fields('n', array('nid'))
-//    ->orderBy('n.nid', 'ASC')
-//    ->where('n.nid > :nid', array(':nid' => $context['sandbox']['current_node']))
-//    ->extend('PagerDefault')
-//    ->limit($limit)
-//    ->execute();
-  
-  
-  
-  for ($i = $context['sandbox']['current_node']; $i <= $context['sandbox']['current_node'] + 5; $i++) {
-    $node = $context['sandbox']['nodes'][$i];
-    //dpm($node);
-  //foreach ($result as $node) {
+  $result = db_select('node', 'n')
+    ->fields('n', array('nid'))
+    ->orderBy('n.nid', 'ASC')
+    ->where('n.nid > :nid', array(':nid' => $context['sandbox']['current_node']))
+    ->extend('PagerDefault')
+    ->limit($limit)
+    ->execute();
+  foreach ($result as $row) {
     // Here we actually perform our dummy 'processing' on the current node.
-    //$node = node_load($row->nid, NULL, TRUE);
+    $node = node_load($row->nid, NULL, TRUE);
 
     // Store some results for post-processing in the 'finished' callback.
     // The contents of 'results' will be available as $results in the
     // 'finished' function (in this example, batch_example_finished()).
-    $context['results'][] = $node->nid . ' : ' . $node->title . ' ' . $operation_details;
+    $context['results'][] = $node->nid . ' : ' . check_plain($node->title) . ' ' . $operation_details;
 
     // Update our progress information.
     $context['sandbox']['progress']++;
-    $context['sandbox']['current_node'] = $i;
-    $context['message'] = $node->title;
-    
+    $context['sandbox']['current_node'] = $node->nid;
+    $context['message'] = check_plain($node->title);
   }
-  dpm($context['sandbox']['current_node']);
-//sleep(1);
-//
+
   // Inform the batch engine that we are not finished,
   // and provide an estimation of the completion level we reached.
-  if ($context['sandbox']['progress'] < $context['sandbox']['max']) {
+  if ($context['sandbox']['progress'] != $context['sandbox']['max']) {
     $context['finished'] = ($context['sandbox']['progress'] >= $context['sandbox']['max']);
-  }
-  else {
-    $context['finished'] = TRUE;
   }
   _batch_example_update_http_requests();
 }
