@@ -213,7 +213,7 @@ function batch_example_op_2($operation_details, &$context) {
   
   
   
-  for ($i = $context['sandbox']['current_node']; $i < $context['sandbox']['current_node'] + 5; $i++) {
+  for ($i = $context['sandbox']['current_node']; $i <= $context['sandbox']['current_node'] + 5; $i++) {
     $node = $context['sandbox']['nodes'][$i];
     //dpm($node);
   //foreach ($result as $node) {
