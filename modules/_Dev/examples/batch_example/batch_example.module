@@ -95,7 +95,7 @@ function batch_example_simple_form_submit($form, &$form_state) {
 function batch_example_batch_1() {
   $nid = batch_example_lowest_nid();
   $num_operations = 1000;
-  drupal_set_message(t('Creating an array of @num operations', array('@num' => $num_operations)));
+  drupal_set_message(t('Creating an array of @num operations', array('@num' => $num_operations)), $num_operations);
 
   $operations = array();
   // Set up an operations array with 1000 elements, each doing function
@@ -122,21 +122,24 @@ function batch_example_batch_1() {
  * Batch operation for batch 1: load a node.
  * This is the function that is called on each operation in batch 1.
  */
-function batch_example_op_1($nid, $operation_details, &$context) {
+function batch_example_op_1($nid, $operation_details, $num_operations, &$context) {
   $node = node_load($nid, NULL, TRUE);
 
   static $count;
   
-  $count++;
   // Store some results for post-processing in the 'finished' callback.
   // The contents of 'results' will be available as $results in the
   // 'finished' function (in this example, batch_example_finished()).
-  $context['results'][] = $node->nid . ' : ' . check_plain($node->title) . ' ' . $count;
+  $context['results'][] = $node->nid . ' : ' . check_plain($node->title);
 
   // Optional message displayed under the progressbar.
-  $context['message'] = t('Loading node "@title"', array('@title' => $node->title . ' ' . $count)) . ' ' . $operation_details;
+  $context['message'] = t('Loading node "@title"', array('@title' => $node->title)) . ' ' . $operation_details;
 
-  watchdog('ZP Test Batch', $node->title . ' ' . $count . ' --> ' . $operation_details, NULL, WATCHDOG_WARNING);
+  if ($num_operations == 21) {
+    $context['finished'] = TRUE;
+  }
+  
+  watchdog('ZP Test Batch', $node->title . ' --> ' . $operation_details, NULL, WATCHDOG_WARNING);
   sleep(1);
   _batch_example_update_http_requests();
 }
