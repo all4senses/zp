@@ -2381,7 +2381,9 @@ function zp_misc_addObjectsToCatalog_batch($objects) {
     'redirect' => '/',// 'admin/structure/taxonomy',
     'error_message' => t('ZP Catalog objects adding process has encountered an error.'),
   );
+  
   batch_set($batch);
+  dpm($objects);
 }
 
 
