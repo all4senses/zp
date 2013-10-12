@@ -2383,8 +2383,6 @@ function zp_misc_addZpCatalogObjects_form() {
     '#markup' => t('Go adding new ZP Catalog objects!'),
   );
   
-  dpm('zp_current_batch_id = ' . $_SESSION['zp_current_batch_id']);
-  
   if (!empty($_SESSION['zp_current_batch_id'])) {
     $form['continue_interrupted'] = array(
       '#type' => 'markup',
