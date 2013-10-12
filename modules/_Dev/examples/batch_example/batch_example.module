@@ -244,6 +244,7 @@ function batch_example_op_2($operation_details, &$context) {
     // Update our progress information.
     $context['sandbox']['progress']++;
     //$context['progress']++;
+    dpm($context['sandbox']['current_node']);
     $context['sandbox']['current_node'] = $key;
     $context['message'] = $row;
     
