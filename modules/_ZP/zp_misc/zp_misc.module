@@ -2384,7 +2384,13 @@ function zp_misc_addZpCatalogObjects_form() {
   );
   
   $objects = zp_misc_prepareZpObjectsToAddToCatalog();
-  dpm($objects);
+  if (empty($_SESSION['http_request_count'])) {
+    dpm($objects);
+  }
+  else {
+    // reset counter for debug information.
+    $_SESSION['http_request_count'] = NULL;
+  }
   
   return $form;
 }
@@ -2417,8 +2423,7 @@ function zp_misc_addZpCatalogObjects_form_submit($form, &$form_state) {
     'error_message' => t('ZP Catalog objects adding process has encountered an error.'),
   );
   batch_set($batch);
-  $_SESSION['http_request_count'] = 0; // reset counter for debug information.
-
+  
   //batch_process();
 }
 
