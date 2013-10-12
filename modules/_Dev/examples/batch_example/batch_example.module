@@ -237,7 +237,7 @@ function batch_example_op_2($operation_details, &$context) {
     $result[] = 'Op ' . $j;
   }
   
-  for ($j = $context['sandbox']['current_node']; $j < $context['sandbox']['current_node'] + 5 && $context['sandbox']['current_node'] < count($result); $j++) {
+  for ($key = $context['sandbox']['current_node']; $key < $context['sandbox']['current_node'] + 5 && $context['sandbox']['current_node'] < count($result); $key++, $row = $result[$key]) {
     // Here we actually perform our dummy 'processing' on the current node.
     $context['results']['rows_data'][] = $row . ' ' . $operation_details;
 
@@ -249,7 +249,7 @@ function batch_example_op_2($operation_details, &$context) {
     
     
   }
-  sleep(1);
+  //sleep(1);
   
   // Inform the batch engine that we are not finished,
   // and provide an estimation of the completion level we reached.
