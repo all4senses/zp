@@ -2495,7 +2495,7 @@ function zp_misc_addObjectsToCatalog_batch_process($objects, &$context) {
   }
   
   
-  _batch_example_update_http_requests();
+  zp_misc_update_http_requests();
   
   
 //  if ($node->nid == 49) {
@@ -2510,7 +2510,7 @@ function zp_misc_addObjectsToCatalog_batch_process($objects, &$context) {
 function zp_misc_addObjectsToCatalog_batch_finished($success, $results, $operations) {
   dpm($results);
   if ($success) {
-    drupal_set_message(t('@count objects processed in @requests HTTP requests.', array('@count' => count($results['items']), '@requests' => _batch_example_get_http_requests())));
+    drupal_set_message(t('@count objects processed in @requests HTTP requests.', array('@count' => count($results['items']), '@requests' => zp_misc_get_http_requests())));
     drupal_set_message(t('ZP Catalog has been updated with new/changed objects. The final object was "%final"', array('%final' => end($results['items']))));
   }
   else {
@@ -2529,11 +2529,11 @@ function zp_misc_addObjectsToCatalog_batch_finished($success, $results, $operati
 /**
  * Utility function to count the HTTP requests in a session variable.
  */
-function _batch_example_update_http_requests() {
+function zp_misc_update_http_requests() {
   $_SESSION['http_request_count']++;
 }
 
-function _batch_example_get_http_requests() {
+function zp_misc_get_http_requests() {
   return !empty($_SESSION['http_request_count']) ? $_SESSION['http_request_count'] : 0;
 }
 
