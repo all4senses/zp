@@ -209,9 +209,10 @@ function batch_example_op_2($operation_details, &$context) {
   for($i = 0; $i < 100; $i++) {
     $result[] = (object) array('nid' => $i, 'title' => 'object ' . $i);
   }
-  
+  dpm($result);
   for ($i = $context['sandbox']['current_node']; $i < $context['sandbox']['current_node'] + 5; $i++) {
     $node = $result[$i];
+    dpm($node);
   //foreach ($result as $node) {
     // Here we actually perform our dummy 'processing' on the current node.
     //$node = node_load($row->nid, NULL, TRUE);
