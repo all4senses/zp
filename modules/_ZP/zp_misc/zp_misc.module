@@ -2383,6 +2383,8 @@ function zp_misc_addZpCatalogObjects_form() {
     '#markup' => t('Go adding new ZP Catalog objects!'),
   );
   
+  dpm('zp_current_batch_id = ' . $_SESSION['zp_current_batch_id']);
+  
   if (!empty($_SESSION['zp_current_batch_id'])) {
     $form['continue_interrupted'] = array(
       '#type' => 'markup',
@@ -2508,7 +2510,7 @@ function zp_misc_addObjectsToCatalog_batch_process($objects, &$context) {
   if (!$context['finished']) {
     $context['sandbox']['current_object_id'] += 1;
     // We can stop batch and then contimue it using stored id of batch.
-    $_SESSION['zp_current_batch_id'] = $_GET['id'];
+    $_SESSION['zp_current_batch_id'] = 'xxx' . $_GET['id'];
   }
   elseif ($context['finished'] && !$error_message) {
     // We don't need to know it anymore.
