@@ -2354,18 +2354,18 @@ function zp_misc_testPage() {
     'weight' => 2,
   );
   
-  for($i = 1; $i< 1000; $i++) {
-    $objects[] = array(
-      'type' => 'product_a',
-      'title' => 'Бормотуха ' . ($i+3),
-      'description' => 'Описание продукта Бормотуха 1', 
-      'summary' => 'Краткое описание продукта Бормотуха 1',
-      'zp_id' => 'z011',
-      'parent_zp_id' => 'z004',
-      'subgroup' => 'подгруппа Бормотуха',
-      'weight' => 2,
-    );
-  }
+//  for($i = 1; $i< 1000; $i++) {
+//    $objects[] = array(
+//      'type' => 'product_a',
+//      'title' => 'Бормотуха ' . ($i+3),
+//      'description' => 'Описание продукта Бормотуха 1', 
+//      'summary' => 'Краткое описание продукта Бормотуха 1',
+//      'zp_id' => 'z011',
+//      'parent_zp_id' => 'z004',
+//      'subgroup' => 'подгруппа Бормотуха',
+//      'weight' => 2,
+//    );
+//  }
   zp_misc_addObjectsToCatalog_batch($objects);
   
   return $out . '<br>End of Test';
@@ -2463,6 +2463,7 @@ function zp_misc_addObjectsToCatalog_finished($success, $results, $operations) {
   
   // Clear caches, etc after adding new ZP Catalog objects.
   ////menu_cache_clear_all();
+  drupal_goto('<front>'); 
 }
 
 
