@@ -68,7 +68,7 @@ function batch_example_simple_form() {
   $text_field = array(
       '#type' => 'textarea',
       '#title' => 'History',
-      '#value' => $context['sandbox']['history'],
+      '#value' => 'xxx',
     );
     dpm(render($text_field));
     
