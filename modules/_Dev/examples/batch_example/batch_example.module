@@ -63,6 +63,18 @@ function batch_example_simple_form() {
     '#type' => 'submit',
     '#value' => 'Go',
   );
+  
+  
+  $text_field = array(
+      '#type' => 'textarea',
+      '#title' => 'History',
+      '#default_value' => $context['sandbox']['history'],
+    );
+    dpm(render($text_field));
+    
+  $form['submit'] = array(
+    '#markup' => 'xxx '. render($text_field),
+  );  
 
   // If no nodes, prevent submission.
   // Find out if we have a node to work with. Otherwise it won't work.
