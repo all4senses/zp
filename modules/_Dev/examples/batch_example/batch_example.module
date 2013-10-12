@@ -232,12 +232,12 @@ function batch_example_op_2($operation_details, &$context) {
     $text_field = array(
       '#type' => 'textarea',
       '#title' => 'History',
-      '#value' => $context['sandbox']['history'],
+      '#value' => $context['sandbox']['results']['history'],
     );
 
     $context['message'] = $message . ' ' . render($text_field);
-    $context['sandbox']['history'] = $message . '
-' . $context['sandbox']['history']; 
+    $context['sandbox']['results']['history'] = $message . '
+' . $context['sandbox']['results']['history']; 
 
   }
 
