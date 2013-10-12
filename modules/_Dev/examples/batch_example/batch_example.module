@@ -221,15 +221,15 @@ function batch_example_op_2($operation_details, &$context) {
     // Store some results for post-processing in the 'finished' callback.
     // The contents of 'results' will be available as $results in the
     // 'finished' function (in this example, batch_example_finished()).
-    $context['results'][] = $node->nid . ' : ' . check_plain($node->title) . ' ' . $operation_details;
+    $context['results']['items'][] = $node->nid . ' : ' . check_plain($node->title) . ' ' . $operation_details;
 
     // Update our progress information.
     $context['sandbox']['progress']++;
     $context['sandbox']['current_node'] = $node->nid;
 
     $message = check_plain($node->title) . ' ' . $node->nid . '(' . $context['sandbox']['progress'] . ' out of ' . $context['sandbox']['max'] . ')';
-    $context['sandbox']['history'] .= $message . '
-'; 
+    $context['sandbox']['history'] = $message . '
+' . $context['sandbox']['history']; 
     
     $text_field = array(
       '#type' => 'textarea',
