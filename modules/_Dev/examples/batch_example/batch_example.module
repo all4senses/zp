@@ -114,6 +114,11 @@ function batch_example_batch_1() {
   $batch = array(
     'operations' => $operations,
     'finished' => 'batch_example_finished',
+      
+    'title' => t('Processing batch 1'),
+    'init_message' => t('Batch 1 is starting.'),
+    'progress_message' => t('Processed @current out of @total.'),
+    'error_message' => t('Batch 1 has encountered an error.'),
   );
   return $batch;
 }
@@ -134,6 +139,8 @@ function batch_example_op_1($nid, $operation_details, &$context) {
   $context['message'] = t('Loading node "@title"', array('@title' => $node->title)) . ' ' . $operation_details;
 
   _batch_example_update_http_requests();
+  
+  sleep(1);
 }
 
 /**
