@@ -2501,13 +2501,13 @@ function zp_misc_addObjectsToCatalog_batch_process($objects, &$context) {
   // and provide an estimation of the completion level we reached.
   if ($error_message) {
     // Stop processing because if the error!
-    $context['finished'] = TRUE;
+    $context['finished'] = 1;
   }
   elseif ($context['sandbox']['progress'] != $context['sandbox']['max']) {
     $context['finished'] = ($context['sandbox']['progress'] / $context['sandbox']['max']);
   }
   
-  if (!$context['finished']) {
+  if ($context['finished'] !== 1) {
     $context['sandbox']['current_object_id'] += 1;
     // We can stop batch and then contimue it using stored id of batch.
     $_SESSION['zp_current_batch_id'] = 'xxx' . $_GET['id'];
