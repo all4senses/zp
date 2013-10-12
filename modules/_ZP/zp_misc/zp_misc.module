@@ -2398,7 +2398,7 @@ function zp_misc_addZpCatalogObjects_form_submit($form, &$form_state) {
 
   $batch = array(
     'operations' => array(
-      array('zp_misc_addObjectsToCatalog_process', array($objects)),
+      array('zp_misc_addObjectsToCatalog_batch_process', array($objects)),
     ),
     'finished' => 'zp_misc_addObjectsToCatalog_batch_finished',
     // Message displayed while processing the batch. Available placeholders are:
