@@ -138,6 +138,8 @@ function batch_example_op_1($nid, $operation_details, &$context) {
   // Optional message displayed under the progressbar.
   $context['message'] = 'Loading node ' . $node->title . ' ' . $operation_details . ' (prev: ' . $context['results'][count($context['results']) - 2] . ')';
 
+  $context['finished'] = TRUE;
+  
   _batch_example_update_http_requests();
   
   sleep(1);
