@@ -202,7 +202,7 @@ function batch_example_op_2($operation_details, &$context) {
   // progress feedback to the user and wait for the next request.
   // That way even though we're already processing at the operation level
   // the operation itself is interruptible.
-  $limit = 5;
+  $limit = 1;
 
   // Retrieve the next group of nids.
   $result = db_select('node', 'n')
