@@ -244,7 +244,7 @@ function batch_example_op_2($operation_details, &$context) {
     $text_field = array(
       '#type' => 'textarea',
       '#title' => 'History',
-      '#default_value' => $context['sandbox']['history'],
+      '#value' => $context['sandbox']['history'],
     );
     dpm(render($text_field));
     $context['message'] = render($text_field);
