@@ -2388,7 +2388,7 @@ function zp_misc_addZpCatalogObjects_form() {
   if (!empty($_SESSION['zp_current_batch_id'])) {
     $form['continue_interrupted'] = array(
       '#type' => 'markup',
-      '#markup' => t('Continue the last interrupted @batch', array('@batch' => l('batch with id=' . $_SESSION['zp_current_batch_id'], 'batch', array('query' => array('op' => 'start', 'id' => $_SESSION['zp_current_batch_id']))))),
+      '#markup' => '<div>' . t('Continue the last interrupted ') . l(t('batch with id=') . $_SESSION['zp_current_batch_id'], 'batch', array('query' => array('op' => 'start', 'id' => $_SESSION['zp_current_batch_id']))) . '</div>',
     );
   }
 
@@ -2492,7 +2492,7 @@ function zp_misc_addObjectsToCatalog_batch_process($objects, &$context) {
     '#value' => $context['results']['history'],
   );
 
-  $context['message'] = $_GET['id'] . ' - - - ' . $message . ' ' . render($text_field);
+  $context['message'] = $message . ' ' . render($text_field);
 
   $context['results']['history'] = $message . '
 ' . $context['results']['history']; 
@@ -2507,14 +2507,14 @@ function zp_misc_addObjectsToCatalog_batch_process($objects, &$context) {
     $context['finished'] = ($context['sandbox']['progress'] / $context['sandbox']['max']);
   }
   
-  if ($context['finished'] !== 1) {
+  if ($context['finished'] < 1) {
     $context['sandbox']['current_object_id'] += 1;
     // We can stop batch and then contimue it using stored id of batch.
-    $_SESSION['zp_current_batch_id'] = 'xxx' . $_GET['id'];
+    $_SESSION['zp_current_batch_id'] = $_GET['id'];
   }
-  elseif ($context['finished'] && !$error_message) {
+  elseif ($context['finished'] >= 1 && !$error_message) {
     // We don't need to know it anymore.
-    //unset($_SESSION['zp_current_batch_id']);
+    unset($_SESSION['zp_current_batch_id']);
   }
   
   
