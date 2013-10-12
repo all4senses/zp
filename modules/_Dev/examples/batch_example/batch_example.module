@@ -225,9 +225,16 @@ function batch_example_op_2($operation_details, &$context) {
     // Update our progress information.
     $context['sandbox']['progress']++;
     $context['sandbox']['current_node'] = $node->nid;
-    $context['message'] .= check_plain($node->title) . ' ' . $node->nid . '(' . $context['sandbox']['progress'] . ' out of ' . $context['sandbox']['max'] . ')<br/>';
+
+    $message = check_plain($node->title) . ' ' . $node->nid . '(' . $context['sandbox']['progress'] . ' out of ' . $context['sandbox']['max'] . ')<br/>';
+    $context['sandbox']['history'] .= $message; 
     
-    $context['progress'] = $context['sandbox']['progress'];
+    $text_field = array(
+      '#type' => 'textarea',
+      '#title' => 'History',
+      '#default_value' => $context['sandbox']['history'],
+    );
+    $context['message'] = render($text_field);
   }
 
   sleep(1);
