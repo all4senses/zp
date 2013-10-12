@@ -228,14 +228,16 @@ function batch_example_op_2($operation_details, &$context) {
     $context['sandbox']['current_node'] = $node->nid;
 
     $message = check_plain($node->title) . ' ' . $node->nid . '(' . $context['sandbox']['progress'] . ' out of ' . $context['sandbox']['max'] . ')<br/>';
-    $context['sandbox']['history'] .= $message; 
+    $context['sandbox']['history'] .= '
+      
+' . $message; 
     
     $text_field = array(
       '#type' => 'textarea',
       '#title' => 'History',
       '#value' => $context['sandbox']['history'],
     );
-    dpm(render($text_field));
+
     $context['message'] = render($text_field);
   }
 
