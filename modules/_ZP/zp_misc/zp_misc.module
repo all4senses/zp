@@ -2180,7 +2180,7 @@ function zp_misc_addNewZpObject($object, $test = FALSE){
     $type = $object['type'];
   }
   else {
-    $type = isset($object['product_display']) ? isset($object['product_display']) : (isset($object['product_type']) ? $object['product_type'] : NULL);
+    $type = isset($object['product_display']) ? $object['product_display'] : (isset($object['product_type']) ? $object['product_type'] : NULL);
   }
     dpm($type);
     return;
