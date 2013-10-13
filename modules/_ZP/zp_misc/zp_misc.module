@@ -1897,7 +1897,7 @@ function zp_misc_addNewProductAndConnectItToSubgroupCatalogTerm($object) {
 
   
   // Connect the subgroup term (found above) to this product node.
-  zp_misc_fieldTermReferenceSave('catalog', $node->nid, $subgroup_term_tid, 'node', $object_type);
+  zp_misc_fieldTermReferenceSave('catalog', $node->nid, $subgroup_term_tid, 'node', $product_display);
   drupal_set_message('The Product display "' . $object['title'] . '" has been connected to a corresponding Product type and the subgroup term "' . $subgroup_term_tid . '".', 'warning');
   
   
