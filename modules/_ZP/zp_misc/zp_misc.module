@@ -1863,7 +1863,7 @@ function zp_misc_addNewProductAndConnectItToSubgroupCatalogTerm($object) {
   
   $node->field_c_weight[$node->language][0]['value'] = $object['weight'];
 
-  $node->field_{$product_type}[$node->language][0]['value'] = $product_id;
+  $node->field_{$product_type}[$node->language][0]['product_id'] = $product_id;
   
   dpm($node);
   
