@@ -1865,6 +1865,7 @@ function zp_misc_addNewProductAndConnectItToSubgroupCatalogTerm($object) {
 
   $node->field_{$product_type}[$node->language][0]['value'] = $product_id;
   
+  dpm($node);
   
   /*
   $node->field_zp_id[$node->language][0] = array(
