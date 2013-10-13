@@ -2132,135 +2132,46 @@ function zp_misc_addNewZpObject($object){
   }
 }
 
+
 /**
  * Test page function for url /test.
  */
 function zp_misc_testPage() {
   
   $out = '<div>Start test...</div><br/>';
+
   /*
-  $dept = array(
-    'type' => 'department',
-    'title' => 'Напитки',
-    'description' => 'Описание отдела Напитки', 
-    'summary' => 'Краткое описание отдела Напитки',
-    'zp_id' => 'z003',
-    'parent_zp_id' => 'z001',
-    'weight' => 5,
+  $objects[] = array(
+    'type' => 'product_a',
+    'title' => 'Бормотуха 4',
+    'description' => 'Описание продукта Бормотуха 1', 
+    'summary' => 'Краткое описание продукта Бормотуха 1',
+    'zp_id' => 'z012',
+    'parent_zp_id' => 'z004',
+    'subgroup' => 'подгруппа Бормотуха',
+    'weight' => 3,
   );
   
-  zp_misc_addNewZpObject($dept);
-  */
-  /*
-  $dept = array(
-    'type' => 'department',
-    'title' => 'Алкогольные напитки',
-    'description' => 'Описание отдела Алкогольные напитки', 
-    'summary' => 'Краткое описание отдела Алкогольные напитки',
-    'zp_id' => 'z004',
-    'parent_zp_id' => 'z003',
-    'weight' => 5,
-  );
-  
-  zp_misc_addNewZpObject($dept);
+  zp_misc_addNewZpObject($objects[0]);
   */
   
-  /*
-  $dept = array(
-    'title' => 'Безалкогольные напитки',
-    'description' => 'Описание отдела Безлкогольные напитки', 
-    'summary' => 'Краткое описание отдела Безалкогольные напитки',
-    'zp_id' => 'z005',
-    'parent_zp_id' => 'z003',
-    'weight' => 6,
-  );
-  
-  zp_misc_addNewDeptAndMenuItem($dept);
-  */
-  
-  
+  if ($fields = field_info_instances('node', 'product_a')) {
+    dpm($fields);
+    foreach ($fields as $name => $field) {
+      $field_info = field_read_field($name);
+      if ($field_info['type'] == 'commerce_product_reference') {
+        dpm('name = ' . $name);
+      }
+    }
+  }
   
   return $out . '<br>End of Test';
 }
 
 
 /**
- * Add objects (depts, subgroups, products) to ZP Catalog.
- *
- * @param $objects
- *   A list of objects to add to ZP Catalog.
+ * Builds an array with objects to add to ZP Catalog.
  */
-/*
-function zp_misc_addObjectsToCatalog_batch($objects) {
-  $batch = array(
-    'operations' => array(
-      array('zp_misc_addObjectsToCatalog_process', array($objects)),
-    ),
-    'finished' => 'zp_misc_addObjectsToCatalog_finished',
-    'title' => t('Add Objects to ZP Catalog'),
-    'init_message' => t('Catalog objects are about to be added to ZP Catalog.'),
-    'progress_message' => t('Adding objects to ZP Catalog Progress: Completed @current of @total objects adding.'),
-    'redirect' => 'admin/structure/taxonomy',
-    'error_message' => t('ZP Catalog objects adding process has encountered an error.'),
-  );
-  
-  batch_set($batch);
-  batch_process('admin/structure/taxonomy');
-  //dpm($objects);
-}
-*/
-
-/**
- * Processes the batch.
- *
- * @param $objects
- *   A list of objects to add to ZP Catalog.
- * 
- */
-/*
-function zp_misc_addObjectsToCatalog_batch_process($objects, &$context) {
-  // Objects are processed 10 by 10.
-  $limit = 2;
-
-  // Initialize the sandbox the first time through.
-  if (!isset($context['sandbox']['progress'])) {
-    $context['sandbox']['progress'] = 0;
-    $context['sandbox']['max'] = count($objects);
-  }
-
-  // Store all the $objects in the sandbox and retrieve the next
-  // group of $objects to be processed.
-  $context['sandbox']['chunks'] = array_chunk($objects, $limit);
-
-  // Loop through eack chunk and process its $objects.
-  foreach ($context['sandbox']['chunks'] as $chunk) {
-    foreach ($chunk as $object) {
-      // Add $object to ZP Catalog.
-      zp_misc_addNewZpObject($object);
-
-      // Store some result for post-processing in the finished callback.
-      $context['results'][] = check_plain($object['title']);
-      // Update our progress information.
-      $context['sandbox']['progress']++;
-      $context['sandbox']['current_object'] = $object['title'];
-    }
-
-    // Inform the batch engine that we are not finished, and provide an estimation
-    // of the completion level we reached.
-    if ($context['sandbox']['progress'] < $context['sandbox']['max']) {
-      $current_count = $context['sandbox']['max'] - $context['sandbox']['progress'];
-      $context['message'] = t('Remaining %current objects to process out of %count ...', array('%current' => $current_count, '%count' => $context['sandbox']['max']));
-      $context['finished'] = $context['sandbox']['progress'] / $context['sandbox']['max'];
-    }
-    else {
-      $context['finished'] = 1;
-    }
-  }
-}
-*/
-
-
-
 function zp_misc_prepareZpObjectsToAddToCatalog() {
   
   $objects = array();
