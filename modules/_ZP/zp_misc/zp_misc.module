@@ -2175,7 +2175,6 @@ function zp_misc_addNewZpObject($object, $test = FALSE){
   }
   
   dpm($object);
-  return;
   
   if (isset($object['type'])) {
     $type = $object['type'];
@@ -2183,18 +2182,17 @@ function zp_misc_addNewZpObject($object, $test = FALSE){
   else {
     $type = isset($object['product_display']) ? isset($object['product_display']) : (isset($object['product_type']) ? $object['product_type'] : NULL);
   }
+    dpm($type);
+    return;
     
   switch ($type) {
     case 'department':
       return zp_misc_addNewDeptAndMenuItem($object);
-      break;
     case 'subgroup':
       return zp_misc_addNewCatalogTerm($object);
-      break;
     case 'product':
     case 'product_a':
       return zp_misc_addNewProductAndConnectItToSubgroupCatalogTerm($object);
-      break;
   }
 }
 
