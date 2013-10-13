@@ -1781,7 +1781,45 @@ function zp_misc_addNewProductAndConnectItToSubgroupCatalogTerm($object) {
   
   //dpm($subgroup_term_tid);
   
-  // Create a node for the product.
+  
+  
+  // Create a Product Type entity for the product.
+  // ---------------------------------------------------------------------------------------------------
+  
+  // From product_example.module.
+  
+  $form_state = array();
+  $form_state['values'] = array();
+  $form = array();
+  $form['#parents'] = array();
+
+  // Generate a new product object
+  $new_product = commerce_product_new($product_type);
+
+  $new_product->status = $extras['status'];
+  $new_product->uid = $extras['uid'];
+
+  $new_product->sku = $extras['sku'];
+  $new_product->title = $extras['title'];
+  $new_product->created = $new_product->changed = time();
+
+  //commerce_price[und][0][amount]
+  $price = array(LANGUAGE_NONE => array(0 => array(
+    'amount' => $price * 100,
+    'currency_code' => commerce_default_currency(),
+  )));
+  $form_state['values']['commerce_price'] = $price;
+
+  // Notify field widgets to save their field data
+  field_attach_submit('commerce_product', $new_product, $form, $form_state);
+
+  commerce_product_save($new_product);
+  //return $new_product->product_id;
+  
+  
+  
+  // Create a Product Display node for the product,
+  // And connect to it just created Product Type entity.
   // ---------------------------------------------------------------------------------------------------
   
   global $user;

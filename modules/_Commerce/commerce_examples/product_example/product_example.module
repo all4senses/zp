@@ -124,5 +124,6 @@ function product_example_create_product($product_type, $price, $extras) {
   field_attach_submit('commerce_product', $new_product, $form, $form_state);
 
   commerce_product_save($new_product);
+  dpm($new_product);
   return $new_product->product_id;
 }
