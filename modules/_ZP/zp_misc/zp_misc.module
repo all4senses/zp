@@ -2174,6 +2174,9 @@ function zp_misc_addNewZpObject($object, $test = FALSE){
     }
   }
   
+  dpm($object);
+  return;
+  
   if (isset($object['type'])) {
     $type = $object['type'];
   }
