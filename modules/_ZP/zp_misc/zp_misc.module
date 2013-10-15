@@ -1699,14 +1699,16 @@ function zp_misc_addNewDeptAndMenuItem($object) {
   */
   
   if (!$node = node_submit($node)) {
-    drupal_set_message('1.Error has occured while saving a Department ' . $object['title'], 'error');
-    return FALSE;
+    $error_message = '1.Error has occured while saving a Department ' . $object['title'];
+    drupal_set_message($error_message, 'error');
+    return $error_message;
   }
 
   node_save($node);
   if (empty($node->nid)) {
-    drupal_set_message('2.Error has occured while saving a Department ' . $object['title'], 'error');
-    return FALSE;
+    $error_message = '2.Error has occured while saving a Department ' . $object['title'];
+    drupal_set_message($error_message, 'error');
+    return $error_message;
   }
   
   drupal_set_message('A new department "' . $object['title']. '" was created, Success!', 'warning');
@@ -1720,7 +1722,8 @@ function zp_misc_addNewDeptAndMenuItem($object) {
   
   // Taxonomy term itself will be assigned to this node automatically on taxonomy_menu item creation via hook zp_misc_taxonomy_menu_save.
   
-  
+  // Success.
+  return FALSE;
 }
 
 
@@ -1760,12 +1763,11 @@ function zp_misc_addNewCatalogTerm($object) {
  */
 function zp_misc_addNewProductAndConnectItToSubgroupCatalogTerm($object) {
  
-  
-  
   // Find parent term tid by parent_zp_id.
   if (!$parent_tid = zp_misc_fieldRead_idByValue_single('zp_id', $object['parent_zp_id'], 'taxonomy_term', 'catalog')) {
-    drupal_set_message('There is no dept with zp_id ' . $object['parent_zp_id'], 'warning');
-    return;
+    $error_message = 'There is no dept with zp_id ' . $object['parent_zp_id'];
+    drupal_set_message($error_message, 'warning');
+    return $error_message;
   }
   
   // Search for term which is a child of this product parent dept (and just found parent term) and has a name of subgroup which is set in object
@@ -1775,20 +1777,66 @@ function zp_misc_addNewProductAndConnectItToSubgroupCatalogTerm($object) {
   $query->join('taxonomy_term_hierarchy', 'th', 'th.tid = td.tid AND th.parent = ' . $parent_tid);
   
   if (!$subgroup_term_tid = $query->execute()->fetchField()) {
-    drupal_set_message('No subgroup ' . $object['subgroup'] . ' in the dept with zp_id ' . $object['parent_zp_id'], 'warning');
-    return;
+    $error_message = 'No subgroup ' . $object['subgroup'] . ' in the dept with zp_id ' . $object['parent_zp_id'];
+    drupal_set_message($error_message, 'warning');
+    return $error_message;
   }
   
   //dpm($subgroup_term_tid);
   
-  // Create a node for the product.
+  
+  
+  // Create a Product Type entity for the product.
   // ---------------------------------------------------------------------------------------------------
   
-  global $user;
-  global $language;
-  $object_type = empty($object['type']) ? 'product_a' : $object['type']; 
+  // From product_example.module.
+  
+  $form_state = array();
+  $form_state['values'] = array();
+  $form = array();
+  $form['#parents'] = array();
+  
+  $product_type = empty($object['product_type']) ? 'product' : $object['product_type']; 
+  // Generate a new product object
+  $new_product = commerce_product_new($object['product_type']);
+
+  $new_product->status = isset($object['status']) ? $object['status'] : TRUE;
+  $new_product->uid = $GLOBALS['user']->uid;
+
+  $new_product->sku = $object['zp_id'];
+  $new_product->title = $object['title'];
+  $new_product->created = $new_product->changed = time();
+
+  //commerce_price[und][0][amount]
+  $price = array(LANGUAGE_NONE => array(0 => array(
+    'amount' => $object['price'] * 100,
+    'currency_code' => commerce_default_currency(),
+  )));
+  $form_state['values']['commerce_price'] = $price;
+
+  // Notify field widgets to save their field data
+  field_attach_submit('commerce_product', $new_product, $form, $form_state);
+
+  commerce_product_save($new_product);
+  
+  if (empty($new_product->product_id)) {
+    $error_message = '0.Error has occured while creating a Product type "' . $object['title'] . '" with zp_id ' . $object['zp_id'];
+    drupal_set_message($error_message, 'error');
+    return $error_message;
+  }
+  
+  $product_id = $new_product->product_id;
+  dpm('product_id = ' . $product_id);
+  
+  
+  
+  // Create a Product Display node for the product,
+  // And connect to it just created Product Type entity.
+  // ---------------------------------------------------------------------------------------------------
+  
+  $product_display = empty($object['product_display']) ? 'product_a' : $object['product_display']; 
   $node = new stdClass();
-  $node->type = $object_type;
+  $node->type = $product_display;
   node_object_prepare($node);
   
   $current_time = time();
@@ -1798,7 +1846,7 @@ function zp_misc_addNewProductAndConnectItToSubgroupCatalogTerm($object) {
   
   $node->title = $object['title'];
   $node->language = LANGUAGE_NONE; //$language->language; 
-  $node->uid = $user->uid;
+  $node->uid = $GLOBALS['user']->uid;
   $node->status = 1;
   $node->promote = 0;
   $node->sticky = 0;
@@ -1815,15 +1863,16 @@ function zp_misc_addNewProductAndConnectItToSubgroupCatalogTerm($object) {
   
   $node->field_c_weight[$node->language][0]['value'] = $object['weight'];
 
+  $node->{'field_' . $product_type}[$node->language][0]['product_id'] = $product_id;
+  
+  
   /*
   $node->field_zp_id[$node->language][0] = array(
     'value' => $object['zp_id'],
     'safe_value' => check_plain($object['zp_id']),
     'format' => 'full_html',
   );
-  */
-  
-  /*
+ 
   $node->path = array(
     'alias' => $object['url_alias'],
     'language' => $node->language,
@@ -1832,22 +1881,24 @@ function zp_misc_addNewProductAndConnectItToSubgroupCatalogTerm($object) {
   */
   
   if (!$node = node_submit($node)) {
-    drupal_set_message('1.Error has occured while saving a Product ' . $object['title'], 'error');
-    return FALSE;
+    $error_message = '1.Error has occured while saving a Product display "' . $object['title'] . '" with zp_id ' . $object['zp_id'];
+    drupal_set_message($error_message, 'error');
+    return $error_message;
   }
 
   node_save($node);
   if (empty($node->nid)) {
-    drupal_set_message('2.Error has occured while saving a Product ' . $object['title'], 'error');
-    return FALSE;
+    $error_message = '2.Error has occured while saving a Product display "' . $object['title'] . '" with zp_id ' . $object['zp_id'];
+    drupal_set_message($error_message, 'error');
+    return $error_message;
   }
   
-  drupal_set_message('A new Product "' . $object['title'] . '" was created, Success!', 'warning');
+  drupal_set_message('A new Product display "' . $object['title'] . '" with zp_id ' . $object['zp_id'] . ' was created, Success!', 'warning');
 
   
   // Connect the subgroup term (found above) to this product node.
-  zp_misc_fieldTermReferenceSave('catalog', $node->nid, $subgroup_term_tid, 'node', $object_type);
-  drupal_set_message('The product "' . $object['title'] . '" has been connected to the subgroup term "' . $subgroup_term_tid . '".', 'warning');
+  zp_misc_fieldTermReferenceSave('catalog', $node->nid, $subgroup_term_tid, 'node', $product_display);
+  drupal_set_message('The Product display "' . $object['title'] . '" has been connected to a corresponding Product type and the subgroup term "' . $subgroup_term_tid . '".', 'warning');
   
   
   /*
@@ -1863,6 +1914,8 @@ function zp_misc_addNewProductAndConnectItToSubgroupCatalogTerm($object) {
   }
   */
   
+  // Success.
+  return NULL;
 }
 
 
@@ -2108,29 +2161,37 @@ function zp_misc_node_delete($node) {
 /**
  * Creates new ZP object: dept, subgroup, product, etc.
  */
-function zp_misc_addNewZpObject($object){
-  sleep(1);
-  //dpm($object['title']);
-  if ($object['zp_id'] == 'z010') {
-    return 'Error with z010';
-  }
-  else {
-    return NULL;
+function zp_misc_addNewZpObject($object, $test = FALSE){
+  
+  if ($test) {
+    sleep(1);
+    //dpm($object['title']);
+    if ($object['zp_id'] == 'z010') {
+      return 'Error with z010';
+    }
+    else {
+      return NULL;
+    }
   }
   
-  switch ($object['type']) {
+  if (isset($object['type'])) {
+    $type = $object['type'];
+  }
+  else {
+    $type = isset($object['product_display']) ? $object['product_display'] : (isset($object['product_type']) ? $object['product_type'] : NULL);
+  }
+    
+  switch ($type) {
     case 'department':
-      zp_misc_addNewDeptAndMenuItem($object);
-      break;
+      return zp_misc_addNewDeptAndMenuItem($object);
     case 'subgroup':
-      zp_misc_addNewCatalogTerm($object);
-      break;
+      return zp_misc_addNewCatalogTerm($object);
+    case 'product':
     case 'product_a':
-      zp_misc_addNewProductAndConnectItToSubgroupCatalogTerm($object);
-      break;
-      
+      return zp_misc_addNewProductAndConnectItToSubgroupCatalogTerm($object);
   }
 }
+
 
 /**
  * Test page function for url /test.
@@ -2138,45 +2199,23 @@ function zp_misc_addNewZpObject($object){
 function zp_misc_testPage() {
   
   $out = '<div>Start test...</div><br/>';
-  /*
-  $dept = array(
-    'type' => 'department',
-    'title' => 'Напитки',
-    'description' => 'Описание отдела Напитки', 
-    'summary' => 'Краткое описание отдела Напитки',
-    'zp_id' => 'z003',
-    'parent_zp_id' => 'z001',
-    'weight' => 5,
+
+  
+  $objects[] = array(
+    'product_display' => 'product_a',
+    'product_type' => 'product',
+    'status' => TRUE,
+    'price' => 99.09,
+    'title' => 'Бормотуха 4',
+    'description' => 'Описание продукта Бормотуха 1', 
+    'summary' => 'Краткое описание продукта Бормотуха 1',
+    'zp_id' => 'z012',
+    'parent_zp_id' => 'z004',
+    'subgroup' => 'подгруппа Бормотуха',
+    'weight' => 3,
   );
   
-  zp_misc_addNewZpObject($dept);
-  */
-  /*
-  $dept = array(
-    'type' => 'department',
-    'title' => 'Алкогольные напитки',
-    'description' => 'Описание отдела Алкогольные напитки', 
-    'summary' => 'Краткое описание отдела Алкогольные напитки',
-    'zp_id' => 'z004',
-    'parent_zp_id' => 'z003',
-    'weight' => 5,
-  );
-  
-  zp_misc_addNewZpObject($dept);
-  */
-  
-  /*
-  $dept = array(
-    'title' => 'Безалкогольные напитки',
-    'description' => 'Описание отдела Безлкогольные напитки', 
-    'summary' => 'Краткое описание отдела Безалкогольные напитки',
-    'zp_id' => 'z005',
-    'parent_zp_id' => 'z003',
-    'weight' => 6,
-  );
-  
-  zp_misc_addNewDeptAndMenuItem($dept);
-  */
+  zp_misc_addNewZpObject($objects[0]);
   
   
   
@@ -2185,82 +2224,8 @@ function zp_misc_testPage() {
 
 
 /**
- * Add objects (depts, subgroups, products) to ZP Catalog.
- *
- * @param $objects
- *   A list of objects to add to ZP Catalog.
+ * Builds an array with objects to add to ZP Catalog.
  */
-/*
-function zp_misc_addObjectsToCatalog_batch($objects) {
-  $batch = array(
-    'operations' => array(
-      array('zp_misc_addObjectsToCatalog_process', array($objects)),
-    ),
-    'finished' => 'zp_misc_addObjectsToCatalog_finished',
-    'title' => t('Add Objects to ZP Catalog'),
-    'init_message' => t('Catalog objects are about to be added to ZP Catalog.'),
-    'progress_message' => t('Adding objects to ZP Catalog Progress: Completed @current of @total objects adding.'),
-    'redirect' => 'admin/structure/taxonomy',
-    'error_message' => t('ZP Catalog objects adding process has encountered an error.'),
-  );
-  
-  batch_set($batch);
-  batch_process('admin/structure/taxonomy');
-  //dpm($objects);
-}
-*/
-
-/**
- * Processes the batch.
- *
- * @param $objects
- *   A list of objects to add to ZP Catalog.
- * 
- */
-/*
-function zp_misc_addObjectsToCatalog_batch_process($objects, &$context) {
-  // Objects are processed 10 by 10.
-  $limit = 2;
-
-  // Initialize the sandbox the first time through.
-  if (!isset($context['sandbox']['progress'])) {
-    $context['sandbox']['progress'] = 0;
-    $context['sandbox']['max'] = count($objects);
-  }
-
-  // Store all the $objects in the sandbox and retrieve the next
-  // group of $objects to be processed.
-  $context['sandbox']['chunks'] = array_chunk($objects, $limit);
-
-  // Loop through eack chunk and process its $objects.
-  foreach ($context['sandbox']['chunks'] as $chunk) {
-    foreach ($chunk as $object) {
-      // Add $object to ZP Catalog.
-      zp_misc_addNewZpObject($object);
-
-      // Store some result for post-processing in the finished callback.
-      $context['results'][] = check_plain($object['title']);
-      // Update our progress information.
-      $context['sandbox']['progress']++;
-      $context['sandbox']['current_object'] = $object['title'];
-    }
-
-    // Inform the batch engine that we are not finished, and provide an estimation
-    // of the completion level we reached.
-    if ($context['sandbox']['progress'] < $context['sandbox']['max']) {
-      $current_count = $context['sandbox']['max'] - $context['sandbox']['progress'];
-      $context['message'] = t('Remaining %current objects to process out of %count ...', array('%current' => $current_count, '%count' => $context['sandbox']['max']));
-      $context['finished'] = $context['sandbox']['progress'] / $context['sandbox']['max'];
-    }
-    else {
-      $context['finished'] = 1;
-    }
-  }
-}
-*/
-
-
-
 function zp_misc_prepareZpObjectsToAddToCatalog() {
   
   $objects = array();
@@ -2313,7 +2278,10 @@ function zp_misc_prepareZpObjectsToAddToCatalog() {
   );
   
   $objects[] = array(
-    'type' => 'product_a',
+    'product_display' => 'product_a',
+    'product_type' => 'product',
+    'status' => TRUE,
+    'price' => 99.09,
     'title' => 'Вино 1',
     'description' => 'Описание продукта Вино 1', 
     'summary' => 'Краткое описание продукта Вино 1',
@@ -2324,7 +2292,10 @@ function zp_misc_prepareZpObjectsToAddToCatalog() {
   );
   
   $objects[] = array(
-    'type' => 'product_a',
+    'product_display' => 'product_a',
+    'product_type' => 'product',
+    'status' => TRUE,
+    'price' => 99.09,
     'title' => 'Вино 2',
     'description' => 'Описание продукта Вино 2', 
     'summary' => 'Краткое описание продукта Вино 2',
@@ -2335,7 +2306,10 @@ function zp_misc_prepareZpObjectsToAddToCatalog() {
   );
   
   $objects[] = array(
-    'type' => 'product_a',
+    'product_display' => 'product_a',
+    'product_type' => 'product',
+    'status' => TRUE,
+    'price' => 99.09,
     'title' => 'Вино 3',
     'description' => 'Описание продукта Вино 3', 
     'summary' => 'Краткое описание продукта Вино 3',
@@ -2347,7 +2321,10 @@ function zp_misc_prepareZpObjectsToAddToCatalog() {
   
   
   $objects[] = array(
-    'type' => 'product_a',
+    'product_display' => 'product_a',
+    'product_type' => 'product',
+    'status' => TRUE,
+    'price' => 99.09,
     'title' => 'Бормотуха 1',
     'description' => 'Описание продукта Бормотуха 1', 
     'summary' => 'Краткое описание продукта Бормотуха 1',
@@ -2359,7 +2336,10 @@ function zp_misc_prepareZpObjectsToAddToCatalog() {
   
 //  for($i = 1; $i< 1000; $i++) {
 //    $objects[] = array(
-//      'type' => 'product_a',
+//      'product_display' => 'product_a',
+//      'product_type' => 'product',
+//      'status' => TRUE,
+//      'price' => 99.09,
 //      'title' => 'Бормотуха ' . ($i+3),
 //      'description' => 'Описание продукта Бормотуха 1', 
 //      'summary' => 'Краткое описание продукта Бормотуха 1',
@@ -2469,7 +2449,7 @@ function zp_misc_addObjectsToCatalog_batch_process($objects, &$context) {
 
   // Process object.
   $current_object_title = 'id: ' . $context['sandbox']['current_object_id'] . ', ' . $objects[$context['sandbox']['current_object_id']]['title'];
-  if (!$error_message = zp_misc_addNewZpObject($objects[$context['sandbox']['current_object_id']])) {
+  if (!$error_message = zp_misc_addNewZpObject($objects[$context['sandbox']['current_object_id']], TRUE)) {
     $current_object_result_message = 'Success: ' . $current_object_title;
     // Update progress information.
     $context['sandbox']['progress']++;

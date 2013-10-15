@@ -343,7 +343,7 @@ function zp_pages_setZpBreadcrumb($node) {
     }
     $parents = $query->execute()->fetchObject();
 
-    dpm($parents);
+    //dpm($parents);
 
     $breadcrumb = array(
       0 => '<a href="/">Home</a>',
