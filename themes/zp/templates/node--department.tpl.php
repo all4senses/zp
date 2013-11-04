@@ -126,7 +126,7 @@ if ($page) {
     //dpm($catalog_parents_tids);
   
   if (!empty($node->zp_template_data['view_display'])) {
-    echo '<div class="title">' . $node->zp_template_data['views_title'] . '</div>' . $node->zp_template_data['view_display'];
+    echo '<div class="title 2">' . $node->zp_template_data['views_title'] . '</div>' . $node->zp_template_data['view_display'];
   }
 }
 ?>
