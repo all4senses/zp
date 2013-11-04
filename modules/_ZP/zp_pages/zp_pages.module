@@ -52,7 +52,7 @@ function zp_pages_menu_contextual_links_alter(&$links, $router_item, $root_path)
           'localized_options' => array(
             'query' => array(
             //'destination' => current_path(),
-            'destination' => request_uri(), //$destination,
+            'destination' => ltrim(request_uri(), '/'), //$destination,
           ),
         ),
       );      
