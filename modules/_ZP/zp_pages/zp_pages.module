@@ -100,7 +100,7 @@ function zp_pages_form_alter(&$form, &$form_state, $form_id) {
     
     
     case 'product_a_node_form':
-      dpm($form);
+      //dpm($form);
       
       break;
     
