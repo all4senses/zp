@@ -44,13 +44,15 @@ function zp_pages_menu_contextual_links_alter(&$links, $router_item, $root_path)
         $product = commerce_product_load($element['product_id']);  
 
         // Add your contextual link
+        $destination = drupal_get_destination();
+        $destination = $destination['destination'];
         $links['edit_prod_'.$element['product_id']] = array(
           'title' => t('Edit @sku', array('@sku' => $product->sku)),
           'href' => 'admin/commerce/products/'.$element['product_id'].'/edit',
           'localized_options' => array(
             'query' => array(
             //'destination' => current_path(),
-            'destination' => drupal_get_destination(),
+            'destination' => $destination,
           ),
         ),
       );      
