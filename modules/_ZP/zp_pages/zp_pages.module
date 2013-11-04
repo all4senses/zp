@@ -62,6 +62,11 @@ function zp_pages_form_alter(&$form, &$form_state, $form_id) {
       */
     
     
+    case 'product_a':
+      dpm($form);
+      break;
+    
+    
     case 'user_login_block':
     case 'user_login':
       
@@ -424,7 +429,7 @@ function zp_pages_buildDeptPage($node) {
 
 
 
-    $views_title = 'Товары';
+    $views_title = 'РўРѕРІР°СЂС‹';
     $display = 'bl_prods_of_dpt';
 
     $view = views_get_view('zp_catalog');
@@ -482,7 +487,7 @@ function zp_pages_buildDeptPage($node) {
         'expose' => array(
             'operator_id' => 'field_catalog_tid_op',
             'operator' => 'field_catalog_tid_op',
-            'label' => 'Подгруппа',
+            'label' => 'РџРѕРґРіСЂСѓРїРїР°',
             'identifier' => 'field_catalog_tid',
             'multiple' => TRUE,
             'reduce' => TRUE,
@@ -496,7 +501,7 @@ function zp_pages_buildDeptPage($node) {
   }
   else {
     // We have a dept with subdepts here.
-    $views_title = 'Подотделы';
+    $views_title = 'РџРѕРґРѕС‚РґРµР»С‹';
     $display = 'bl_subdpts_of_dpt';
 
     $term_children = taxonomy_get_children($node->field_catalog['und'][0]['tid']);//, $node->field_category['und'][0]['taxonomy_term']->vid);
