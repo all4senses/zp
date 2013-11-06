@@ -57,7 +57,7 @@ function zp_pages_access_product() {
  * Goto product display from entoty product page via local menu.
  */
 function zp_pages_goToDisplayProductEditPage($product_id) {
-  //dpm($nid);
+  dpm($product_id);
   
   dpm($_GET);
   dpm(arg());
