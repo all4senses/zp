@@ -54,32 +54,27 @@ function zp_pages_access_product() {
 
 
 /**
+ * Goto product entity from display product page via local menu.
+ */
+function zp_pages_goToProductEditPage($node) {
+  drupal_goto('admin/commerce/products/' . $node->field_product[LANGUAGE_NONE][0]['product_id'], array('query' => array('destination' => ltrim(url('node/' . $node->nid), '/'))));
+}
+
+
+/**
  * Goto product display from entoty product page via local menu.
  */
 function zp_pages_goToDisplayProductEditPage($product_id, $destination = NULL, $server = NULL) {
   
-  dpm($product_id);
-  dpm($destination);
-  dpm($server);
-  dpm($_SERVER);
-  
-  dpm($_GET);
-  dpm(arg());
-  
-  
   //$nid = zp_pages_get_referencing_node_id(commerce_product_load($product_id));
   $display_node_nid = zp_pages_get_display_node_by_product_id($product_id); 
-  dpm($display_node_nid);
   
-  
-  
-  if (strpos($_SERVER['HTTP_REFERER'], 'destination=')) {
+  //if (strpos($_SERVER['HTTP_REFERER'], 'destination=')) {
     drupal_goto('node/' . $display_node_nid);
-  }
-  else { 
-    drupal_goto('node/' . $display_node_nid, array('query' => array('destination' => ltrim(url('admin/commerce/products/' . $product_id), '/'))));
-  }
-  //return 'test';
+//  }
+//  else { 
+//    drupal_goto('node/' . $display_node_nid, array('query' => array('destination' => ltrim(url('admin/commerce/products/' . $product_id), '/'))));
+//  }
 }
 
 
@@ -132,16 +127,6 @@ function zp_pages_get_referencing_node_id($product) {
   }
 
   return false;
-}
-
-
-/**
- * Goto product entity from display product page via local menu.
- */
-function zp_pages_goToProductEditPage($node) {
-  //dpm($node);
-  drupal_goto('admin/commerce/products/' . $node->field_product[LANGUAGE_NONE][0]['product_id'], array('query' => array('destination' => ltrim(url('node/' . $node->nid . '/edit'), '/'))));
-  //return 'test';
 }
 
 
