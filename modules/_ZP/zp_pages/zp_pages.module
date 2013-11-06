@@ -16,7 +16,7 @@ module_load_include('inc', 'zp_misc', 'inc/constants');
  */
 function zp_pages_menu() {
   
-  $items['node/%zp_pages_node/crop'] = array(
+  $items['node/%node/crop'] = array(
     'title' => 'Crop',
     'description' => t('Do whatever my module does to a node.'),
     'page callback' => 'zp_pages_goToProductEditPage',
@@ -28,11 +28,11 @@ function zp_pages_menu() {
   
   return $items;
 }
-function zp_pages_node_load($nid) {
-  dpm($nid);
-  //$node = node_load($nid);
-  return $nid;//$node;// ($node->type == 'product_a') ? $node : FALSE;
-}
+//function zp_pages_node_load($nid) {
+//  dpm($nid);
+//  //$node = node_load($nid);
+//  return $nid;//$node;// ($node->type == 'product_a') ? $node : FALSE;
+//}
 function zp_pages_goToProductEditPage($nid) {
   dpm($nid);
   return 'test';
