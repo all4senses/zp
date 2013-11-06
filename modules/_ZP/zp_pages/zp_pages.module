@@ -29,8 +29,9 @@ function zp_pages_menu() {
   return $items;
 }
 function zp_pages_node_load($nid) {
+  dpm($nid);
   //$node = node_load($nid);
-  return $node;// ($node->type == 'product_a') ? $node : FALSE;
+  return 33;//$node;// ($node->type == 'product_a') ? $node : FALSE;
 }
 function zp_pages_goToProductEditPage($nid) {
   dpm($nid);
