@@ -68,14 +68,17 @@ function zp_pages_goToDisplayProductEditPage($product_id, $destination = NULL, $
   
   //$nid = zp_pages_get_referencing_node_id(commerce_product_load($product_id));
   $display_node_nid = zp_pages_get_display_node_by_product_id($product_id); 
-  
   dpm($display_node_nid);
-  if (strpos($destination, '/edit')) {
-    drupal_goto('node/' . $display_node_nid);
-  }
-  else {
-    drupal_goto('node/' . $display_node_nid, array('query' => array('destination' => ltrim(url('admin/commerce/products/' . $product_id), '/'))));
-  }
+  
+  drupal_goto('node/' . $display_node_nid);
+  
+  
+//  if (strpos($destination, '/edit')) {
+//    drupal_goto('node/' . $display_node_nid);
+//  }
+//  else {
+//    drupal_goto('node/' . $display_node_nid, array('query' => array('destination' => ltrim(url('admin/commerce/products/' . $product_id), '/'))));
+//  }
   //return 'test';
 }
 
