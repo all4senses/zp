@@ -21,7 +21,8 @@ function zp_pages_menu() {
     'description' => t('Do whatever my module does to a node.'),
     'page callback' => 'zp_pages_goToProductEditPage',
     'page arguments' => array(1),
-    'access callback' => 'zp_pages_access_product',
+    //'access callback' => 'zp_pages_access_product',
+    'access arguments' => array('administer taxonomy'),
     'type' => MENU_LOCAL_TASK,
     'weight' => 50,
   );
@@ -31,7 +32,8 @@ function zp_pages_menu() {
     'description' => t('Do whatever my module does to a node.'),
     'page callback' => 'zp_pages_goToDisplayProductEditPage',
     'page arguments' => array(1),
-    'access callback' => 'zp_pages_access_product',
+    //'access callback' => 'zp_pages_access_product',
+    'access arguments' => array('administer taxonomy'),
     'type' => MENU_LOCAL_TASK,
     'weight' => 50,
   );
@@ -51,9 +53,10 @@ function zp_pages_goToDisplayProductEditPage($nid) {
   return 'test';
 }
 
-function zp_pages_goToProductEditPage($nid) {
-  dpm($nid);
-  return 'test';
+function zp_pages_goToProductEditPage($node) {
+  dpm($node);
+  drupal_goto('admin/commerce/products/' . $node->field_product[LANGUAGE_NONE][0]['product_id']);
+  //return 'test';
 }
 
 function zp_pages_custom_theme() {

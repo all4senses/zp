@@ -32,7 +32,7 @@ function zp_misc_menu() {
     'description' => 'Add new ZP Catalog objects: depts, subgroups, products, etc',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('zp_misc_addZpCatalogObjects_form'),
-    'access arguments' => array('administer taxonomy'), 
+    'access arguments' => array('administer taxonomy'),
   );
   
   $items['test'] = array(
