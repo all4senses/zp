@@ -22,7 +22,7 @@ function zp_pages_menu() {
     'page callback' => 'zp_pages_goToProductEditPage',
     'page arguments' => array(1),
     'access callback' => 'zp_pages_access_productEntity',
-    'access arguments' => array(3), //array('administer taxonomy'),
+    'access arguments' => array(1), //array('administer taxonomy'),
     'type' => MENU_LOCAL_TASK,
     'weight' => 50,
   );
