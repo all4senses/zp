@@ -45,7 +45,7 @@ function zp_pages_goToProductEditPage($nid) {
 function zp_pages_custom_theme() {
   $args = arg();
   dpm($args);
-  if (arg(0) == 'admin' && arg(2) == 'products') {
+  if ($args[0] == 'admin' && $args[2] == 'products' && !empty($args[3]) && empty($args[4])) {
     return 'zp';
   }
 }
