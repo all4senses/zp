@@ -16,7 +16,7 @@ module_load_include('inc', 'zp_misc', 'inc/constants');
  */
 function zp_pages_menu() {
   
-  $items['node/%zp_pages_node_load/crop'] = array(
+  $items['node/%zp_pages_load/crop'] = array(
     'title' => 'Crop',
     'description' => t('Do whatever my module does to a node.'),
     'page callback' => 'zp_pages_goToProductEditPage',
