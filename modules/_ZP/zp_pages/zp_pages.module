@@ -31,7 +31,7 @@ function zp_pages_menu() {
     'title' => 'Product display',
     'description' => t('Do whatever my module does to a node.'),
     'page callback' => 'zp_pages_goToDisplayProductEditPage',
-    'page arguments' => array(1),
+    'page arguments' => array(3),
     //'access callback' => 'zp_pages_access_product',
     'access arguments' => array('administer taxonomy'),
     'type' => MENU_LOCAL_TASK,
