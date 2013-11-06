@@ -31,7 +31,7 @@ function zp_pages_menu() {
 function zp_pages_node_load($nid) {
   dpm($nid);
   //$node = node_load($nid);
-  return nid;//$node;// ($node->type == 'product_a') ? $node : FALSE;
+  return $nid;//$node;// ($node->type == 'product_a') ? $node : FALSE;
 }
 function zp_pages_goToProductEditPage($nid) {
   dpm($nid);
