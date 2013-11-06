@@ -31,7 +31,7 @@ function zp_pages_menu() {
     'title' => 'Product display',
     'description' => t('Do whatever my module does to a node.'),
     'page callback' => 'zp_pages_goToDisplayProductEditPage',
-    'page arguments' => array(3),
+    'page arguments' => array(3, $_GET['destination']),
     //'access callback' => 'zp_pages_access_product',
     'access arguments' => array('administer taxonomy'),
     'type' => MENU_LOCAL_TASK,
@@ -56,7 +56,7 @@ function zp_pages_access_product() {
 /**
  * Goto product display from entoty product page via local menu.
  */
-function zp_pages_goToDisplayProductEditPage($product_id) {
+function zp_pages_goToDisplayProductEditPage($product_id, $destination = NULL) {
   dpm($product_id);
   
   dpm($_GET);
@@ -66,7 +66,12 @@ function zp_pages_goToDisplayProductEditPage($product_id) {
   $display_node_nid = zp_pages_get_display_node_by_product_id($product_id); 
   
   dpm($display_node_nid);
-  drupal_goto('node/' . $display_node_nid, array('query' => array('destination' => ltrim(url('admin/commerce/products/' . $product_id), '/'))));
+  if ($destination) {
+    drupal_goto('node/' . $display_node_nid);
+  }
+  else {
+    drupal_goto('node/' . $display_node_nid, array('query' => array('destination' => ltrim(url('admin/commerce/products/' . $product_id), '/'))));
+  }
   //return 'test';
 }
 
