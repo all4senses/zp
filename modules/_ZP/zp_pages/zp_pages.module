@@ -40,6 +40,9 @@ function zp_pages_menu() {
   return $items;
 }
 
+/**
+ * Implements access function for products.
+ */
 function zp_pages_access_product() {
   return TRUE;
 }
@@ -48,25 +51,71 @@ function zp_pages_access_product() {
 //  //$node = node_load($nid);
 //  return $nid;//$node;// ($node->type == 'product_a') ? $node : FALSE;
 //}
-function zp_pages_goToDisplayProductEditPage($nid) {
+
+
+/**
+ * Goto product display from entoty product page via local menu.
+ */
+function zp_pages_goToDisplayProductEditPage($product_id) {
+  //dpm($nid);
+  
+  dpm($_GET);
+  dpm(arg());
+  
+  $nid = zp_pages_get_referencing_node_id(commerce_product_load($product_id));
   dpm($nid);
+  //drupal_goto('node/' . $node_id, array('query' => array('destination' => ltrim(url('admin/commerce/products/' . $product_id), '/'))));
   return 'test';
 }
 
+
+function zp_pages_get_referencing_node_id($product) {
+  // Itterate through all fields which refer to commerce products.
+  foreach (commerce_info_fields('commerce_product_reference') as $field) {
+    // Build query.
+    $query = new EntityFieldQuery;
+    $query->entityCondition('entity_type', 'node', '=')
+      ->fieldCondition($field['field_name'], 'product_id', $product->product_id, '=')
+      ->range(0, 1);
+
+    if ($result = $query->execute()) {
+      // Return node id.
+      return array_shift(array_keys($result['node']));
+    }
+  }
+
+  return false;
+
+
+/**
+ * Goto product entity from display product page via local menu.
+ */
 function zp_pages_goToProductEditPage($node) {
-  dpm($node);
+  //dpm($node);
   drupal_goto('admin/commerce/products/' . $node->field_product[LANGUAGE_NONE][0]['product_id'], array('query' => array('destination' => ltrim(url('node/' . $node->nid . '/edit'), '/'))));
   //return 'test';
 }
 
+
+/**
+ * Implements hook_custom_theme().
+ * 
+ * http://drupal.stackexchange.com/questions/812/how-do-i-change-a-theme-based-on-the-url
+ */  
 function zp_pages_custom_theme() {
   $args = arg();
   //dpm($args);
-  if ($args[0] == 'admin' && $args[2] == 'products' && !empty($args[3]) && empty($args[4])) {
+  if ($args[0] == 'admin' && @$args[2] == 'products' && !empty($args[3]) && empty($args[4])) {
     return 'zp';
   }
 }
 
+
+/**
+ * Implements hook_menu_contextual_links_alter().
+ * 
+ * Add edit product entity for a product display node.
+ */  
 function zp_pages_menu_contextual_links_alter(&$links, $router_item, $root_path) {
   // Add a link to all contextual links for nodes.
   /*
