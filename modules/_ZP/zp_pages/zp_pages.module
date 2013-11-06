@@ -21,12 +21,16 @@ function zp_pages_menu() {
     'description' => t('Do whatever my module does to a node.'),
     'page callback' => 'zp_pages_goToProductEditPage',
     'page arguments' => array(1),
-    //'access callback' => 'mymodule_access_callback',
+    'access callback' => 'zp_pages_access_product',
     'type' => MENU_LOCAL_TASK,
     'weight' => 50,
   );
   
   return $items;
+}
+
+function zp_pages_access_product() {
+  return TRUE;
 }
 //function zp_pages_node_load($nid) {
 //  dpm($nid);
