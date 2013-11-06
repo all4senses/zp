@@ -16,7 +16,7 @@ module_load_include('inc', 'zp_misc', 'inc/constants');
  */
 function zp_pages_menu() {
   
-  $items['node/%node/crop'] = array(
+  $items['node/%node/product_entity'] = array(
     'title' => 'Product entity',
     'description' => t('Do whatever my module does to a node.'),
     'page callback' => 'zp_pages_goToProductEditPage',
@@ -26,7 +26,7 @@ function zp_pages_menu() {
     'weight' => 50,
   );
   
-  $items['admin/commerce/products/%/%'] = array(
+  $items['admin/commerce/products/%/display'] = array(
     'title' => 'Product display',
     'description' => t('Do whatever my module does to a node.'),
     'page callback' => 'zp_pages_goTodisplayProductEditPage',
