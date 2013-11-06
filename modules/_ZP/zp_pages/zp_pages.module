@@ -30,7 +30,7 @@ function zp_pages_menu() {
 }
 function zp_pages_node_load($nid) {
   $node = node_load($nid);
-  return ($node->type == 'product_a') ? $node : FALSE;
+  return $node;// ($node->type == 'product_a') ? $node : FALSE;
 }
 function zp_pages_goToProductEditPage($nid) {
   dpm($nid);
