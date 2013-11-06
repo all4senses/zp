@@ -55,7 +55,7 @@ function zp_pages_goToDisplayProductEditPage($nid) {
 
 function zp_pages_goToProductEditPage($node) {
   dpm($node);
-  drupal_goto('admin/commerce/products/' . $node->field_product[LANGUAGE_NONE][0]['product_id']);
+  drupal_goto('admin/commerce/products/' . $node->field_product[LANGUAGE_NONE][0]['product_id'], array('query' => array('destination' => ltrim(request_uri(), '/'))));
   //return 'test';
 }
 
