@@ -61,6 +61,7 @@ function zp_pages_goToDisplayProductEditPage($product_id, $destination = NULL, $
   dpm($product_id);
   dpm($destination);
   dpm($server);
+  dpm($_SERVER);
   
   dpm($_GET);
   dpm(arg());
