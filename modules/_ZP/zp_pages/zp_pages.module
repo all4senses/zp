@@ -45,9 +45,9 @@ function zp_pages_goToProductEditPage($nid) {
 function zp_pages_custom_theme() {
   $args = arg();
   dpm($args);
-//  if (arg(0) == 'event2011') {
-//    return 'the theme to use for that page';
-//  }
+  if (arg(0) == 'admin' && arg(2) == 'products') {
+    return 'zp';
+  }
 }
 
 function zp_pages_menu_contextual_links_alter(&$links, $router_item, $root_path) {
