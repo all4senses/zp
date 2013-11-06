@@ -62,7 +62,8 @@ function zp_pages_goToDisplayProductEditPage($product_id) {
   dpm($_GET);
   dpm(arg());
   
-  $nid = zp_pages_get_display_node_by_product_id($product_id); //zp_pages_get_referencing_node_id(commerce_product_load($product_id));
+  //$nid = zp_pages_get_display_node_by_product_id($product_id); 
+  $nid = zp_pages_get_referencing_node_id(commerce_product_load($product_id));
   dpm($nid);
   //drupal_goto('node/' . $node_id, array('query' => array('destination' => ltrim(url('admin/commerce/products/' . $product_id), '/'))));
   return 'test';
