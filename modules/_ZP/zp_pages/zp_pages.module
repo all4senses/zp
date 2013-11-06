@@ -18,22 +18,22 @@ function zp_pages_menu() {
   
   $items['node/%node/product_entity'] = array(
     'title' => 'Product entity',
-    'description' => t('Do whatever my module does to a node.'),
+    'description' => t('Go to the product Entity, connected to this product Display.'),
     'page callback' => 'zp_pages_goToProductEditPage',
     'page arguments' => array(1),
-    //'access callback' => 'zp_pages_access_product',
-    'access arguments' => array('administer taxonomy'),
+    'access callback' => 'zp_pages_access_product',
+    'access arguments' => array(3), //array('administer taxonomy'),
     'type' => MENU_LOCAL_TASK,
     'weight' => 50,
   );
   
   $items['admin/commerce/products/%/display'] = array(
     'title' => 'Product display',
-    'description' => t('Do whatever my module does to a node.'),
+    'description' => t('Go to the product Display, connected to this product Entity.'),
     'page callback' => 'zp_pages_goToDisplayProductEditPage',
     'page arguments' => array(3),
-    //'access callback' => 'zp_pages_access_product',
-    'access arguments' => array('administer taxonomy'),
+    'access callback' => 'zp_pages_access_productEntity',
+    'access arguments' => array('access content'), //array('administer taxonomy'),
     'type' => MENU_LOCAL_TASK,
     'weight' => 50,
   );
@@ -43,9 +43,12 @@ function zp_pages_menu() {
 /**
  * Implements access function for products.
  */
-function zp_pages_access_product() {
-  return TRUE;
+function zp_pages_access_productEntity($node) {
+  global $user;
+  return ($user->uid == 1 && $node->type == 'product_a') ? TRUE : FALSE;
 }
+
+
 //function zp_pages_node_load($nid) {
 //  dpm($nid);
 //  //$node = node_load($nid);
