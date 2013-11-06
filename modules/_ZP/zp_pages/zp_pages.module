@@ -29,7 +29,7 @@ function zp_pages_menu() {
   $items['admin/commerce/products/%/display'] = array(
     'title' => 'Product display',
     'description' => t('Do whatever my module does to a node.'),
-    'page callback' => 'zp_pages_goTodisplayProductEditPage',
+    'page callback' => 'zp_pages_goToDisplayProductEditPage',
     'page arguments' => array(1),
     'access callback' => 'zp_pages_access_product',
     'type' => MENU_LOCAL_TASK,
@@ -46,6 +46,11 @@ function zp_pages_access_product() {
 //  //$node = node_load($nid);
 //  return $nid;//$node;// ($node->type == 'product_a') ? $node : FALSE;
 //}
+function zp_pages_goToDisplayProductEditPage($nid) {
+  dpm($nid);
+  return 'test';
+}
+
 function zp_pages_goToProductEditPage($nid) {
   dpm($nid);
   return 'test';
