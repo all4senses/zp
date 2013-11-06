@@ -88,7 +88,7 @@ function zp_pages_get_display_node_by_product_id($product_id, $product_field_nam
     ->propertyCondition('type', 'product_a')
     ->fieldCondition($product_field_name, 'product_id', $product_id, '=')
     ->range(0, 1)->execute();
- 
+ dpm($result);
   if (empty($result['node'])) {
     return FALSE;
   }
