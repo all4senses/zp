@@ -1810,7 +1810,7 @@ function zp_misc_addNewProductAndConnectItToSubgroupCatalogTerm($object) {
   //commerce_price[und][0][amount]
   $price = array(LANGUAGE_NONE => array(0 => array(
     'amount' => $object['price'] * 100,
-    'currency_code' => commerce_default_currency(),
+    'currency_code' => $object['currency'], //commerce_default_currency(),
   )));
   $form_state['values']['commerce_price'] = $price;
 
@@ -2206,6 +2206,7 @@ function zp_misc_testPage() {
     'product_type' => 'product',
     'status' => TRUE,
     'price' => 99.09,
+    'currency' => 'UAH',
     'title' => 'Бормотуха 4',
     'description' => 'Описание продукта Бормотуха 1', 
     'summary' => 'Краткое описание продукта Бормотуха 1',
@@ -2282,6 +2283,7 @@ function zp_misc_prepareZpObjectsToAddToCatalog() {
     'product_type' => 'product',
     'status' => TRUE,
     'price' => 99.09,
+    'currency' => 'UAH',
     'title' => 'Вино 1',
     'description' => 'Описание продукта Вино 1', 
     'summary' => 'Краткое описание продукта Вино 1',
@@ -2296,6 +2298,7 @@ function zp_misc_prepareZpObjectsToAddToCatalog() {
     'product_type' => 'product',
     'status' => TRUE,
     'price' => 99.09,
+    'currency' => 'UAH',
     'title' => 'Вино 2',
     'description' => 'Описание продукта Вино 2', 
     'summary' => 'Краткое описание продукта Вино 2',
@@ -2310,6 +2313,7 @@ function zp_misc_prepareZpObjectsToAddToCatalog() {
     'product_type' => 'product',
     'status' => TRUE,
     'price' => 99.09,
+    'currency' => 'UAH',
     'title' => 'Вино 3',
     'description' => 'Описание продукта Вино 3', 
     'summary' => 'Краткое описание продукта Вино 3',
@@ -2325,6 +2329,7 @@ function zp_misc_prepareZpObjectsToAddToCatalog() {
     'product_type' => 'product',
     'status' => TRUE,
     'price' => 99.09,
+    'currency' => 'UAH',
     'title' => 'Бормотуха 1',
     'description' => 'Описание продукта Бормотуха 1', 
     'summary' => 'Краткое описание продукта Бормотуха 1',
@@ -2340,6 +2345,7 @@ function zp_misc_prepareZpObjectsToAddToCatalog() {
 //      'product_type' => 'product',
 //      'status' => TRUE,
 //      'price' => 99.09,
+//      'currency' => 'UAH',
 //      'title' => 'Бормотуха ' . ($i+3),
 //      'description' => 'Описание продукта Бормотуха 1', 
 //      'summary' => 'Краткое описание продукта Бормотуха 1',
