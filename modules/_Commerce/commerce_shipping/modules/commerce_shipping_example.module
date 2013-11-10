@@ -136,7 +136,7 @@ function commerce_shipping_example_service_details_form_submit($details_form, $d
     // Build a price array for the express delivery fee.
     $express_price = array(
       'amount' => 1500,
-      'currency_code' => $line_item_wrapper->commerce_unit_price->currency_code, //'UAH',
+      'currency_code' => $line_item_wrapper->commerce_unit_price->currency_code->value(), //'UAH',
       'data' => array(),
     );
 
