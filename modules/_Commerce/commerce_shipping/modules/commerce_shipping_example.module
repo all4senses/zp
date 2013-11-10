@@ -69,6 +69,10 @@ function commerce_shipping_example_service_details_form($pane_form, $pane_values
     'express' => 'yyy',
   );
 
+  $form['description'] = array(
+    '#markup' => '<div>10% from the total</div>',
+  );
+  
   $form['name'] = array(
     '#type' => 'textfield',
     '#title' => t('Name'),
