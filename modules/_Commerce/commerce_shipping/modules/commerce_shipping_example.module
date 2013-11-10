@@ -51,9 +51,17 @@ function commerce_shipping_example_commerce_shipping_service_info() {
 function commerce_shipping_example_service_rate($shipping_service, $order) {
   dpm($shipping_service);
   dpm($order); 
+  
+  if ($order->commerce_orde_total['und'][0]['data']['components'][0]['price']['amount'] < 10000) {
+    $shipping_cost = 2000;
+  }
+  else {
+    $shipping_cost = $order->commerce_order_total['und'][0]['data']['components'][0]['price']['amount']/10; // 10%
+  }
+  
   return array(
-    'amount' => 2000,
-    'currency_code' => 'USD',
+    'amount' => $shipping_cost,
+    'currency_code' => 'UAH',
     'data' => array(),
   );
 }
@@ -64,22 +72,32 @@ function commerce_shipping_example_service_rate($shipping_service, $order) {
 function commerce_shipping_example_service_details_form($pane_form, $pane_values, $checkout_pane, $order, $shipping_service) {
   $form = array();
 
+  if ($order->commerce_orde_total['und'][0]['data']['components'][0]['price']['amount'] < 10000) {
+    //$shipping_cost = 2000;
+    $descr = 'The order sum is less than 100UAH. Shipping cost is 20UAH';
+  }
+  else {
+    $shipping_cost = $order->commerce_order_total['und'][0]['data']['components'][0]['price']['amount']/10; // 10%
+    $descr = 'Shipping cost is ' . $shipping_cost . 'UAH (10% from the total order sum)';
+  }
+  
   $pane_values['service_details'] += array(
-    'name' => 'xxx',
+    //'name' => 'xxx',
+    'descr' => $descr,
     'express' => 1,
   );
 
-  $form['description'] = array(
-    '#markup' => '<div>10% from the total</div>',
+  $form['descr'] = array(
+    '#markup' => '<div>' . $descr . '</div>',
   );
   
-  $form['name'] = array(
-    '#type' => 'textfield',
-    '#title' => t('Name'),
-    '#description' => t('This is a demonstration field coded to fail validation for single character values.'),
-    '#default_value' => $pane_values['service_details']['name'],
-    '#required' => TRUE,
-  );
+//  $form['name'] = array(
+//    '#type' => 'textfield',
+//    '#title' => t('Name'),
+//    '#description' => t('This is a demonstration field coded to fail validation for single character values.'),
+//    '#default_value' => $pane_values['service_details']['name'],
+//    '#required' => TRUE,
+//  );
 
   $form['express'] = array(
     '#type' => 'checkbox',
