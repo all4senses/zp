@@ -39,6 +39,7 @@ function commerce_shipping_example_commerce_shipping_service_info() {
     'shipping_method' => 'zp_shipping_method',
     'price_component' => 'shipping',
     //'rules_component' => FALSE,
+    'weight' => -100,
     'callbacks' => array(
       'rate' => 'commerce_shipping_example_service_rate',
       'details_form' => 'commerce_shipping_example_service_details_form',
@@ -80,11 +81,11 @@ function commerce_shipping_example_service_details_form($pane_form, $pane_values
 
   if ($order->commerce_order_total['und'][0]['data']['components'][0]['price']['amount'] < 10000) {
     //$shipping_cost = 2000;
-    $descr = 'The order sum is less than ' . commerce_currency_format(100, $order->commerce_order_total['und'][0]['currency_code']) . '. Shipping cost is ' . commerce_currency_format(20, $order->commerce_order_total['und'][0]['currency_code']);
+    $descr = 'The order sum is less than ' . commerce_currency_format(10000, $order->commerce_order_total['und'][0]['currency_code']) . '. Shipping cost is ' . commerce_currency_format(2000, $order->commerce_order_total['und'][0]['currency_code']);
   }
   else {
     $shipping_cost = $order->commerce_order_total['und'][0]['data']['components'][0]['price']['amount']/10; // 10%
-    $descr = 'Shipping cost is ' . commerce_currency_format($shipping_cost/100, $order->commerce_order_total['und'][0]['currency_code']) . ' (10% from the total order sum of ' . commerce_currency_format($order->commerce_order_total['und'][0]['data']['components'][0]['price']['amount']/100, $order->commerce_order_total['und'][0]['currency_code']) . ')';
+    $descr = 'Shipping cost is ' . commerce_currency_format($shipping_cost, $order->commerce_order_total['und'][0]['currency_code']) . ' (10% from the total order sum of ' . commerce_currency_format($order->commerce_order_total['und'][0]['data']['components'][0]['price']['amount'], $order->commerce_order_total['und'][0]['currency_code']) . ')';
   }
   
   $pane_values['service_details'] += array(
@@ -108,7 +109,7 @@ function commerce_shipping_example_service_details_form($pane_form, $pane_values
   $form['express'] = array(
     '#type' => 'checkbox',
     '#title' => t('Экспресс доставка'),
-    '#description' => t('Быстрая доставка (costs an additional ' . commerce_currency_format(15, $order->commerce_order_total['und'][0]['currency_code']) .')'),
+    '#description' => t('Быстрая доставка (costs an additional ' . commerce_currency_format(1500, $order->commerce_order_total['und'][0]['currency_code']) .')'),
     '#default_value' => $pane_values['service_details']['express'],
   );
 
