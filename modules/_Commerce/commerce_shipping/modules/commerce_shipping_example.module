@@ -13,11 +13,11 @@ function commerce_shipping_example_commerce_shipping_method_info() {
   $shipping_methods = array();
 
   //$shipping_methods['example_shipping_method'] = array(
-  $shipping_methods['courier_shipping_method'] = array(
+  $shipping_methods['zp_shipping_method'] = array(
     //'title' => t('Example shipping method'),
-    'title' => t('Courier shipping method'),
+    'title' => t('ZP shipping method'),
     //'description' => t('Defines a single flat rate service with a couple of service details.'),
-    'description' => t('Defines a single flat rate service with a couple of service details.'),
+    'description' => t('Defines ZP shipping services with a couple of service details.'),
   );
 
   return $shipping_methods;
@@ -36,7 +36,7 @@ function commerce_shipping_example_commerce_shipping_service_info() {
     //'display_title' => t('Shipping'),
     'display_title' => t('Доставка курьером по городу'),
     //'shipping_method' => 'example_shipping_method',
-    'shipping_method' => 'courier_shipping_method',
+    'shipping_method' => 'zp_shipping_method',
     'price_component' => 'shipping',
     //'rules_component' => FALSE,
     'callbacks' => array(
