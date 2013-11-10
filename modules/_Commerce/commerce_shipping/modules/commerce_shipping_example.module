@@ -50,7 +50,7 @@ function commerce_shipping_example_commerce_shipping_service_info() {
  */
 function commerce_shipping_example_service_rate($shipping_service, $order) {
   dpm($shipping_service);
-  dpm($order);
+  dpm($order); 
   return array(
     'amount' => 2000,
     'currency_code' => 'USD',
