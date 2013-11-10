@@ -61,7 +61,7 @@ function commerce_shipping_example_service_rate($shipping_service, $order) {
   
   return array(
     'amount' => $shipping_cost,
-    'currency_code' => 'UAH',
+    'currency_code' => $order->commerce_order_total['und'][0]['currency_code'],
     'data' => array(),
   );
 }
@@ -74,11 +74,11 @@ function commerce_shipping_example_service_details_form($pane_form, $pane_values
 
   if ($order->commerce_order_total['und'][0]['data']['components'][0]['price']['amount'] < 10000) {
     //$shipping_cost = 2000;
-    $descr = 'The order sum is less than 100UAH. Shipping cost is 20UAH';
+    $descr = 'The order sum is less than 100' . $order->commerce_order_total['und'][0]['currency_code'] . '. Shipping cost is 20' . $order->commerce_order_total['und'][0]['currency_code'];
   }
   else {
     $shipping_cost = $order->commerce_order_total['und'][0]['data']['components'][0]['price']['amount']/10; // 10%
-    $descr = 'Shipping cost is ' . $shipping_cost/100 . 'UAH (10% from the total order sum of ' . $order->commerce_order_total['und'][0]['data']['components'][0]['price']['amount']/100 . 'UAH)';
+    $descr = 'Shipping cost is ' . $shipping_cost/100 . $order->commerce_order_total['und'][0]['currency_code'] . ' (10% from the total order sum of ' . $order->commerce_order_total['und'][0]['data']['components'][0]['price']['amount']/100 . $order->commerce_order_total['und'][0]['currency_code'] .  ')';
   }
   
   $pane_values['service_details'] += array(
@@ -113,6 +113,7 @@ function commerce_shipping_example_service_details_form($pane_form, $pane_values
  * Shipping service callback: validates the example shipping service details.
  */
 function commerce_shipping_example_service_details_form_validate($details_form, $details_values, $shipping_service, $order, $form_parents) {
+dpm($details_values);
 //  if (strlen($details_values['name']) < 2) {
 //    form_set_error(implode('][', array_merge($form_parents, array('name'))), t('You must enter a name two or more characters long.'));
 //
@@ -128,13 +129,14 @@ function commerce_shipping_example_service_details_form_validate($details_form, 
  * express delivery was selected.
  */
 function commerce_shipping_example_service_details_form_submit($details_form, $details_values, $line_item) {
+  dpm($line_item);
   if ($details_values['express']) {
     $line_item_wrapper = entity_metadata_wrapper('commerce_line_item', $line_item);
 
     // Build a price array for the express delivery fee.
     $express_price = array(
       'amount' => 1500,
-      'currency_code' => 'USD',
+      'currency_code' => 'UAH',
       'data' => array(),
     );
 
