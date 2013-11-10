@@ -78,7 +78,7 @@ function commerce_shipping_example_service_details_form($pane_form, $pane_values
   }
   else {
     $shipping_cost = $order->commerce_order_total['und'][0]['data']['components'][0]['price']['amount']/10; // 10%
-    $descr = 'Shipping cost is ' . $shipping_cost/100 . 'UAH (10% from the total order sum)';
+    $descr = 'Shipping cost is ' . $shipping_cost/100 . 'UAH (10% from the total order sum of ' . $order->commerce_order_total['und'][0]['data']['components'][0]['price']['amount']/100 . 'UAH)';
   }
   
   $pane_values['service_details'] += array(
