@@ -161,7 +161,7 @@ function commerce_shipping_example_commerce_price_component_type_info() {
   return array(
     'example_shipping_service_express' => array(
       'title' => t('Express delivery'),
-      'weight' => 20,
+      'weight' => 50,
     ),
   );
 }
