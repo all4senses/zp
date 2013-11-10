@@ -71,7 +71,7 @@ function commerce_shipping_example_service_rate($shipping_service, $order) {
  */
 function commerce_shipping_example_service_details_form($pane_form, $pane_values, $checkout_pane, $order, $shipping_service) {
   $form = array();
-
+  dpm($order);
   if ($order->commerce_orde_total['und'][0]['data']['components'][0]['price']['amount'] < 10000) {
     //$shipping_cost = 2000;
     $descr = 'The order sum is less than 100UAH. Shipping cost is 20UAH';
