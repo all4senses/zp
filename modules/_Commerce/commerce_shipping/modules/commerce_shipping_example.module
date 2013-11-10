@@ -32,7 +32,7 @@ function commerce_shipping_example_commerce_shipping_service_info() {
     'display_title' => t('Shipping'),
     'shipping_method' => 'example_shipping_method',
     'price_component' => 'shipping',
-    'rules_component' => FALSE,
+    //'rules_component' => FALSE,
     'callbacks' => array(
       'rate' => 'commerce_shipping_example_service_rate',
       'details_form' => 'commerce_shipping_example_service_details_form',
