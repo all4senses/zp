@@ -12,8 +12,11 @@
 function commerce_shipping_example_commerce_shipping_method_info() {
   $shipping_methods = array();
 
-  $shipping_methods['example_shipping_method'] = array(
-    'title' => t('Example shipping method'),
+  //$shipping_methods['example_shipping_method'] = array(
+  $shipping_methods['courier_shipping_method'] = array(
+    //'title' => t('Example shipping method'),
+    'title' => t('Courier shipping method'),
+    //'description' => t('Defines a single flat rate service with a couple of service details.'),
     'description' => t('Defines a single flat rate service with a couple of service details.'),
   );
 
@@ -26,11 +29,14 @@ function commerce_shipping_example_commerce_shipping_method_info() {
 function commerce_shipping_example_commerce_shipping_service_info() {
   $shipping_services = array();
 
-  $shipping_services['example_shipping_service'] = array(
-    'title' => t('Example shipping service'),
-    'description' => t('A $20 flat rate service with express delivery available for an additional $15.'),
-    'display_title' => t('Shipping'),
-    'shipping_method' => 'example_shipping_method',
+  //$shipping_services['example_shipping_service'] = array(
+  $shipping_services['courier_shipping_service'] = array(
+    'title' => t('Доставка курьером по городу'),
+    'description' => t('Доставка курьером в пределах города'),
+    //'display_title' => t('Shipping'),
+    'display_title' => t('Доставка курьером по городу'),
+    //'shipping_method' => 'example_shipping_method',
+    'shipping_method' => 'courier_shipping_method',
     'price_component' => 'shipping',
     //'rules_component' => FALSE,
     'callbacks' => array(
@@ -74,11 +80,11 @@ function commerce_shipping_example_service_details_form($pane_form, $pane_values
 
   if ($order->commerce_order_total['und'][0]['data']['components'][0]['price']['amount'] < 10000) {
     //$shipping_cost = 2000;
-    $descr = 'The order sum is less than 100' . $order->commerce_order_total['und'][0]['currency_code'] . '. Shipping cost is 20' . $order->commerce_order_total['und'][0]['currency_code'];
+    $descr = 'The order sum is less than ' . commerce_currency_format(100, $order->commerce_order_total['und'][0]['currency_code']) . '. Shipping cost is ' . commerce_currency_format(20, $order->commerce_order_total['und'][0]['currency_code']);
   }
   else {
     $shipping_cost = $order->commerce_order_total['und'][0]['data']['components'][0]['price']['amount']/10; // 10%
-    $descr = 'Shipping cost is ' . $shipping_cost/100 . $order->commerce_order_total['und'][0]['currency_code'] . ' (10% from the total order sum of ' . $order->commerce_order_total['und'][0]['data']['components'][0]['price']['amount']/100 . $order->commerce_order_total['und'][0]['currency_code'] .  ')';
+    $descr = 'Shipping cost is ' . commerce_currency_format($shipping_cost/100, $order->commerce_order_total['und'][0]['currency_code']) . ' (10% from the total order sum of ' . commerce_currency_format($order->commerce_order_total['und'][0]['data']['components'][0]['price']['amount']/100, $order->commerce_order_total['und'][0]['currency_code']) . ')';
   }
   
   $pane_values['service_details'] += array(
@@ -88,7 +94,7 @@ function commerce_shipping_example_service_details_form($pane_form, $pane_values
   );
 
   $form['descr'] = array(
-    '#markup' => '<div>' . $descr . '</div>',
+    '#markup' => '<div class="description">' . $descr . '</div>',
   );
   
 //  $form['name'] = array(
@@ -101,8 +107,8 @@ function commerce_shipping_example_service_details_form($pane_form, $pane_values
 
   $form['express'] = array(
     '#type' => 'checkbox',
-    '#title' => t('Express delivery'),
-    '#description' => t('Express delivery (costs an additional $15)'),
+    '#title' => t('Экспресс доставка'),
+    '#description' => t('Быстрая доставка (costs an additional ' . commerce_currency_format(15, $order->commerce_order_total['und'][0]['currency_code']) .')'),
     '#default_value' => $pane_values['service_details']['express'],
   );
 
@@ -160,7 +166,8 @@ function commerce_shipping_example_service_details_form_submit($details_form, $d
 function commerce_shipping_example_commerce_price_component_type_info() {
   return array(
     'example_shipping_service_express' => array(
-      'title' => t('Express delivery'),
+      //'title' => t('Express delivery'),
+      'title' => t('Быстраяяяя доставка'),
       'weight' => 50,
     ),
   );
