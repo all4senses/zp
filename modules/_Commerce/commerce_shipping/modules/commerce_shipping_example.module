@@ -64,8 +64,8 @@ function commerce_shipping_example_service_details_form($pane_form, $pane_values
   $form = array();
 
   $pane_values['service_details'] += array(
-    'name' => '',
-    'express' => '',
+    'name' => 'xxx',
+    'express' => 'yyy',
   );
 
   $form['name'] = array(
