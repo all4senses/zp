@@ -1,3 +1,4 @@
+<?php
 /**
  * @file
  * Hide the country, state and zip code.
