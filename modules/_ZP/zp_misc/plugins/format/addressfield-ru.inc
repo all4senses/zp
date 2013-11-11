@@ -108,5 +108,26 @@ function addressfield_format_address_ru_generate(&$format, $address, $context = 
           "NEN" => 	t("Nenetskiy avtonomnyy okrug"),
           "YAN" => 	t("Yamalo-Nenetskiy avtonomnyy okrug")	
     );
+    
+    
+    
+    $format['locality_block']['locality'] = array(
+      '#title' => t('City'),
+      '#size' => 7,
+      '#required' => TRUE,
+      '#prefix' => ' ',
+      '#attributes' => array('class' => array('locality')),
+    );
+    
+    $format['locality_block']['locality']['#options'] = array(
+          ""   =>   t("--"),
+          "AD" => 	t("Adygeya, Respublika"),
+          "AL" => 	t("Altay, Respublika"),
+          "BA" => 	t("Bashkortostan, Respublika"),
+      
+    );
+    
+    
+    
   }
 }
