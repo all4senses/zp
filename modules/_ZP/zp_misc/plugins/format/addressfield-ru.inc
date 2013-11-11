@@ -13,7 +13,35 @@ $plugin = array(
 );
 
 function addressfield_format_address_ru_generate(&$format, $address, $context = array()){
-   if ($address['country'] == 'RU'){
+  
+  //you may need to hide other address parts, such as phone number
+  //$format['country']['#access'] = 0;
+  $format['locality_block']['administrative_area']['#access'] = 0;
+  //$format['locality_block']['postal_code']['#access'] = 0;
+  //$format['street_block']['premise']['#access'] = 0;
+  
+  $format['locality_block']['#weight'] = -1;
+  $format['street_block']['thoroughfare']['#title'] = 'Адрес';
+  $format['street_block']['premise']['#title'] = 'Дополнительная информация';
+  $format['street_block']['premise']['#description'] = 'Например, этаж, подъезд, код подъезда и пр.';
+  
+  $format['locality_block']['locality'] = array(
+    '#title' => 'Город',
+    '#size' => 7,
+    '#required' => TRUE,
+    '#prefix' => ' ',
+    '#attributes' => array('class' => array('locality')),
+  );
+
+   if ($address['country'] == 'UA'){
+      $format['locality_block']['locality']['#options'] = array(
+          ''   =>   '--',
+          'kh' => 	'Харьков',
+      );
+   }
+   elseif ($address['country'] == 'RU'){
+     
+    /*
     $format['locality_block']['administrative_area'] = array(
       '#title' => t('Region'),
       '#size' => 10,
@@ -108,24 +136,14 @@ function addressfield_format_address_ru_generate(&$format, $address, $context = 
           "NEN" => 	t("Nenetskiy avtonomnyy okrug"),
           "YAN" => 	t("Yamalo-Nenetskiy avtonomnyy okrug")	
     );
+    */
     
     
     
-    $format['locality_block']['locality'] = array(
-      '#title' => t('City'),
-      '#size' => 7,
-      '#required' => TRUE,
-      '#prefix' => ' ',
-      '#attributes' => array('class' => array('locality')),
-    );
-    
-    $format['locality_block']['locality']['#options'] = array(
-          ""   =>   t("--"),
-          "AD" => 	t("Adygeya, Respublika"),
-          "AL" => 	t("Altay, Respublika"),
-          "BA" => 	t("Bashkortostan, Respublika"),
-      
-    );
+      $format['locality_block']['locality']['#options'] = array(
+          ''   =>   '--',
+          'nsk' => 	'Новосибирск',
+      );
     
     
     
