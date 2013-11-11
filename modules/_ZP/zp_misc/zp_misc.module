@@ -76,6 +76,14 @@ function zp_misc_menu_alter(&$items) {
 
 
 
+/**
+ * Implements hook_ctools_plugin_directory().
+ */
+function zp_misc_ctools_plugin_directory($module, $plugin) {
+  if ($module == 'addressfield') {
+    return 'plugins/' . $plugin;
+  }
+}
 
 
 /**

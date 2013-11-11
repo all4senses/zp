@@ -7,18 +7,18 @@
 
 $plugin = array(
   'title' => t('Address form (CH add-on)'),
-  'format callback' => 'addressfield_format_address_ch_generate',
+  'format callback' => 'zp_misc_addressfield_format_address_ch_generate',
   'type' => 'address',
   'weight' => -80,
 );
 
-function addressfield_format_address_ch_generate(&$format, $address, $context = array()) {
+function zp_misc_addressfield_format_address_ch_generate(&$format, $address, $context = array()) {
   if ($address['country'] == 'CH' && $context['mode'] == 'form') {
     $format['locality_block']['postal_code']['#wrapper_id'] = $format['#wrapper_id'];
     $format['locality_block']['postal_code']['#process'][] = 'ajax_process_form';
-    $format['locality_block']['postal_code']['#process'][] = 'addressfield_format_address_ch_postal_code_process';
+    $format['locality_block']['postal_code']['#process'][] = 'zp_misc_addressfield_format_address_ch_postal_code_process';
 
-    $format['locality_block']['postal_code']['#element_validate'] = array('addressfield_form_ch_postal_code_validation');
+    $format['locality_block']['postal_code']['#element_validate'] = array('zp_misc_addressfield_form_ch_postal_code_validation');
     $format['locality_block']['postal_code']['#ajax'] = array(
       'callback' => 'addressfield_standard_widget_refresh',
       'wrapper' => $format['#wrapper_id'],
@@ -32,13 +32,13 @@ function addressfield_format_address_ch_generate(&$format, $address, $context = 
   }
 }
 
-function addressfield_format_address_ch_postal_code_process($element) {
+function zp_misc_addressfield_format_address_ch_postal_code_process($element) {
   $element['#limit_validation_errors'] = array($element['#parents']);
 
   return $element;
 }
 
-function addressfield_form_ch_postal_code_validation($element, &$form_state, &$form) {
+function zp_misc_addressfield_form_ch_postal_code_validation($element, &$form_state, &$form) {
   $data = array(
     '1000' => array('town' => 'Lausanne', 'canton' => 'VD'),
     '1001' => array('town' => 'Lausanne', 'canton' => 'VD'),
