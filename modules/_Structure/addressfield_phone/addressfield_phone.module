@@ -48,10 +48,10 @@ function addressfield_phone_field_attach_presave($entity_type, $entity) {
 function addressfield_phone_field_attach_load($entity_type, $entities, $age, $options){
   $addressfields = addressfield_phone_addressfield_types();
   $phone_elements = drupal_map_assoc(array(
-    'phone_number',
-    'phone_number_extension',
-    'mobile_number',
-    'fax_number',
+    'phone_numbers',
+    //'phone_number_extension',
+    //'mobile_number',
+    //'fax_number',
   ));
 
   foreach ($entities as $entity) {
@@ -95,26 +95,26 @@ function _addressfield_phone_render_address($format) {
   $address = $format['#address'];
 
   $format['phone_block'] = array(
-    '#title' => t('Phone'),
+    '#title' => t('Phones'),
     '#type' => 'addressfield_container',
-    'phone_number' => array(
-      '#title' => t('Contact Phone'),
+    'phone_numbers' => array(
+      '#title' => t('Contact Phones'),
       '#size' => 15,
-      '#attributes' => array('class' => array('phone-number')),
+      '#attributes' => array('class' => array('phone-numbers')),
       '#tag' => 'span',
     ),
-    'phone_number_extension' => array(
-      '#title' => t('Phone Extension'),
-      '#size' => 10,
-      '#attributes' => array('class' => array('phone-extension')),
-      '#tag' => 'span',
-    ),
-    'fax_number' => array(
-      '#title' => t('Fax Number'),
-      '#size' => 15,
-      '#attributes' => array('class' => array('phone-number')),
-      '#tag' => 'div',
-    ),
+//    'phone_number_extension' => array(
+//      '#title' => t('Phone Extension'),
+//      '#size' => 10,
+//      '#attributes' => array('class' => array('phone-extension')),
+//      '#tag' => 'span',
+//    ),
+//    'fax_number' => array(
+//      '#title' => t('Fax Number'),
+//      '#size' => 15,
+//      '#attributes' => array('class' => array('phone-number')),
+//      '#tag' => 'div',
+//    ),
   );
 
   return $format;
