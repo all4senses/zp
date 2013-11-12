@@ -49,7 +49,7 @@ function zp_commerce_menu() {
 function zp_commerce_commerce_entity_access($op, $entity, $account, $entity_type) {
   dpm($op);
   dpm($entity);
-  if ($entity_type == 'commerce_order' && $op == 'edit') {
+  if ($entity_type == 'commerce_order' && $op == 'update') {
     // Require administer orders permission to delete orders
     //if (!user_access('administer commerce_order entities', $account)) 
       {
