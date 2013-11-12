@@ -10,6 +10,8 @@ function addressfield_phone_ctools_plugin_directory($module, $plugin) {
 
 /**
  * Implements hook_field_attach_presave().
+ * 
+ * With a4s fixes, hide some fields.
  *
  * Store additional address fields serialized in addressfield data column.
  */

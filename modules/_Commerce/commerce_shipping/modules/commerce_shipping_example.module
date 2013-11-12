@@ -12,12 +12,9 @@
 function commerce_shipping_example_commerce_shipping_method_info() {
   $shipping_methods = array();
 
-  //$shipping_methods['example_shipping_method'] = array(
-  $shipping_methods['zp_shipping_method'] = array(
-    //'title' => t('Example shipping method'),
-    'title' => t('ZP shipping method'),
-    //'description' => t('Defines a single flat rate service with a couple of service details.'),
-    'description' => t('Defines ZP shipping services with a couple of service details.'),
+  $shipping_methods['example_shipping_method'] = array(
+    'title' => t('Example shipping method'),
+    'description' => t('Defines a single flat rate service with a couple of service details.'),
   );
 
   return $shipping_methods;
@@ -29,17 +26,12 @@ function commerce_shipping_example_commerce_shipping_method_info() {
 function commerce_shipping_example_commerce_shipping_service_info() {
   $shipping_services = array();
 
-  //$shipping_services['example_shipping_service'] = array(
-  $shipping_services['courier_shipping_service'] = array(
-    'title' => t('Доставка курьером по городу'),
-    'description' => t('Доставка курьером в пределах города'),
-    //'display_title' => t('Shipping'),
-    'display_title' => t('Доставка курьером по городу'),
-    //'shipping_method' => 'example_shipping_method',
-    'shipping_method' => 'zp_shipping_method',
+  $shipping_services['example_shipping_service'] = array(
+    'title' => t('Example shipping service'),
+    'description' => t('A $20 flat rate service with express delivery available for an additional $15.'),
+    'display_title' => t('Shipping'),
+    'shipping_method' => 'example_shipping_method',
     'price_component' => 'shipping',
-    //'rules_component' => FALSE,
-    'weight' => -100,
     'callbacks' => array(
       'rate' => 'commerce_shipping_example_service_rate',
       'details_form' => 'commerce_shipping_example_service_details_form',
@@ -56,19 +48,9 @@ function commerce_shipping_example_commerce_shipping_service_info() {
  * calculated for the given order.
  */
 function commerce_shipping_example_service_rate($shipping_service, $order) {
-  dpm($shipping_service);
-  dpm($order); 
-  
-  if ($order->commerce_order_total['und'][0]['data']['components'][0]['price']['amount'] < 10000) {
-    $shipping_cost = 2000;
-  }
-  else {
-    $shipping_cost = $order->commerce_order_total['und'][0]['data']['components'][0]['price']['amount']/10; // 10%
-  }
-  
   return array(
-    'amount' => $shipping_cost,
-    'currency_code' => $order->commerce_order_total['und'][0]['currency_code'],
+    'amount' => 2000,
+    'currency_code' => 'USD',
     'data' => array(),
   );
 }
@@ -79,37 +61,23 @@ function commerce_shipping_example_service_rate($shipping_service, $order) {
 function commerce_shipping_example_service_details_form($pane_form, $pane_values, $checkout_pane, $order, $shipping_service) {
   $form = array();
 
-  if ($order->commerce_order_total['und'][0]['data']['components'][0]['price']['amount'] < 10000) {
-    //$shipping_cost = 2000;
-    $descr = 'The order sum is less than ' . commerce_currency_format(10000, $order->commerce_order_total['und'][0]['currency_code']) . '. Shipping cost is ' . commerce_currency_format(2000, $order->commerce_order_total['und'][0]['currency_code']);
-  }
-  else {
-    $shipping_cost = $order->commerce_order_total['und'][0]['data']['components'][0]['price']['amount']/10; // 10%
-    $descr = 'Shipping cost is ' . commerce_currency_format($shipping_cost, $order->commerce_order_total['und'][0]['currency_code']) . ' (10% from the total order sum of ' . commerce_currency_format($order->commerce_order_total['und'][0]['data']['components'][0]['price']['amount'], $order->commerce_order_total['und'][0]['currency_code']) . ')';
-  }
-  
   $pane_values['service_details'] += array(
-    //'name' => 'xxx',
-    'descr' => $descr,
-    'express' => 1,
+    'name' => '',
+    'express' => '',
   );
 
-  $form['descr'] = array(
-    '#markup' => '<div class="description">' . $descr . '</div>',
+  $form['name'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Name'),
+    '#description' => t('This is a demonstration field coded to fail validation for single character values.'),
+    '#default_value' => $pane_values['service_details']['name'],
+    '#required' => TRUE,
   );
-  
-//  $form['name'] = array(
-//    '#type' => 'textfield',
-//    '#title' => t('Name'),
-//    '#description' => t('This is a demonstration field coded to fail validation for single character values.'),
-//    '#default_value' => $pane_values['service_details']['name'],
-//    '#required' => TRUE,
-//  );
 
   $form['express'] = array(
     '#type' => 'checkbox',
-    '#title' => t('Экспресс доставка'),
-    '#description' => t('Быстрая доставка (costs an additional ' . commerce_currency_format(1500, $order->commerce_order_total['und'][0]['currency_code']) .')'),
+    '#title' => t('Express delivery'),
+    '#description' => t('Express delivery (costs an additional $15)'),
     '#default_value' => $pane_values['service_details']['express'],
   );
 
@@ -120,15 +88,14 @@ function commerce_shipping_example_service_details_form($pane_form, $pane_values
  * Shipping service callback: validates the example shipping service details.
  */
 function commerce_shipping_example_service_details_form_validate($details_form, $details_values, $shipping_service, $order, $form_parents) {
-dpm($details_values);
-//  if (strlen($details_values['name']) < 2) {
-//    form_set_error(implode('][', array_merge($form_parents, array('name'))), t('You must enter a name two or more characters long.'));
-//
-//    // Even though the form error is enough to stop the submission of the form,
-//    // it's not enough to stop it from a Commerce standpoint because of the
-//    // combined validation / submission going on per-pane in the checkout form.
-//    return FALSE;
-//  }
+  if (strlen($details_values['name']) < 2) {
+    form_set_error(implode('][', array_merge($form_parents, array('name'))), t('You must enter a name two or more characters long.'));
+
+    // Even though the form error is enough to stop the submission of the form,
+    // it's not enough to stop it from a Commerce standpoint because of the
+    // combined validation / submission going on per-pane in the checkout form.
+    return FALSE;
+  }
 }
 
 /**
@@ -136,14 +103,13 @@ dpm($details_values);
  * express delivery was selected.
  */
 function commerce_shipping_example_service_details_form_submit($details_form, $details_values, $line_item) {
-  dpm($line_item);
   if ($details_values['express']) {
     $line_item_wrapper = entity_metadata_wrapper('commerce_line_item', $line_item);
 
     // Build a price array for the express delivery fee.
     $express_price = array(
       'amount' => 1500,
-      'currency_code' => $line_item_wrapper->commerce_unit_price->currency_code->value(), //'UAH',
+      'currency_code' => 'USD',
       'data' => array(),
     );
 
@@ -167,9 +133,8 @@ function commerce_shipping_example_service_details_form_submit($details_form, $d
 function commerce_shipping_example_commerce_price_component_type_info() {
   return array(
     'example_shipping_service_express' => array(
-      //'title' => t('Express delivery'),
-      'title' => t('Быстраяяяя доставка'),
-      'weight' => 50,
+      'title' => t('Express delivery'),
+      'weight' => 20,
     ),
   );
 }

@@ -18,10 +18,10 @@ $plugin = array(
  */ 
 function proctors_format_address_hide_statezip(&$format, $address, $context = array()) {
   //you may need to hide other address parts, such as phone number
-  //$format['country']['#access'] = 0;
-  //$format['locality_block']['administrative_area']['#access'] = 0;
-  //$format['locality_block']['postal_code']['#access'] = 0;
+  $format['country']['#access'] = 0;
+  $format['locality_block']['administrative_area']['#access'] = 0;
+  $format['locality_block']['postal_code']['#access'] = 0;
   $format['street_block']['premise']['#access'] = 0;
   
-  dpm($format);
+  //dpm($format);
 }

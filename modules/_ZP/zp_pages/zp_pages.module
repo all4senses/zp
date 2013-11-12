@@ -12,128 +12,6 @@ module_load_include('inc', 'zp_misc', 'inc/constants');
 
 
 /**
- * Implements hook_menu().
- */
-function zp_pages_menu() {
-  
-  $items['node/%node/product_entity'] = array(
-    'title' => 'Product entity',
-    'description' => t('Go to the product Entity, connected to this product Display.'),
-    'page callback' => 'zp_pages_goToProductEditPage',
-    'page arguments' => array(1),
-    'access callback' => 'zp_pages_access_productEntity',
-    'access arguments' => array(1), //array('administer taxonomy'),
-    'type' => MENU_LOCAL_TASK,
-    'weight' => 50,
-  );
-  
-  $items['admin/commerce/products/%/display'] = array(
-    'title' => 'Product display',
-    'description' => t('Go to the product Display, connected to this product Entity.'),
-    'page callback' => 'zp_pages_goToDisplayProductEditPage',
-    'page arguments' => array(3),
-    //'access callback' => 'zp_pages_access_productEntity',
-    'access arguments' => array('access content'), //array('administer taxonomy'),
-    'type' => MENU_LOCAL_TASK,
-    'weight' => 50,
-  );
-  return $items;
-}
-
-/**
- * Implements access function for products.
- */
-function zp_pages_access_productEntity($node) {
-  global $user;
-  return ($user->uid == 1 && $node->type == 'product_a') ? TRUE : FALSE;
-}
-
-
-//function zp_pages_node_load($nid) {
-//  dpm($nid);
-//  //$node = node_load($nid);
-//  return $nid;//$node;// ($node->type == 'product_a') ? $node : FALSE;
-//}
-
-
-/**
- * Goto product entity from display product page via local menu.
- */
-function zp_pages_goToProductEditPage($node) {
-  drupal_goto('admin/commerce/products/' . $node->field_product[LANGUAGE_NONE][0]['product_id'], array('query' => array('destination' => ltrim(url('node/' . $node->nid), '/'))));
-}
-
-
-/**
- * Goto product display from entoty product page via local menu.
- */
-function zp_pages_goToDisplayProductEditPage($product_id) {
-  
-  //$nid = zp_pages_get_referencing_node_id(commerce_product_load($product_id));
-  $display_node_nid = zp_pages_get_display_node_by_product_id($product_id); 
-  
-  //if (strpos($_SERVER['HTTP_REFERER'], 'destination=')) {
-    drupal_goto('node/' . $display_node_nid);
-//  }
-//  else { 
-//    drupal_goto('node/' . $display_node_nid, array('query' => array('destination' => ltrim(url('admin/commerce/products/' . $product_id), '/'))));
-//  }
-}
-
-
-
-/**
- * Get display node id for a commerce product.
- * 
- * http://dropbucket.org/node/785
- * 
- * @param $product_id
- *  An integer value of the product id.
- * @param string $product_field_name
- *  Name of the commerce_product_reference field used to reference products from display node.
- * @return FALSE|node_id
- *  Returns FALSE if no results or display node id on success.
- */
-function zp_pages_get_display_node_by_product_id($product_id, $product_field_name = 'field_product') {
-  $query = new EntityFieldQuery;
-  $result = $query->entityCondition('entity_type', 'node', '=')
-    ->propertyCondition('type', 'product_a')
-    ->fieldCondition($product_field_name, 'product_id', $product_id, '=')
-    ->range(0, 1)->execute();
-
-  if (empty($result['node'])) {
-    return FALSE;
-  }
- 
-  return reset($result['node'])->nid;
-}
-
-
-/**
- * Get display node id for a commerce product. Another version.
- * 
- * http://www.drupalcommerce.org/questions/3176/how-get-node-id-product-display-using-product-id
- */
-function zp_pages_get_referencing_node_id($product) {
-  // Itterate through all fields which refer to commerce products.
-  foreach (commerce_info_fields('commerce_product_reference') as $field) {
-    // Build query.
-    $query = new EntityFieldQuery;
-    $query->entityCondition('entity_type', 'node', '=')
-      ->fieldCondition($field['field_name'], 'product_id', $product->product_id, '=')
-      ->range(0, 1);
-
-    if ($result = $query->execute()) {
-      // Return node id.
-      return array_shift(array_keys($result['node']));
-    }
-  }
-
-  return false;
-}
-
-
-/**
  * Implements hook_custom_theme().
  * 
  * http://drupal.stackexchange.com/questions/812/how-do-i-change-a-theme-based-on-the-url
@@ -144,49 +22,6 @@ function zp_pages_custom_theme() {
   if ($args[0] == 'admin' && @$args[2] == 'products' && !empty($args[3]) && empty($args[4])) {
     return 'zp';
   }
-}
-
-
-/**
- * Implements hook_menu_contextual_links_alter().
- * 
- * Add edit product entity for a product display node.
- */  
-function zp_pages_menu_contextual_links_alter(&$links, $router_item, $root_path) {
-  // Add a link to all contextual links for nodes.
-  /*
-  if ($root_path == 'node/%') {
-    $links['foo'] = array(
-      'title' => t('Do fu'),
-      'href' => 'foo/do',
-      'localized_options' => array(
-        'query' => array(
-          'foo' => 'bar',
-        ),
-      ),
-    );
-  }
-  */
-  
-  // Add a link to all contextual links for nodes of type product_display.
-    if ($root_path == 'node/%' && $router_item['page_arguments'][0]->type == 'product_a' && !empty($router_item['page_arguments'][0]->field_product[LANGUAGE_NONE])) {
-
-      // Loop through all products
-      foreach ($router_item['page_arguments'][0]->field_product[LANGUAGE_NONE] as $element) {
-        $product = commerce_product_load($element['product_id']);  
-
-        // Add your contextual link
-        $links['edit_prod_'.$element['product_id']] = array(
-          'title' => t('Edit @sku', array('@sku' => $product->sku)),
-          'href' => 'admin/commerce/products/'.$element['product_id'].'/edit',
-          'localized_options' => array(
-            'query' => array(
-            'destination' => ltrim(request_uri(), '/'), //current_path(),
-          ),
-        ),
-      );      
-    }
-  }  
 }
 
 
@@ -594,7 +429,7 @@ function zp_pages_buildDeptPage($node) {
         //dpm($tf);
       }
 
-      $zp_global_data['current_dept_subgroups'] = render(drupal_get_form('zp_misc_buildSidebarFilter_form', array('subgroups_terms' => $subgroups_terms, 'tf' => $tf)));
+      $zp_global_data['current_dept_subgroups'] = render(drupal_get_form('zp_commerce_buildSidebarFilter_form', array('subgroups_terms' => $subgroups_terms, 'tf' => $tf)));
     }
 
 

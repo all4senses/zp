@@ -14,6 +14,8 @@ $plugin = array(
 
 /**
  * Format callback.
+ * 
+ * With a4s fixes, hide some fields.
  *
  * @see CALLBACK_addressfield_format_callback()
  */
