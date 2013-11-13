@@ -74,7 +74,7 @@ function zp_commerce_commerce_entity_access($op, $entity, $account, $entity_type
 function zp_commerce_entity_view_alter(&$build, $type) {
   dpm($build);
   dpm($type);
-  //$build['product:commerce_price']['#access']=FALSE;
+  $build['product:commerce_price']['#access']=FALSE;
 }
 
 /*
