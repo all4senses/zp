@@ -71,6 +71,7 @@ function zp_commerce_commerce_price_field_formatter_prepare_view($entity_type, $
   dpm($instances);
   dpm($items);
   dpm($displays);
+  $displays[6]['type'] == 'hidden';
   /*
   // If this is a single value purchase price field attached to a product...
   if ($entity_type == 'commerce_product' && $field['field_name'] == 'commerce_price' && $field['cardinality'] == 1) {
