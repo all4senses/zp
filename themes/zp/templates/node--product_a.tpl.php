@@ -87,6 +87,7 @@
           }
           
           echo render($content);
+          dpm($content);
         ?>
       </div>
 
