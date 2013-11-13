@@ -277,9 +277,13 @@ function zp_pages_node_view($node, $view_mode) {
     
     case 'product_a':
       
-      if ($view_mode == 'full') {
-        zp_pages_setZpBreadcrumb($node);
+      if ($view_mode != 'full') {
+        return;
       }
+
+      dpm($node);
+      zp_pages_setZpBreadcrumb($node);
+
       
       break;
     
