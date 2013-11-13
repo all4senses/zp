@@ -86,7 +86,7 @@
             echo 'summary...';
           }
           
-          echo render($content);z
+          echo render($content);
         ?>
       </div>
 
