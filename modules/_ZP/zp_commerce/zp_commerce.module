@@ -45,7 +45,12 @@ function zp_commerce_menu() {
 }
 
 
-
+/**
+ * Implements hook_commerce_entity_access().
+ * 
+ * Disable editing all orders except the cart to enable editing custom line item editable field for all users. 
+ * Used while set enabled permission to edit any own orders.
+ */
 function zp_commerce_commerce_entity_access($op, $entity, $account, $entity_type) {
   //dpm($op);
   //dpm($entity);
@@ -62,10 +67,17 @@ function zp_commerce_commerce_entity_access($op, $entity, $account, $entity_type
 }
 
 
+/**
+ * Implements hook_entity_view_alter().
+ * 
+ */
 function zp_commerce_entity_view_alter(&$build, $type) {
+  dpm($build);
+  dpm($type);
   $build['product:commerce_price']['#access']=FALSE;
 }
 
+/*
 function zp_commerce_commerce_price_field_formatter_prepare_view($entity_type, $entities, $field, $instances, $langcode, $items, $displays) {
   //static $calculated_prices = array();
 
@@ -78,7 +90,7 @@ function zp_commerce_commerce_price_field_formatter_prepare_view($entity_type, $
   $displays[6]['type'] == 'hidden';
   $instances[6]['display']['full']['type'] == 'hidden';
   $instances[6]['display']['default']['type'] == 'hidden';
-  /*
+  
   // If this is a single value purchase price field attached to a product...
   if ($entity_type == 'commerce_product' && $field['field_name'] == 'commerce_price' && $field['cardinality'] == 1) {
     // Prepare the items for each entity passed in.
@@ -95,9 +107,9 @@ function zp_commerce_commerce_price_field_formatter_prepare_view($entity_type, $
       }
     }
   }
-  */
+  
 }
-
+*/
 
 
 
