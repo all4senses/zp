@@ -62,6 +62,10 @@ function zp_commerce_commerce_entity_access($op, $entity, $account, $entity_type
 }
 
 
+function zp_commerce_entity_view_alter(&$build, $type) {
+  $build['product:commerce_price']['#access']=FALSE;
+}
+
 function zp_commerce_commerce_price_field_formatter_prepare_view($entity_type, $entities, $field, $instances, $langcode, $items, $displays) {
   //static $calculated_prices = array();
 
