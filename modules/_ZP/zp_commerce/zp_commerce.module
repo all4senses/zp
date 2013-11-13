@@ -52,12 +52,14 @@ function zp_commerce_menu() {
  * Used while set enabled permission to edit any own orders.
  */
 function zp_commerce_commerce_entity_access($op, $entity, $account, $entity_type) {
-   dpm($op);
+   //dpm($op);
   dpm($entity);
   dpm($account);
   //return TRUE;
   //if ($entity_type == 'commerce_order' && $op == 'update') {
-  if ($entity_type == 'commerce_order' && $account->uid != 1 && $entity->status != 'cart') {
+  if ($entity_type == 'commerce_order' 
+          && $account->uid != 1 
+          && $entity->status != 'cart') {
     // Require administer orders permission to delete orders
     if (!user_access('administer commerce_order entities', $account)) 
       {
