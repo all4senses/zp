@@ -282,6 +282,8 @@ function zp_pages_node_view($node, $view_mode) {
       }
 
       dpm($node);
+      $node->content['field_product']['line_item_fields']['commerce_unit_price']['#processes'] = TRUE;
+      
       zp_pages_setZpBreadcrumb($node);
 
       
