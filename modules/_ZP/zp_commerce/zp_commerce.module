@@ -70,6 +70,8 @@ function zp_commerce_commerce_entity_access($op, $entity, $account, $entity_type
 /**
  * Implements hook_entity_view_alter().
  * 
+ * Using for hiding prices from users who don't have permission to see it, for example, anonimous or who don't have the product's shop in his favorites.
+ * 
  */
 function zp_commerce_entity_view_alter(&$build, $type) {
   dpm($build);

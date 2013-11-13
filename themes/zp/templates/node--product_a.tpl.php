@@ -86,8 +86,7 @@
             echo 'summary...';
           }
           
-          echo render($content);
-          dpm($content);
+          echo render($content);z
         ?>
       </div>
 

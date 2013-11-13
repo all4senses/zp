@@ -281,9 +281,14 @@ function zp_pages_node_view($node, $view_mode) {
         return;
       }
 
-      dpm($node);
-      $node->content['field_product']['line_item_fields']['commerce_unit_price']['#processes'] = TRUE;
-      //unset($node->content['field_product']);
+      
+      // Doesn't work to hide a price, because this is inside of processed add_to_cart form which doesn't have a price.
+      //$node->content['field_product']['line_item_fields']['commerce_unit_price']['#processes'] = TRUE;
+      // So on this stage there is no price field
+      // But we can hide the dproduct (add_to_cart) field with the button. The price will remain in place as it, seems, will be rendered later.
+      // unset($node->content['field_product']);
+      // For hiding a price we'll be using hook_commerce_entity_view_alter  => zp_commerce_entity_view_alter(&$build, $type)
+      // 
       //dpm($node);
       zp_pages_setZpBreadcrumb($node);
 
