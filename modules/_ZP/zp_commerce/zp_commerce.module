@@ -46,6 +46,41 @@ function zp_commerce_menu() {
 
 
 /**
+ * Implements hook_form_alter().
+ *
+ * @param array &$form
+ *   Array with declared form.
+ *
+ * @param array &$form_state
+ *   Array with current form state.
+ *
+ * @param string $form_id
+ *   Form ID.
+ *
+ * @return void
+ *   Return nothing.
+ */
+function zp_commerce_form_alter(&$form, &$form_state, $form_id) {
+  
+  dpm($form_id);  dpm($form);
+  // $conf['locale_custom_strings_en']['old string'] = 'new string'
+  
+  switch ($form_id) {
+    case 'views_form_commerce_cart_form_default':
+      //dpm($form);
+      $form['#submit'][] = 'zp_commerce_formCart_validate';
+      break;
+  }
+}
+
+
+ 
+ 
+function zp_commerce_formCart_validate($form, &$form_state) {
+  drupal_set_message('This was run after the cart form was submitted, before the checkout page was rendered.');
+}
+
+/**
  * Implements hook_commerce_entity_access().
  * 
  * Disable editing all orders except the cart to enable editing custom line item editable field for all users. 
