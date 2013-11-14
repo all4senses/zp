@@ -62,14 +62,16 @@ function zp_commerce_menu() {
  */
 function zp_commerce_form_alter(&$form, &$form_state, $form_id) {
   
-  dpm($form_id);  dpm($form);
+  dpm($form_id);  //dpm($form);
   // $conf['locale_custom_strings_en']['old string'] = 'new string'
   
   switch ($form_id) {
     case 'views_form_commerce_cart_form_default':
       dpm($form);
-      dpm('caaaaaaaaaaaaart');
-      $form['#submit'][] = 'zp_commerce_formCart_validate';
+      
+      $form['#validate'][] = 'zp_commerce_formCart_validate';
+      $form['#submit'][] = 'zp_commerce_formCart_submit';
+      
       break;
   }
 }
@@ -78,7 +80,14 @@ function zp_commerce_form_alter(&$form, &$form_state, $form_id) {
  
  
 function zp_commerce_formCart_validate($form, &$form_state) {
-  drupal_set_message('This was run after the cart form was submitted, before the checkout page was rendered.');
+  dpm('caaaaaaaaaaaaart validate');
+  drupal_set_message('---------This was run after the cart form was submitted, before the checkout page was rendered.');
+}
+
+
+function zp_commerce_formCart_submit($form, &$form_state) {
+  dpm('caaaaaaaaaaaaart submit');
+  drupal_set_message('++++++++++This was run after the cart form was submitted, before the checkout page was rendered.');
 }
 
 /**
