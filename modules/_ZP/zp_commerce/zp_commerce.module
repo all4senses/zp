@@ -62,21 +62,54 @@ function zp_commerce_menu() {
  */
 function zp_commerce_form_alter(&$form, &$form_state, $form_id) {
   
-  //dpm($form_id);  //dpm($form);
+  dpm($form_id);  //dpm($form);
   // $conf['locale_custom_strings_en']['old string'] = 'new string'
   
   switch ($form_id) {
     case 'views_form_commerce_cart_form_default':
       
-      dpm($form);
+      //dpm($form);
       
-      $form['actions']['checkout']['#disabled'] = TRUE;
+      /*
+      
+        case 'views_form_commerce_cart_form_default':
+    case 'commerce_checkout_form_checkout':
+      global $user;
+      $disabled = TRUE;
+      // Load the order and loop through to differed products.
+      $order = commerce_cart_order_load($user->uid);
+      foreach($order->commerce_line_items['und'] as $line_item_id) {
+        if($line_item = commerce_line_item_load($line_item_id['line_item_id'])) {
+          if (!empty($line_item->commerce_product['und'][0]['product_id'])) {
+            $product = commerce_product_load($line_item->commerce_product['und'][0]['product_id']);       
+            // Actual check (Business Logic)
+            if ($product->type == 'my_custom_product_type') {
+              $disabled = FALSE;              
+            }        
+          }
+        }
+      }      
+      if($disabled) {
+        // Setting a message to make sure visitors understand what is going on.
+        drupal_set_message(t('You need to add ... before continuing.'), 'warning');
+        if ($form_id == 'views_form_commerce_cart_form_default') {
+          $form['actions']['checkout']['#disabled'] = TRUE;
+        }
+        if ($form_id == 'commerce_checkout_form_checkout') {
+          $form['buttons']['continue']['#disabled'] = TRUE;
+        }       
+      }
+      
+      */
+      
+      //$form['actions']['checkout']['#disabled'] = TRUE;
+      
       
       $form['actions']['checkout'] = array(
         '#markup' => l('Login to checkout', 'node/34'),
       );
       
-      //
+      //$form['actions']['checkout']['#disabled'] = TRUE;
       //$form['actions']['checkout']['#submit'][] = 'zp_commerce_formCart_submit';
       // Prevent submission. Just in case.
       $form['#validate'][] = 'zp_commerce_formCart_validate';
