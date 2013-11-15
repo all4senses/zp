@@ -139,6 +139,27 @@ function zp_commerce_formCart_submit($form, &$form_state) {
 
 
 /**
+  * Implementation of hook_form_FORMID_alter().
+  */
+function zp_commerce_form_commerce_cart_add_to_cart_form_alter(&$form, &$form_state) {
+  dpm($form);
+  $form['#validate'][] = 'zp_commerce_cart_add_to_cart_form_validate';
+}
+
+/**
+  * Custom validation function to implement your business logic.
+  */
+function zp_commerce_cart_add_to_cart_form_validate($form, &$form_state) {
+  dpm('xxx');
+  // Custom business logic here:
+  //if (...) 
+                {
+    form_set_error('submit', t('This is the error that will be shown to the user.'));
+  }
+}
+
+
+/**
  * Implements hook_commerce_entity_access().
  * 
  * Disable editing all orders except the cart to enable editing custom line item editable field for all users. 
