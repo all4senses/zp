@@ -67,11 +67,11 @@ function zp_commerce_form_alter(&$form, &$form_state, $form_id) {
   
   switch ($form_id) {
     case 'views_form_commerce_cart_form_default':
-      dpm($form);
+      
       
       $form['#validate'][] = 'zp_commerce_formCart_validate';
       $form['#submit'][] = 'zp_commerce_formCart_submit';
-      
+      dpm($form);
       break;
   }
 }
