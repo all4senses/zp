@@ -62,44 +62,43 @@ function zp_commerce_menu() {
  */
 function zp_commerce_form_alter(&$form, &$form_state, $form_id) {
   
-  dpm($form_id);  //dpm($form);
+  //dpm($form_id);  //dpm($form);
   // $conf['locale_custom_strings_en']['old string'] = 'new string'
   
   switch ($form_id) {
     case 'views_form_commerce_cart_form_default':
       
-      
-      $form['#validate'][] = 'zp_commerce_formCart_validate';
-      //$form['#submit'][] = 'zp_commerce_formCart_submit';
-      //$form['actions']['submit']['#submit'][] = 'zp_commerce_formCart_submit';
-      $form['actions']['checkout']['#submit'][] = 'zp_commerce_formCart_submit';
       dpm($form);
+      
+      $form['actions']['checkout']['#disabled'] = TRUE;
+      //
+      //$form['actions']['checkout']['#submit'][] = 'zp_commerce_formCart_submit';
+      // Prevent submission. Just in case.
+      $form['#validate'][] = 'zp_commerce_formCart_validate';
       break;
   }
 }
 
-
  
- 
+/**
+ * Validation function for the Cart form.
+ *
+ */
 function zp_commerce_formCart_validate($form, &$form_state) {
-  dpm('caaaaaaaaaaaaart validate');
-  //drupal_set_message('---------This was run after the cart form was submitted, before the checkout page was rendered.');
-  
-  
-
-  //$tmp = $form['actions']['checkout'];
-  //$tmp['#value'] = 'xxx';
-  //form_set_value($form['actions']['checkout'], $tmp, $form_state);
+//  dpm('caaaaaaaaaaaaart validate');
   form_set_error('', t('Sorry, you have to log in to finish the purchase.'));
-  dpm($form_state);
 }
 
 
+/**
+ * Submit function for the Cart form.
+ *
+ */
 function zp_commerce_formCart_submit($form, &$form_state) {
-  //exit();
-  dpm('caaaaaaaaaaaaart submit');
-  drupal_set_message('++++++++++This was run after the cart form was submitted, before the checkout page was rendered.');
+//  dpm('caaaaaaaaaaaaart submit');
+//  drupal_set_message('++++++++++This was run after the cart form was submitted, before the checkout page was rendered.');
 }
+
 
 /**
  * Implements hook_commerce_entity_access().
