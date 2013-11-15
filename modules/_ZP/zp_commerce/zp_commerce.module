@@ -87,7 +87,7 @@ function zp_commerce_formCart_validate($form, &$form_state) {
   
   dpm($form_state);
   $form_state['values']['checkout'] = 'xxx';
-  form_set_value($form['actions']['checkout']['#value'], 'test');
+  form_set_value($form['actions']['checkout']['#value'], 'test', $form_state);
   form_set_error('checkout', t('Sorry, you have to log in to finish the purchase.'));
 }
 
