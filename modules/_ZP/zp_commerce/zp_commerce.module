@@ -84,6 +84,9 @@ function zp_commerce_form_alter(&$form, &$form_state, $form_id) {
 function zp_commerce_formCart_validate($form, &$form_state) {
   dpm('caaaaaaaaaaaaart validate');
   drupal_set_message('---------This was run after the cart form was submitted, before the checkout page was rendered.');
+  
+  dpm($form_state);
+  form_set_error('name',t('Sorry, but Your account is blocked. Please contact administrator to unblock it.'));
 }
 
 
