@@ -86,6 +86,7 @@ function zp_commerce_formCart_validate($form, &$form_state) {
 
 
 function zp_commerce_formCart_submit($form, &$form_state) {
+  exit();
   dpm('caaaaaaaaaaaaart submit');
   drupal_set_message('++++++++++This was run after the cart form was submitted, before the checkout page was rendered.');
 }
