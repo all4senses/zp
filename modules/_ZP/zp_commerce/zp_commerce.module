@@ -71,6 +71,11 @@ function zp_commerce_form_alter(&$form, &$form_state, $form_id) {
       dpm($form);
       
       $form['actions']['checkout']['#disabled'] = TRUE;
+      
+      $form['actions']['checkout'] = array(
+        '#markup' => l('Login to checkout', 'node/34'),
+      );
+      
       //
       //$form['actions']['checkout']['#submit'][] = 'zp_commerce_formCart_submit';
       // Prevent submission. Just in case.
