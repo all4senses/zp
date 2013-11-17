@@ -133,7 +133,7 @@ function zp_commerce_formCart_validate($form, &$form_state) {
  *
  */
 function zp_commerce_formCart_submit($form, &$form_state) {
-//  dpm('caaaaaaaaaaaaart submit');
+  dpm('in caaaaaaaaaaaaart submit');
 //  drupal_set_message('++++++++++This was run after the cart form was submitted, before the checkout page was rendered.');
 }
 
@@ -144,6 +144,10 @@ function zp_commerce_formCart_submit($form, &$form_state) {
 function zp_commerce_form_commerce_cart_add_to_cart_form_alter(&$form, &$form_state) {
   dpm($form);
   
+  $form['submit'] = array(
+    '#markup' => l('Add TO cart', '#'),
+    '#weight' => 50,
+  );
   $form['#submit'] = array();
   
   //$form['#validate'][] = 'zp_commerce_cart_add_to_cart_form_validate';
@@ -154,12 +158,12 @@ function zp_commerce_form_commerce_cart_add_to_cart_form_alter(&$form, &$form_st
   * Custom validation function to implement your business logic.
   */
 function zp_commerce_cart_add_to_cart_form_validate($form, &$form_state) {
-  dpm('xxx');
+  dpm('in add to cart vaidate');
   // Custom business logic here:
   //if (...) 
-                {
-    form_set_error('submit', t('This is the error that will be shown to the user.'));
-  }
+//  {
+//    form_set_error('submit', t('This is the error that will be shown to the user.'));
+//  }
 }
 
 
