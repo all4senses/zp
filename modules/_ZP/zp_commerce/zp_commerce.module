@@ -145,7 +145,7 @@ function zp_commerce_form_commerce_cart_add_to_cart_form_alter(&$form, &$form_st
   dpm($form);
   
   $form['submit'] = array(
-    '#markup' => l('Add TO cart', '/'),
+    '#markup' => '<div class="deny-addtocart"><a href="#">' . t('Add to cart') . '</a></div>',
     '#weight' => 50,
   );
   static $deny_addtocart_message_is_set;
@@ -156,6 +156,7 @@ function zp_commerce_form_commerce_cart_add_to_cart_form_alter(&$form, &$form_st
     $path_to_custom_js = drupal_get_path('module', 'zp_commerce') . '/js/';
     drupal_add_js($path_to_custom_js . 'zp_deny_addtocart_message.js');
   }
+  // Unset any submit functions.
   $form['#submit'] = array();
   
   //$form['#validate'][] = 'zp_commerce_cart_add_to_cart_form_validate';
