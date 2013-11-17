@@ -144,6 +144,11 @@ function zp_commerce_formCart_submit($form, &$form_state) {
 function zp_commerce_form_commerce_cart_add_to_cart_form_alter(&$form, &$form_state) {
   dpm($form);
   
+  global $user;
+  $product_ids = array();
+  $order = commerce_cart_order_load($user->uid);
+  dpm($order);
+  
   $form['submit'] = array(
     '#markup' => '<div class="deny-addtocart"><a href="#">' . t('Add to cart') . '</a></div>',
     '#weight' => 50,
