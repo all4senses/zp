@@ -146,7 +146,7 @@ function zp_commerce_form_commerce_cart_add_to_cart_form_alter(&$form, &$form_st
   
   $form['#submit'] = array();
   
-  $form['#validate'][] = 'zp_commerce_cart_add_to_cart_form_validate';
+  //$form['#validate'][] = 'zp_commerce_cart_add_to_cart_form_validate';
   
 }
 
