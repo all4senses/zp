@@ -145,9 +145,17 @@ function zp_commerce_form_commerce_cart_add_to_cart_form_alter(&$form, &$form_st
   dpm($form);
   
   $form['submit'] = array(
-    '#markup' => l('Add TO cart', '#'),
+    '#markup' => l('Add TO cart', '/'),
     '#weight' => 50,
   );
+  static $deny_addtocart_message_is_set;
+  if (!$deny_addtocart_message_is_set) {
+    $deny_addtocart_message_is_set = TRUE;
+    $deny_message = 'You are not allowed to add to cart!';
+    drupal_add_js( array ("zp_commerce" => array('deny_message' => $deny_message)), 'setting');
+    $path_to_custom_js = drupal_get_path('module', 'zp_commerce') . '/js/';
+    drupal_add_js($path_to_custom_js . 'zp_deny_addtocart_message.js');
+  }
   $form['#submit'] = array();
   
   //$form['#validate'][] = 'zp_commerce_cart_add_to_cart_form_validate';
