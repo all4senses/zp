@@ -159,12 +159,14 @@ function zp_commerce_form_commerce_cart_add_to_cart_form_alter(&$form, &$form_st
   
     if (!empty($order->commerce_line_items['und'])) {
       $current_cart_shop_zp_id = @$order->field_u_order_shop_zp_id['und'][0]['value'];
-      $first_cart_product = commerce_line_item_load($order->commerce_line_items['und'][0]['line_item_id']);
-      dpm($first_cart_product);
+      //$first_cart_product = commerce_line_item_load($order->commerce_line_items['und'][0]['line_item_id']);
+      //dpm($first_cart_product);
     }
-    else {
+    elseif (!isset($order->field_u_order_shop_zp_id['und'][0]['value']) || $order->field_u_order_shop_zp_id['und'][0]['value'] != NULL) {
+      // Reset current shop zp_id for the cart to NULL if it's not set or is set not to NULL.
       $current_cart_shop_zp_id = NULL;
       $order->field_u_order_shop_zp_id['und'][0]['value'] = NULL;
+      commerce_cart_order_save($order);
     }
     
   }
@@ -954,7 +956,7 @@ function zp_commerce_addNewCatalogTerm($object) {
   }
   
   // Find parent term tid by parent_zp_id.
-  $parent_tid = zp_commerce_fieldRead_idByValue_single('zp_id', $object['parent_zp_id'], 'taxonomy_term', 'catalog');
+  $parent_tid = zp_misc_fieldRead_idByValue_single('zp_id', $object['parent_zp_id'], 'taxonomy_term', 'catalog');
   
   $catalog_term = (object) array(
     'name' => !empty($object['menu_item_title']) ? $object['menu_item_title'] : $object['title'],
@@ -978,7 +980,7 @@ function zp_commerce_addNewCatalogTerm($object) {
 function zp_commerce_addNewProductAndConnectItToSubgroupCatalogTerm($object) {
  
   // Find parent term tid by parent_zp_id.
-  if (!$parent_tid = zp_commerce_fieldRead_idByValue_single('zp_id', $object['parent_zp_id'], 'taxonomy_term', 'catalog')) {
+  if (!$parent_tid = zp_misc_fieldRead_idByValue_single('zp_id', $object['parent_zp_id'], 'taxonomy_term', 'catalog')) {
     $error_message = 'There is no dept with zp_id ' . $object['parent_zp_id'];
     drupal_set_message($error_message, 'warning');
     return $error_message;
@@ -1117,7 +1119,7 @@ function zp_commerce_addNewProductAndConnectItToSubgroupCatalogTerm($object) {
   
   /*
   // Find this product Catalog term by parent_zp_id.
-  $term_tid = zp_commerce_fieldRead_idByValue_single('zp_id', $object['parent_zp_id'], 'taxonomy_term', 'catalog');
+  $term_tid = zp_misc_fieldRead_idByValue_single('zp_id', $object['parent_zp_id'], 'taxonomy_term', 'catalog');
   if ($term_tid) {
     // Connect or update the term to the node.
     zp_commerce_fieldTermReferenceSave('catalog', $node->nid, $term_tid, 'node', $object_type);
@@ -1317,11 +1319,11 @@ function zp_commerce_findDeptOrShopOrCityByZpIDofTerm_andConnectItToTerm($term) 
   
   // Connect not only depts but also shops to corresponding catalog term.
   $object_type = 'department';
-  if(!$object_nid = zp_commerce_fieldRead_idByValue_single('zp_id', $term->field_zp_id['und'][0]['value'], 'node', $object_type)) {
+  if(!$object_nid = zp_misc_fieldRead_idByValue_single('zp_id', $term->field_zp_id['und'][0]['value'], 'node', $object_type)) {
     $object_type = 'shop';
-    if(!$object_nid = zp_commerce_fieldRead_idByValue_single('zp_id', $term->field_zp_id['und'][0]['value'], 'node', $object_type)) {
+    if(!$object_nid = zp_misc_fieldRead_idByValue_single('zp_id', $term->field_zp_id['und'][0]['value'], 'node', $object_type)) {
       $object_type = 'city';
-      if(!$object_nid = zp_commerce_fieldRead_idByValue_single('zp_id', $term->field_zp_id['und'][0]['value'], 'node', $object_type)) {
+      if(!$object_nid = zp_misc_fieldRead_idByValue_single('zp_id', $term->field_zp_id['und'][0]['value'], 'node', $object_type)) {
         return NULL;
       }
     }
@@ -1354,7 +1356,7 @@ function zp_commerce_node_delete($node) {
     // So we have to delete such an orphaned tid/mlid from the taxonomy menu table.
     
     // Find the catalog menu tid by the deleted node zp_id which is the same in corresponding term from the catalog menu.
-    $term_tid = zp_commerce_fieldRead_idByValue_single('zp_id', $node->field_zp_id['und'][0]['value'], 'taxonomy_term', 'catalog');
+    $term_tid = zp_misc_fieldRead_idByValue_single('zp_id', $node->field_zp_id['und'][0]['value'], 'taxonomy_term', 'catalog');
     // Delete the row with this tid from the taxonomy menu table.
     _taxonomy_menu_delete_item($catalog_voc->vid, $term_tid);
     

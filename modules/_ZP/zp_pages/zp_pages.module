@@ -446,7 +446,7 @@ function zp_pages_buildDeptPage($node) {
 
 
 
-    $views_title = 'РџСЂРѕРґСѓРєС‚С‹';
+    $views_title = 'Товары';
     $display = 'bl_prods_of_dpt';
 
     $view = views_get_view('zp_catalog');
@@ -518,7 +518,7 @@ function zp_pages_buildDeptPage($node) {
   }
   else {
     // We have a dept with subdepts here.
-    $views_title = 'РџРѕРґРѕС‚РґРµР»С‹'; 
+    $views_title = 'Отделы'; 
     $display = 'bl_subdpts_of_dpt';
 
     $term_children = taxonomy_get_children($node->field_catalog['und'][0]['tid']);//, $node->field_category['und'][0]['taxonomy_term']->vid);
