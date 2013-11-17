@@ -1113,7 +1113,7 @@ function zp_commerce_addNewProductAndConnectItToSubgroupCatalogTerm($object) {
 
   
   // Connect the subgroup term (found above) to this product node.
-  zp_commerce_fieldTermReferenceSave('catalog', $node->nid, $subgroup_term_tid, 'node', $product_display);
+  zp_misc_fieldTermReferenceSave('catalog', $node->nid, $subgroup_term_tid, 'node', $product_display);
   drupal_set_message('The Product display "' . $object['title'] . '" has been connected to a corresponding Product type and the subgroup term "' . $subgroup_term_tid . '".', 'warning');
   
   
@@ -1122,7 +1122,7 @@ function zp_commerce_addNewProductAndConnectItToSubgroupCatalogTerm($object) {
   $term_tid = zp_misc_fieldRead_idByValue_single('zp_id', $object['parent_zp_id'], 'taxonomy_term', 'catalog');
   if ($term_tid) {
     // Connect or update the term to the node.
-    zp_commerce_fieldTermReferenceSave('catalog', $node->nid, $term_tid, 'node', $object_type);
+    zp_misc_fieldTermReferenceSave('catalog', $node->nid, $term_tid, 'node', $object_type);
     drupal_set_message('The product "' . $object['title'] . '" has been connected to the term "' . $term_tid . '".', 'warning');
   }
   else {
@@ -1331,7 +1331,7 @@ function zp_commerce_findDeptOrShopOrCityByZpIDofTerm_andConnectItToTerm($term) 
 
 
   // Connect or update the term to the node.
-  zp_commerce_fieldTermReferenceSave('catalog', $object_nid, $term->tid, 'node', $object_type);
+  zp_misc_fieldTermReferenceSave('catalog', $object_nid, $term->tid, 'node', $object_type);
 
   
   //dpm('$object_nid = ' . $object_nid);
