@@ -157,8 +157,6 @@ function zp_commerce_getShopData($zp_id) {
   $shop['extra_data'] = unserialize($shop['extra_data']);
   dpm($shop);
 
-  //$shop['title'] = '';
-  //$shop['address'] = '';
   $shop['access'] = array();
   
   return $shop;
@@ -211,13 +209,17 @@ function zp_commerce_form_commerce_cart_add_to_cart_form_alter(&$form, &$form_st
     dpm($curent_page_products_shop_zp_id);
     zp_commerce_getShopData($curent_page_products_shop_zp_id);
     // Check if a current user can add this product to cart.
-    if ($curent_page_products_shop_zp_id != $current_cart_shop_zp_id) {
+    if ($current_cart_shop_zp_id && $curent_page_products_shop_zp_id != $current_cart_shop_zp_id) {
+      // If in cart the same shop that on the current page products.
       $current_cart_shop_data = zp_commerce_getShopData($current_cart_shop_zp_id);
       $deny_addtocart_message = 'There are already products of other shop (' . ') in the cart cart! You have to remove all products of that shop from the cart and after that add products of the current shop.';
     }
+    else {
+      $curent_page_products_shop_data = zp_commerce_getShopData($curent_page_products_shop_zp_id);
+      $deny_addtocart_message = 'You cant add products from ' .  $curent_page_products_shop_data['title'] . ' (' . $curent_page_products_shop_data['extra_data']['address'] . ')!';
+      dpm($curent_page_products_shop_data);
+    }
 
-    $deny_addtocart_message = 'You are not allowed to add to cart!';
-    
     if ($deny_addtocart_message) {
       drupal_add_js( array ("zp_commerce" => array('deny_message' => $deny_addtocart_message)), 'setting');
       $path_to_custom_js = drupal_get_path('module', 'zp_commerce') . '/js/';
