@@ -66,6 +66,30 @@ function zp_pages_form_alter(&$form, &$form_state, $form_id) {
       */
     
     
+    
+    case 'shop_node_form':
+      
+      $extra_data = unserialize($form['field_extra_data']['und'][0]['value']['#default_value']);
+      
+      $form['extra_data'] = array(
+        '#type' => 'fieldset',
+        '#title' => 'ZP Extra data',
+        '#collapsible' => TRUE,
+        '#collapsed' => FALSE,
+        '#tree' => TRUE,
+      );
+      $form['extra_data']['address'] = array(
+        '#type' => 'textfield',
+        '#title' => t('Address'),
+        '#default_value' => @$extra_data['address'],
+      );
+      
+      $form['#validate'][] = 'zp_pages_validateForm_shop';
+      
+      break;
+    
+    
+    
     case 'product_a_node_form':
       //dpm($form);
       
@@ -194,6 +218,27 @@ function zp_pages_validateForm_disableUserLoginForDisabled(&$form, &$form_state)
       form_set_error('name',t('Sorry, but Your account is blocked. Please contact administrator to unblock it.'));
     }
   }
+}
+
+
+/**
+ * Custom validate of shop type form.
+ *
+ * @param array &$form
+ *   Array with declared form.
+ *
+ * @param array &$form_state
+ *   Array with current form state.
+
+ * @return void
+ *   Return nothing.
+ */
+function zp_pages_validateForm_shop(&$form, &$form_state) {
+  dpm($form_state['values']);
+//  $extra_data = array(
+//    'title' => htmlspecialchars_decode($form_state['values']['title'], ENT_QUOTES), 
+//  );
+//  form_set_value($form['field_extra_data'], array('und' => array(0 => array('value' => serialize($extra_data), 'format' => 'full_html') )), $form_state);
 }
 
 
