@@ -146,7 +146,7 @@ function zp_commerce_getShopData($zp_id) {
   $query = db_select('field_data_field_zp_id', 'zpid');
   $query->condition('zpid.field_zp_id_value', $zp_id);
   //$query->fields('zpid', array('entity_id'));
-  $query->fields('zpid', 'entity_id', 'nid');
+  $query->addField('zpid', 'entity_id', 'nid');
   $query->leftJoin('node', 'n', "n.nid = zpid.entity_id");
   $query->fields('n', array('title'));
   $query->leftJoin('field_data_field_extra_data', 'd', 'd.entity_id = zpid.entity_id');
