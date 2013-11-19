@@ -124,7 +124,7 @@ function zp_commerce_form_alter(&$form, &$form_state, $form_id) {
  */
 function zp_commerce_formCart_validate($form, &$form_state) {
 //  dpm('caaaaaaaaaaaaart validate');
-  form_set_error('', t('Sorry, you have to log in to finish the purchase.'));
+  ////form_set_error('', t('Sorry, you have to log in to finish the purchase.'));
 }
 
 
@@ -206,7 +206,7 @@ function zp_commerce_form_commerce_cart_add_to_cart_form_alter(&$form, &$form_st
   
   
     
-    zp_commerce_getShopData($current_cart_shop_zp_id);
+    zp_commerce_getShopData($curent_page_products_shop_zp_id);
     // Check if a current user can add this product to cart.
     if ($curent_page_products_shop_zp_id != $current_cart_shop_zp_id) {
       $current_cart_shop_data = zp_commerce_getShopData($current_cart_shop_zp_id);
