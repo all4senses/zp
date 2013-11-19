@@ -147,14 +147,14 @@ function zp_commerce_getShopData($zp_id) {
   $query->condition('zpid.field_zp_id_value', $zp_id);
   $query->fields('zpid', array('entity_id'));
   $query->leftJoin('node', 'n', "n.nid = zpid.entity_id");
-  $query->fields('n', array('nid', 'title'));
+  $query->fields('n', array('title'));
   $query->leftJoin('field_data_field_extra_data', 'd', 'd.entity_id = zpid.entity_id');
   $query->fields('d', array('field_extra_data_value'));
   $shop = $query->execute()->fetchAssoc();
 
   dpm($shop);
 
-  $shop['title'] = '';
+  //$shop['title'] = '';
   $shop['address'] = '';
   $shop['access'] = array();
   
@@ -223,7 +223,7 @@ function zp_commerce_form_commerce_cart_add_to_cart_form_alter(&$form, &$form_st
   }
   
   
-  if ($deny_addtocart_message_is_set) {
+  if ($deny_addtocart_message) {
     $form['submit'] = array(
       '#markup' => '<div class="deny-addtocart"><a href="#">' . t('Add to cart') . '</a></div>',
       '#weight' => 50,
