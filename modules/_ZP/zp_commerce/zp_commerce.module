@@ -181,7 +181,7 @@ function zp_commerce_form_commerce_cart_add_to_cart_form_alter(&$form, &$form_st
     $addtocart_access_processed = TRUE;
     
     // Define current products shop zp_id.
-    $curent_page_products_shop_zp_id = drupal_substr($form['line_item_fields']['#entity']->line_item_label, 0, 3);
+    $curent_page_products_shop_zp_id = drupal_substr($form['line_item_fields']['#entity']->line_item_label, 0, 2);
 
   
     // Define current cart shop zp_id.
