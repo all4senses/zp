@@ -70,6 +70,7 @@ function zp_pages_form_alter(&$form, &$form_state, $form_id) {
     case 'shop_node_form':
       
       $extra_data = unserialize($form['field_extra_data']['und'][0]['value']['#default_value']);
+      $form['field_extra_data']['#access'] = FALSE;
       
       $form['extra_data'] = array(
         '#type' => 'fieldset',
