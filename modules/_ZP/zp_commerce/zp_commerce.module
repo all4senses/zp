@@ -139,8 +139,32 @@ function zp_commerce_formCart_submit($form, &$form_state) {
 
 
 /**
-  * Implementation of hook_form_FORMID_alter().
-  */
+ * Get shops data like title, address, access settings, etc.
+ */
+function zp_commerce_getShopData($zp_id) {
+  
+  $query = db_select('field_data_field_zp_id', 'zpid');
+  $query->condition('zpid.field_zp_id_value', $zp_id);
+  $query->fields('zp_id', array('entity_id'));
+  $query->leftJoin('node', 'n', "n.nid = zpid.entity_id");
+  $query->fields('n', array('nid', 'title'));
+  $query->leftJoin('field_data_field_extra_data', 'd', 'd.entity_id = zpid.entity_id');
+  $query->fields('d', array('field_extra_data_value'));
+  $shop = $query->execute()->fetchAssoc();
+
+  dpm($shop);
+
+  $shop['title'] = '';
+  $shop['address'] = '';
+  $shop['access'] = array();
+  
+  return $shop;
+}
+
+
+/**
+ * Implementation of hook_form_FORMID_alter().
+ */
 function zp_commerce_form_commerce_cart_add_to_cart_form_alter(&$form, &$form_state) {
   dpm($form);
   
@@ -148,11 +172,19 @@ function zp_commerce_form_commerce_cart_add_to_cart_form_alter(&$form, &$form_st
   
   
   
-  global $curent_page_products_shop_zp_id, $current_cart_shop_zp_id, $deny_addtocart_message_is_set;
+  global $curent_page_products_shop_zp_id, $current_cart_shop_zp_id, $addtocart_access_processed, $deny_addtocart_message;
   
-  $curent_page_products_shop_zp_id = $form['line_item_fields']['#entity']->line_item_label;
   
-  if (!isset($current_cart_shop_zp_id)) {
+  
+  if (!$addtocart_access_processed) {
+    // Get access based on the first product on the page.
+    $addtocart_access_processed = TRUE;
+    
+    // Define current products shop zp_id.
+    $curent_page_products_shop_zp_id = drupal_substr($form['line_item_fields']['#entity']->line_item_label, 0, 3);
+
+  
+    // Define current cart shop zp_id.
     global $user;
     $order = commerce_cart_order_load($user->uid);
     dpm($order);
@@ -169,20 +201,27 @@ function zp_commerce_form_commerce_cart_add_to_cart_form_alter(&$form, &$form_st
       commerce_cart_order_save($order);
     }
     
-  }
+
   
   
   
-  if (!$deny_addtocart_message_is_set) {
     
+    zp_commerce_getShopData($current_cart_shop_zp_id);
     // Check if a current user can add this product to cart.
+    if ($curent_page_products_shop_zp_id != $current_cart_shop_zp_id) {
+      $current_cart_shop_data = zp_commerce_getShopData($current_cart_shop_zp_id);
+      $deny_addtocart_message = 'There are already products of other shop (' . ') in the cart cart! You have to remove all products of that shop from the cart and after that add products of the current shop.';
+    }
+
+    $deny_addtocart_message = 'You are not allowed to add to cart!';
     
-    $deny_addtocart_message_is_set = TRUE;
-    $deny_message = 'You are not allowed to add to cart!';
-    drupal_add_js( array ("zp_commerce" => array('deny_message' => $deny_message)), 'setting');
-    $path_to_custom_js = drupal_get_path('module', 'zp_commerce') . '/js/';
-    drupal_add_js($path_to_custom_js . 'zp_deny_addtocart_message.js');
+    if ($deny_addtocart_message) {
+      drupal_add_js( array ("zp_commerce" => array('deny_message' => $deny_addtocart_message)), 'setting');
+      $path_to_custom_js = drupal_get_path('module', 'zp_commerce') . '/js/';
+      drupal_add_js($path_to_custom_js . 'zp_deny_addtocart_message.js');
+    }
   }
+  
   
   if ($deny_addtocart_message_is_set) {
     $form['submit'] = array(
@@ -190,15 +229,16 @@ function zp_commerce_form_commerce_cart_add_to_cart_form_alter(&$form, &$form_st
       '#weight' => 50,
     );
     // Unset any submit and validate functions.
-    $form['#submit'] = array();
-    $form['#validate'] = array();
+    //$form['#submit'] = array();
+    //$form['#validate'] = array();
+    // Just in case, define own stubs instead of any other functions.
+    $form['#validate'] = 'zp_commerce_cart_add_to_cart_form_validate';
+    $form['#submit'] = 'zp_commerce_cart_add_to_cart_form_submit';
   }
-  else {
-    
-  }
+
   
-  $form['#validate'][] = 'zp_commerce_cart_add_to_cart_form_validate';
-  $form['#submit'][] = 'zp_commerce_cart_add_to_cart_form_submit';
+  //$form['#validate'][] = 'zp_commerce_cart_add_to_cart_form_validate';
+  //$form['#submit'][] = 'zp_commerce_cart_add_to_cart_form_submit';
   
 }
 
