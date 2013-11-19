@@ -199,7 +199,7 @@ function zp_commerce_form_commerce_cart_add_to_cart_form_alter(&$form, &$form_st
       // Reset current shop zp_id for the cart to NULL if it's not set or is set not to NULL.
       $current_cart_shop_zp_id = NULL;
       $order->field_u_order_shop_zp_id['und'][0]['value'] = NULL;
-      //commerce_cart_order_save($order);
+      commerce_order_save($order);
     }
     
 
