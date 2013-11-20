@@ -169,6 +169,22 @@ function zp_commerce_getShopData($zp_id) {
   return $shop;
 }
 
+/**
+ * Get user data like favorite shoprs, etc.
+ */
+function zp_commerce_getUserData($uid) {
+  
+  $user = user_load($uid);
+  $user_data = array();
+  
+  // Get user's favorite shops.
+  foreach ($user->field_favorite_shops['und'] as $value) {
+    $user_data['favorite_shops'][] = $value['value'];
+  }
+  
+  return $user_data;
+}
+
 
 /**
  * Implementation of hook_form_FORMID_alter().
@@ -229,8 +245,8 @@ function zp_commerce_form_commerce_cart_add_to_cart_form_alter(&$form, &$form_st
       }
       else {
         // Authorized user.
-        $current_user = user_load($order->uid);
-        dpm($current_user);
+        $current_user_data = zp_commerce_getUserData($order->uid);
+        dpm($current_user_data);
         
       }
     }
