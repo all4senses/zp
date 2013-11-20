@@ -160,7 +160,9 @@ function zp_commerce_getShopData($zp_id) {
   $query = db_select('field_data_field_zp_access', 'a');
   $query->condition('a.entity_id', $shop['nid']);
   $query->addField('a', 'field_zp_access_value', 'zp_access');
-  $shop['zp_access'] = $query->execute()->fetchAllAssoc('zp_access');
+  $zp_access = $query->execute()->fetchAllAssoc('zp_access');
+  
+  $shop['zp_access'] = !empty($zp_access) ? array_keys($zp_access) : array();
   
   dpm($shop);
   
