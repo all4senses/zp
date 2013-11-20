@@ -196,7 +196,8 @@ function zp_commerce_form_commerce_cart_add_to_cart_form_alter(&$form, &$form_st
   
   
   
-  global $curent_page_products_shop_zp_id, $current_cart_shop_zp_id, $addtocart_access_processed, $deny_addtocart_message;
+  global $curent_page_products_shop_zp_id, $current_cart_shop_zp_id, $addtocart_access_processed, $deny_addtocart_message,
+          $current_cart_shop_data, $curent_page_products_shop_data, $current_user_data, $current_page_products_are_not_user_favorite;
   
   
   
@@ -229,13 +230,18 @@ function zp_commerce_form_commerce_cart_add_to_cart_form_alter(&$form, &$form_st
   
   
     // Check if a current user can add this product to cart.
+    
+    // Define this variable not inside of condition ELSE below, 
+    // because it will be used later in hook  function zp_commerce_entity_view_alter(&$build, $type) for prices visibility for current user.
+    $curent_page_products_shop_data = zp_commerce_getShopData($curent_page_products_shop_zp_id);
+    
     if ($current_cart_shop_zp_id && $curent_page_products_shop_zp_id != $current_cart_shop_zp_id) {
       // If in cart the same shop that on the current page products.
       $current_cart_shop_data = zp_commerce_getShopData($current_cart_shop_zp_id);
       $deny_addtocart_message = 'There are already products of other shop ' .  $current_cart_shop_data['title'] . ' (' . $current_cart_shop_data['extra_data']['address'] . ') in the cart cart! You have to remove all products of that shop from the cart and after that add products of the current shop.';
     }
     else {
-      $curent_page_products_shop_data = zp_commerce_getShopData($curent_page_products_shop_zp_id);
+      
       if (!$order->uid) {
         // Anonimous user.
         if (in_array('add_to_cart_denied_for_anonimous', $curent_page_products_shop_data['zp_access']) || in_array('prices_invisible_for_anonimous', $curent_page_products_shop_data['zp_access'])) {
@@ -254,6 +260,7 @@ function zp_commerce_form_commerce_cart_add_to_cart_form_alter(&$form, &$form_st
           $curent_page_products_city_zp_id = drupal_substr($form['line_item_fields']['#entity']->line_item_label, 0, 1);
           if (!in_array($curent_page_products_city_zp_id, $current_user_data['favorite_shops'])) {
             $deny_addtocart_message = 'Sorry, you cannot buy products from the shop ' .  $curent_page_products_shop_data['title'] . ' (' . $curent_page_products_shop_data['extra_data']['address'] . '), (perhapse because its not in your city, or for some other reason). Please contact administration if you are not agree.';
+            $current_page_products_are_not_user_favorite = TRUE;
           }
         }
       } // End of else of if (!$order->uid) {
@@ -309,15 +316,14 @@ function zp_commerce_cart_add_to_cart_form_validate($form, &$form_state) {
 function zp_commerce_cart_add_to_cart_form_submit($form, &$form_state) {
   dpm('in add to cart submit');
   
+  // Set the current shop zp_id for the current cart, if it's not yet set.
   global $curent_page_products_shop_zp_id, $current_cart_shop_zp_id;
-          
   if (!$current_cart_shop_zp_id) {
     global $user;
     $order = commerce_cart_order_load($user->uid);
-    dpm($order);
-  
+    //dpm($order);
     $order->field_u_order_shop_zp_id['und'][0]['value'] = $curent_page_products_shop_zp_id;
-    commerce_cart_order_save($order);
+    commerce_order_save($order);
   }
   // Custom business logic here:
   //if (...) 
@@ -357,10 +363,24 @@ function zp_commerce_commerce_entity_access($op, $entity, $account, $entity_type
  * 
  */
 function zp_commerce_entity_view_alter(&$build, $type) {
-  dpm($build);
-  dpm($type);
-  $build['product:commerce_price']['#access']=FALSE;
+  
+  // These global variables was defined a bit earlier in function zp_commerce_form_commerce_cart_add_to_cart_form_alter(&$form, &$form_state) {
+  global $curent_page_products_shop_data, $current_user_data, $current_page_products_are_not_user_favorite;
+  
+  if (empty($current_user_data) && in_array('prices_invisible_for_anonimous', $curent_page_products_shop_data['zp_access'])) {
+    // Anonimous user.
+    dpm($build);
+    dpm($type);
+    $build['product:commerce_price']['#access']=FALSE;
+  }
+  elseif ($current_page_products_are_not_user_favorite && in_array('prices_invisible_for_authorized_not_favorite', $curent_page_products_shop_data['zp_access'])) {
+    // Authorized user.
+    dpm($build);
+    dpm($type);
+    $build['product:commerce_price']['#access']=FALSE;
+  }
 }
+
 
 /*
 function zp_commerce_commerce_price_field_formatter_prepare_view($entity_type, $entities, $field, $instances, $langcode, $items, $displays) {
