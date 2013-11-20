@@ -146,18 +146,23 @@ function zp_commerce_getShopData($zp_id) {
   $query = db_select('field_data_field_zp_id', 'zpid');
   $query->condition('zpid.field_zp_id_value', $zp_id);
   //$query->fields('zpid', array('entity_id'));
-  $query->addField('zpid', 'entity_id', 'nid');
   $query->leftJoin('node', 'n', "n.nid = zpid.entity_id");
-  $query->fields('n', array('title'));
+  $query->fields('n', array('title', 'nid'));
   $query->leftJoin('field_data_field_extra_data', 'd', 'd.entity_id = zpid.entity_id');
   //$query->fields('d', array('field_extra_data_value'));
   $query->addField('d', 'field_extra_data_value', 'extra_data');
   $shop = $query->execute()->fetchAssoc();
 
   $shop['extra_data'] = unserialize($shop['extra_data']);
-  dpm($shop);
+  
 
-  $shop['access'] = array();
+  
+  $query = db_select('field_data_field_zp_access', 'a');
+  $query->condition('a.entity_id', $shop['nid']);
+  $query->addField('a', 'field_zp_access_value', 'zp_access');
+  $shop['zp_access'] = $query->execute()->fetchAllAssoc('zp_access');
+  
+  dpm($shop);
   
   return $shop;
 }
