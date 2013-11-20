@@ -253,7 +253,7 @@ function zp_commerce_form_commerce_cart_add_to_cart_form_alter(&$form, &$form_st
           // Just in case, find out if the user has access to all city's shops
           $curent_page_products_city_zp_id = drupal_substr($form['line_item_fields']['#entity']->line_item_label, 0, 1);
           if (!in_array($curent_page_products_city_zp_id, $current_user_data['favorite_shops'])) {
-            $deny_addtocart_message = 'Sorry, you cannot buy products from the shop ' .  $curent_page_products_shop_data['title'] . ' (' . $curent_page_products_shop_data['extra_data']['address'] . ' (perhapse because its not in your city, or for some other reason). Please contact administration if you are not agree.';
+            $deny_addtocart_message = 'Sorry, you cannot buy products from the shop ' .  $curent_page_products_shop_data['title'] . ' (' . $curent_page_products_shop_data['extra_data']['address'] . '), (perhapse because its not in your city, or for some other reason). Please contact administration if you are not agree.';
           }
         }
       } // End of else of if (!$order->uid) {
