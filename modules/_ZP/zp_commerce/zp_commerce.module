@@ -229,6 +229,8 @@ function zp_commerce_form_commerce_cart_add_to_cart_form_alter(&$form, &$form_st
       }
       else {
         // Authorized user.
+        $current_user = user_load($order->uid);
+        dpm($current_user);
         
       }
     }
