@@ -246,7 +246,9 @@ function zp_commerce_form_commerce_cart_add_to_cart_form_alter(&$form, &$form_st
       else {
         // Authorized user.
         $current_user_data = zp_commerce_getUserData($order->uid);
-        //dpm($current_user_data);
+        dpm($current_cart_shop_zp_id);
+        dpm($current_user_data);
+        
         if (!in_array($current_cart_shop_zp_id, $current_user_data['favorite_shops'])) {
           // Just in case, find out if the user has access to all city's shops
           $current_cart_city_zp_id = drupal_substr($form['line_item_fields']['#entity']->line_item_label, 0, 1);
