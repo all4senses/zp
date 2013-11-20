@@ -212,20 +212,28 @@ function zp_commerce_form_commerce_cart_add_to_cart_form_alter(&$form, &$form_st
 
   
   
-  
-    dpm($curent_page_products_shop_zp_id);
-    zp_commerce_getShopData($curent_page_products_shop_zp_id);
     // Check if a current user can add this product to cart.
     if ($current_cart_shop_zp_id && $curent_page_products_shop_zp_id != $current_cart_shop_zp_id) {
       // If in cart the same shop that on the current page products.
       $current_cart_shop_data = zp_commerce_getShopData($current_cart_shop_zp_id);
-      $deny_addtocart_message = 'There are already products of other shop (' . ') in the cart cart! You have to remove all products of that shop from the cart and after that add products of the current shop.';
+      $deny_addtocart_message = 'There are already products of other shop ' .  $current_cart_shop_data['title'] . ' (' . $current_cart_shop_data['extra_data']['address'] . ') in the cart cart! You have to remove all products of that shop from the cart and after that add products of the current shop.';
     }
     else {
       $curent_page_products_shop_data = zp_commerce_getShopData($curent_page_products_shop_zp_id);
-      $deny_addtocart_message = 'You cant add products from ' .  $curent_page_products_shop_data['title'] . ' (' . $curent_page_products_shop_data['extra_data']['address'] . ')!';
-      dpm($curent_page_products_shop_data);
+      if (!$order->uid) {
+        // Anonimous user.
+        if (in_array('add_to_cart_denied_for_anonimous', $curent_page_products_shop_data['zp_access']) || in_array('prices_invisible_for_anonimous', $curent_page_products_shop_data['zp_access'])) {
+          // Anonimous user is denied to add to cart from this shop.
+          $deny_addtocart_message = 'Sorry, anonimous users cannot add to cart products from the shop ' .  $curent_page_products_shop_data['title'] . ' (' . $curent_page_products_shop_data['extra_data']['address'] . ')! You have to login/register first.';
+        }
+      }
+      else {
+        // Authorized user.
+        
+      }
     }
+    
+     
 
     if ($deny_addtocart_message) {
       drupal_add_js( array ("zp_commerce" => array('deny_message' => $deny_addtocart_message)), 'setting');
