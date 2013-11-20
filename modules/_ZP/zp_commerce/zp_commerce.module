@@ -260,6 +260,7 @@ function zp_commerce_form_commerce_cart_add_to_cart_form_alter(&$form, &$form_st
      
     // Add js handler for the denial popup message.
     if ($deny_addtocart_message) {
+      dpm('Deny message: ' . $deny_addtocart_message);
       drupal_add_js( array ("zp_commerce" => array('deny_message' => $deny_addtocart_message)), 'setting');
       $path_to_custom_js = drupal_get_path('module', 'zp_commerce') . '/js/';
       drupal_add_js($path_to_custom_js . 'zp_deny_addtocart_message.js');
