@@ -210,15 +210,17 @@ function zp_commerce_form_commerce_cart_add_to_cart_form_alter(&$form, &$form_st
   if (isset($form_state['default_product'])) {
     // Allow decimal anly for non empty and non items/шт. qmeasure for each specified product.
     $field_qmeasure = $form_state['default_product']->field_qmeasure['und'][0]['value'];
-    if (!$field_qmeasure || strpos($field_qmeasure, 'шт') !== FALSE || strpos($field_qmeasure, 'item') !== FALSE) {
-      return;
+    if ($field_qmeasure && strpos($field_qmeasure, 'шт') === FALSE && strpos($field_qmeasure, 'item') === FALSE) {
+      $form['quantity']['#datatype'] = 'decimal';
     }
-    $form['quantity']['#datatype'] = 'decimal';
+    // Set quantity measure suffix mark (items, kg, g, etc).
+    //$form['quantity']['#suffix'] = '<div class="qmeasure">' . zp_misc_fieldRead_valueById_single('qmeasure', $form['product_id']['#value'], 'commerce_product', 'product') . '</div>';
+    $form['quantity']['#suffix'] = '<div class="qmeasure">' . $field_qmeasure . '</div>';
   }
     
     
-  // Set quantity measure suffix mark (items, kg, g, etc).
-  $form['quantity']['#suffix'] = '<div class="qmeasure">' . zp_misc_fieldRead_valueById_single('qmeasure', $form['product_id']['#value'], 'commerce_product', 'product') . '</div>';
+  
+  
   
   dpm('$form');
   dpm($form);
