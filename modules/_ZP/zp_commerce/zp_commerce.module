@@ -368,7 +368,7 @@ function zp_commerce_entity_view_alter(&$build, $type) {
   
   if ($type == 'node' && $build['#bundle'] == 'product_a') {
     
-      $build['field_product'][0]['quantity']['#suffix'] = '<div>km</div>';
+      $build['field_product'][0]['quantity']['#suffix'] = '<div>kg.</div>';
       
       // These global variables was defined a bit earlier in function zp_commerce_form_commerce_cart_add_to_cart_form_alter(&$form, &$form_state) {
       global $curent_page_products_shop_data, $current_user_data, $current_page_products_are_not_user_favorite;
