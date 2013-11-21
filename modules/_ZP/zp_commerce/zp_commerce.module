@@ -311,6 +311,7 @@ function zp_commerce_form_commerce_cart_add_to_cart_form_alter(&$form, &$form_st
   */
 function zp_commerce_cart_add_to_cart_form_validate($form, &$form_state) {
   dpm('in add to cart vaidate');
+  dpm($form_state['values']);
   // Custom business logic here:
   //if (...) 
 //  {
