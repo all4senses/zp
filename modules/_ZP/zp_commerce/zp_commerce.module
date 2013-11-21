@@ -324,12 +324,15 @@ function zp_commerce_cart_add_to_cart_form_validate($form, &$form_state) {
 function zp_commerce_cart_add_to_cart_form_submit($form, &$form_state) {
   dpm('in add to cart submit');
   
+  $order = commerce_cart_order_load($user->uid);
+  dpm($order);
+  
   // Set the current shop zp_id for the current cart, if it's not yet set.
   global $curent_page_products_shop_zp_id, $current_cart_shop_zp_id;
   if (!$current_cart_shop_zp_id) {
     global $user;
     $order = commerce_cart_order_load($user->uid);
-    //dpm($order);
+    dpm($order);
     $order->field_u_order_shop_zp_id['und'][0]['value'] = $curent_page_products_shop_zp_id;
     commerce_order_save($order);
   }
