@@ -261,7 +261,8 @@ function zp_commerce_form_commerce_cart_add_to_cart_form_alter(&$form, &$form_st
   else {
     $field_qmeasure = zp_misc_fieldRead_valueById_single('qmeasure', $form['product_id']['#value'], 'commerce_product', 'product');
   }
-  
+  dpm($form);
+  dpm($field_qmeasure);
   // Set quantity measure suffix mark (items, kg, g, etc).
   $form['quantity']['#suffix'] = '<div class="qmeasure">' . $field_qmeasure . '</div>';
   
