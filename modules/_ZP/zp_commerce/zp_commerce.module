@@ -365,8 +365,9 @@ function zp_commerce_commerce_entity_access($op, $entity, $account, $entity_type
  * 
  */
 function zp_commerce_entity_view_alter(&$build, $type) {
-  dpm($build);
   dpm($type);
+  dpm($build);
+  
   if ($type == 'node' && $build['#bundle'] == 'product_a') {
     
       $build['field_product'][0]['quantity']['#suffix'] = '<div>kg.</div>';
