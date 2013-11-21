@@ -254,7 +254,7 @@ function zp_commerce_form_commerce_cart_add_to_cart_form_alter(&$form, &$form_st
   // Partly bAsed on module commerce_decimal_quantities.
   // Other parts of this functionality are located in functions:
   // zp_commerce_form_alter, zp_commerce_decimal_quantities_update_views_edit_quantity, 
-  if (isset($form_state['default_product'])) {
+  if (!empty($form_state['default_product']->field_qmeasure['und'][0]['value'])) {
     dpm($form_state['default_product']);
     $field_qmeasure = $form_state['default_product']->field_qmeasure['und'][0]['value'];
   }
