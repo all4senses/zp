@@ -217,14 +217,14 @@ function zp_commerce_form_commerce_cart_add_to_cart_form_alter(&$form, &$form_st
     // Define current cart shop zp_id.
     global $user;
     $order = commerce_cart_order_load($user->uid);
-    dpm('$order');
-    dpm($order);
+    //dpm('$order');
+    //dpm($order);
   
     if (!empty($order->commerce_line_items['und'])) {
       $current_cart_shop_zp_id = @$order->field_u_order_shop_zp_id['und'][0]['value'];
       $first_cart_product = commerce_line_item_load($order->commerce_line_items['und'][0]['line_item_id']);
-      dpm('$first_cart_product');
-      dpm($first_cart_product);
+      //dpm('$first_cart_product');
+      //dpm($first_cart_product);
     }
     elseif (!isset($order->field_u_order_shop_zp_id['und'][0]['value']) || $order->field_u_order_shop_zp_id['und'][0]['value'] != NULL) {
       // Reset current shop zp_id for the cart to NULL if it's not set or is set not to NULL.
@@ -261,8 +261,8 @@ function zp_commerce_form_commerce_cart_add_to_cart_form_alter(&$form, &$form_st
         $current_user_data = zp_commerce_getUserData($order->uid);
         //dpm('$current_cart_shop_zp_id: ' . $curent_page_products_shop_zp_id);
         
-        dpm('$current_user_data');
-        dpm($current_user_data);
+        //dpm('$current_user_data');
+        //dpm($current_user_data);
         
         if (!in_array($curent_page_products_shop_zp_id, $current_user_data['favorite_shops'])) {
           // Just in case, find out if the user has access to all city's shops
@@ -311,7 +311,7 @@ function zp_commerce_form_commerce_cart_add_to_cart_form_alter(&$form, &$form_st
   */
 function zp_commerce_cart_add_to_cart_form_validate($form, &$form_state) {
   dpm('in add to cart vaidate');
-  dpm($form_state['values']);
+  //dpm($form_state['values']);
   // Custom business logic here:
   //if (...) 
 //  {
@@ -326,17 +326,12 @@ function zp_commerce_cart_add_to_cart_form_validate($form, &$form_state) {
 function zp_commerce_cart_add_to_cart_form_submit($form, &$form_state) {
   dpm('in add to cart submit');
   
-  
-  global $user;
-  $order = commerce_cart_order_load($user->uid);
-  dpm($order);
-  
   // Set the current shop zp_id for the current cart, if it's not yet set.
   global $curent_page_products_shop_zp_id, $current_cart_shop_zp_id;
   if (!$current_cart_shop_zp_id) {
     global $user;
     $order = commerce_cart_order_load($user->uid);
-    dpm($order);
+    //dpm($order);
     $order->field_u_order_shop_zp_id['und'][0]['value'] = $curent_page_products_shop_zp_id;
     commerce_order_save($order);
   }
@@ -345,29 +340,6 @@ function zp_commerce_cart_add_to_cart_form_submit($form, &$form_state) {
 //  {
 //    form_set_error('submit', t('This is the error that will be shown to the user.'));
 //  }
-}
-
-
-/**
- * Implements hook_commerce_entity_access().
- * 
- * Disable editing all orders except the cart to enable editing custom line item editable field for all users. 
- * Used while set enabled permission to edit any own orders.
- */
-function zp_commerce_commerce_entity_access($op, $entity, $account, $entity_type) {
-//   dpm($op);
-//   dpm($entity_type);
-//  dpm($entity);
-//  dpm($account);
-  //return TRUE;
-  //if ($entity_type == 'commerce_order' && $op == 'update') {
-  if ($entity_type == 'commerce_order' 
-          && $account->uid != 1 && @$entity->status != 'cart') {
-    // Require administer orders permission to delete orders
-    if (!user_access('administer commerce_order entities', $account)) {
-      return FALSE;
-    }
-  }
 }
 
 
@@ -391,19 +363,20 @@ function zp_commerce_entity_view_alter(&$build, $type) {
       if (empty($current_user_data) && in_array('prices_invisible_for_anonimous', $curent_page_products_shop_data['zp_access'])) {
         // Anonimous user.
         //dpm($build);
-        dpm('in product entity view alter, anonymous, type: ' . $type);
+        //dpm('in product entity view alter, anonymous, type: ' . $type);
         $build['product:commerce_price']['#access']=FALSE;
       }
       elseif ($current_page_products_are_not_user_favorite && in_array('prices_invisible_for_authorized_not_favorite', $curent_page_products_shop_data['zp_access'])) {
         // Authorized user.
         //dpm($build);
-        dpm('in product entity view alter, not favorite, type: ' . $type);
+        //dpm('in product entity view alter, not favorite, type: ' . $type);
         $build['product:commerce_price']['#access']=FALSE;
       }
   }
 }
 
 
+// Doesn't work hiding price...
 /*
 function zp_commerce_commerce_price_field_formatter_prepare_view($entity_type, $entities, $field, $instances, $langcode, $items, $displays) {
   //static $calculated_prices = array();
@@ -437,6 +410,34 @@ function zp_commerce_commerce_price_field_formatter_prepare_view($entity_type, $
   
 }
 */
+
+
+/**
+ * Implements hook_commerce_entity_access().
+ * 
+ * Disable editing all orders except the cart to enable editing custom line item editable field for all users. 
+ * Used while set enabled permission to edit any own orders.
+ */
+function zp_commerce_commerce_entity_access($op, $entity, $account, $entity_type) {
+//   dpm($op);
+//   dpm($entity_type);
+//  dpm($entity);
+//  dpm($account);
+  //return TRUE;
+  //if ($entity_type == 'commerce_order' && $op == 'update') {
+  if ($entity_type == 'commerce_order' 
+          && $account->uid != 1 && @$entity->status != 'cart') {
+    // Require administer orders permission to delete orders
+    if (!user_access('administer commerce_order entities', $account)) {
+      return FALSE;
+    }
+  }
+}
+
+
+
+
+
 
 
 
