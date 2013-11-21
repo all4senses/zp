@@ -141,9 +141,9 @@ function zp_commerce_form_alter(&$form, &$form_state, $form_id) {
         
         if (!in_array($order->field_u_order_shop_zp_id['und'][0]['value'], $current_user_data['favorite_shops'])) {
           // Just in case, find out if the user has access to all city's shops
-          $curent_cart_city_zp_id = drupal_substr($order->field_u_order_shop_zp_id['und'][0]['value'], 0, 1);
-          if (!in_array($curent_page_products_city_zp_id, $current_user_data['favorite_shops'])) {
-            $deny_checkout_message = 'Sorry, you cannot buy products from the shop ' .  $curent_cart_shop_data['title'] . ' (' . $curent_cart_shop_data['extra_data']['address'] . '), (perhapse because its not in your city, or for some other reason). Please contact administration if you are not agree.';
+          $current_cart_city_zp_id = drupal_substr($order->field_u_order_shop_zp_id['und'][0]['value'], 0, 1);
+          if (!in_array($current_cart_city_zp_id, $current_user_data['favorite_shops'])) {
+            $deny_checkout_message = 'Sorry, you cannot buy products from the shop ' .  $current_cart_shop_data['title'] . ' (' . $current_cart_shop_data['extra_data']['address'] . '), (perhapse because its not in your city, or for some other reason). Please contact administration if you are not agree.';
             //$current_cart_are_not_user_favorite = TRUE;
           }
         }
@@ -151,7 +151,7 @@ function zp_commerce_form_alter(&$form, &$form_state, $form_id) {
       else {
         dpm('Anonimous user');
         if (!in_array('checkout_denied_for_anonimous', $current_cart_shop_data['zp_access'])) {
-          $deny_checkout_message = 'Sorry, you cannot buy products from the shop ' .  $curent_cart_shop_data['title'] . ' (' . $curent_cart_shop_data['extra_data']['address'] . ') as anonimous. Please login/register first.';
+          $deny_checkout_message = 'Sorry, you cannot buy products from the shop ' .  $current_cart_shop_data['title'] . ' (' . $current_cart_shop_data['extra_data']['address'] . ') as anonimous. Please login/register first.';
         }
       }
       //$form['actions']['checkout']['#disabled'] = TRUE;
@@ -316,15 +316,15 @@ function zp_commerce_form_commerce_cart_add_to_cart_form_alter(&$form, &$form_st
   //dpm('$form');
   //dpm($form);
   
-  global $curent_page_products_shop_zp_id, $current_cart_shop_zp_id, $addtocart_access_processed, $deny_addtocart_message,
-          $current_cart_shop_data, $curent_page_products_shop_data, $current_user_data, $current_page_products_are_not_user_favorite;
+  global $current_page_products_shop_zp_id, $current_cart_shop_zp_id, $addtocart_access_processed, $deny_addtocart_message,
+          $current_cart_shop_data, $current_page_products_shop_data, $current_user_data, $current_page_products_are_not_user_favorite;
   
   if (!$addtocart_access_processed) {
     // Get access based on the first product on the page.
     $addtocart_access_processed = TRUE;
     
     // Define current products shop zp_id.
-    $curent_page_products_shop_zp_id = drupal_substr($form['line_item_fields']['#entity']->line_item_label, 0, 2);
+    $current_page_products_shop_zp_id = drupal_substr($form['line_item_fields']['#entity']->line_item_label, 0, 2);
 
   
     // Define current cart shop zp_id.
@@ -353,9 +353,9 @@ function zp_commerce_form_commerce_cart_add_to_cart_form_alter(&$form, &$form_st
     
     // Define this variable not inside of condition ELSE below, 
     // because it will be used later in hook  function zp_commerce_entity_view_alter(&$build, $type) for prices visibility for current user.
-    $curent_page_products_shop_data = zp_commerce_getShopData($curent_page_products_shop_zp_id);
+    $current_page_products_shop_data = zp_commerce_getShopData($current_page_products_shop_zp_id);
     
-    if ($current_cart_shop_zp_id && $curent_page_products_shop_zp_id != $current_cart_shop_zp_id) {
+    if ($current_cart_shop_zp_id && $current_page_products_shop_zp_id != $current_cart_shop_zp_id) {
       // If in cart the same shop that on the current page products.
       $current_cart_shop_data = zp_commerce_getShopData($current_cart_shop_zp_id);
       $deny_addtocart_message = 'There are already products of other shop ' .  $current_cart_shop_data['title'] . ' (' . $current_cart_shop_data['extra_data']['address'] . ') in the cart cart! You have to remove all products of that shop from the cart and after that add products of the current shop.';
@@ -364,29 +364,29 @@ function zp_commerce_form_commerce_cart_add_to_cart_form_alter(&$form, &$form_st
       
       if (!$order->uid) {
         // Anonimous user.
-        if (in_array('add_to_cart_denied_for_anonimous', $curent_page_products_shop_data['zp_access']) || in_array('prices_invisible_for_anonimous', $curent_page_products_shop_data['zp_access'])) {
+        if (in_array('add_to_cart_denied_for_anonimous', $current_page_products_shop_data['zp_access']) || in_array('prices_invisible_for_anonimous', $current_page_products_shop_data['zp_access'])) {
           // Anonimous user is denied to add to cart from this shop.
-          $deny_addtocart_message = 'Sorry, anonimous users cannot add to cart products from the shop ' .  $curent_page_products_shop_data['title'] . ' (' . $curent_page_products_shop_data['extra_data']['address'] . ')! You have to login/register first.';
+          $deny_addtocart_message = 'Sorry, anonimous users cannot add to cart products from the shop ' .  $current_page_products_shop_data['title'] . ' (' . $current_page_products_shop_data['extra_data']['address'] . ')! You have to login/register first.';
         }
       }
       else {
         // Authorized user.
         $current_user_data = zp_commerce_getUserData($order->uid);
-        //dpm('$current_cart_shop_zp_id: ' . $curent_page_products_shop_zp_id);
+        //dpm('$current_cart_shop_zp_id: ' . $current_page_products_shop_zp_id);
         
         //dpm('$current_user_data');
         //dpm($current_user_data);
         
-        if (!in_array($curent_page_products_shop_zp_id, $current_user_data['favorite_shops'])) {
+        if (!in_array($current_page_products_shop_zp_id, $current_user_data['favorite_shops'])) {
           // Just in case, find out if the user has access to all city's shops
-          $curent_page_products_city_zp_id = drupal_substr($form['line_item_fields']['#entity']->line_item_label, 0, 1);
-          if (!in_array($curent_page_products_city_zp_id, $current_user_data['favorite_shops'])) {
-            $deny_addtocart_message = 'Sorry, you cannot buy products from the shop ' .  $curent_page_products_shop_data['title'] . ' (' . $curent_page_products_shop_data['extra_data']['address'] . '), (perhapse because its not in your city, or for some other reason). Please contact administration if you are not agree.';
+          $current_page_products_city_zp_id = drupal_substr($form['line_item_fields']['#entity']->line_item_label, 0, 1);
+          if (!in_array($current_page_products_city_zp_id, $current_user_data['favorite_shops'])) {
+            $deny_addtocart_message = 'Sorry, you cannot buy products from the shop ' .  $current_page_products_shop_data['title'] . ' (' . $current_page_products_shop_data['extra_data']['address'] . '), (perhapse because its not in your city, or for some other reason). Please contact administration if you are not agree.';
             $current_page_products_are_not_user_favorite = TRUE;
           }
         }
       } // End of else of if (!$order->uid) {
-    } // End of else of if ($current_cart_shop_zp_id && $curent_page_products_shop_zp_id != $current_cart_shop_zp_id) {
+    } // End of else of if ($current_cart_shop_zp_id && $current_page_products_shop_zp_id != $current_cart_shop_zp_id) {
     
      
     // Add js handler for the denial popup message.
@@ -440,12 +440,12 @@ function zp_commerce_cart_add_to_cart_form_submit($form, &$form_state) {
   //dpm('in add to cart submit');
   
   // Set the current shop zp_id for the current cart, if it's not yet set.
-  global $curent_page_products_shop_zp_id, $current_cart_shop_zp_id;
+  global $current_page_products_shop_zp_id, $current_cart_shop_zp_id;
   if (!$current_cart_shop_zp_id) {
     global $user;
     $order = commerce_cart_order_load($user->uid);
     //dpm($order);
-    $order->field_u_order_shop_zp_id['und'][0]['value'] = $curent_page_products_shop_zp_id;
+    $order->field_u_order_shop_zp_id['und'][0]['value'] = $current_page_products_shop_zp_id;
     commerce_order_save($order);
   }
   // Custom business logic here:
@@ -471,15 +471,15 @@ function zp_commerce_entity_view_alter(&$build, $type) {
       //$build['field_product'][0]['quantity']['#suffix'] = '<div>kg.</div>';
       
       // These global variables was defined a bit earlier in function zp_commerce_form_commerce_cart_add_to_cart_form_alter(&$form, &$form_state) {
-      global $curent_page_products_shop_data, $current_user_data, $current_page_products_are_not_user_favorite;
+      global $current_page_products_shop_data, $current_user_data, $current_page_products_are_not_user_favorite;
 
-      if (empty($current_user_data) && in_array('prices_invisible_for_anonimous', $curent_page_products_shop_data['zp_access'])) {
+      if (empty($current_user_data) && in_array('prices_invisible_for_anonimous', $current_page_products_shop_data['zp_access'])) {
         // Anonimous user.
         //dpm($build);
         //dpm('in product entity view alter, anonymous, type: ' . $type);
         $build['product:commerce_price']['#access']=FALSE;
       }
-      elseif ($current_page_products_are_not_user_favorite && in_array('prices_invisible_for_authorized_not_favorite', $curent_page_products_shop_data['zp_access'])) {
+      elseif ($current_page_products_are_not_user_favorite && in_array('prices_invisible_for_authorized_not_favorite', $current_page_products_shop_data['zp_access'])) {
         // Authorized user.
         //dpm($build);
         //dpm('in product entity view alter, not favorite, type: ' . $type);
