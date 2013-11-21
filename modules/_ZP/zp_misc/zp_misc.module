@@ -584,7 +584,7 @@ function zp_misc_fieldDelete($field_name, $entity_id, $target_field_name = NULL,
 /**
  * Read  a field value by entity_id.
  */
-function zp_misc_fieldRead_valueById_single($field_name, $entity_id, $entity_type = 'node') {
+function zp_misc_fieldRead_valueById_single($field_name, $entity_id, $entity_type = 'node', $bundle = 'product_a') {
   $query = db_select('field_data_field_' . $field_name, 'f');
   $query->fields('f', array('field_' . $field_name . '_value'))
         ->condition('f.entity_id', $entity_id)
