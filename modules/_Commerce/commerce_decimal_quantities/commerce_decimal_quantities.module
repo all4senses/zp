@@ -67,8 +67,14 @@ function commerce_decimal_quantities_commerce_product_type_delete($product_type,
 function commerce_decimal_quantities_form_commerce_cart_add_to_cart_form_alter(&$form, &$form_state) {
   ctools_include('export');
   if (isset($form_state['default_product'])) {
+    
     dpm('$form_state');
     dpm($form_state);
+    // a4s fix 1. Allow decimal anly for non empty and non items/шт. qmeasure for each specified product.
+    if (!$form_state['default_product']->field_qmeasure['und'][0]['value'] || strpos($form_state['default_product']->field_qmeasure['und'][0]['value'], 'шт') !== FALSE || strpos($form_state['default_product']->field_qmeasure['und'][0]['value'], 'item') !== FALSE) {
+      return;
+    }
+    
     $preset = ctools_export_crud_load('commerce_decimal_quantities', $form_state['default_product']->type);
     dpm('$preset');
     dpm($preset);
@@ -98,7 +104,7 @@ function commerce_decimal_quantities_update_views_edit_quantity(&$form, &$form_s
 
       dpm('$product');
       dpm($product);
-      // a4s fix. Allow decimal anly for non empty and non items/шт. qmeasure for each specified product.
+      // a4s fix 2. Allow decimal anly for non empty and non items/шт. qmeasure for each specified product.
       if (!$product->field_qmeasure['und'][0]['value'] || strpos($product->field_qmeasure['und'][0]['value'], 'шт') !== FALSE || strpos($product->field_qmeasure['und'][0]['value'], 'item') !== FALSE) {
         return;
       }
