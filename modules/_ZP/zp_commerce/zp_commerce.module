@@ -155,8 +155,6 @@ function zp_commerce_getShopData($zp_id) {
 
   $shop['extra_data'] = unserialize($shop['extra_data']);
   
-
-  
   $query = db_select('field_data_field_zp_access', 'a');
   $query->condition('a.entity_id', $shop['nid']);
   $query->addField('a', 'field_zp_access_value', 'zp_access');
@@ -164,10 +162,9 @@ function zp_commerce_getShopData($zp_id) {
   
   $shop['zp_access'] = !empty($zp_access) ? array_keys($zp_access) : array();
   
-  dpm($shop);
-  
   return $shop;
 }
+
 
 /**
  * Get user data like favorite shoprs, etc.
@@ -193,9 +190,8 @@ function zp_commerce_getUserData($uid) {
  */
 function zp_commerce_form_commerce_cart_add_to_cart_form_alter(&$form, &$form_state) {
   
-  //$form['quantity']['#suffix'] = '<div>km</div>';
-  
-  $form['line_item_fields']['field_qmeasure']['und'][0]['value']['#default_value'] = '<div>km...</div>';
+  // Set quantity measure suffix mark (items, kg, g, etc).
+  $form['quantity']['#suffix'] = '<div class="qmeasure">' . zp_misc_fieldRead_valueById_single('qmeasure', $form['product_id']['#value'], 'commerce_product') . '</div>';
   
   dpm('$form');
   dpm($form);
