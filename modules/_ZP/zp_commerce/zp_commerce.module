@@ -253,6 +253,7 @@ function zp_commerce_form_commerce_cart_add_to_cart_form_alter(&$form, &$form_st
   // Other parts of this functionality are located in functions:
   // zp_commerce_form_alter, zp_commerce_decimal_quantities_update_views_edit_quantity, 
   if (isset($form_state['default_product'])) {
+    dpm($form_state['default_product']);
     // Allow decimal anly for non empty and non items/шт. qmeasure for each specified product.
     $field_qmeasure = $form_state['default_product']->field_qmeasure['und'][0]['value'];
     if ($field_qmeasure && strpos($field_qmeasure, 'шт') === FALSE && strpos($field_qmeasure, 'item') === FALSE) {
