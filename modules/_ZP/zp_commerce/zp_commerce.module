@@ -81,7 +81,7 @@ function zp_commerce_form_alter(&$form, &$form_state, $form_id) {
   switch ($form_id) {
     case 'views_form_commerce_cart_form_default':
       
-      //dpm($form);
+      dpm($form);
       
       /*
       
@@ -151,6 +151,29 @@ function zp_commerce_formCart_submit($form, &$form_state) {
 }
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// -----------------------------------------------------------------------------------------------------
+// Hide prices or deny add to cart for users who doesn't have acces to it.
+// Also add quantity measure to quantity
+// and in some funtions allow decimal quantity for products with not empty and containing not шт/item 
+//---------------------
+
+
 /**
  * Get shops data like title, address, access settings, etc.
  */
@@ -218,18 +241,12 @@ function zp_commerce_form_commerce_cart_add_to_cart_form_alter(&$form, &$form_st
     $form['quantity']['#suffix'] = '<div class="qmeasure">' . $field_qmeasure . '</div>';
   }
     
-    
   
-  
-  
-  dpm('$form');
-  dpm($form);
-  
+  //dpm('$form');
+  //dpm($form);
   
   global $curent_page_products_shop_zp_id, $current_cart_shop_zp_id, $addtocart_access_processed, $deny_addtocart_message,
           $current_cart_shop_data, $curent_page_products_shop_data, $current_user_data, $current_page_products_are_not_user_favorite;
-  
-  
   
   if (!$addtocart_access_processed) {
     // Get access based on the first product on the page.
@@ -349,7 +366,7 @@ function zp_commerce_cart_add_to_cart_form_validate($form, &$form_state) {
   * Custom add_to_cart_form validation function.
   */
 function zp_commerce_cart_add_to_cart_form_submit($form, &$form_state) {
-  dpm('in add to cart submit');
+  //dpm('in add to cart submit');
   
   // Set the current shop zp_id for the current cart, if it's not yet set.
   global $curent_page_products_shop_zp_id, $current_cart_shop_zp_id;
@@ -375,8 +392,8 @@ function zp_commerce_cart_add_to_cart_form_submit($form, &$form_state) {
  * 
  */
 function zp_commerce_entity_view_alter(&$build, $type) {
-  dpm($type);
-  dpm($build);
+  //dpm($type);
+  //dpm($build);
   
   if ($type == 'node' && $build['#bundle'] == 'product_a') {
     
