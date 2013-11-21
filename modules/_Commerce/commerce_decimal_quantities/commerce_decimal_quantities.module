@@ -129,8 +129,12 @@ function commerce_decimal_quantities_field_widget_form_alter(&$element, &$form_s
   if ($context['instance']['widget']['type'] === 'commerce_line_item_manager' and isset($element['line_items'])) {
     // Loop through each item in the array.
     foreach ($element['line_items'] as $delta => $line_item) {
+      dpm('$line_item');
+      dpm($line_item);
       $line_item_wrapper = entity_metadata_wrapper('commerce_line_item', $line_item['line_item']['#value']);
       if (isset($line_item_wrapper->commerce_product)) {
+        dpm('$line_item_wrapper->commerce_product');
+        dpm($line_item_wrapper->commerce_product);
         // If the product referenced in the line item accepts decimals...
         ctools_include('export');
         $preset = ctools_export_crud_load('commerce_decimal_quantities', $line_item_wrapper->commerce_product->type->value());
