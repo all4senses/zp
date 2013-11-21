@@ -188,11 +188,13 @@ function zp_commerce_getUserData($uid) {
 
 /**
  * Implementation of hook_form_FORMID_alter().
+ * 
+ * Deny add to cart for products if a user doesn't have acces to it.
  */
 function zp_commerce_form_commerce_cart_add_to_cart_form_alter(&$form, &$form_state) {
   dpm($form);
   
-  
+  $form['quantity']['#suffix'] = '<div>km</div>';
   
   
   
