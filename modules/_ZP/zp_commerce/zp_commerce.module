@@ -248,21 +248,28 @@ function zp_commerce_getUserData($uid) {
  */
 function zp_commerce_form_commerce_cart_add_to_cart_form_alter(&$form, &$form_state) {
   
+  // Allow decimal only for non empty and non items/шт. qmeasure for each specified product.
+  // 
   // Hack the Add to cart form to accept fractional quantities if the product type allows it.
   // Partly bAsed on module commerce_decimal_quantities.
   // Other parts of this functionality are located in functions:
   // zp_commerce_form_alter, zp_commerce_decimal_quantities_update_views_edit_quantity, 
   if (isset($form_state['default_product'])) {
     dpm($form_state['default_product']);
-    // Allow decimal anly for non empty and non items/шт. qmeasure for each specified product.
     $field_qmeasure = $form_state['default_product']->field_qmeasure['und'][0]['value'];
-    if ($field_qmeasure && strpos($field_qmeasure, 'шт') === FALSE && strpos($field_qmeasure, 'item') === FALSE) {
-      $form['quantity']['#datatype'] = 'decimal';
-    }
-    // Set quantity measure suffix mark (items, kg, g, etc).
-    //$form['quantity']['#suffix'] = '<div class="qmeasure">' . zp_misc_fieldRead_valueById_single('qmeasure', $form['product_id']['#value'], 'commerce_product', 'product') . '</div>';
-    $form['quantity']['#suffix'] = '<div class="qmeasure">' . $field_qmeasure . '</div>';
   }
+  else {
+    $field_qmeasure = zp_misc_fieldRead_valueById_single('qmeasure', $form['product_id']['#value'], 'commerce_product', 'product');
+  }
+  
+  // Set quantity measure suffix mark (items, kg, g, etc).
+  $form['quantity']['#suffix'] = '<div class="qmeasure">' . $field_qmeasure . '</div>';
+  
+  if ($field_qmeasure && strpos($field_qmeasure, 'шт') === FALSE && strpos($field_qmeasure, 'item') === FALSE) {
+    $form['quantity']['#datatype'] = 'decimal';
+  }
+  
+  
     
   
   //dpm('$form');
