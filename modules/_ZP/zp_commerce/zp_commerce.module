@@ -115,6 +115,15 @@ function zp_commerce_form_alter(&$form, &$form_state, $form_id) {
       
       */
       
+      
+      
+      
+      // Define current cart shop zp_id.
+      global $user;
+      $order = commerce_cart_order_load($user->uid);
+      dpm('$order in cart');
+      dpm($order);
+      
       //$form['actions']['checkout']['#disabled'] = TRUE;
       
       
