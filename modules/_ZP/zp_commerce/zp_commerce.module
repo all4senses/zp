@@ -132,7 +132,9 @@ function zp_commerce_form_alter(&$form, &$form_state, $form_id) {
       //dpm($current_cart_shop_data);
       //$deny_addtocart_message = 'There are already products of other shop ' .  $current_cart_shop_data['title'] . ' (' . $current_cart_shop_data['extra_data']['address'] . ') in the cart cart! You have to remove all products of that shop from the cart and after that add products of the current shop.';
       
-      
+      $form['current_shop'] = array(
+        '#markup' => '<div class="current-shop-link">' . l($current_cart_shop_data['title'], 'node/' . $current_cart_shop_data['nid']) . ' (' . $current_cart_shop_data['extra_data']['address'] . ')</div>',
+      );
       
       if ($order->uid) {
         $current_user_data = zp_commerce_getUserData($order->uid);
