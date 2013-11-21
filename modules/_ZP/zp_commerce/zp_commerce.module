@@ -192,6 +192,7 @@ function zp_commerce_getUserData($uid) {
  * Deny add to cart for products if a user doesn't have acces to it.
  */
 function zp_commerce_form_commerce_cart_add_to_cart_form_alter(&$form, &$form_state) {
+  dpm('$form');
   dpm($form);
   
   $form['quantity']['#suffix'] = '<div>km</div>';
@@ -215,12 +216,14 @@ function zp_commerce_form_commerce_cart_add_to_cart_form_alter(&$form, &$form_st
     // Define current cart shop zp_id.
     global $user;
     $order = commerce_cart_order_load($user->uid);
+    dpm('$order');
     dpm($order);
   
     if (!empty($order->commerce_line_items['und'])) {
       $current_cart_shop_zp_id = @$order->field_u_order_shop_zp_id['und'][0]['value'];
-      //$first_cart_product = commerce_line_item_load($order->commerce_line_items['und'][0]['line_item_id']);
-      //dpm($first_cart_product);
+      $first_cart_product = commerce_line_item_load($order->commerce_line_items['und'][0]['line_item_id']);
+      dpm('$first_cart_product');
+      dpm($first_cart_product);
     }
     elseif (!isset($order->field_u_order_shop_zp_id['und'][0]['value']) || $order->field_u_order_shop_zp_id['und'][0]['value'] != NULL) {
       // Reset current shop zp_id for the cart to NULL if it's not set or is set not to NULL.
@@ -255,7 +258,9 @@ function zp_commerce_form_commerce_cart_add_to_cart_form_alter(&$form, &$form_st
       else {
         // Authorized user.
         $current_user_data = zp_commerce_getUserData($order->uid);
-        dpm('$current_cart_shop_zp_id: ' . $curent_page_products_shop_zp_id);
+        //dpm('$current_cart_shop_zp_id: ' . $curent_page_products_shop_zp_id);
+        
+        dpm('$current_user_data');
         dpm($current_user_data);
         
         if (!in_array($curent_page_products_shop_zp_id, $current_user_data['favorite_shops'])) {
