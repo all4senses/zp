@@ -91,6 +91,8 @@ function commerce_decimal_quantities_update_views_edit_quantity(&$form, &$form_s
     if (isset($form['edit_quantity'][$child]['#line_item_id'])) {
       $line_item = commerce_line_item_load($form['edit_quantity'][$child]['#line_item_id']);
       $product = commerce_product_load($line_item->commerce_product[LANGUAGE_NONE][0]['product_id']);
+      dpm('$product');
+      dpm($product);
       ctools_include('export');
       // Get the decimal quantities setting for this product type
       $preset = ctools_export_crud_load('commerce_decimal_quantities', $product->type);
