@@ -365,7 +365,8 @@ function zp_commerce_commerce_entity_access($op, $entity, $account, $entity_type
  * 
  */
 function zp_commerce_entity_view_alter(&$build, $type) {
-  
+  dpm($build);
+  dpm($type);
   if ($type == 'node' && $build['#bundle'] == 'product_a') {
     
       $build['field_product'][0]['quantity']['#suffix'] = '<div>kg.</div>';
@@ -375,14 +376,14 @@ function zp_commerce_entity_view_alter(&$build, $type) {
 
       if (empty($current_user_data) && in_array('prices_invisible_for_anonimous', $curent_page_products_shop_data['zp_access'])) {
         // Anonimous user.
-        dpm($build);
-        dpm($type);
+        //dpm($build);
+        dpm('in product entity view alter, anonymous, type: ' . $type);
         $build['product:commerce_price']['#access']=FALSE;
       }
       elseif ($current_page_products_are_not_user_favorite && in_array('prices_invisible_for_authorized_not_favorite', $curent_page_products_shop_data['zp_access'])) {
         // Authorized user.
-        dpm($build);
-        dpm($type);
+        //dpm($build);
+        dpm('in product entity view alter, not favorite, type: ' . $type);
         $build['product:commerce_price']['#access']=FALSE;
       }
   }
