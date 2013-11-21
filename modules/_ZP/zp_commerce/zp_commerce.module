@@ -194,8 +194,9 @@ function zp_commerce_getUserData($uid) {
 function zp_commerce_form_commerce_cart_add_to_cart_form_alter(&$form, &$form_state) {
   dpm($form);
   
-  //$form['quantity']['#suffix'] = '<div>km</div>';
+  $form['quantity']['#suffix'] = '<div>km</div>';
   
+  $form['line_item_fields']['field_qmeasure']['und'][0]['value']['#default_value'] = '<div>km...</div>';
   
   
   global $curent_page_products_shop_zp_id, $current_cart_shop_zp_id, $addtocart_access_processed, $deny_addtocart_message,
@@ -370,7 +371,7 @@ function zp_commerce_entity_view_alter(&$build, $type) {
   
   if ($type == 'node' && $build['#bundle'] == 'product_a') {
     
-      $build['field_product'][0]['quantity']['#suffix'] = '<div>kg.</div>';
+      //$build['field_product'][0]['quantity']['#suffix'] = '<div>kg.</div>';
       
       // These global variables was defined a bit earlier in function zp_commerce_form_commerce_cart_add_to_cart_form_alter(&$form, &$form_state) {
       global $curent_page_products_shop_data, $current_user_data, $current_page_products_are_not_user_favorite;
