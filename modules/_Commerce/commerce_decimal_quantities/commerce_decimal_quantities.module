@@ -67,7 +67,11 @@ function commerce_decimal_quantities_commerce_product_type_delete($product_type,
 function commerce_decimal_quantities_form_commerce_cart_add_to_cart_form_alter(&$form, &$form_state) {
   ctools_include('export');
   if (isset($form_state['default_product'])) {
+    dpm('$form_state');
+    dpm($form_state);
     $preset = ctools_export_crud_load('commerce_decimal_quantities', $form_state['default_product']->type);
+    dpm('$preset');
+    dpm($preset);
     if (is_object($preset) && $preset->allow_decimal) {
       $form['quantity']['#datatype'] = 'decimal';
     }
