@@ -61,9 +61,22 @@ function zp_commerce_menu() {
  *   Return nothing.
  */
 function zp_commerce_form_alter(&$form, &$form_state, $form_id) {
+
   
-  dpm($form_id);  //dpm($form);
+  //dpm($form_id);  //dpm($form);
   // $conf['locale_custom_strings_en']['old string'] = 'new string'
+  
+  //Hack quantity form in each view to accept fractional quantities
+  // if the product type allows it.
+  // Partly based on module commerce_decimal_quantities.
+  // Other parts of this functionality are located in functions
+  // zp_commerce_decimal_quantities_update_views_edit_quantity, zp_commerce_form_commerce_cart_add_to_cart_form_alter
+  if (isset($form['edit_quantity'])) {
+    zp_commerce_decimal_quantities_update_views_edit_quantity($form, $form_state);
+  }
+  
+  
+  
   
   switch ($form_id) {
     case 'views_form_commerce_cart_form_default':
@@ -190,6 +203,20 @@ function zp_commerce_getUserData($uid) {
  */
 function zp_commerce_form_commerce_cart_add_to_cart_form_alter(&$form, &$form_state) {
   
+  // Hack the Add to cart form to accept fractional quantities if the product type allows it.
+  // Partly bAsed on module commerce_decimal_quantities.
+  // Other parts of this functionality are located in functions:
+  // zp_commerce_form_alter, zp_commerce_decimal_quantities_update_views_edit_quantity, 
+  if (isset($form_state['default_product'])) {
+    // Allow decimal anly for non empty and non items/шт. qmeasure for each specified product.
+    $field_qmeasure = $form_state['default_product']->field_qmeasure['und'][0]['value'];
+    if (!$field_qmeasure || strpos($field_qmeasure, 'шт') !== FALSE || strpos($field_qmeasure, 'item') !== FALSE) {
+      return;
+    }
+    $form['quantity']['#datatype'] = 'decimal';
+  }
+    
+    
   // Set quantity measure suffix mark (items, kg, g, etc).
   $form['quantity']['#suffix'] = '<div class="qmeasure">' . zp_misc_fieldRead_valueById_single('qmeasure', $form['product_id']['#value'], 'commerce_product', 'product') . '</div>';
   
@@ -1743,7 +1770,9 @@ function zp_commerce_commerce_price_component_type_info() {
 
 /**
  * Implements hook_form_ID_alter().
- *
+ * 
+ * isn't needed for zp_commerce module.
+ * 
  * Provides a checkbox on the Product type edit form to allow decimal quantities.
  */
 //function zp_commerce_decimal_quantities_form_commerce_product_ui_product_type_form_alter(&$form, &$form_state) {
@@ -1767,6 +1796,8 @@ function zp_commerce_commerce_price_component_type_info() {
 
 /**
  * Element validation callback for the decimal checkbox.
+ * 
+ * isn't needed for zp_commerce module.
  */
 //function  zp_commerce_decimal_quantities_checkbox_validate($element, &$form_state, $form) {
 //  ctools_include('export');
@@ -1782,6 +1813,8 @@ function zp_commerce_commerce_price_component_type_info() {
 
 /**
  * Implements hook_ctooks_plugin_api().
+ * 
+ * isn't needed for zp_commerce module.
  */
 //function zp_commerce_decimal_quantities_ctools_plugin_api($owner, $api) {
 //  if ($owner == 'zp_commerce_decimal_quantities' && $api == 'default_zp_commerce_decimal_quantities_presets') {
@@ -1792,6 +1825,8 @@ function zp_commerce_commerce_price_component_type_info() {
 
 /**
  * Implements hook_commerce_product_type_delete().
+ * 
+ * isn't needed for zp_commerce module.
  */
 //function zp_commerce_decimal_quantities_commerce_product_type_delete($product_type, $skip_reset) {
 //  ctools_include('export');
@@ -1801,47 +1836,51 @@ function zp_commerce_commerce_price_component_type_info() {
 
 /**
  * Implements hook_form_FORM_ID_alter().
- *
+ * 
+ * implemented earlier.
+ * 
  * Hack the Add to cart form to accept fractional quantities if the product type allows it.
  */
-function zp_commerce_decimal_quantities_form_commerce_cart_add_to_cart_form_alter(&$form, &$form_state) {
-  //ctools_include('export');
-  if (isset($form_state['default_product'])) {
-    
-    //dpm('$form_state');
-    //dpm($form_state);
-    // a4s fix 1. Allow decimal anly for non empty and non items/шт. qmeasure for each specified product.
-    $field_qmeasure = $form_state['default_product']->field_qmeasure['und'][0]['value'];
-    if (!$field_qmeasure || strpos($field_qmeasure, 'шт') !== FALSE || strpos($field_qmeasure, 'item') !== FALSE) {
-      return;
-    }
-    
-//    $preset = ctools_export_crud_load('zp_commerce_decimal_quantities', $form_state['default_product']->type);
-//    if (is_object($preset) && $preset->allow_decimal) 
-    {
-      $form['quantity']['#datatype'] = 'decimal';
-    }
-  }
-}
+//function zp_commerce_form_commerce_cart_add_to_cart_form_alter(&$form, &$form_state) {
+//  //ctools_include('export');
+//  if (isset($form_state['default_product'])) {
+//    
+//    //dpm('$form_state');
+//    //dpm($form_state);
+//    // a4s fix 1. Allow decimal anly for non empty and non items/шт. qmeasure for each specified product.
+//    $field_qmeasure = $form_state['default_product']->field_qmeasure['und'][0]['value'];
+//    if (!$field_qmeasure || strpos($field_qmeasure, 'шт') !== FALSE || strpos($field_qmeasure, 'item') !== FALSE) {
+//      return;
+//    }
+//    
+////    $preset = ctools_export_crud_load('zp_commerce_decimal_quantities', $form_state['default_product']->type);
+////    if (is_object($preset) && $preset->allow_decimal) 
+//    {
+//      $form['quantity']['#datatype'] = 'decimal';
+//    }
+//  }
+//}
 
 
 /**
  * Implements hook_form_alter().
+ * 
+ * implemented earlier.
  *
  * Hack quantity form in each view to accept fractional quantities
  * if the product type allows it.
  */
-function zp_commerce_decimal_quantities_form_alter(&$form, &$form_state, $form_id) {
-  if (isset($form['edit_quantity'])) {
-    zp_commerce_decimal_quantities_update_views_edit_quantity($form, $form_state);
-  }
-}
+//function zp_commerce_form_alter(&$form, &$form_state, $form_id) {
+//  if (isset($form['edit_quantity'])) {
+//    zp_commerce_decimal_quantities_update_views_edit_quantity($form, $form_state);
+//  }
+//}
 
 
 /**
- * Helper function for the above function zp_commerce_decimal_quantities_form_alter(&$form, &$form_state, $form_id).
+ * Helper function for calling from the function zp_commerce_form_alter(&$form, &$form_state, $form_id).
  */
-function zp_commerce_decimal_quantities_update_views_edit_quantity(&$form, &$form_state) {
+function zp_commerce_update_views_edit_quantity(&$form, &$form_state) {
   foreach (element_children($form['edit_quantity']) as $child) {
     if (isset($form['edit_quantity'][$child]['#line_item_id'])) {
       $line_item = commerce_line_item_load($form['edit_quantity'][$child]['#line_item_id']);
@@ -1871,7 +1910,7 @@ function zp_commerce_decimal_quantities_update_views_edit_quantity(&$form, &$for
 /**
  * Implements hook_field_widget_form_alter().
  */
-function zp_commerce_decimal_quantities_field_widget_form_alter(&$element, &$form_state, $context) {
+function zp_commerce_field_widget_form_alter(&$element, &$form_state, $context) {
   // Only proceed if this widget form is a commerce line item manager and there
   // are line items to modify.
   if ($context['instance']['widget']['type'] === 'commerce_line_item_manager' and isset($element['line_items'])) {
