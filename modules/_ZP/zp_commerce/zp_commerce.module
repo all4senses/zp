@@ -124,19 +124,19 @@ function zp_commerce_form_alter(&$form, &$form_state, $form_id) {
       dpm('$order in cart');
       dpm($order);
       
-//      $current_cart_shop_data = zp_commerce_getShopData($order->field_u_order_shop_zp_id['und'][0]['value']);
-//      dpm('$current_cart_shop_data');
-//      dpm($current_cart_shop_data);
+      $current_cart_shop_data = zp_commerce_getShopData($order->field_u_order_shop_zp_id['und'][0]['value']);
+      dpm('$current_cart_shop_data');
+      dpm($current_cart_shop_data);
       //$deny_addtocart_message = 'There are already products of other shop ' .  $current_cart_shop_data['title'] . ' (' . $current_cart_shop_data['extra_data']['address'] . ') in the cart cart! You have to remove all products of that shop from the cart and after that add products of the current shop.';
       
-//      if ($order->uid) {
-//        $current_user_data = zp_commerce_getUserData($order->uid);
-//        dpm('$current_user_data');
-//        dpm($current_user_data);
-//      }
-//      else {
-//        dpm('Anonimous user');
-//      }
+      if ($order->uid) {
+        $current_user_data = zp_commerce_getUserData($order->uid);
+        dpm('$current_user_data');
+        dpm($current_user_data);
+      }
+      else {
+        dpm('Anonimous user');
+      }
       //$form['actions']['checkout']['#disabled'] = TRUE;
       
       
