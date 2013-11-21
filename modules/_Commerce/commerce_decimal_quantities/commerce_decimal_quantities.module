@@ -135,6 +135,8 @@ function commerce_decimal_quantities_field_widget_form_alter(&$element, &$form_s
       if (isset($line_item_wrapper->commerce_product)) {
         dpm('$line_item_wrapper->commerce_product');
         dpm($line_item_wrapper->commerce_product);
+        dpm('$line_item_wrapper->commerce_product->field_qmeasure->value()');
+        dpm($line_item_wrapper->commerce_product->field_qmeasure->value());
         // If the product referenced in the line item accepts decimals...
         ctools_include('export');
         $preset = ctools_export_crud_load('commerce_decimal_quantities', $line_item_wrapper->commerce_product->type->value());
