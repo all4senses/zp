@@ -120,34 +120,67 @@ function zp_commerce_form_alter(&$form, &$form_state, $form_id) {
       
       // Define current cart shop zp_id.
       global $user;
+      //$current_cart_are_not_user_favorite = FALSE;
+      $deny_checkout_message = FALSE;
+      
       $order = commerce_cart_order_load($user->uid);
-      dpm('$order in cart');
-      dpm($order);
+      //dpm('$order in cart');
+      //dpm($order);
       
       $current_cart_shop_data = zp_commerce_getShopData($order->field_u_order_shop_zp_id['und'][0]['value']);
-      dpm('$current_cart_shop_data');
-      dpm($current_cart_shop_data);
+      //dpm('$current_cart_shop_data');
+      //dpm($current_cart_shop_data);
       //$deny_addtocart_message = 'There are already products of other shop ' .  $current_cart_shop_data['title'] . ' (' . $current_cart_shop_data['extra_data']['address'] . ') in the cart cart! You have to remove all products of that shop from the cart and after that add products of the current shop.';
+      
+      
       
       if ($order->uid) {
         $current_user_data = zp_commerce_getUserData($order->uid);
-        dpm('$current_user_data');
-        dpm($current_user_data);
+        //dpm('$current_user_data');
+        //dpm($current_user_data);
+        
+        if (!in_array($order->field_u_order_shop_zp_id['und'][0]['value'], $current_user_data['favorite_shops'])) {
+          // Just in case, find out if the user has access to all city's shops
+          $curent_cart_city_zp_id = drupal_substr($order->field_u_order_shop_zp_id['und'][0]['value'], 0, 1);
+          if (!in_array($curent_page_products_city_zp_id, $current_user_data['favorite_shops'])) {
+            $deny_checkout_message = 'Sorry, you cannot buy products from the shop ' .  $curent_cart_shop_data['title'] . ' (' . $curent_cart_shop_data['extra_data']['address'] . '), (perhapse because its not in your city, or for some other reason). Please contact administration if you are not agree.';
+            //$current_cart_are_not_user_favorite = TRUE;
+          }
+        }
       }
       else {
         dpm('Anonimous user');
+        if (!in_array('checkout_denied_for_anonimous', $current_cart_shop_data['zp_access'])) {
+          $deny_checkout_message = 'Sorry, you cannot buy products from the shop ' .  $curent_cart_shop_data['title'] . ' (' . $curent_cart_shop_data['extra_data']['address'] . ') as anonimous. Please login/register first.';
+        }
       }
       //$form['actions']['checkout']['#disabled'] = TRUE;
       
       
-      $form['actions']['checkout'] = array(
-        '#markup' => l('Login to checkout', 'node/34'),
-      );
-      
-      //$form['actions']['checkout']['#disabled'] = TRUE;
-      //$form['actions']['checkout']['#submit'][] = 'zp_commerce_formCart_submit';
-      // Prevent submission. Just in case.
-      $form['#validate'][] = 'zp_commerce_formCart_validate';
+      if ($deny_checkout_message) {
+        $form['actions']['checkout'] = array(
+          '#markup' => '<div class="deny-checkout"><a href="#">' . t('Login to checkout') . '</a></div>',
+          //'#weight' => 50,
+        );
+        
+        dpm('Deny message: ' . $deny_checkout_message);
+        drupal_add_js( array ("zp_commerce" => array('deny_checkout_message' => $deny_checkout_message)), 'setting');
+        $path_to_custom_js = drupal_get_path('module', 'zp_commerce') . '/js/';
+        drupal_add_js($path_to_custom_js . 'zp_deny_checkout_message.js');
+        
+        //$form['actions']['checkout']['#disabled'] = TRUE;
+        // Prevent submission. Just in case.
+        // Unset all handlers.
+        $form['actions']['checkout']['#validate'] = array();
+        $form['actions']['checkout']['#submit'] = array();
+        $form['#validate'] = array();
+        $form['#submit'] = array();
+      }
+      else {
+        //$form['actions']['checkout']['#submit'][] = 'zp_commerce_formCart_submit';
+        //$form['#validate'][] = 'zp_commerce_formCart_validate';
+      }
+
       break;
   }
 }
@@ -158,7 +191,7 @@ function zp_commerce_form_alter(&$form, &$form_state, $form_id) {
  *
  */
 function zp_commerce_formCart_validate($form, &$form_state) {
-//  dpm('caaaaaaaaaaaaart validate');
+  dpm('caaaaaaaaaaaaart validate');
   ////form_set_error('', t('Sorry, you have to log in to finish the purchase.'));
 }
 
@@ -221,6 +254,7 @@ function zp_commerce_getShopData($zp_id) {
   $zp_access = $query->execute()->fetchAllAssoc('zp_access');
   
   $shop['zp_access'] = !empty($zp_access) ? array_keys($zp_access) : array();
+  $shop['zp_id'] = $zp_id;
   
   return $shop;
 }
@@ -358,7 +392,7 @@ function zp_commerce_form_commerce_cart_add_to_cart_form_alter(&$form, &$form_st
     // Add js handler for the denial popup message.
     if ($deny_addtocart_message) {
       dpm('Deny message: ' . $deny_addtocart_message);
-      drupal_add_js( array ("zp_commerce" => array('deny_message' => $deny_addtocart_message)), 'setting');
+      drupal_add_js( array ("zp_commerce" => array('deny_addtocart_message' => $deny_addtocart_message)), 'setting');
       $path_to_custom_js = drupal_get_path('module', 'zp_commerce') . '/js/';
       drupal_add_js($path_to_custom_js . 'zp_deny_addtocart_message.js');
     }
@@ -374,8 +408,8 @@ function zp_commerce_form_commerce_cart_add_to_cart_form_alter(&$form, &$form_st
     //$form['#submit'] = array();
     //$form['#validate'] = array();
     // Just in case, define own stubs instead of any other functions.
-    $form['#validate'] = 'zp_commerce_cart_add_to_cart_form_validate';
-    $form['#submit'] = 'zp_commerce_cart_add_to_cart_form_submit';
+    $form['#validate'] = array(); //'zp_commerce_cart_add_to_cart_form_validate';
+    $form['#submit'] = array(); //'zp_commerce_cart_add_to_cart_form_submit';
   }
   else {
     $form['#validate'][] = 'zp_commerce_cart_add_to_cart_form_validate';
