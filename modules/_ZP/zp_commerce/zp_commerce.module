@@ -81,7 +81,7 @@ function zp_commerce_form_alter(&$form, &$form_state, $form_id) {
   switch ($form_id) {
     case 'views_form_commerce_cart_form_default':
       
-      dpm($form);
+      //dpm($form);
       
       /*
       
@@ -151,7 +151,7 @@ function zp_commerce_form_alter(&$form, &$form_state, $form_id) {
         }
       }
       else {
-        dpm('Anonimous user');
+        //dpm('Anonimous user');
         if (!in_array('checkout_denied_for_anonimous', $current_cart_shop_data['zp_access'])) {
           $deny_checkout_message = 'Sorry, you cannot buy products from the shop ' .  $current_cart_shop_data['title'] . ' (' . $current_cart_shop_data['extra_data']['address'] . ') as anonimous. Please login/register first.';
         }
@@ -248,7 +248,7 @@ function zp_commerce_getShopData($zp_id) {
 
   
   $shop['extra_data'] = unserialize($shop['extra_data']);
-  dpm($shop);
+  //dpm($shop);
   
   $query = db_select('field_data_field_zp_access', 'a');
   $query->condition('a.entity_id', $shop['nid']);
@@ -293,7 +293,7 @@ function zp_commerce_form_commerce_cart_add_to_cart_form_alter(&$form, &$form_st
   // Other parts of this functionality are located in functions:
   // zp_commerce_form_alter, zp_commerce_decimal_quantities_update_views_edit_quantity, 
   if (!empty($form_state['default_product']->field_qmeasure['und'][0]['value'])) {
-    dpm($form_state['default_product']);
+    //dpm($form_state['default_product']);
     $field_qmeasure = $form_state['default_product']->field_qmeasure['und'][0]['value'];
   }
   else {
@@ -303,8 +303,8 @@ function zp_commerce_form_commerce_cart_add_to_cart_form_alter(&$form, &$form_st
   if (!$field_qmeasure) {
     $field_qmeasure = 'items';
   }
-  dpm($form);
-  dpm($field_qmeasure);
+  //dpm($form);
+  //dpm($field_qmeasure);
   // Set quantity measure suffix mark (items, kg, g, etc).
   $form['quantity']['#suffix'] = '<div class="qmeasure">' . $field_qmeasure . '</div>';
   

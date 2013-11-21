@@ -390,7 +390,7 @@ function zp_pages_setZpBreadcrumb($node) {
 
   if ($node->type == 'product_a') {
     
-    $shop_zp_id = 'z01';//drupal_substr($text, $start, $length);
+    $shop_zp_id = drupal_substr($node->field_parent_zp_id['und'][0]['value'], 0, 2);
 
     $node->field_parent_zp_id['und'][0]['value'];
 
