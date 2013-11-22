@@ -330,13 +330,13 @@ function zp_commerce_form_commerce_cart_add_to_cart_form_alter(&$form, &$form_st
     // Define current products shop zp_id.
     $current_page_products_shop_zp_id = drupal_substr($form['line_item_fields']['#entity']->line_item_label, 0, 2);
 
-  return;
+  
     // Define current cart shop zp_id.
     global $user;
     $order = commerce_cart_order_load($user->uid);
-    //dpm('$order');
-    //dpm($order);
-  
+    dpm('$order');
+    dpm($order);
+  return;
     if (!empty($order->commerce_line_items['und'])) {
       $current_cart_shop_zp_id = @$order->field_u_order_shop_zp_id['und'][0]['value'];
       $first_cart_product = commerce_line_item_load($order->commerce_line_items['und'][0]['line_item_id']);
