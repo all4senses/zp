@@ -333,24 +333,24 @@ function zp_commerce_form_commerce_cart_add_to_cart_form_alter(&$form, &$form_st
   
     // Define current cart shop zp_id.
     global $user;
-    $order = commerce_cart_order_load($user->uid);
-    dpm('$order');
-    dpm($order);
-  return;
-    if (!empty($order->commerce_line_items['und'])) {
-      $current_cart_shop_zp_id = @$order->field_u_order_shop_zp_id['und'][0]['value'];
-      $first_cart_product = commerce_line_item_load($order->commerce_line_items['und'][0]['line_item_id']);
-      //dpm('$first_cart_product');
-      //dpm($first_cart_product);
-    }
-    elseif (!isset($order->field_u_order_shop_zp_id['und'][0]['value']) || $order->field_u_order_shop_zp_id['und'][0]['value'] != NULL) {
-      // Reset current shop zp_id for the cart to NULL if it's not set or is set not to NULL.
-      $current_cart_shop_zp_id = NULL;
-      $order->field_u_order_shop_zp_id['und'][0]['value'] = NULL;
-      commerce_order_save($order);
+    if ($order = commerce_cart_order_load($user->uid)) {
+      //dpm('$order');
+      //dpm($order);
+
+      if (!empty($order->commerce_line_items['und'])) {
+        $current_cart_shop_zp_id = @$order->field_u_order_shop_zp_id['und'][0]['value'];
+        $first_cart_product = commerce_line_item_load($order->commerce_line_items['und'][0]['line_item_id']);
+        //dpm('$first_cart_product');
+        //dpm($first_cart_product);
+      }
+      elseif (!isset($order->field_u_order_shop_zp_id['und'][0]['value']) || $order->field_u_order_shop_zp_id['und'][0]['value'] != NULL) {
+        // Reset current shop zp_id for the cart to NULL if it's not set or is set not to NULL.
+        $current_cart_shop_zp_id = NULL;
+        $order->field_u_order_shop_zp_id['und'][0]['value'] = NULL;
+        commerce_order_save($order);
+      }
     }
     
-
   
   
     // Check if a current user can add this product to cart.
@@ -448,7 +448,7 @@ function zp_commerce_cart_add_to_cart_form_submit($form, &$form_state) {
   if (!$current_cart_shop_zp_id) {
     global $user;
     $order = commerce_cart_order_load($user->uid);
-    //dpm($order);
+    dpm($order);
     $order->field_u_order_shop_zp_id['und'][0]['value'] = $current_page_products_shop_zp_id;
     commerce_order_save($order);
   }
