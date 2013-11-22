@@ -366,7 +366,7 @@ function zp_commerce_form_commerce_cart_add_to_cart_form_alter(&$form, &$form_st
     }
     else {
       
-      if (!$order->uid) {
+      if (!$user->uid) {
         // Anonimous user.
         if (in_array('add_to_cart_denied_for_anonimous', $current_page_products_shop_data['zp_access']) || in_array('prices_invisible_for_anonimous', $current_page_products_shop_data['zp_access'])) {
           // Anonimous user is denied to add to cart from this shop.
@@ -375,7 +375,7 @@ function zp_commerce_form_commerce_cart_add_to_cart_form_alter(&$form, &$form_st
       }
       else {
         // Authorized user.
-        $current_user_data = zp_commerce_getUserData($order->uid);
+        $current_user_data = zp_commerce_getUserData($user->uid);
         //dpm('$current_cart_shop_zp_id: ' . $current_page_products_shop_zp_id);
         
         //dpm('$current_user_data');
