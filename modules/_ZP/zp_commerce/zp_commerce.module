@@ -286,6 +286,8 @@ function zp_commerce_getUserData($uid) {
  */
 function zp_commerce_form_commerce_cart_add_to_cart_form_alter(&$form, &$form_state) {
   
+  return;
+  
   // Allow decimal only for non empty and non items/шт. qmeasure for each specified product.
   // 
   // Hack the Add to cart form to accept fractional quantities if the product type allows it.
