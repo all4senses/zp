@@ -1,4 +1,5 @@
 <?php
+use Drupal\krumong as k;
 
 /**
  * @file
@@ -127,13 +128,16 @@ function zp_commerce_form_alter(&$form, &$form_state, $form_id) {
       
       $order = commerce_cart_order_load($user->uid);
       //krumong()->jMessage($order);
-      dpmk($order);
-      //dpm('$order in cart');
+      //dpmk($order);
+      k\dpm('$order in cart');
       //krumong('main')->kPrint('$order in cart');
-      //dpm($order);
+      k\dpm($order);
       
       //krumong('main')->kPrint($order);
-      dpmkj($order);
+      //dpmkj($order);
+      
+      
+      
       
       $current_cart_shop_data = zp_commerce_getShopData($order->field_u_order_shop_zp_id['und'][0]['value']);
       //dpm('$current_cart_shop_data');
