@@ -129,9 +129,9 @@ function zp_commerce_form_alter(&$form, &$form_state, $form_id) {
       $order = commerce_cart_order_load($user->uid);
       //krumong()->jMessage($order);
       //dpmk($order);
-      k\dpm('$order in cart');
+      krumong('devel')->dpm('$order in cart');
       //krumong('main')->kPrint('$order in cart');
-      k\dpm($order);
+      krumong('devel')->dpm($order);
       
       //krumong('main')->kPrint($order);
       //dpmkj($order);
