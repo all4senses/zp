@@ -124,8 +124,9 @@ function zp_commerce_form_alter(&$form, &$form_state, $form_id) {
       //$current_cart_are_not_user_favorite = FALSE;
       $deny_checkout_message = FALSE;
       
-      krumong()->jMessage($order);
+      
       $order = commerce_cart_order_load($user->uid);
+      krumong()->jMessage($order);
       dpm('$order in cart');
       //krumong('main')->kPrint('$order in cart');
       dpm($order);
