@@ -66,6 +66,15 @@ function zp_misc_menu_alter(&$items) {
 }
 
 
+/**
+ * Helper function to call KrumoNG functions.
+ */
+function dpmk($var) {
+  krumong('main')->kPrint($var);
+}
+function dpmkj($var) {
+  krumong()->jMessage($var);
+}
 
 /**
  * Implements hook_ctools_plugin_directory().
