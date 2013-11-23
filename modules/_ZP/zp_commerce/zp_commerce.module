@@ -342,8 +342,8 @@ function zp_commerce_form_commerce_cart_add_to_cart_form_alter(&$form, &$form_st
           $first_cart_product = commerce_line_item_load($order->commerce_line_items['und'][0]['line_item_id']);
           //$current_cart_shop_zp_id = @$order->field_u_order_shop_zp_id['und'][0]['value'];
 
-          dpm('$first_cart_product');
-          dpm($first_cart_product);
+          dpr('$first_cart_product');
+          dpr($first_cart_product);
 //          $order->field_u_order_shop_zp_id['und'][0]['value'] = $current_cart_shop_zp_id;
 //          commerce_order_save($order);
 
