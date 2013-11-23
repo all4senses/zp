@@ -62,10 +62,6 @@ function zp_commerce_menu() {
  */
 function zp_commerce_form_alter(&$form, &$form_state, $form_id) {
 
-  return;
-  
-  
-  
   
   //dpm($form_id);  //dpm($form);
   // $conf['locale_custom_strings_en']['old string'] = 'new string'
@@ -290,7 +286,7 @@ function zp_commerce_getUserData($uid) {
  */
 function zp_commerce_form_commerce_cart_add_to_cart_form_alter(&$form, &$form_state) {
   
-  return;
+  
   
   // Allow decimal only for non empty and non items/шт. qmeasure for each specified product.
   // 
@@ -338,20 +334,27 @@ function zp_commerce_form_commerce_cart_add_to_cart_form_alter(&$form, &$form_st
     // Define current cart shop zp_id.
     global $user;
     if ($order = commerce_cart_order_load($user->uid)) {
-      dpm('$order');
-      dpm($order);
+      //dpm('$order');
+      //dpm($order);
+      if (!$current_cart_shop_zp_id = @$order->field_u_order_shop_zp_id['und'][0]['value']) {
+        
+        if (!empty($order->commerce_line_items['und'])) {
+          $first_cart_product = commerce_line_item_load($order->commerce_line_items['und'][0]['line_item_id']);
+          //$current_cart_shop_zp_id = @$order->field_u_order_shop_zp_id['und'][0]['value'];
 
-      if (!empty($order->commerce_line_items['und'])) {
-        $current_cart_shop_zp_id = @$order->field_u_order_shop_zp_id['und'][0]['value'];
-        $first_cart_product = commerce_line_item_load($order->commerce_line_items['und'][0]['line_item_id']);
-        //dpm('$first_cart_product');
-        //dpm($first_cart_product);
-      }
-      elseif (!isset($order->field_u_order_shop_zp_id['und'][0]['value']) || $order->field_u_order_shop_zp_id['und'][0]['value'] != NULL) {
-        // Reset current shop zp_id for the cart to NULL if it's not set or is set not to NULL.
-        $current_cart_shop_zp_id = NULL;
-        $order->field_u_order_shop_zp_id['und'][0]['value'] = NULL;
-        commerce_order_save($order);
+          dpm('$first_cart_product');
+          dpm($first_cart_product);
+//          $order->field_u_order_shop_zp_id['und'][0]['value'] = $current_cart_shop_zp_id;
+//          commerce_order_save($order);
+
+        }
+        elseif (!isset($order->field_u_order_shop_zp_id['und'][0]['value']) || $order->field_u_order_shop_zp_id['und'][0]['value'] != NULL) {
+          // Reset current shop zp_id for the cart to NULL if it's not set or is set not to NULL.
+          $current_cart_shop_zp_id = NULL;
+          $order->field_u_order_shop_zp_id['und'][0]['value'] = NULL;
+          commerce_order_save($order);
+        }
+        
       }
     }
     
@@ -445,7 +448,7 @@ function zp_commerce_cart_add_to_cart_form_validate($form, &$form_state) {
   * Custom add_to_cart_form validation function.
   */
 function zp_commerce_cart_add_to_cart_form_submit($form, &$form_state) {
-  dpm('in add to cart submit');
+  //dpm('in add to cart submit');
   
   // Set the current shop zp_id for the current cart, if it's not yet set.
 //  global $current_page_products_shop_zp_id, $current_cart_shop_zp_id;
@@ -540,18 +543,6 @@ function zp_commerce_commerce_price_field_formatter_prepare_view($entity_type, $
  * Used while set enabled permission to edit any own orders.
  */
 function zp_commerce_commerce_entity_access($op, $entity, $account, $entity_type) {
-  
-  
-  return;
-  
-  
-  
-  
-  
-  
-  
-  
-  
 //   dpm($op);
 //   dpm($entity_type);
 //  dpm($entity);
