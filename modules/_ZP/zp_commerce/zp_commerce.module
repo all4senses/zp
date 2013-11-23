@@ -175,7 +175,12 @@ function zp_commerce_form_alter(&$form, &$form_state, $form_id) {
       
       if ($deny_checkout_message) {
         $form['actions']['checkout'] = array(
-          '#markup' => '<div class="deny-checkout"><a href="#">' . t('Login to checkout') . '</a></div>',
+          //'#markup' => '<div class="deny-checkout"><a href="#">' . t('Login to checkout') . '</a></div>',
+          
+          //'#markup' => '<div class="deny-checkout">' . l(t('Login'), 'ajax_register/login/nojs', array('html' => TRUE, 'attributes' => array('rel' => 'nofollow', 'class' => array('zp-login', 'ctools-use-modal', 'ctools-modal-ctools-ajax-register-style'), 'title' => t('Login')))) . '</div>',
+          '#markup' => l(t('Login'), 'ajax_register/login/nojs', array('html' => TRUE, 'attributes' => array('rel' => 'nofollow', 'class' => array('zp-login', 'ctools-use-modal', 'ctools-modal-ctools-ajax-register-style'), 'title' => t('Login')))),
+            
+            
           //'#weight' => 50,
         );
         
