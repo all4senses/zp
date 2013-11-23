@@ -117,15 +117,16 @@ function zp_commerce_form_alter(&$form, &$form_state, $form_id) {
       
       
       
-      
+      // Deny checkout for those who have no right for it!
+
       // Define current cart shop zp_id.
       global $user;
       //$current_cart_are_not_user_favorite = FALSE;
       $deny_checkout_message = FALSE;
       
       $order = commerce_cart_order_load($user->uid);
-      //dpm('$order in cart');
-      //dpm($order);
+      dpm('$order in cart');
+      dpm($order);
       
       $current_cart_shop_data = zp_commerce_getShopData($order->field_u_order_shop_zp_id['und'][0]['value']);
       //dpm('$current_cart_shop_data');
