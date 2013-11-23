@@ -124,11 +124,13 @@ function zp_commerce_form_alter(&$form, &$form_state, $form_id) {
       //$current_cart_are_not_user_favorite = FALSE;
       $deny_checkout_message = FALSE;
       
+      drupal_add_js('sites/all/modules/_Dev/devel/krumo/krumo.js');
+      
       $order = commerce_cart_order_load($user->uid);
       dpm('$order in cart');
-      krumong('main')->kPrint('$order in cart');
+      //krumong('main')->kPrint('$order in cart');
       dpm($order);
-      krumong('main')->kPrint($order);
+      //krumong('main')->kPrint($order);
       
       $current_cart_shop_data = zp_commerce_getShopData($order->field_u_order_shop_zp_id['und'][0]['value']);
       //dpm('$current_cart_shop_data');
