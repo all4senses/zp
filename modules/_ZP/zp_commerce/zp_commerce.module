@@ -166,7 +166,7 @@ function zp_commerce_form_alter(&$form, &$form_state, $form_id) {
       }
       else {
         //dpm('Anonimous user');
-        if (!in_array('checkout_denied_for_anonimous', $current_cart_shop_data['zp_access'])) {
+        if (in_array('checkout_denied_for_anonimous', $current_cart_shop_data['zp_access'])) {
           $deny_checkout_message = 'Sorry, you cannot buy products from the shop ' .  $current_cart_shop_data['title'] . ' (' . $current_cart_shop_data['extra_data']['address'] . ') as anonimous. Please login/register first.';
         }
       }
