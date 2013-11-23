@@ -540,6 +540,18 @@ function zp_commerce_commerce_price_field_formatter_prepare_view($entity_type, $
  * Used while set enabled permission to edit any own orders.
  */
 function zp_commerce_commerce_entity_access($op, $entity, $account, $entity_type) {
+  
+  
+  return;
+  
+  
+  
+  
+  
+  
+  
+  
+  
 //   dpm($op);
 //   dpm($entity_type);
 //  dpm($entity);
