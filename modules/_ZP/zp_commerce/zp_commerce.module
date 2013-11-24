@@ -169,7 +169,8 @@ function zp_commerce_form_alter(&$form, &$form_state, $form_id) {
         if (in_array('checkout_denied_for_anonimous', $current_cart_shop_data['zp_access'])) {
           $deny_checkout_message = 'Sorry, you cannot buy products from the shop ' .  $current_cart_shop_data['title'] . ' (' . $current_cart_shop_data['extra_data']['address'] 
                   . ') as anonimous. Please ' 
-                  . l(t('Login/Register'), 'ajax_register/login/nojs', array('html' => TRUE, 'attributes' => array('rel' => 'nofollow', 'class' => array('zp-login', 'ctools-use-modal', 'ctools-modal-ctools-ajax-register-style'), 'title' => t('Login')))) 
+                  //. l(t('Login/Register'), 'ajax_register/login/nojs', array('html' => TRUE, 'attributes' => array('rel' => 'nofollow', 'class' => array('zp-login', 'ctools-use-modal', 'ctools-modal-ctools-ajax-register-style'), 'title' => t('Login')))) 
+                  . '<a id="click-to-login" href="#">Login/Register</a>' 
                   . ' first.';
         }
       }

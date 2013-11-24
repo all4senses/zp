@@ -15,6 +15,12 @@
        });
        
        
+       $("#deny-message-cb #click-to-login").click(function(){
+            //console.log('Closedddddd');
+            $.fn.colorbox.close();
+            $('a.zp-login').click();
+        });
+       
         $("#deny-message-cb #no").click(function(){
             //console.log('Closedddddd');
             $.fn.colorbox.close();
