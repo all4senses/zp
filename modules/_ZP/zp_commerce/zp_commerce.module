@@ -419,7 +419,7 @@ function zp_commerce_form_commerce_cart_add_to_cart_form_alter(&$form, &$form_st
           // Anonimous user is denied to add to cart from this shop.
           $deny_addtocart_message = 'Sorry, anonimous users cannot add to cart products from the shop ' .  $current_page_products_shop_data['title'] . ' (' . $current_page_products_shop_data['extra_data']['address'] 
                   . ')! You have to ' 
-                  . '<a class="click-to-login" href="#">login/register</a>'
+                  . '<a id="click-to-login" href="#">login/register</a>'
                   . ' first.';
         }
       }
