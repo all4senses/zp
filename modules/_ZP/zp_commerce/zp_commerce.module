@@ -174,11 +174,36 @@ function zp_commerce_form_alter(&$form, &$form_state, $form_id) {
       
       
       if ($deny_checkout_message) {
+        
+        $form['deny_popup_colorbox'] = array(
+            '#markup' => '
+            <div style="display: none;">
+                <div id="exitIntent"> 
+                  <div id="line-1">Do You Want To Save BIG On</div>
+                  <div id="line-2">Reliable Business Phone Service?</div>
+
+                  <div id="line-3">Get Voice, Fax, Text and Video Conferencing for $19/mo.</div>
+
+                  <a href="/business" id="yes" target="_top">YES</a>
+                  <div id="no">NO - I like overpaying for my old phone service.</div>
+                </div>
+              </div>  
+            ',
+        );
+        drupal_add_js('sites/all/libraries/jquery.plugins/colorbox/colorbox/jquery.colorbox.js');
+        drupal_add_css('sites/all/libraries/jquery.plugins/colorbox/example1/colorbox.css', array('preprocess' => FALSE)); // array('group' => CSS_THEME, 'preprocess' => FALSE)
+
+        // Exit intent Ad block main js.
+        $path_to_custom_js = drupal_get_path('module', 'zp_commerce') . '/js/';
+        drupal_add_js($path_to_custom_js . 'zp_deny_message_cb.js');
+                  
+                  
         $form['actions']['checkout'] = array(
           //'#markup' => '<div class="deny-checkout"><a href="#">' . t('Login to checkout') . '</a></div>',
+          '#markup' => '<div class="deny-message"><a href="#">' . t('Login to checkout') . '</a></div>',
           
           //'#markup' => '<div class="deny-checkout">' . l(t('Login'), 'ajax_register/login/nojs', array('html' => TRUE, 'attributes' => array('rel' => 'nofollow', 'class' => array('zp-login', 'ctools-use-modal', 'ctools-modal-ctools-ajax-register-style'), 'title' => t('Login')))) . '</div>',
-          '#markup' => l(t('Login'), 'ajax_register/login/nojs', array('html' => TRUE, 'attributes' => array('rel' => 'nofollow', 'class' => array('zp-login', 'ctools-use-modal', 'ctools-modal-ctools-ajax-register-style'), 'title' => t('Login')))),
+          ////'#markup' => l(t('Login'), 'ajax_register/login/nojs', array('html' => TRUE, 'attributes' => array('rel' => 'nofollow', 'class' => array('zp-login', 'ctools-use-modal', 'ctools-modal-ctools-ajax-register-style'), 'title' => t('Login')))),
             
             
           //'#weight' => 50,
