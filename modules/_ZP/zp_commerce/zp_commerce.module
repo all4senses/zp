@@ -192,7 +192,7 @@ function zp_commerce_form_alter(&$form, &$form_state, $form_id) {
         drupal_add_js('sites/all/libraries/jquery.plugins/colorbox/colorbox/jquery.colorbox.js');
         drupal_add_css('sites/all/libraries/jquery.plugins/colorbox/example1/colorbox.css', array('preprocess' => FALSE)); // array('group' => CSS_THEME, 'preprocess' => FALSE)
 
-        // Exit intent Ad block main js.
+        // Popup window js.
         $path_to_custom_js = drupal_get_path('module', 'zp_commerce') . '/js/';
         drupal_add_js($path_to_custom_js . 'zp_deny_message_cb.js');
                   
@@ -417,7 +417,10 @@ function zp_commerce_form_commerce_cart_add_to_cart_form_alter(&$form, &$form_st
         // Anonimous user.
         if (in_array('add_to_cart_denied_for_anonimous', $current_page_products_shop_data['zp_access']) || in_array('prices_invisible_for_anonimous', $current_page_products_shop_data['zp_access'])) {
           // Anonimous user is denied to add to cart from this shop.
-          $deny_addtocart_message = 'Sorry, anonimous users cannot add to cart products from the shop ' .  $current_page_products_shop_data['title'] . ' (' . $current_page_products_shop_data['extra_data']['address'] . ')! You have to login/register first.';
+          $deny_addtocart_message = 'Sorry, anonimous users cannot add to cart products from the shop ' .  $current_page_products_shop_data['title'] . ' (' . $current_page_products_shop_data['extra_data']['address'] 
+                  . ')! You have to ' 
+                  . '<a class="click-to-login" href="#">login/register</a>'
+                  . ' first.';
         }
       }
       else {
@@ -443,16 +446,39 @@ function zp_commerce_form_commerce_cart_add_to_cart_form_alter(&$form, &$form_st
     // Add js handler for the denial popup message.
     if ($deny_addtocart_message) {
       dpm('Deny message: ' . $deny_addtocart_message);
-      drupal_add_js( array ("zp_commerce" => array('deny_addtocart_message' => $deny_addtocart_message)), 'setting');
-      $path_to_custom_js = drupal_get_path('module', 'zp_commerce') . '/js/';
-      drupal_add_js($path_to_custom_js . 'zp_deny_addtocart_message.js');
+//      drupal_add_js( array ("zp_commerce" => array('deny_addtocart_message' => $deny_addtocart_message)), 'setting');
+//      $path_to_custom_js = drupal_get_path('module', 'zp_commerce') . '/js/';
+//      drupal_add_js($path_to_custom_js . 'zp_deny_addtocart_message.js');
+      
+      
+      
+        $form['deny_popup_colorbox'] = array(
+            '#markup' => '
+            <div style="display: none;">
+                <div id="deny-message-cb"> 
+                  <div class="message">' . $deny_addtocart_message . '</div>
+                  <div id="no">Cancel</div>
+                </div>
+              </div>  
+            ',
+        );
+        drupal_add_js('sites/all/libraries/jquery.plugins/colorbox/colorbox/jquery.colorbox.js');
+        drupal_add_css('sites/all/libraries/jquery.plugins/colorbox/example1/colorbox.css', array('preprocess' => FALSE)); // array('group' => CSS_THEME, 'preprocess' => FALSE)
+
+        // Popup window js.
+        $path_to_custom_js = drupal_get_path('module', 'zp_commerce') . '/js/';
+        drupal_add_js($path_to_custom_js . 'zp_deny_message_cb.js');
+
+        
+        
+        
     }
   }
   
   
   if ($deny_addtocart_message) {
     $form['submit'] = array(
-      '#markup' => '<div class="deny-addtocart"><a href="#">' . t('Add to cart') . '</a></div>',
+      '#markup' => '<div class="deny-message"><a href="#">' . t('Add to cart') . '</a></div>',
       '#weight' => 50,
     );
     // Unset any submit and validate functions.
