@@ -9,13 +9,13 @@
        
        $(".deny-message a").click(function(){
          
-          $.fn.colorbox({inline:true, href:"#exitIntent", width:780, height:440});  
+          $.fn.colorbox({inline:true, href:"#deny-message-cb", width:780, height:440});  
           return false;
 
        });
        
        
-        $("#exitIntent #no").click(function(){
+        $("#deny-message-cb #no").click(function(){
             //console.log('Closedddddd');
             $.fn.colorbox.close();
         });
