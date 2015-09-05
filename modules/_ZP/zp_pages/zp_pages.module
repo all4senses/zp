@@ -803,14 +803,42 @@ function zp_pages_importPrices_formValidate(&$form, &$form_state) {
           
           dpm("Processed...");
           
-        }
+          if (is_array($excel_data)) {
+            // Use only the first sheet ([0])
+            foreach ($excel_data[0] as $number => $row) {
+              
+                    if ($number > 20) {
+                      break;
+                    }
+                    $row_data = array();
+                    foreach ($row as $col_name => $col_data) {
+
+                        if (strpos($col_data, 'HYPERLINK(')) {
+                          $col_data = preg_replace('/.*\=HYPERLINK\(\"(.*)\"\).*    /iU', '$1', $col_data);
+                          $col_data = explode('","', $col_data);
+                        }
+
+                        $row_data[$col_name] = $col_data;
+
+                    }
+                    $file_data[] = $row_data;
+              
+            } // End of foreach ($excel_data[0] as $number => $row) {
+            
+            dpm($file_data); 
+            
+          } // End of if (is_array($excel_data)) {
+          
+        } // End of if ($file->filemime == 'application/vnd.ms-excel' || $file->filemime == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
         
         
-      }
+      } // if (($handle = fopen(zp_misc_getPathFromStreamUri($file->uri), "r")) !== FALSE) {
       
-    }
+    } // End of if ($uploaded == TRUE) {
     
-  }
+  } // if ($form_state['values']['op'] == 'Import from file') {
+  
+  
   /*
   if ($form_state['values']['op'] == 'Import from file') {
     $get['action'] = 'done';
