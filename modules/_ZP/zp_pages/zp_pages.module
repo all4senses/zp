@@ -725,7 +725,7 @@ function zp_pages_importPrices_form($form, &$form_state) {
       '#upload_validators' => array(
         'file_validate_extensions' => array('csv xls xlsx'),
         ),
-      '#upload_location' => 'private://',  '/home/zpshop/zp_prices_uploaded/', //'public://prices',   // DRUPAL_ROOT
+      '#upload_location' => 'private://',  //'/home/zpshop/zp_prices_uploaded/', //'public://prices',   // DRUPAL_ROOT
        // Remove the original element "Upload" button.
       '#process' => array('zp_misc_import_my_file_element_process')
     );
