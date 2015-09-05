@@ -760,6 +760,21 @@ function zp_pages_importPrices_formValidate(&$form, &$form_state) {
   $get = $_GET;
   unset($get['q'], $get['action']);
   
+  
+  
+  if ($form_state['values']['op'] == 'Import from file') {
+    $get['action'] = 'done';
+    
+    $file = file_load($form_state['values']['file_fid']);
+    dpm($file);
+
+    // Change status to permanent.
+    $file->status = FILE_STATUS_PERMANENT;
+    // Save.
+    $uploaded = file_save($file);
+
+    drupal_set_message('Uploaded?');
+  }
   /*
   if ($form_state['values']['op'] == 'Import from file') {
     $get['action'] = 'done';
