@@ -10,6 +10,24 @@
  */
 module_load_include('inc', 'zp_misc', 'inc/constants');
 
+/**
+ * Implements hook_menu().
+ */
+function zp_pages_menu() {
+  
+
+  $items['admin/content/import-price'] = array(
+    'title' => 'Import a price',
+    'description' => 'Импорт прайс-листа',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('zp_pages_importPrices_form'),
+    'access callback' => 'zp_misc_userIsAdmin',
+    'type' => MENU_NORMAL_ITEM,
+  );
+  
+  return $items;
+}
+
 
 /**
  * Implements hook_custom_theme().
