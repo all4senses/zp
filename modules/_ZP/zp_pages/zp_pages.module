@@ -754,7 +754,7 @@ function zp_pages_importPrices_form($form, &$form_state) {
 function zp_pages_importPrices_formValidate(&$form, &$form_state) {
 
   //dpm($_POST);
-  dpm($form_state);
+  //dpm($form_state);
   
   $file_data = array();
   $get = $_GET;
@@ -763,6 +763,9 @@ function zp_pages_importPrices_formValidate(&$form, &$form_state) {
   
   
   if ($form_state['values']['op'] == 'Import from file') {
+    
+    //dpm($form_state);
+    
     $get['action'] = 'done';
     
     $file = file_load($form_state['values']['file_fid']);
@@ -781,7 +784,7 @@ function zp_pages_importPrices_formValidate(&$form, &$form_state) {
       
       if (($handle = fopen(zp_misc_getPathFromStreamUri($file->uri), "r")) !== FALSE) {
         
-        dpm($file);
+        //dpm($file);
         
         if ($file->filemime == 'application/vnd.ms-excel' || $file->filemime == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
           
@@ -793,10 +796,12 @@ function zp_pages_importPrices_formValidate(&$form, &$form_state) {
           // Module phpexcel module needed, and phpexcel library downloaded.
           // https://www.drupal.org/node/1351450
           module_load_include('inc', 'phpexcel');
-//          $excel_data = phpexcel_import(zp_misc_getPathFromStreamUri($file->uri));
+          $excel_data = phpexcel_import(zp_misc_getPathFromStreamUri($file->uri));
 //          
 //          dpm(zp_misc_getPathFromStreamUri($file->uri));
 //          dpm($excel_data);
+          
+          dpm("Processed...");
           
         }
         
