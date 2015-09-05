@@ -774,6 +774,18 @@ function zp_pages_importPrices_formValidate(&$form, &$form_state) {
     $uploaded = file_save($file);
 
     drupal_set_message('Uploaded?');
+    
+    if ($uploaded == TRUE) {
+      
+      drupal_set_message('The file has been uploaded.');
+      
+      if (($handle = fopen(zp_misc_getPathFromStreamUri($file->uri), "r")) !== FALSE) {
+        
+        dpm($file);
+      }
+      
+    }
+    
   }
   /*
   if ($form_state['values']['op'] == 'Import from file') {
