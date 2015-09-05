@@ -766,7 +766,7 @@ function zp_pages_importPrices_formValidate(&$form, &$form_state) {
     $get['action'] = 'done';
     
     $file = file_load($form_state['values']['file_fid']);
-    dpm($file);
+    //dpm($file);
 
     // Change status to permanent.
     $file->status = FILE_STATUS_PERMANENT;
@@ -782,6 +782,25 @@ function zp_pages_importPrices_formValidate(&$form, &$form_state) {
       if (($handle = fopen(zp_misc_getPathFromStreamUri($file->uri), "r")) !== FALSE) {
         
         dpm($file);
+        
+        if ($file->filemime == 'application/vnd.ms-excel' || $file->filemime == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
+          
+          dpm('Excel!..');
+          // Close because it will  be opened by importer function
+          fclose($handle);
+          
+          // Import the data from Excel
+          // Module phpexcel module needed, and phpexcel library downloaded.
+          // https://www.drupal.org/node/1351450
+          module_load_include('inc', 'phpexcel');
+//          $excel_data = phpexcel_import(zp_misc_getPathFromStreamUri($file->uri));
+//          
+//          dpm(zp_misc_getPathFromStreamUri($file->uri));
+//          dpm($excel_data);
+          
+        }
+        
+        
       }
       
     }
