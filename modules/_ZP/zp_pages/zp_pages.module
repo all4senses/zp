@@ -800,7 +800,7 @@ function zp_pages_importPrices_formValidate(&$form, &$form_state) {
 //          
           dpm(zp_misc_getPathFromStreamUri($file->uri));
           //dpm($excel_data);
-          dpm("Rows: " . count($excel_data[0]));
+          //dpm("Rows: " . count($excel_data[0]));
           
           dpm('Opened...');
           
@@ -814,10 +814,10 @@ function zp_pages_importPrices_formValidate(&$form, &$form_state) {
                     $row_data = array();
                     foreach ($row as $col_name => $col_data) {
 
-                        if (strpos($col_data, 'HYPERLINK(')) {
-                          $col_data = preg_replace('/.*\=HYPERLINK\(\"(.*)\"\).*    /iU', '$1', $col_data);
-                          $col_data = explode('","', $col_data);
-                        }
+//                        if (strpos($col_data, 'HYPERLINK(')) {
+//                          $col_data = preg_replace('/.*\=HYPERLINK\(\"(.*)\"\).*    /iU', '$1', $col_data);
+//                          $col_data = explode('","', $col_data);
+//                        }
 
                         $row_data[$col_name] = $col_data;
 
