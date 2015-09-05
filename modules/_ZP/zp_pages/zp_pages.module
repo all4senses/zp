@@ -765,11 +765,13 @@ function zp_pages_importPrices_formValidate(&$form, &$form_state) {
     
     // Load the file.
     $file = file_load($form_state['values']['file_fid']);
-    //dpm($file);
+    dpm($file);
     // Change status to permanent.
     $file->status = FILE_STATUS_PERMANENT;
     // Save.
     $uploaded = file_save($file);
+    
+    drupal_set_message(' uploaded?');
     
     if ($uploaded == TRUE) {
       drupal_set_message('The file has been uploaded.');
@@ -864,5 +866,5 @@ function zp_pages_importPrices_formValidate(&$form, &$form_state) {
     $file_path = $file->uri;
   }
   
-  drupal_goto($_GET['q'], array('query' => $get));
+  //drupal_goto($_GET['q'], array('query' => $get));
 }
