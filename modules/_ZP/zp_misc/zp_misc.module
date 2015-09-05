@@ -1132,8 +1132,9 @@ function zp_misc_rewriteLinks($type, $data, $direction = 'forward') {
  * Convert path from Drupal stream uri.
  */
 function zp_misc_getPathFromStreamUri($uri) {
-  dpm($uri);
-  $file_default_scheme = file_default_scheme();
+  
+  //$file_default_scheme = file_default_scheme();
+  list($file_default_scheme, ) = explode($uri, '://');
   dpm($file_default_scheme);
   $default_file_path = variable_get('file_' . $file_default_scheme . '_path', conf_path() . '/f');
   
