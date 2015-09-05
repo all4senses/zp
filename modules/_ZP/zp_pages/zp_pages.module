@@ -754,12 +754,13 @@ function zp_pages_importPrices_form($form, &$form_state) {
 function zp_pages_importPrices_formValidate(&$form, &$form_state) {
 
   //dpm($_POST);
-  //dpm($form_state);
+  dpm($form_state);
   
   $file_data = array();
   $get = $_GET;
   unset($get['q'], $get['action']);
   
+  /*
   if ($form_state['values']['op'] == 'Import from file') {
     $get['action'] = 'done';
     
@@ -806,7 +807,7 @@ function zp_pages_importPrices_formValidate(&$form, &$form_state) {
                 }
                 else {
                   if (strpos($col_data, 'HYPERLINK(')) {
-                    $col_data = preg_replace('/.*\=HYPERLINK\(\"(.*)\"\).*/iU', '$1', $col_data);
+                    $col_data = preg_replace('/.*\=HYPERLINK\(\"(.*)\"\).*    /iU', '$1', $col_data);
                     $col_data = explode('","', $col_data);
                   }
                   
@@ -865,6 +866,7 @@ function zp_pages_importPrices_formValidate(&$form, &$form_state) {
 
     $file_path = $file->uri;
   }
+  */
   
-  //drupal_goto($_GET['q'], array('query' => $get));
+  drupal_goto($_GET['q'], array('query' => $get));
 }
