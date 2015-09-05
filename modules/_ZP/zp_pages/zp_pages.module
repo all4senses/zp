@@ -800,7 +800,7 @@ function zp_pages_importPrices_formValidate(&$form, &$form_state) {
 //          
           dpm(zp_misc_getPathFromStreamUri($file->uri));
           //dpm($excel_data);
-          dpm("Rows: " . count($excel_data));
+          dpm("Rows: " . count($excel_data[0]));
           
           dpm('Opened...');
           
