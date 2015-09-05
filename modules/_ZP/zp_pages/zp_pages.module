@@ -799,9 +799,9 @@ function zp_pages_importPrices_formValidate(&$form, &$form_state) {
           $excel_data = phpexcel_import(zp_misc_getPathFromStreamUri($file->uri));
 //          
           dpm(zp_misc_getPathFromStreamUri($file->uri));
-          dpm($excel_data);
+          //dpm($excel_data);
           
-          dpm("Processed...");
+          dpm('Opened...');
           
           if (is_array($excel_data)) {
             // Use only the first sheet ([0])
@@ -825,6 +825,7 @@ function zp_pages_importPrices_formValidate(&$form, &$form_state) {
               
             } // End of foreach ($excel_data[0] as $number => $row) {
             
+            dpm('Processed...');
             dpm($file_data); 
             
           } // End of if (is_array($excel_data)) {
