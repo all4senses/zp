@@ -798,8 +798,8 @@ function zp_pages_importPrices_formValidate(&$form, &$form_state) {
           module_load_include('inc', 'phpexcel');
           $excel_data = phpexcel_import(zp_misc_getPathFromStreamUri($file->uri));
 //          
-//          dpm(zp_misc_getPathFromStreamUri($file->uri));
-//          dpm($excel_data);
+          dpm(zp_misc_getPathFromStreamUri($file->uri));
+          dpm($excel_data);
           
           dpm("Processed...");
           
