@@ -2804,3 +2804,10 @@ function zp_misc_setBreadcrumbs(&$variables) {
 } 
 
 
+/* It disables the default upload button that comes with this #managed_file form */
+function zp_misc_import_my_file_element_process($element, &$form_state, $form) {
+  $element = file_managed_file_process($element, $form_state, $form);
+  $element['upload_button']['#access'] = FALSE;
+ 
+  return $element;
+}

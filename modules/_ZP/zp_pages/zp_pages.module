@@ -675,3 +675,175 @@ function zp_pages_menu_set_active_trail($url = NULL) {
     }
 
 }
+
+
+
+
+// -----------------------------------
+
+// Import Conferences from a file in bulk functions.
+
+
+
+/**
+ * Import Prices from a file page.
+ */
+function zp_pages_importPrices_form($form, &$form_state) {
+  
+  
+  
+  if (@$_GET['action'] == 'done') {
+    $form['submit_again'] = array('#type' => 'submit', '#value' => 'Import again');
+  } else {
+    
+    // http://www.lilianagaete.com/how-to-do-a-file-upload-in-drupal-7/
+
+    // Use the #managed_file FAPI element to upload a file.
+    $form['file_fid'] = array(
+      '#title' => 'Выберите файл с прайс-листом',
+      '#type' => 'managed_file',
+      '#description' => 'Разрешены только форматы Excel и CSV.',
+      '#default_value' => variable_get('file_fid', ''),
+      '#upload_validators' => array(
+        'file_validate_extensions' => array('csv xls xlsx'),
+        ),
+      '#upload_location' => 'public://prices',
+       // Remove the original element "Upload" button.
+      '#process' => array('zp_misc_import_my_file_element_process')
+    );
+    
+    $form['submit'] = array('#type' => 'submit', '#value' => 'Import from file');
+  }
+  
+  $form['#validate'][] = 'zp_pages_importPrices_formValidate';
+  
+  //dpm($form);
+  
+  return $form;
+}
+
+/**
+ * 
+ * @param array &$form
+ *   Array with declared form.
+ *
+ * @param array &$form_state
+ *   Array with current form state.
+
+ * @return void
+ *   Return nothing.
+ */
+function zp_pages_importPrices_formValidate(&$form, &$form_state) {
+
+  //dpm($_POST);
+  //dpm($form_state);
+  
+  $file_data = array();
+  $get = $_GET;
+  unset($get['q'], $get['action']);
+  
+  if ($form_state['values']['op'] == 'Import from file') {
+    $get['action'] = 'done';
+    
+    // Load the file.
+    $file = file_load($form_state['values']['file_fid']);
+    //dpm($file);
+    // Change status to permanent.
+    $file->status = FILE_STATUS_PERMANENT;
+    // Save.
+    $uploaded = file_save($file);
+    
+    if ($uploaded == TRUE) {
+      drupal_set_message('The file has been uploaded.');
+      
+      if (($handle = fopen(zp_misc_getPathFromStreamUri($file->uri), "r")) !== FALSE) {
+        
+        //dpm($file);
+        
+        if ($file->filemime == 'application/vnd.ms-excel' || $file->filemime == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
+          
+          // Close because it will  be opened by importer function
+          fclose($handle);
+          
+          // Import the data from Excel
+          // Module phpexcel module needed, and phpexcel library downloaded.
+          // https://www.drupal.org/node/1351450
+          module_load_include('inc', 'phpexcel');
+          $excel_data = phpexcel_import(zp_misc_getPathFromStreamUri($file->uri));
+          
+          //dpm(gv_misc_getPathFromStreamUri($file->uri));
+          if (is_array($excel_data)) {
+            // Use only the first sheet ([0])
+            foreach ($excel_data[0] as $row) {
+//              if (empty($row['Conference Name'])) {
+//                continue;
+//              }
+              $row_data = array();
+              foreach ($row as $col_name => $col_data) {
+                if (is_numeric($col_name)) {
+                  continue;
+                }
+                else {
+                  if (strpos($col_data, 'HYPERLINK(')) {
+                    $col_data = preg_replace('/.*\=HYPERLINK\(\"(.*)\"\).*/iU', '$1', $col_data);
+                    $col_data = explode('","', $col_data);
+                  }
+                  
+                  $row_data[$col_name] = $col_data;
+                }
+              }
+              $file_data[] = $row_data;
+            }
+          }
+        }
+        elseif ($file->filemime == 'text/csv') {
+          
+          if (($titles = fgetcsv($handle, 1000, ";")) !== FALSE) {
+          
+            if ($titles[0] == 'Conference Name' && in_array('Applicable Industry', $titles)) {
+              foreach ($titles as $key => $value) {
+                if (!$value) {
+                  unset($titles[$key]);
+                }
+              }
+
+              while (($data = fgetcsv($handle, 1000, ";")) !== FALSE) {
+                  // Skip empty rows (or rows with empty Title column).
+                  if (empty($data[0])) {
+                    continue;
+                  }
+                  $row = array();
+                  foreach ($titles as $key => $title) {
+                    if ($data[$key] == 'TBD') {
+                      $data[$key] = '';
+                    }
+                    $row[$title] = trim($data[$key]);
+                  }
+                  $file_data[] = $row;
+              }
+            }
+
+          }
+          fclose($handle);
+          
+        }
+        
+        
+        dpm($file_data);
+        if (!empty($file_data)) {
+          dpm('Got the data! Ready for importing.');
+          //gv_misc_addConferences_fromVar($file_data);
+        }
+        
+      }
+      
+    }
+    else {
+      drupal_set_message('The file could not be uploaded. Please contact the site administrator.', 'error');
+    }
+
+    $file_path = $file->uri;
+  }
+  
+  drupal_goto($_GET['q'], array('query' => $get));
+}
