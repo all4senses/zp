@@ -806,14 +806,15 @@ function zp_pages_importPrices_formValidate(&$form, &$form_state) {
           //dpm("Rows: " . count($excel_data[0]));
           
           dpm('Opened...');
-          dpm($excel_data[0][0]);
+          //dpm($excel_data[0][0]);
           
-          if (0) {
-          //if (is_array($excel_data)) {
+          //if (0) {
+          if (is_array($excel_data)) {
             // Use only the first sheet ([0])
-            foreach ($excel_data[0] as $number => $row) {
+            //foreach ($excel_data[0] as $number => $row) {
+            foreach ($excel_data['MainTable'] as $number => $row) {
               
-                    if ($number > 20) {
+                    if ($number > 10) {
                       break;
                     }
                     $row_data = array();
