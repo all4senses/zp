@@ -969,7 +969,7 @@ function zp_pages_importPriceBatch_processRow($priceRows, &$context) {
         $counter++;
         $context['sandbox']['progress']++;
  
-        $context['message'] = t('Now processing node %progress of %count', array('%progress' => $context['sandbox']['progress'], '%count' => $context['sandbox']['max']));
+        $context['message'] = t('Now processing node %progress of %count, %title', array('%progress' => $context['sandbox']['progress'], '%count' => $context['sandbox']['max'], '%title' => $row['Название']));
         $context['results']['processed'] = $context['sandbox']['progress'];
         $context['results']['titles'][] = $row['Название'];
         
@@ -988,7 +988,7 @@ function zp_pages_importPriceBatch_processRow($priceRows, &$context) {
 /**
  * Finish callback for Batch
  */
-function zp_pages_importPriceBatch_onFinish() {
+function zp_pages_importPriceBatch_onFinish($success, $results, $operations) {
   
   if ($success) {
     $message = format_plural($results['processed'], 'One node processed.', '@count nodes processed.');
