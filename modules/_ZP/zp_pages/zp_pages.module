@@ -887,7 +887,7 @@ function zp_pages_importPrices_formSubmit(&$form, &$form_state) {
       if (!empty($file_data)) {
         dpm('Got the data! Ready for importing.');
         dpm($file_data);
-        //zp_pages_importPriceBatch($file_data);
+        zp_pages_importPriceBatch($file_data);
       }
       
     } // End of if ($uploaded == TRUE) {
