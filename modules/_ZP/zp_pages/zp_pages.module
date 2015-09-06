@@ -797,13 +797,14 @@ function zp_pages_importPrices_formValidate(&$form, &$form_state) {
           // Module phpexcel module needed, and phpexcel library downloaded.
           // https://www.drupal.org/node/1351450
           module_load_include('inc', 'phpexcel');
-          $excel_data = phpexcel_import(zp_misc_getPathFromStreamUri($file->uri));
+          $excel_data = phpexcel_import(zp_misc_getPathFromStreamUri($file->uri), TRUE, TRUE);
 //          
           dpm(zp_misc_getPathFromStreamUri($file->uri));
-          //dpm($excel_data);
+          dpm($excel_data);
           //dpm("Rows: " . count($excel_data[0]));
           
-          dpm('Opened...' . $excel_data[0][0]);
+          dpm('Opened...');
+          dpm($excel_data[0][0]);
           
           if (0) {
           //if (is_array($excel_data)) {
