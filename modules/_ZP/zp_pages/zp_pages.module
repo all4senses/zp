@@ -797,7 +797,9 @@ function zp_pages_importPrices_formValidate(&$form, &$form_state) {
           // Module phpexcel module needed, and phpexcel library downloaded.
           // https://www.drupal.org/node/1351450
           module_load_include('inc', 'phpexcel');
-          $excel_data = phpexcel_import(zp_misc_getPathFromStreamUri($file->uri), TRUE, TRUE);
+          $excel_data = phpexcel_import(zp_misc_getPathFromStreamUri($file->uri), TRUE, TRUE
+                  ,array('setLoadSheetsOnly' => array('MainTable')) 
+                  );
 //          
           dpm(zp_misc_getPathFromStreamUri($file->uri));
           dpm($excel_data);
