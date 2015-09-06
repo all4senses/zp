@@ -809,9 +809,14 @@ function zp_pages_importPrices_formSubmit(&$form, &$form_state) {
           
           if (is_array($excel_data)) {
             // Use only the first sheet ([0])
+            $rowsCount = 0;
             foreach ($excel_data[0] as $number => $row) {
+                  
+                    if (empty($row['Название'])) {
+                      continue;
+                    }  
               
-                    if ($number > 30) {
+                    if ($rowsCount++ > 30) {
                       break;
                     }
                     $row_data = array();
@@ -947,7 +952,7 @@ function zp_pages_importPriceBatch_processRow($priceRows, &$context) {
       array_splice($context['sandbox']['items'], 0, $limit);
     }
  
-    foreach ($context['sandbox']['items'] as $entity) {
+    foreach ($context['sandbox']['items'] as $row) {
       if ($counter != $limit) {
  
         /*
@@ -966,6 +971,8 @@ function zp_pages_importPriceBatch_processRow($priceRows, &$context) {
  
         $context['message'] = t('Now processing node %progress of %count', array('%progress' => $context['sandbox']['progress'], '%count' => $context['sandbox']['max']));
         $context['results']['processed'] = $context['sandbox']['progress'];
+        $context['results']['titles'][] = $row['Название'];
+        
       } // End of if ($counter != $limit) {
     } // End of foreach ($context['sandbox']['items'] as $entity) {
   } // End of if(!empty($context['sandbox']['items'])) {
@@ -985,6 +992,7 @@ function zp_pages_importPriceBatch_onFinish() {
   
   if ($success) {
     $message = format_plural($results['processed'], 'One node processed.', '@count nodes processed.');
+    dpm($results);
   }
   else {
     $message = t('Finished with an error.');
