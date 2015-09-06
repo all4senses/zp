@@ -734,7 +734,8 @@ function zp_pages_importPrices_form($form, &$form_state) {
     $form['submit'] = array('#type' => 'submit', '#value' => 'Import from file');
   }
   
-  $form['#validate'][] = 'zp_pages_importPrices_formValidate';
+  //$form['#validate'][] = 'zp_pages_importPrices_formValidate';
+  $form['#submit'][] = 'zp_pages_importPrices_formSubmit';
   
   //dpm($form);
   
@@ -752,7 +753,7 @@ function zp_pages_importPrices_form($form, &$form_state) {
  * @return void
  *   Return nothing.
  */
-function zp_pages_importPrices_formValidate(&$form, &$form_state) {
+function zp_pages_importPrices_formSubmit(&$form, &$form_state) {
 
   //dpm($_POST);
   //dpm($form_state);
@@ -798,7 +799,7 @@ function zp_pages_importPrices_formValidate(&$form, &$form_state) {
           // https://www.drupal.org/node/1351450
           module_load_include('inc', 'phpexcel');
           $excel_data = phpexcel_import(zp_misc_getPathFromStreamUri($file->uri), TRUE, TRUE
-                  ,array('setLoadSheetsOnly' => array('MainTable')) 
+                  //,array('setLoadSheetsOnly' => array('MainTable')) 
                   );
 //          
           dpm(zp_misc_getPathFromStreamUri($file->uri));
@@ -811,8 +812,7 @@ function zp_pages_importPrices_formValidate(&$form, &$form_state) {
           //if (0) {
           if (is_array($excel_data)) {
             // Use only the first sheet ([0])
-            //foreach ($excel_data[0] as $number => $row) {
-            foreach ($excel_data['MainTable'] as $number => $row) {
+            foreach ($excel_data[0] as $number => $row) {
               
                     if ($number > 10) {
                       break;
@@ -832,79 +832,17 @@ function zp_pages_importPrices_formValidate(&$form, &$form_state) {
               
             } // End of foreach ($excel_data[0] as $number => $row) {
             
-            dpm('Processed...');
-            dpm($file_data); 
+            dpm('Excel Processed...');
+            //dpm($file_data); 
             
           } // End of if (is_array($excel_data)) {
+          else {
+            dpm('Wrong Data in Excel');
+          }
           
-        } // End of if ($file->filemime == 'application/vnd.ms-excel' || $file->filemime == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
-        
-        
-      } // if (($handle = fopen(zp_misc_getPathFromStreamUri($file->uri), "r")) !== FALSE) {
-      
-    } // End of if ($uploaded == TRUE) {
-    
-  } // if ($form_state['values']['op'] == 'Import from file') {
-  
-  
-  /*
-  if ($form_state['values']['op'] == 'Import from file') {
-    $get['action'] = 'done';
-    
-    // Load the file.
-    $file = file_load($form_state['values']['file_fid']);
-    dpm($file);
-    // Change status to permanent.
-    $file->status = FILE_STATUS_PERMANENT;
-    // Save.
-    $uploaded = file_save($file);
-    
-    drupal_set_message(' uploaded?');
-    
-    if ($uploaded == TRUE) {
-      drupal_set_message('The file has been uploaded.');
-      
-      if (($handle = fopen(zp_misc_getPathFromStreamUri($file->uri), "r")) !== FALSE) {
-        
-        dpm($file);
-        
-        if ($file->filemime == 'application/vnd.ms-excel' || $file->filemime == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
-          
-          // Close because it will  be opened by importer function
           fclose($handle);
           
-          // Import the data from Excel
-          // Module phpexcel module needed, and phpexcel library downloaded.
-          // https://www.drupal.org/node/1351450
-          module_load_include('inc', 'phpexcel');
-          $excel_data = phpexcel_import(zp_misc_getPathFromStreamUri($file->uri));
-          
-          dpm(zp_misc_getPathFromStreamUri($file->uri));
-          dpm($excel_data);
-          if (is_array($excel_data)) {
-            // Use only the first sheet ([0])
-            foreach ($excel_data[0] as $row) {
-//              if (empty($row['Conference Name'])) {
-//                continue;
-//              }
-              $row_data = array();
-              foreach ($row as $col_name => $col_data) {
-                if (is_numeric($col_name)) {
-                  continue;
-                }
-                else {
-                  if (strpos($col_data, 'HYPERLINK(')) {
-                    $col_data = preg_replace('/.*\=HYPERLINK\(\"(.*)\"\).*    /iU', '$1', $col_data);
-                    $col_data = explode('","', $col_data);
-                  }
-                  
-                  $row_data[$col_name] = $col_data;
-                }
-              }
-              $file_data[] = $row_data;
-            }
-          }
-        }
+        } // End of if ($file->filemime == 'application/vnd.ms-excel' || $file->filemime == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
         elseif ($file->filemime == 'text/csv') {
           
           if (($titles = fgetcsv($handle, 1000, ";")) !== FALSE) {
@@ -932,28 +870,129 @@ function zp_pages_importPrices_formValidate(&$form, &$form_state) {
               }
             }
 
+          } // End of if (($titles = fgetcsv($handle, 1000, ";")) !== FALSE) {
+          else {
+            dpm('Wrong Data in CSV');
           }
           fclose($handle);
           
-        }
+        } // End of elseif ($file->filemime == 'text/csv') {
         
-        
-        dpm($file_data);
-        if (!empty($file_data)) {
-          dpm('Got the data! Ready for importing.');
-          //gv_misc_addConferences_fromVar($file_data);
-        }
-        
+      } // if (($handle = fopen(zp_misc_getPathFromStreamUri($file->uri), "r")) !== FALSE) {
+      else {
+        dpm('Error on reading file.');
       }
       
-    }
-    else {
-      drupal_set_message('The file could not be uploaded. Please contact the site administrator.', 'error');
-    }
-
-    $file_path = $file->uri;
-  }
-  */
+      if (!empty($file_data)) {
+        dpm('Got the data! Ready for importing.');
+        dpm($file_data);
+        //zp_pages_importPriceBatch($file_data);
+      }
+      
+    } // End of if ($uploaded == TRUE) {
+    
+    
+    
+  } // if ($form_state['values']['op'] == 'Import from file') {
+  
+  
   
   drupal_goto($_GET['q'], array('query' => $get));
+}
+
+
+function zp_pages_importPriceBatch($priceRows) {
+
+  // Создаём массив с данными для батча
+  $batch = array(
+    'title' => t('Node processing'),
+    'operations' => array(
+      array('zp_pages_importPriceBatch_processRow', array($priceRows)),
+    ),
+    'finished' => 'zp_pages_importPriceBatch_onFinish',
+    //'file' => drupal_get_path('module', 'title_changer') . '/title_changer.batch.inc',
+  );
+ 
+  // Создаём работу для батча
+  batch_set($batch);
+ 
+  // Стартуем батч
+  batch_process();
+}
+
+
+/**
+ * Process every item in batch
+ */
+function zp_pages_importPriceBatch_processRow($priceRows, &$context) {
+ 
+  // Количество материалов, которые будут обработаны одной пачкой за раз
+  $limit = 1;
+ 
+  // Задаём начальные значения для батча
+  if (empty($context['sandbox']['progress'])) {
+    // Текущее количество обработанных материалов
+    $context['sandbox']['progress'] = 0;
+    // Общее количество материалов, которые надо обработать
+    $context['sandbox']['max'] = count($priceRows);
+  }
+ 
+  // Сохраняем массив с материалами
+  // Далее этот массив будет меняться
+  if(empty($context['sandbox']['items'])) {
+    $context['sandbox']['items'] = $priceRows;
+  }
+ 
+  $counter = 0;
+  if(!empty($context['sandbox']['items'])) {
+ 
+    // Убираем из массива с данными уже обработанные материалы
+    if ($context['sandbox']['progress'] != 0) {
+      array_splice($context['sandbox']['items'], 0, $limit);
+    }
+ 
+    foreach ($context['sandbox']['items'] as $entity) {
+      if ($counter != $limit) {
+ 
+        /*
+        // Загружаем материал
+        $node = node_load($entity->nid);
+        // Загружаем автора материала
+        $user = user_load($node->uid);
+        // Добавляем к заголовку материала автора, который его создал
+        $node->title .= t(' Created by !user', array('!user' => $user->name));
+        // Сохраняем материал
+        node_save($node);
+        */
+        // Увеличиваем счётчики
+        $counter++;
+        $context['sandbox']['progress']++;
+ 
+        $context['message'] = t('Now processing node %progress of %count', array('%progress' => $context['sandbox']['progress'], '%count' => $context['sandbox']['max']));
+        $context['results']['processed'] = $context['sandbox']['progress'];
+      } // End of if ($counter != $limit) {
+    } // End of foreach ($context['sandbox']['items'] as $entity) {
+  } // End of if(!empty($context['sandbox']['items'])) {
+ 
+  // Проверка, не пора ли закончить обработку данных.
+  // Как только количество обработанных будет равно общему количеству материалов - обработка завершится
+  if ($context['sandbox']['progress'] != $context['sandbox']['max']) {
+      $context['finished'] = $context['sandbox']['progress'] / $context['sandbox']['max'];
+  }
+}
+
+
+/**
+ * Finish callback for Batch
+ */
+function zp_pages_importPriceBatch_onFinish() {
+  
+  if ($success) {
+    $message = format_plural($results['processed'], 'One node processed.', '@count nodes processed.');
+  }
+  else {
+    $message = t('Finished with an error.');
+  }
+  drupal_set_message($message);
+  
 }
