@@ -811,7 +811,7 @@ function zp_pages_importPrices_formSubmit(&$form, &$form_state) {
             // Use only the first sheet ([0])
             foreach ($excel_data[0] as $number => $row) {
               
-                    if ($number > 10) {
+                    if ($number > 30) {
                       break;
                     }
                     $row_data = array();
@@ -837,7 +837,6 @@ function zp_pages_importPrices_formSubmit(&$form, &$form_state) {
             dpm('Wrong Data in Excel');
           }
           
-          fclose($handle);
           
         } // End of if ($file->filemime == 'application/vnd.ms-excel' || $file->filemime == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
         elseif ($file->filemime == 'text/csv') {
