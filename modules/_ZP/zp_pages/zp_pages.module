@@ -752,12 +752,12 @@ function zp_pages_importPrices_form($form, &$form_state) {
   
   
   dpm($files);
-  
+  dpm($_POST);
   
   $form['files'] = array(
     '#type' => 'radios',
     '#title' => t('Прайс-листы, история'),
-    '#default_value' => NULL,
+    //'#default_value' => NULL,
     '#options' => $files,
     '#description' => t('Выберите файл с прайс-листом для обработки.'),
     //'#access' => TRUE,
