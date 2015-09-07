@@ -778,7 +778,7 @@ function zp_pages_importPrices_form($form, &$form_state) {
   
   //dpm(unserialize($test_str)); 
   
-  //$form_state['rebuild'] = TRUE;
+  $form_state['rebuild'] = TRUE;
   return $form;
 }
 
@@ -802,7 +802,7 @@ function zp_pages_importPrices_formSubmit(&$form, &$form_state) {
   $get = $_GET;
   unset($get['q'], $get['action']);
   
-  $form_state['rebuild'] = TRUE;
+  //$form_state['rebuild'] = TRUE;
           
   //form_set_value($form['files'], array('und' => array(0 => array('value' => $form_state['values']['files']) )), $form_state);
   form_set_value($form['files'], $form_state['values']['files'], $form_state);
