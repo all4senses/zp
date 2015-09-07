@@ -924,7 +924,7 @@ function zp_pages_importPriceBatch($priceRows, $file_path) {
     //'file' => drupal_get_path('module', 'title_changer') . '/title_changer.batch.inc',
       
     'init_message' => t('Импорт прайс-листа начинается...'),
-    'progress_message' => t('Обработка строки @current из @total.'),
+    'progress_message' => t('Выполнение операции @current из @total.'),
     'error_message' => t('Во время обработки прайс-листа возникла ошибка.'),  
   );
  
@@ -989,7 +989,7 @@ function zp_pages_importPriceBatch_processRow($priceRows, $file_path, &$context)
         $counter++;
         $context['sandbox']['progress']++;
  
-        $context['message'] = t('Now processing row %progress of %count, %title', array('%progress' => $context['sandbox']['progress'], '%count' => $context['sandbox']['max'], '%title' => empty($row['Название'])? 'Empty' : $row['Название']  ));
+        $context['message'] = t('Обработка строки прайс-листа %progress из %count, %title', array('%progress' => $context['sandbox']['progress'], '%count' => $context['sandbox']['max'], '%title' => empty($row['Название'])? 'Empty' : $row['Название']  ));
         
         $context['results']['processed'] = $context['sandbox']['progress'];
         if (!empty($row['Название'])) {
