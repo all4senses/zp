@@ -973,6 +973,8 @@ function zp_pages_importPriceBatch_processRow($priceRows, &$context) {
         $context['results']['processed'] = $context['sandbox']['progress'];
         $context['results']['titles'][] = $row['Название'];
         
+        sleep(1);
+        
       } // End of if ($counter != $limit) {
     } // End of foreach ($context['sandbox']['items'] as $entity) {
   } // End of if(!empty($context['sandbox']['items'])) {
