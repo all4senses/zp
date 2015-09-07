@@ -708,6 +708,8 @@ function zp_pages_menu_set_active_trail($url = NULL) {
  */
 function zp_pages_importPrices_form($form, &$form_state) {
   
+  dpm($form_state);
+  
   $price_folder = 'private://zp_prices_uploaded';
   
   if (@$_GET['action'] == 'done') {
@@ -733,12 +735,23 @@ function zp_pages_importPrices_form($form, &$form_state) {
     
     $form['submit'] = array('#type' => 'submit', '#value' => 'Import from file');
     
-    $form['test_file'] = array('#type' => 'submit', '#value' => 'Test file');
+    
   }
   
   $dir = zp_misc_getPathFromStreamUri($price_folder); //'sites/default/files/jsmin-gv';
   $files = scandir($dir);
+  
+  
+  foreach ($files as $key => $object) {
+    if ($object == "." || $object == "..") {
+      //unlink($dir . "/" . $object);
+      unset($files[$key]);
+    }
+  }
+  
+  
   dpm($files);
+  
   
   $form['files'] = array(
     '#type' => 'radios',
@@ -749,11 +762,7 @@ function zp_pages_importPrices_form($form, &$form_state) {
     //'#access' => TRUE,
   );
 
-  foreach ($objects as $object) {
-    if ($object != "." && $object != "..") {
-      //unlink($dir . "/" . $object);
-    }
-  }
+  $form['test_file'] = array('#type' => 'submit', '#value' => 'Test file');
   
   //$form['#validate'][] = 'zp_pages_importPrices_formValidate';
   $form['#submit'][] = 'zp_pages_importPrices_formSubmit';
@@ -925,7 +934,7 @@ function zp_pages_importPrices_formSubmit(&$form, &$form_state) {
     
   } // if ($form_state['values']['op'] == 'Import from file') {
   else {
-    dpm($form_state);
+    dpm($form_state['values']);
   }
   
   
@@ -954,8 +963,8 @@ function zp_pages_importPriceBatch($priceRows, $file_path) {
  
   //dpm(batch_get());
   // Стартуем батч
-  //batch_process('admin/content/import-price', array('query' => array('action' => 'done')));
-  batch_process('admin/content/import-price/done-import');
+  batch_process('admin/content/import-price');
+  //batch_process('admin/content/import-price/done-import');
 }
 
 
