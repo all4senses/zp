@@ -920,7 +920,7 @@ function zp_pages_importPriceBatch($priceRows, $file_path) {
  
   // Стартуем батч
   //batch_process('admin/content/import-price', array('query' => array('action' => 'done')));
-  batch_process('admin/content/import-price');
+  batch_process('admin/content/import-price/test');
 }
 
 
