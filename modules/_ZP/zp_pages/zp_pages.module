@@ -739,6 +739,8 @@ function zp_pages_importPrices_form($form, &$form_state) {
   
   //dpm($form);
   
+  dpm(arg());
+  
   return $form;
 }
 
@@ -1010,4 +1012,5 @@ function zp_pages_importPriceBatch_onFinish($success, $results, $operations) {
   }
   drupal_set_message($message);
   
+  dpm(arg());
 }
