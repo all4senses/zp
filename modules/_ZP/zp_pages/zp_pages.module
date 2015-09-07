@@ -732,11 +732,23 @@ function zp_pages_importPrices_form($form, &$form_state) {
     );
     
     $form['submit'] = array('#type' => 'submit', '#value' => 'Import from file');
+    
+    $form['test_file'] = array('#type' => 'submit', '#value' => 'Test file');
   }
   
   $dir = zp_misc_getPathFromStreamUri($price_folder); //'sites/default/files/jsmin-gv';
-  $objects = scandir($dir);
-  dpm($objects);
+  $files = scandir($dir);
+  dpm($files);
+  
+  $form['files'] = array(
+    '#type' => 'radios',
+    '#title' => t('Прайс-листы, история'),
+    '#default_value' => NULL,
+    '#options' => $files,
+    '#description' => t('Выберите файл с прайс-листом для обработки.'),
+    //'#access' => TRUE,
+  );
+
   foreach ($objects as $object) {
     if ($object != "." && $object != "..") {
       //unlink($dir . "/" . $object);
@@ -913,7 +925,7 @@ function zp_pages_importPrices_formSubmit(&$form, &$form_state) {
     
   } // if ($form_state['values']['op'] == 'Import from file') {
   else {
-    
+    dpm($form_state);
   }
   
   
