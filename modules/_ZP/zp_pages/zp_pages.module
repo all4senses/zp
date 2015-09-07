@@ -709,6 +709,7 @@ function zp_pages_menu_set_active_trail($url = NULL) {
 function zp_pages_importPrices_form($form, &$form_state) {
   
   dpm($form_state);
+  dpm($form);
   
   $price_folder = 'private://zp_prices_uploaded';
   
