@@ -803,7 +803,8 @@ function zp_pages_importPrices_formSubmit(&$form, &$form_state) {
                   //,array('setLoadSheetsOnly' => array('MainTable')) 
                   );
           
-          dpm('Opened Excel from ' . zp_misc_getPathFromStreamUri($file->uri));
+          $file_path = zp_misc_getPathFromStreamUri($file->uri);
+          dpm('Opened Excel from ' . $file_path);
           dpm("Rows: " . count($excel_data[0]));
           //dpm($excel_data);
           
@@ -816,9 +817,9 @@ function zp_pages_importPrices_formSubmit(&$form, &$form_state) {
                       continue;
                     }  
               
-                    if ($rowsCount++ > 30) {
-                      break;
-                    }
+//                    if ($rowsCount++ > 30) {
+//                      break;
+//                    }
                     $row_data = array();
                     foreach ($row as $col_name => $col_data) {
 
@@ -887,7 +888,7 @@ function zp_pages_importPrices_formSubmit(&$form, &$form_state) {
       if (!empty($file_data)) {
         dpm('Got the data! Ready for importing.');
         dpm($file_data);
-        zp_pages_importPriceBatch($file_data);
+        zp_pages_importPriceBatch($file_data, $file_path);
       }
       
     } // End of if ($uploaded == TRUE) {
@@ -902,13 +903,13 @@ function zp_pages_importPrices_formSubmit(&$form, &$form_state) {
 }
 
 
-function zp_pages_importPriceBatch($priceRows) {
+function zp_pages_importPriceBatch($priceRows, $file_path) {
 
   // Создаём массив с данными для батча
   $batch = array(
     'title' => t('Node processing'),
     'operations' => array(
-      array('zp_pages_importPriceBatch_processRow', array($priceRows)),
+      array('zp_pages_importPriceBatch_processRow', array($priceRows, $file_path)),
     ),
     'finished' => 'zp_pages_importPriceBatch_onFinish',
     //'file' => drupal_get_path('module', 'title_changer') . '/title_changer.batch.inc',
@@ -918,14 +919,14 @@ function zp_pages_importPriceBatch($priceRows) {
   batch_set($batch);
  
   // Стартуем батч
-  batch_process();
+  batch_process('admin/content/import-price?action=done');
 }
 
 
 /**
  * Process every item in batch
  */
-function zp_pages_importPriceBatch_processRow($priceRows, &$context) {
+function zp_pages_importPriceBatch_processRow($priceRows, $file_path, &$context) {
  
   // Количество материалов, которые будут обработаны одной пачкой за раз
   $limit = 1;
@@ -934,8 +935,10 @@ function zp_pages_importPriceBatch_processRow($priceRows, &$context) {
   if (empty($context['sandbox']['progress'])) {
     // Текущее количество обработанных материалов
     $context['sandbox']['progress'] = 0;
+    $context['results']['processed'] = 0;
     // Общее количество материалов, которые надо обработать
     $context['sandbox']['max'] = count($priceRows);
+    $context['results']['file_path'] = $file_path;
   }
  
   // Сохраняем массив с материалами
@@ -969,11 +972,14 @@ function zp_pages_importPriceBatch_processRow($priceRows, &$context) {
         $counter++;
         $context['sandbox']['progress']++;
  
-        $context['message'] = t('Now processing node %progress of %count, %title', array('%progress' => $context['sandbox']['progress'], '%count' => $context['sandbox']['max'], '%title' => $row['Название']));
-        $context['results']['processed'] = $context['sandbox']['progress'];
-        $context['results']['titles'][] = $row['Название'];
+        $context['message'] = t('Now processing row %progress of %count, %title', array('%progress' => $context['sandbox']['progress'], '%count' => $context['sandbox']['max'], '%title' => empty($row['Название'])? 'Empty' : $row['Название']  ));
         
-        sleep(1);
+        if (!empty($row['Название'])) {
+          $context['results']['processed']++;
+          $context['results']['titles'][] = $row['Название'];
+        }
+        
+        sleep(0.5);
         
       } // End of if ($counter != $limit) {
     } // End of foreach ($context['sandbox']['items'] as $entity) {
