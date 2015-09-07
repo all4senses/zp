@@ -801,7 +801,8 @@ function zp_pages_importPrices_formSubmit(&$form, &$form_state) {
   $get = $_GET;
   unset($get['q'], $get['action']);
   
-  form_set_value($form['files'], array('und' => array(0 => array('value' => $form_state['values']['files']) )), $form_state);
+  //form_set_value($form['files'], array('und' => array(0 => array('value' => $form_state['values']['files']) )), $form_state);
+  form_set_value($form['files'], $form_state['values']['files'], $form_state);
   
   if ($form_state['values']['op'] == 'Import from file') {
     
@@ -939,7 +940,7 @@ function zp_pages_importPrices_formSubmit(&$form, &$form_state) {
   }
   
   
-  drupal_goto($_GET['q'], array('query' => $get));
+  //drupal_goto($_GET['q'], array('query' => $get));
 }
 
 
