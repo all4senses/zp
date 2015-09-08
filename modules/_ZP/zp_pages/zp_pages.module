@@ -740,7 +740,7 @@ function zp_pages_importPrices_form($form, &$form_state) {
   }
   
   $dir = zp_misc_getPathFromStreamUri($price_folder); //'sites/default/files/jsmin-gv';
-  $files = scandir($dir, 'SCANDIR_SORT_DESCENDING');
+  $files = scandir($dir, SCANDIR_SORT_DESCENDING);
   
   
   foreach ($files as $key => $object) {
