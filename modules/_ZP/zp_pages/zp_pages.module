@@ -867,6 +867,9 @@ function zp_pages_importPrices_formSubmit(&$form, &$form_state) {
     drupal_set_message('Task: delete a file...');
     //dpm($form_state['values']);
     $file = file_load($form_state['values']['files']);
+    
+    // https://api.drupal.org/api/drupal/includes%21file.inc/function/file_delete/7
+    // https://www.drupal.org/node/2334293
     file_delete($file);
     drupal_set_message('The file ' . $file->uri . ' has been deleted.');
   }
