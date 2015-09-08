@@ -734,7 +734,7 @@ function zp_pages_importPrices_form($form, &$form_state) {
       '#process' => array('zp_misc_import_my_file_element_process')
     );
     
-    $form['submit'] = array('#type' => 'submit', '#value' => 'Import from file');
+    $form['submit'] = array('#type' => 'submit', '#value' => 'Загрузить новый прайс-лист');
     
     
   }
@@ -784,7 +784,8 @@ function zp_pages_importPrices_form($form, &$form_state) {
     //'#access' => TRUE,
   );
 
-  $form['test_file'] = array('#type' => 'submit', '#value' => 'Test file');
+  $form['test_price'] = array('#type' => 'submit', '#value' => 'Проверить выбранный прайс-лист');
+  $form['import_price'] = array('#type' => 'submit', '#value' => 'Импортировать/применить выбранный прайс-лист');
   
   //$form['#validate'][] = 'zp_pages_importPrices_formValidate';
   $form['#submit'][] = 'zp_pages_importPrices_formSubmit';
@@ -828,7 +829,7 @@ function zp_pages_importPrices_formSubmit(&$form, &$form_state) {
   //form_set_value($form['files'], array('und' => array(0 => array('value' => $form_state['values']['files']) )), $form_state);
   //form_set_value($form['files'], $form_state['values']['files'], $form_state);
   
-  if ($form_state['values']['op'] == 'Import from file') {
+  if ($form_state['values']['op'] == 'Загрузить новый прайс-лист') {
     
     //dpm($form_state);
     
@@ -959,10 +960,14 @@ function zp_pages_importPrices_formSubmit(&$form, &$form_state) {
     
     
   } // if ($form_state['values']['op'] == 'Import from file') {
-  else {
+  elseif ( $form_state['values']['op'] == 'Проверить выбранный прайс-лист') {
+    dpm('Task: test');
     dpm($form_state['values']);
   }
-  
+  elseif ( $form_state['values']['op'] == 'Импортировать/применить выбранный прайс-лист') {
+    dpm('Task: apply');
+    dpm($form_state['values']);
+  }
   
   //drupal_goto($_GET['q'], array('query' => $get));
 }
