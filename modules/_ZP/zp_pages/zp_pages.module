@@ -748,25 +748,29 @@ function zp_pages_importPrices_form($form, &$form_state) {
       //unlink($dir . "/" . $object);
       unset($files[$key]);
     }
+    else {
+      $files[$key] = $price_folder . '/' . $files[$key];
+    }
   }
   
   //dpm($files);
   
-  foreach ($files as $key => $file) {
+  //foreach ($files as $key => $file) {
     
     $query = db_select('file_managed', 'f')
           ->fields('f', array('fid', 'uid', 'filesize', 'status',  'timestamp', 'filename'));
     //$query->leftJoin('node', 'n', 'n.nid = r.entity_id');
     //$query->fields('n', array('title'));
-    $query->condition('f.uri', $price_folder . '/' . $file);
+    //$query->condition('f.uri', $price_folder . '/' . $file);
+    $query->condition('f.uri', $files, 'IN');
     
     //$query->condition('f.status', 1);
-    $result = $query->execute()->fetchObject();
+    $results = $query->execute()->fetchAllAssoc('f.filename');
     
-    //dpm($result);
+    dpm($results);
     
-    $files[$key] .= ', ' . $result->timestamp . ', ' . $result->filesize . ', ' . $result->uid;
-  }
+    //$files[$key] .= ', ' . $result->timestamp . ', ' . $result->filesize . ', ' . $result->uid;
+  //}
     
   $form['files-frame'] = array(
     '#type' => 'fieldset',
