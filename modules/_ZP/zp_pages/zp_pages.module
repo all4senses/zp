@@ -763,7 +763,7 @@ function zp_pages_importPrices_form($form, &$form_state) {
     //$query->fields('n', array('title'));
     //$query->condition('f.uri', $price_folder . '/' . $file);
     $query->condition('f.uri', $files, 'IN');
-    
+    $query->orderBy('f.timestamp', 'DESC');
     //$query->condition('f.status', 1);
     $results = $query->execute()->fetchAllAssoc('fid');
     
