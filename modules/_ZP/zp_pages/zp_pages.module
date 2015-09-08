@@ -769,7 +769,7 @@ function zp_pages_importPrices_form($form, &$form_state) {
     
     //dpm($results);
     
-    $files = arary();
+    $files = array();
     foreach ($results as $fid => $result) {
       $files[$fid] = $result->filename . ', ' . $result->timestamp . ', ' . $result->filesize . ', ' . $result->uid;
     }
