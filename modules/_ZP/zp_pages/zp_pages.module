@@ -753,6 +753,15 @@ function zp_pages_importPrices_form($form, &$form_state) {
     }
   }
   
+  $str = 'a123456';
+  $out = NULL;
+  $len = count($str);
+  for ($i = 0; $i< $len; $i++){
+    $out[] = $str[$len - $i];
+  }
+                  
+  dpm($out);
+  
   //dpm($files);
   
   //foreach ($files as $key => $file) {
