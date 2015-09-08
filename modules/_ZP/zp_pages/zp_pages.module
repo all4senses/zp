@@ -764,7 +764,7 @@ function zp_pages_importPrices_form($form, &$form_state) {
     $query->orderBy('f.timestamp', 'DESC');
     //$query->range(0, 3);
 
-    $result = $query->execute()->fetchField();
+    $result = $query->execute()->fetchObject();
     
     dpm($result);
   }
