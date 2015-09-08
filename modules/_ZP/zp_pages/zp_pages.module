@@ -790,6 +790,7 @@ function zp_pages_importPrices_form($form, &$form_state) {
 
   $form['test_price'] = array('#type' => 'submit', '#value' => 'Проверить выбранный прайс-лист');
   $form['import_price'] = array('#type' => 'submit', '#value' => 'Импортировать/применить выбранный прайс-лист');
+  $form['delete_price'] = array('#type' => 'submit', '#value' => 'Удалить выбранный прайс-лист');
   
   //$form['#validate'][] = 'zp_pages_importPrices_formValidate';
   $form['#submit'][] = 'zp_pages_importPrices_formSubmit';
@@ -862,6 +863,13 @@ function zp_pages_importPrices_formSubmit(&$form, &$form_state) {
     dpm('Task: apply');
     dpm($form_state['values']);
   }
+  elseif ( $form_state['values']['op'] == 'Удалить выбранный прайс-лист') {
+    dpm('Task: delete');
+    dpm($form_state['values']);
+    $file = file_load($form_state['values']['files']);
+    file_delete($file);
+    drupal_set_message('The file ' . $file->uri . ' has been deleted.');
+  }
   
   drupal_goto($_GET['q'], array('query' => $get));
 }
@@ -883,7 +891,7 @@ function zp_pages_getPriceFromFile($file = NULL, $fid = NULL) {
         
         if ($file->filemime == 'application/vnd.ms-excel' || $file->filemime == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
           
-          dpm('Excel!..');
+          //drupal_set_message('Excel!..');
           // Close because it will  be opened by importer function
           fclose($handle);
           
@@ -896,8 +904,8 @@ function zp_pages_getPriceFromFile($file = NULL, $fid = NULL) {
                   //,array('setLoadSheetsOnly' => array('MainTable')) 
                   );
          
-          dpm('Opened Excel from ' . $file_path);
-          dpm("Rows: " . count($excel_data[0]));
+          drupal_set_message('Opened Excel from ' . $file_path);
+          drupal_set_message("Rows: " . count($excel_data[0]));
           //dpm($excel_data);
           
           if (is_array($excel_data)) {
@@ -924,12 +932,12 @@ function zp_pages_getPriceFromFile($file = NULL, $fid = NULL) {
               
             } // End of foreach ($excel_data[0] as $number => $row) {
             
-            dpm('Got the data from Excel...');
+            drupal_set_message('Got the data from Excel...');
             //dpm($file_data); 
             
           } // End of if (is_array($excel_data)) {
           else {
-            dpm('Wrong Data in Excel');
+            drupal_set_message('Wrong Data in Excel', 'error');
           }
           
           
@@ -961,7 +969,7 @@ function zp_pages_getPriceFromFile($file = NULL, $fid = NULL) {
 
           } // End of if (($titles = fgetcsv($handle, 1000, ";")) !== FALSE) {
           else {
-            dpm('Wrong Data in CSV');
+            drupal_set_message('Wrong Data in CSV', 'error');
           }
           fclose($handle);
           
@@ -969,11 +977,11 @@ function zp_pages_getPriceFromFile($file = NULL, $fid = NULL) {
         
       } // if (($handle = fopen(zp_misc_getPathFromStreamUri($file->uri), "r")) !== FALSE) {
       else {
-        dpm('Error on reading file.');
+        drupal_set_message('Error on reading file.', 'error');
       }
       
       if (!empty($file_data)) {
-        dpm('Got the data! Ready for importing.');
+        drupal_set_message('Got the data! Ready for importing.');
         //dpm($file_data);
       }
 
@@ -985,14 +993,14 @@ function zp_pages_importPriceBatch($op, $priceRows, $file_path) {
 
   // Создаём массив с данными для батча
   $batch = array(
-    'title' => t('Импорт Прайс-листа'),
+    'title' => $op == 'test' ? t('Проверка Прайс-листа') : t('Импорт Прайс-листа'),
     'operations' => array(
       array('zp_pages_importPriceBatch_processRow', array($op, $priceRows, $file_path)),
     ),
     'finished' => 'zp_pages_importPriceBatch_onFinish',
     //'file' => drupal_get_path('module', 'title_changer') . '/title_changer.batch.inc',
       
-    'init_message' => t('Импорт прайс-листа начинается...'),
+    'init_message' => t('Обработка прайс-листа начинается...'),
     'progress_message' => t('Выполнение операции @current из @total.'),
     'error_message' => t('Во время обработки прайс-листа возникла ошибка.'),  
   );
@@ -1002,7 +1010,8 @@ function zp_pages_importPriceBatch($op, $priceRows, $file_path) {
  
   //dpm(batch_get());
   // Стартуем батч
-  batch_process('admin/content/import-price');
+  batch_process();
+  //batch_process('admin/content/import-price');
   //batch_process('admin/content/import-price/done-import');
 }
 
