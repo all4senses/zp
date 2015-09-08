@@ -767,11 +767,12 @@ function zp_pages_importPrices_form($form, &$form_state) {
     //$query->condition('f.status', 1);
     $results = $query->execute()->fetchAllAssoc('fid');
     
-    //dpm($results);
+    dpm($results);
     
     $files = array();
     foreach ($results as $fid => $result) {
-      $files[$fid] = $result['filename'] . ', ' . $result['timestamp'] . ', ' . $result['filesize'] . ', ' . $result['uid'];
+      $files[$fid] = $result->filename . ', ' . $result->timestamp . ', ' . $result->filesize . ', ' . $result->uid;
+      //$files[$fid] = $result['filename'] . ', ' . $result['timestamp'] . ', ' . $result['filesize'] . ', ' . $result['uid'];
     }
     
     //$files[$key] .= ', ' . $result->timestamp . ', ' . $result->filesize . ', ' . $result->uid;
