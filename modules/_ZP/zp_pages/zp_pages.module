@@ -871,9 +871,12 @@ function zp_pages_importPrices_formSubmit(&$form, &$form_state) {
 
 function zp_pages_getPriceFromFile($file = NULL, $fid = NULL) {
   
+  $file_data = NULL;
+  
   if (!$file) {
     $file = file_load($fid);
   }
+  
   $file_path = zp_misc_getPathFromStreamUri($file->uri);
   
   if (($handle = fopen($file_path, "r")) !== FALSE) {
@@ -974,9 +977,9 @@ function zp_pages_getPriceFromFile($file = NULL, $fid = NULL) {
       if (!empty($file_data)) {
         dpm('Got the data! Ready for importing.');
         //dpm($file_data);
-        zp_pages_importPriceBatch($file_data, $file_path);
       }
 
+      return $file_data;
 }
 
 
