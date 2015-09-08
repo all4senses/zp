@@ -753,15 +753,7 @@ function zp_pages_importPrices_form($form, &$form_state) {
     }
   }
   
-  $str = 'a123456';
-  $out = NULL;
-  $len = strlen($str);
-  dpm('len = ' . $len);
-  for ($i = 0; $i < $len; $i++){
-    $out .= $str[$len - 1 - $i];
-  }
-                  
-  dpm('out = ' . $out);
+ 
   
   //dpm($files);
   
@@ -781,7 +773,7 @@ function zp_pages_importPrices_form($form, &$form_state) {
     
     $files = array();
     foreach ($results as $fid => $result) {
-      $files[$fid] = str_replace($price_folder . '/', '', $result->uri) . ', ' . $result->timestamp . ', ' . $result->filesize . ', ' . $result->uid;
+      $files[$fid] = str_replace($price_folder . '/', '', $result->uri) . ', ' . $result->timestamp . ', ' . ( (int) $result->filesize/1000) . 'k, ' . $result->uid;
     }
     
     //$files[$key] .= ', ' . $result->timestamp . ', ' . $result->filesize . ', ' . $result->uid;
