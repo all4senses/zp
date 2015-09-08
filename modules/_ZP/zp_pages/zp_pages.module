@@ -855,8 +855,6 @@ function zp_pages_importPrices_formSubmit(&$form, &$form_state) {
     $file = file_load($form_state['values']['files']);
       
     if ($file_data = zp_pages_getPriceFromFile($file)) {
-      dpm('Got the data! Ready for importing.');
-      //dpm($file_data);
       zp_pages_importPriceBatch('test', $file_data, zp_misc_getPathFromStreamUri($file->uri));
     }
   }
@@ -1087,7 +1085,7 @@ function zp_pages_importPriceBatch_processRow($op, $priceRows, $file_path, &$con
 
 function zp_pages_importPrice_processRow($op, $row) {
   
-  if (empty($row['Название']) || $row['Действие / результат'] = 'Action') {
+  if (empty($row['Название']) || $row['Действие / результат'] == 'Action') {
     return NULL;
   }
   
