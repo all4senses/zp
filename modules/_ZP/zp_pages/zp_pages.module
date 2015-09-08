@@ -859,8 +859,8 @@ function zp_pages_importPrices_formSubmit(&$form, &$form_state) {
   elseif ( $form_state['values']['op'] == 'Проверить выбранный прайс-лист') {
     dpm('Task: test');
     dpm($form_state['values']);
-    return;
-    $file = file_load($form_state['values']['file_fid']);
+    //return;
+    $file = file_load($form_state['values']['files']);
       
     if ($file_data = zp_pages_getPriceFromFile($file)) {
       dpm('Got the data! Ready for importing.');
