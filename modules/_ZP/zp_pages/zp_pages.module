@@ -1087,14 +1087,14 @@ function zp_pages_importPriceBatch_processRow($op, $priceRows, $file_path, &$con
 
 function zp_pages_importPrice_processRow($op, $row) {
   
-  if (empty($row['Название'])) {
+  if (empty($row['Название']) || $row['Действие / результат'] = 'Action') {
     return NULL;
   }
   
   $rowResult = NULL;
   switch ($op) {
     case 'test':
-      $rowResult['action'] = $row['Действие / результат']; 
+      $rowResult['action'] = empty($row['Действие / результат']) ? 'No Change' : $row['Действие / результат']; 
       $rowResult['error'] = NULL; // string = error message
       break;
   }
@@ -1109,20 +1109,19 @@ function zp_pages_importPrice_processRow($op, $row) {
 function zp_pages_importPriceBatch_onFinish($success, $results, $operations) {
   
   if ($success) {
-    $message = format_plural($results['processed'], 'One row processed.', '@count rows processed.');
-    dpm($message);
+    //$message = format_plural($results['processed'], 'One row processed.', '@count rows processed.');
+    //dpm($message);
     dpm($results);
-    $message = $results['processed'] . ' row(s) processed.';
+    //$message = $results['processed'] . ' row(s) processed.';
   }
   else {
     // An error occurred.
     // $operations contains the operations that remained unprocessed.
     $error_operation = reset($operations);
     $message = t('An error occurred while processing %error_operation with arguments: @arguments', array('%error_operation' => $error_operation[0], '@arguments' => print_r($error_operation[1], TRUE)));
-    //drupal_set_message($message, 'error');
+    drupal_set_message($message, 'error');
     //$message = t('Finished with an error.');
   }
-  drupal_set_message($message);
   
   //dpm(arg());
 }
