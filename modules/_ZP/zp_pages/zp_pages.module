@@ -708,8 +708,8 @@ function zp_pages_menu_set_active_trail($url = NULL) {
  */
 function zp_pages_importPrices_form($form, &$form_state) {
   
-  dpm($form_state);
-  dpm($form);
+  //dpm($form_state);
+  //dpm($form);
   
   $price_folder = 'private://zp_prices_uploaded';
   
@@ -750,16 +750,31 @@ function zp_pages_importPrices_form($form, &$form_state) {
     }
   }
   
-  
   dpm($files);
-  dpm($_POST);
   
+  foreach ($files as $key => $file) {
+    
+    $query = db_select('file_managed', 'f')
+          ->fields('f', array('fid', 'uid', 'filesize', 'status',  'timestamp'));
+    //$query->leftJoin('node', 'n', 'n.nid = r.entity_id');
+    //$query->fields('n', array('title'));
+    $query->condition('f.uri', $price_folder . '/' . $file);
+    
+    //$query->condition('f.status', 1);
+    $query->orderBy('f.timestamp', 'DESC');
+    //$query->range(0, 3);
+
+    $result = $query->execute()->fetchField();
+    
+    dpm($result);
+  }
+    
   $form['files-frame'] = array(
     '#type' => 'fieldset',
     '#title' => t('Прайс-листы, история'),
     '#collapsible' => TRUE,  
     '#description' => t('Выберите файл с прайс-листом для обработки.'),
-    '#attributes' => array('style' => 'height: 100px; overflow-y: scroll;'),
+    '#attributes' => array('style' => 'max-height: 100px; overflow-y: scroll;'),
   );
   $form['files-frame']['files'] = array(
     '#type' => 'radios',
