@@ -755,7 +755,7 @@ function zp_pages_importPrices_form($form, &$form_state) {
   
   $str = 'a123456';
   $out = NULL;
-  $len = count($str);
+  $len = strlen($str);
   dpm('len = ' . $len);
   for ($i = 0; $i< $len; $i++){
     $out[] = $str[$len - $i];
