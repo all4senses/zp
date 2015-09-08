@@ -755,16 +755,16 @@ function zp_pages_importPrices_form($form, &$form_state) {
   dpm($_POST);
   
   $form['files-frame'] = array(
-    '#type' => 'container',
+    '#type' => 'fieldset',
     '#title' => t('Прайс-листы, история'),
-    '#description' => t('Выберите файл с прайс-листом для обработки.'),
+    '#attributes' => array('style' => 'height: 100px; overflow-y: scroll;'),
   );
   $form['files-frame']['files'] = array(
     '#type' => 'radios',
-    //'#title' => t('Прайс-листы, история'),
+    '#title' => t('Прайс-листы, история'),
     '#default_value' => NULL,
     '#options' => $files,
-    //'#description' => t('Выберите файл с прайс-листом для обработки.'),
+    '#description' => t('Выберите файл с прайс-листом для обработки.'),
     //'#access' => TRUE,
   );
 
