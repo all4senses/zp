@@ -757,8 +757,8 @@ function zp_pages_importPrices_form($form, &$form_state) {
   
   $query = db_select('file_managed', 'f')
         ->fields('f', array('fid', 'uid', 'filesize', 'status',  'timestamp', 'filename', 'uri'));
-  //$query->leftJoin('node', 'n', 'n.nid = r.entity_id');
-  //$query->fields('n', array('title'));
+  $query->leftJoin('users', 'u', 'u.uid = f.uid');
+  $query->fields('u', array('name'));
   $query->condition('f.uri', $files, 'IN');
   $query->orderBy('f.timestamp', 'DESC');
   //$query->condition('f.status', 1);
@@ -768,7 +768,7 @@ function zp_pages_importPrices_form($form, &$form_state) {
 
   $files = array();
   foreach ($results as $fid => $result) {
-    $files[$fid] = str_replace($price_folder . '/', '', $result->uri) . ', ' . $result->timestamp . ', ' . intval($result->filesize/1000) . 'k, ' . $result->uid;
+    $files[$fid] = str_replace($price_folder . '/', '', $result->uri) . ', ' . date('m-d-Y H:i:s',$result->timestamp) . ', ' . intval($result->filesize/1000) . 'k, ' . $result->name;
   }
     
     
@@ -851,7 +851,7 @@ function zp_pages_importPrices_formSubmit(&$form, &$form_state) {
     
   } // if ($form_state['values']['op'] == 'Import from file') {
   elseif ( $form_state['values']['op'] == 'Проверить выбранный прайс-лист') {
-    dpm('Task: test');
+    drupal_set_message('Task: test a price-list');
     //dpm($form_state['values']);
     $file = file_load($form_state['values']['files']);
       
@@ -860,12 +860,12 @@ function zp_pages_importPrices_formSubmit(&$form, &$form_state) {
     }
   }
   elseif ( $form_state['values']['op'] == 'Импортировать/применить выбранный прайс-лист') {
-    dpm('Task: apply');
-    dpm($form_state['values']);
+    drupal_set_message('Task: import/apply a price-list');
+    //dpm($form_state['values']);
   }
   elseif ( $form_state['values']['op'] == 'Удалить выбранный прайс-лист') {
-    dpm('Task: delete');
-    dpm($form_state['values']);
+    drupal_set_message('Task: delete a file...');
+    //dpm($form_state['values']);
     $file = file_load($form_state['values']['files']);
     file_delete($file);
     drupal_set_message('The file ' . $file->uri . ' has been deleted.');
