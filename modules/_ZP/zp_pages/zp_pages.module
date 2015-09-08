@@ -765,7 +765,7 @@ function zp_pages_importPrices_form($form, &$form_state) {
     $query->condition('f.uri', $files, 'IN');
     
     //$query->condition('f.status', 1);
-    $results = $query->execute()->fetchAllAssoc('f.filename');
+    $results = $query->execute()->fetchAllAssoc('filename');
     
     dpm($results);
     
