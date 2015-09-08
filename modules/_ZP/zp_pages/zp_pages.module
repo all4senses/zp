@@ -755,7 +755,7 @@ function zp_pages_importPrices_form($form, &$form_state) {
   foreach ($files as $key => $file) {
     
     $query = db_select('file_managed', 'f')
-          ->fields('f'/*, array('fid', 'uid', 'filesize', 'status',  'timestamp')*/);
+          ->fields('f', array('fid', 'uid', 'filesize', 'status',  'timestamp', 'filename'));
     //$query->leftJoin('node', 'n', 'n.nid = r.entity_id');
     //$query->fields('n', array('title'));
     $query->condition('f.uri', $price_folder . '/' . $file);
