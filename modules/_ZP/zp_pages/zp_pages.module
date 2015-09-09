@@ -871,7 +871,9 @@ function zp_pages_importPrices_formSubmit(&$form, &$form_state) {
     // https://api.drupal.org/api/drupal/includes%21file.inc/function/file_delete/7
     // https://www.drupal.org/node/2334293
     file_delete($file);
-    drupal_set_message('The file ' . $file->uri . ' has been deleted.');
+    $filename = explode('/', $file->uri);
+    $filename = $filename[count($filename) - 1];
+    drupal_set_message('The file ' . $filename . ' has been deleted.');
   }
   
   drupal_goto($_GET['q'], array('query' => $get));
