@@ -1163,7 +1163,18 @@ function zp_commerce_importPriceList_batch_process($op, $priceRows, $file_path, 
     '#value' => $context['results']['history'],
   );
 
-  $context['message'] = $message . ' ' . render($text_field) . l('Stop the batch', /*'zp/add_objects'*/ 'admin/content/import-price');
+  $context['message'] = $message . ' ' 
+                      . render($text_field)
+                      . '
+Processed: ' . $context['results']['processed'] . '
+Not empty: ' . $context['results']['processed_not_empty'] . '   
+Empty rows: ' . $context['results']['processed_empty_row'] . '  
+Empty action rows: ' . $context['results']['processed_empty_action'] . '    
+New: ' . count(@$context['results']['processed_by_action']['new']) . '
+Delete: ' . count(@$context['results']['processed_by_action']['delete']) . '
+Change: ' . count(@$context['results']['processed_by_action']['change']) . '  
+Hide: ' . count(@$context['results']['processed_by_action']['hide'])
+                      . l('Stop the batch', /*'zp/add_objects'*/ 'admin/content/import-price');
 
   $context['results']['history'] = $message . '
 ' . $context['results']['history']; 
