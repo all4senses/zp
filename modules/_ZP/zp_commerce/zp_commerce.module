@@ -1166,14 +1166,14 @@ function zp_commerce_importPriceList_batch_process($op, $priceRows, $file_path, 
   $context['message'] = $message . ' ' 
                       . render($text_field)
                       . '
-<br>Processed: ' . $context['results']['processed'] . '
+Processed: ' . $context['results']['processed'] . '
 <br>Not empty: ' . $context['results']['processed_not_empty'] . '   
 <br>Empty rows: ' . $context['results']['processed_empty_row'] . '  
 <br>Empty action rows: ' . $context['results']['processed_empty_action'] . '    
 <br>New: ' . count(@$context['results']['processed_by_action']['new']) . '
 <br>Delete: ' . count(@$context['results']['processed_by_action']['delete']) . '
 <br>Change: ' . count(@$context['results']['processed_by_action']['change']) . '  
-<br>Hide: ' . count(@$context['results']['processed_by_action']['hide']) . '<br>'
+<br>Hide: ' . count(@$context['results']['processed_by_action']['hide']) . '<br><br>'
                       . l('Stop the batch', /*'zp/add_objects'*/ 'admin/content/import-price');
 
   $context['results']['history'] = $message . '
