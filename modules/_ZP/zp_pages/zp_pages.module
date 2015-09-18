@@ -851,7 +851,7 @@ function zp_pages_importPrices_formSubmit(&$form, &$form_state) {
   
   if ($form_state['values']['op'] == 'Загрузить новый прайс-лист') {
     
-    $get['action'] = 'done';
+    //$get['action'] = 'done';
     
     $file = file_load($form_state['values']['file_fid']);
     //dpm($file);
