@@ -934,6 +934,7 @@ function zp_commerce_prepareZpObjectsToAddToCatalog() {
   );
   
   $objects[] = array(
+    'type' => 'department',
     'title' => 'Безалкогольные напитки',
     'description' => 'Описание отдела Безлкогольные напитки', 
     'summary' => 'Краткое описание отдела Безалкогольные напитки',
@@ -1051,9 +1052,9 @@ function zp_commerce_addZpCatalogObjects_form_submit($form, &$form_state) {
 
   $batch = array(
     'operations' => array(
-      array('zp_commerce_addObjectsToCatalog_batch_process', array($objects)),
+      array('zp_commerce_importPriceList_batch_process', array($objects)),
     ),
-    'finished' => 'zp_commerce_addObjectsToCatalog_batch_finished',
+    'finished' => 'zp_commerce_importPriceList_batch_finished',
     // Message displayed while processing the batch. Available placeholders are:
     // @current, @remaining, @total, @percentage, @estimate and @elapsed.
     // These placeholders are replaced with actual values in _batch_process(),
@@ -1087,29 +1088,59 @@ function zp_commerce_addZpCatalogObjects_form_submit($form, &$form_state) {
  * After each group of 5 control is returned to the batch API for later
  * continuation.
  */
-function zp_commerce_addObjectsToCatalog_batch_process($objects, &$context) {
+//function zp_commerce_importPriceList_batch_process($objects, &$context) {
+function zp_commerce_importPriceList_batch_process($op, $priceRows, $file_path, &$context) {  
+  
   // Use the $context['sandbox'] at your convenience to store the
   // information needed to track progression between successive calls.
   if (empty($context['sandbox'])) {
     $context['sandbox'] = array();
     $context['sandbox']['progress'] = 0;
-    $context['sandbox']['current_object_id'] = 0;
-    $context['results']['objects_source'] = $objects;
+   
     // Save object count for the termination message.
-    $context['sandbox']['max'] = count($objects);
+    $context['sandbox']['max'] = count($priceRows);
+   
+    $context['results']['finished'] = FALSE;
+    $context['results']['file_path'] = $file_path;
+    $context['results']['current_object_id'] = 0;
+    $context['results']['op'] = $op;
+    $context['results']['objects_source'] = $priceRows;
+    $context['results']['processed_not_empty'] = 0;
+    $context['results']['processed_by_action'] = array();
+    $context['results']['processed_empty_row'] = 0;
+    $context['results']['processed_empty_action'] = 0;
+    
+    $context['results']['zp_current_batch_id'] = $_GET['id'];
+    $_SESSION['zp_current_batch_id'] = $context['results']['zp_current_batch_id'];
   }
 
-  // Process object.
-  $current_object_title = 'id: ' . $context['sandbox']['current_object_id'] . ', ' . $objects[$context['sandbox']['current_object_id']]['title'];
-  if (!$error_message = zp_commerce_addNewZpObject($objects[$context['sandbox']['current_object_id']], TRUE)) {
-    $current_object_result_message = 'Success: ' . $current_object_title;
-    // Update progress information.
-    $context['sandbox']['progress']++;
+  $current_object_id = $context['results']['current_object_id'];
+  $row = $priceRows[$current_object_id];
+  
+  if (empty($row['Название']) || $row['Действие / результат'] == 'Action' || empty($row['Действие / результат'])) {
+          if (empty($row['Название'])) {
+            $current_object_title = 'id: ' . $current_object_id . ', Empty row.';
+            $context['results']['processed_empty_row']++;
+          }
+          elseif (empty($row['Действие / результат'])) {
+            $current_object_title = 'id: ' . $current_object_id . ', EMPTY ACTION for "' . $row['title'] . '"';
+            $context['results']['processed_empty_action']++;
+          }
   }
   else {
-    $current_object_result_message = 'Error: ' . $current_object_title . ' 
--> ' . $error_message;
-    $context['results']['errors'][] = $current_object_result_message;
+          // Process object.
+          $context['results']['processed_not_empty']++;
+          $context['results']['processed_by_action'][$row['Действие / результат']]++;
+          
+          $current_object_title = 'id: ' . $current_object_id . ', "' . $row['title'] . '"';
+          if (!$error_message = zp_commerce_processPriceList_row($op, $row, TRUE)) {
+            $current_object_result_message = 'Success: ' . $current_object_title;
+          }
+          else {
+            $current_object_result_message = 'Error: ' . $current_object_title . ' 
+        -> ' . $error_message;
+            $context['results']['errors'][] = $current_object_result_message;
+          }
   }
   
   // Store some results for post-processing in the 'finished' callback.
@@ -1125,18 +1156,19 @@ function zp_commerce_addObjectsToCatalog_batch_process($objects, &$context) {
     '#value' => $context['results']['history'],
   );
 
-  $context['message'] = $message . ' ' . render($text_field) . l('Stop', 'zp/add_objects');;
+  $context['message'] = $message . ' ' . render($text_field) . l('Stop the batch', 'zp/add_objects');
 
   $context['results']['history'] = $message . '
 ' . $context['results']['history']; 
   
-  // We can stop batch and then contimue it using stored id of batch.
-  $_SESSION['zp_current_batch_id'] = $_GET['id'];
-  $_SESSION['zp_current_batch_' . $_GET['id'] . '_results'] = $context['results'];
+  // We can stop batch and then continue it using stored id of batch.
+  $_SESSION['zp_current_batch_' . $context['results']['zp_current_batch_id'] . '_results'] = $context['results'];
   
   // If no error, Inform the batch engine that we are not finished,
   // and provide an estimation of the completion level we reached.
-  if ($error_message) {
+  if ($error_message && $op != 'test') {
+    // If $op == 'test' we don't stop processing and just collect all errors.
+
     // Stop processing because of the error!
     $context['finished'] = 1;
   }
@@ -1145,16 +1177,17 @@ function zp_commerce_addObjectsToCatalog_batch_process($objects, &$context) {
   }
   
   if ($context['finished'] < 1) {
-    $context['sandbox']['current_object_id'] += 1;
+    $context['results']['current_object_id']++;
   }
   else{
     // We don't need to know it anymore.
-    unset($_SESSION['zp_current_batch_id'], $_SESSION['zp_current_batch_' . $_GET['id'] . '_results']);
-    
+    unset($_SESSION['zp_current_batch_id'], $_SESSION['zp_current_batch_' . $context['results']['zp_current_batch_id'] . '_results']);
+    $context['results']['finished'] = TRUE;
   }
   
-  
-  
+  // Update progress information.
+  $context['sandbox']['progress']++;
+            
   // Alert the next iteration.
   zp_misc_update_http_requests();
 }
@@ -1163,7 +1196,8 @@ function zp_commerce_addObjectsToCatalog_batch_process($objects, &$context) {
 /**
  * Batch 'finished' callback.
  */
-function zp_commerce_addObjectsToCatalog_batch_finished($success, $results, $operations) {
+function zp_commerce_importPriceList_batch_finished($success, $results, $operations) {
+  
   dpm($results);
   if ($success) {
     drupal_set_message(t('@count objects processed in @requests HTTP requests.', array('@count' => count($results['objects_processed']), '@requests' => zp_misc_get_http_requests())));
@@ -1182,10 +1216,94 @@ function zp_commerce_addObjectsToCatalog_batch_finished($success, $results, $ope
 }
 
 
+
+
+
+
+
 /**
- * Test page function for url /test.
+ * Creates new ZP object: dept, subgroup, product, etc.
  */
-function zp_commerce_addNewDeptAndMenuItem($object) {
+function zp_commerce_processPriceList_row($op, $object, $test = FALSE){
+  
+  if ($test) {
+    sleep(1);
+    //dpm($object['title']);
+    if ($object['zp_id'] == 'z010') {
+      return 'Error with z010';
+    }
+    else {
+      return NULL;
+    }
+  }
+  
+  return;
+  
+  switch ($object['Действие / результат']) {
+    case 'new':
+        return zp_commerce_processPriceList_row_add($op, $object, $test);
+      break;
+    
+    case 'delete':
+        return zp_commerce_processPriceList_row_delete($op, $object, $test);
+      break;
+    
+//    case 'change':
+//        return zp_commerce_processPriceList_row_change($op, $object, $test);
+//      break;
+//    
+//    case 'hide':
+//        return zp_commerce_processPriceList_row_hide($op, $object, $test);
+//      break;
+  }
+  
+}
+
+
+/*
+ *  Add a new dept or product.
+ * 
+**/
+function zp_commerce_processPriceList_row_add($op, $object, $test = FALSE) {
+  
+  if (isset($object['type'])) {
+    $type = $object['type'];
+  }
+  else {
+    $type = isset($object['product_display']) ? $object['product_display'] : (isset($object['product_type']) ? $object['product_type'] : NULL);
+  }
+    
+  switch ($type) {
+    case 'department':
+      return zp_commerce_addNewDeptAndMenuItem($op, $object);
+    //case 'subgroup':
+    //  return zp_commerce_addNewCatalogTerm($op, $object);
+    case 'product':
+    case 'product_a':
+      return zp_commerce_addNewProductAndConnectItToSubgroupCatalogTerm($op, $object);
+  }
+}
+
+
+function zp_commerce_processPriceList_row_change($op, $object, $test = FALSE) {
+  
+}
+
+function zp_commerce_processPriceList_row_delete($op, $object, $test = FALSE) {
+  
+}
+
+function zp_commerce_processPriceList_row_hide($op, $object, $test = FALSE) {
+  
+}
+
+
+
+
+/**
+ * 
+ */
+function zp_commerce_addNewDeptAndMenuItem($op, $object) {
  
   // Creat a node for the department.
   // ---------------------------------------------------------------------------------------------------
@@ -1269,7 +1387,7 @@ function zp_commerce_addNewDeptAndMenuItem($object) {
  * If there is a dept with such a zp_id, it will be connected to that dept, 
  * or else no menu item will be created at all.
  */
-function zp_commerce_addNewCatalogTerm($object) {
+function zp_commerce_addNewCatalogTerm($op, $object) {
   
   static $catalog_voc;
   if (!$catalog_voc) {
@@ -1298,7 +1416,7 @@ function zp_commerce_addNewCatalogTerm($object) {
 /**
  * Create a new product and connect it to the Catalog term by zp_id.
  */
-function zp_commerce_addNewProductAndConnectItToSubgroupCatalogTerm($object) {
+function zp_commerce_addNewProductAndConnectItToSubgroupCatalogTerm($op, $object) {
  
   // Find parent term tid by parent_zp_id.
   if (!$parent_tid = zp_misc_fieldRead_idByValue_single('zp_id', $object['parent_zp_id'], 'taxonomy_term', 'catalog')) {
@@ -1650,14 +1768,13 @@ function zp_commerce_findDeptOrShopOrCityByZpIDofTerm_andConnectItToTerm($term) 
     }
   }
 
-
   // Connect or update the term to the node.
   zp_misc_fieldTermReferenceSave('catalog', $object_nid, $term->tid, 'node', $object_type);
-
   
   //dpm('$object_nid = ' . $object_nid);
   return $object_nid;
 }
+
 
 /**
  * Implements hook_node_delete().
@@ -1692,41 +1809,6 @@ function zp_commerce_node_delete($node) {
     drupal_set_message('ZP. Taxonomy menu item for "' .  $node->title . '" has been updated to set empty item after the node ' . $node->nid . ' deletion!', 'warning');
   }
   
-}
-
-
-/**
- * Creates new ZP object: dept, subgroup, product, etc.
- */
-function zp_commerce_addNewZpObject($object, $test = FALSE){
-  
-  if ($test) {
-    sleep(1);
-    //dpm($object['title']);
-    if ($object['zp_id'] == 'z010') {
-      return 'Error with z010';
-    }
-    else {
-      return NULL;
-    }
-  }
-  
-  if (isset($object['type'])) {
-    $type = $object['type'];
-  }
-  else {
-    $type = isset($object['product_display']) ? $object['product_display'] : (isset($object['product_type']) ? $object['product_type'] : NULL);
-  }
-    
-  switch ($type) {
-    case 'department':
-      return zp_commerce_addNewDeptAndMenuItem($object);
-    case 'subgroup':
-      return zp_commerce_addNewCatalogTerm($object);
-    case 'product':
-    case 'product_a':
-      return zp_commerce_addNewProductAndConnectItToSubgroupCatalogTerm($object);
-  }
 }
 
 
