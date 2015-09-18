@@ -1208,6 +1208,7 @@ function zp_commerce_importPriceList_batch_finished($success, $results, $operati
   dpm($results);
   if ($success) {
     drupal_set_message(t('@count objects processed in @requests HTTP requests.', array('@count' => count($results['processed']), '@requests' => zp_misc_get_http_requests())));
+
     drupal_set_message(t('ZP Catalog has been updated with new/changed objects. The final object was "%final"', array('%final' => $results['results']['objects_source'][$results['results']['last_not_empty_object_id']])));
   }
   else {
@@ -1234,7 +1235,7 @@ function zp_commerce_importPriceList_batch_finished($success, $results, $operati
 function zp_commerce_processPriceList_row($op, $object, $test = FALSE){
   
   if ($test) {
-    sleep(1);
+    //sleep(1);
     //dpm($object['Название']);
     if ($object['zp_id'] == 'z010') {
       return 'Error with z010';
