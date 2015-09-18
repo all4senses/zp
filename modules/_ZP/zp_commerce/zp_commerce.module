@@ -1134,7 +1134,7 @@ function zp_commerce_importPriceList_batch_process($op, $priceRows, $file_path, 
           
           $current_object_title = 'id: ' . $current_object_id . ', "' . $row['Название'] . '"';
           if (!$error_message = zp_commerce_processPriceList_row($op, $row, TRUE)) {
-            $current_object_result_message = 'Success: ' . $current_object_title;
+            $current_object_result_message = 'Success: "' . $row['Действие / результат'] . '", ' . $current_object_title;
           }
           else {
             $current_object_result_message = 'Error: ' . $current_object_title . ' 
