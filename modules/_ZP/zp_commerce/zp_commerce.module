@@ -1155,7 +1155,7 @@ function zp_commerce_importPriceList_batch_process($op, $priceRows, $file_path, 
   $context['results']['objects_processed'][] = $current_object_result_message;
   
   // Dynamic message block (current processing object and the history in textarea) under the progress bar.
-  $message = $current_object_result_message . '(' . $context['sandbox']['progress'] . ' out of ' . $context['sandbox']['max'] . ')';
+  $message = '(' . $context['sandbox']['progress'] . ' out of ' . $context['sandbox']['max'] . ') ' . $current_object_result_message;
   
   $text_field = array(
     '#type' => 'textarea',
