@@ -1103,6 +1103,7 @@ function zp_commerce_importPriceList_batch_process($op, $priceRows, $file_path, 
     $context['results']['finished'] = FALSE;
     $context['results']['file_path'] = $file_path;
     $context['results']['current_object_id'] = 0;
+    $context['results']['last_not_empty_object_id'] = 0;
     $context['results']['op'] = $op;
     $context['results']['objects_source'] = $priceRows;
     $context['results']['processed_not_empty'] = 0;
@@ -1130,7 +1131,7 @@ function zp_commerce_importPriceList_batch_process($op, $priceRows, $file_path, 
   else {
           // Process object.
           $context['results']['processed_not_empty']++;
-          $context['results']['processed_by_action'][$row['Действие / результат']]++;
+          $context['results']['processed_by_action'][$row['Действие / результат']][$current_object_id] = $row['Название'];
           
           $current_object_title = 'id: ' . $current_object_id . ', "' . $row['Название'] . '"';
           if (!$error_message = zp_commerce_processPriceList_row($op, $row, TRUE)) {
@@ -1143,8 +1144,14 @@ function zp_commerce_importPriceList_batch_process($op, $priceRows, $file_path, 
           }
   }
   
+  if (!empty($row['Название'])) {
+    $context['results']['last_not_empty_object_id'] = $current_object_id;
+  }
+  
   // Store some results for post-processing in the 'finished' callback.
   // The contents of 'results' will be available as $results in the 'finished' 
+  
+  $context['results']['processed']++;
   $context['results']['objects_processed'][] = $current_object_result_message;
   
   // Dynamic message block (current processing object and the history in textarea) under the progress bar.
@@ -1200,8 +1207,8 @@ function zp_commerce_importPriceList_batch_finished($success, $results, $operati
   
   dpm($results);
   if ($success) {
-    drupal_set_message(t('@count objects processed in @requests HTTP requests.', array('@count' => count($results['objects_processed']), '@requests' => zp_misc_get_http_requests())));
-    drupal_set_message(t('ZP Catalog has been updated with new/changed objects. The final object was "%final"', array('%final' => end($results['objects_processed']))));
+    drupal_set_message(t('@count objects processed in @requests HTTP requests.', array('@count' => count($results['processed']), '@requests' => zp_misc_get_http_requests())));
+    drupal_set_message(t('ZP Catalog has been updated with new/changed objects. The final object was "%final"', array('%final' => $results['results']['objects_source'][$results['results']['last_not_empty_object_id']])));
   }
   else {
     // An error occurred.
