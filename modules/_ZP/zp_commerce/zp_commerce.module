@@ -1111,6 +1111,9 @@ function zp_commerce_importPriceList_batch_process($op, $priceRows, $file_path, 
     $context['results']['processed_empty_row'] = 0;
     $context['results']['processed_empty_action'] = 0;
     
+    $context['results']['processed_depts'] = 0;
+    $context['results']['processed_products'] = 0;
+    
     $context['results']['zp_current_batch_id'] = $_GET['id'];
     $_SESSION['zp_current_batch_id'] = $context['results']['zp_current_batch_id'];
   }
@@ -1146,6 +1149,12 @@ function zp_commerce_importPriceList_batch_process($op, $priceRows, $file_path, 
   
   if (!empty($row['Название'])) {
     $context['results']['last_not_empty_object_id'] = $current_object_id;
+    if ($row['Тип записи'] == 'Отдел') {
+      $context['results']['processed_depts']++;
+    } 
+    else {
+      $context['results']['processed_products']++;
+    }
   }
   
   // Store some results for post-processing in the 'finished' callback.
@@ -1167,10 +1176,15 @@ function zp_commerce_importPriceList_batch_process($op, $priceRows, $file_path, 
                       . render($text_field)
                       . '
 Processed: ' . $context['results']['processed'] . '
-<br>Not empty: ' . $context['results']['processed_not_empty'] . '   
-<br>Empty rows: ' . $context['results']['processed_empty_row'] . '  
+<br><br>Empty rows: ' . $context['results']['processed_empty_row'] . '  
+  
+<br><br>Not empty: ' . $context['results']['processed_not_empty'] . '   
 <br>Empty action rows: ' . $context['results']['processed_empty_action'] . '    
-<br>New: ' . count(@$context['results']['processed_by_action']['new']) . '
+  
+<br><br>Total depts: ' . $context['results']['processed_depts'] . '   
+<br>Total products: ' . $context['results']['processed_products'] . '    
+  
+<br><br>New: ' . count(@$context['results']['processed_by_action']['new']) . '
 <br>Delete: ' . count(@$context['results']['processed_by_action']['delete']) . '
 <br>Change: ' . count(@$context['results']['processed_by_action']['change']) . '  
 <br>Hide: ' . count(@$context['results']['processed_by_action']['hide']) . '<br><br>'
