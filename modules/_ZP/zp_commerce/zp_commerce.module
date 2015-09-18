@@ -1209,7 +1209,7 @@ function zp_commerce_importPriceList_batch_finished($success, $results, $operati
   if ($success) {
     drupal_set_message(t('@count objects processed in @requests HTTP requests.', array('@count' => count($results['processed']), '@requests' => zp_misc_get_http_requests())));
 
-    drupal_set_message(t('ZP Catalog has been updated with new/changed objects. The final object was "%final"', array('%final' => $results['objects_source'][$results['results']['last_not_empty_object_id']])));
+    drupal_set_message(t('ZP Catalog has been updated with new/changed objects. The final object was "%final"', array('%final' => $results['objects_source'][$results['last_not_empty_object_id']])));
   }
   else {
     // An error occurred.
