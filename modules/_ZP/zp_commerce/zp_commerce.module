@@ -1103,6 +1103,7 @@ function zp_commerce_importPriceList_batch_process($op, $priceRows, $file, &$con
     $file_path = zp_misc_getPathFromStreamUri($file->uri);
     $context['results']['finished'] = FALSE;
     $context['results']['file_path'] = $file_path;
+    $context['results']['fid'] = $file->fid;
     $context['results']['current_object_id'] = 0;
     $context['results']['last_not_empty_object_id'] = 0;
     $context['results']['op'] = $op;
@@ -1114,6 +1115,8 @@ function zp_commerce_importPriceList_batch_process($op, $priceRows, $file, &$con
     
     $context['results']['processed_depts'] = 0;
     $context['results']['processed_products'] = 0;
+    
+    $context['results']['errors'] = NULL;
     
     $context['results']['zp_current_batch_id'] = $_GET['id'];
     $_SESSION['zp_current_batch_id'] = $context['results']['zp_current_batch_id'];
