@@ -806,16 +806,17 @@ function zp_pages_importPrices_form($form, &$form_state) {
     
       drupal_set_message('Temporary file import result has been rewritten to DB', 'warning');
       $errors_count = count($context['results']['errors']);
+      $total_rows = count($context['results']['objects_source']);
 
 //      if ($context['finished'] == 1) {
 //        $status = ($op == 'test' ? 'Checked.' : 'Imported.');
 //      }
 //      else 
         {
-        $status = ($context['results']['op'] == 'test' ? 'Checking interrupted...' : 'Importing interrupted...') . ' Errors: ' .  $errors_count .  ' on ' . $context['sandbox']['progress'] . ' out of ' . $context['sandbox']['max'];
+        $status = ($context['results']['op'] == 'test' ? 'Checking interrupted...' : 'Importing interrupted...') . ' Errors: ' .  $errors_count .  '.';
       }
 
-      $status = $status . 'Total rows: ' . count($context['results']['objects_source']) . '. Processed: ' . $context['results']['processed'] . '. Empty rows: ' . $context['results']['processed_empty_row'] . '. Not empty: ' . $context['results']['processed_not_empty'] . '. Empty action rows: ' . $context['results']['processed_empty_action'] . '. Total depts: ' . $context['results']['processed_depts'] . '. Total products: ' . $context['results']['processed_products'] . '. New: ' . count(@$context['results']['processed_by_action']['new']) . '. Delete: ' . count(@$context['results']['processed_by_action']['delete']) . '. Change: ' . count(@$context['results']['processed_by_action']['change']) . '. Hide: ' . count(@$context['results']['processed_by_action']['hide']);
+      $status = $status . ' Total rows: ' . $total_rows . '. Processed: ' . $context['results']['processed'] . '. Empty rows: ' . $context['results']['processed_empty_row'] . '. Not empty: ' . $context['results']['processed_not_empty'] . '. Empty action rows: ' . $context['results']['processed_empty_action'] . '. Total depts: ' . $context['results']['processed_depts'] . '. Total products: ' . $context['results']['processed_products'] . '. New: ' . count(@$context['results']['processed_by_action']['new']) . '. Delete: ' . count(@$context['results']['processed_by_action']['delete']) . '. Change: ' . count(@$context['results']['processed_by_action']['change']) . '. Hide: ' . count(@$context['results']['processed_by_action']['hide']);
 
       // Set results row in the DB
       db_update('zp_price_import_results') 
