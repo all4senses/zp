@@ -763,7 +763,8 @@ function zp_pages_importPrices_form($form, &$form_state) {
   $query->fields('u', array('name'));
   
   $query->leftJoin('zp_price_import_results', 'r', 'r.fid = f.fid');
-  $query->fields('r', array('status'));
+  //$query->fields('r', array('status'));
+  $query->addField('r', 'status', 'op_status');
   
   $query->condition('f.uri', $files, 'IN');
  
@@ -775,7 +776,7 @@ function zp_pages_importPrices_form($form, &$form_state) {
 
   $files = array();
   foreach ($results as $fid => $result) {
-    $files[$fid] = str_replace($price_folder . '/', '', $result->uri) . ', ' . date('m-d-Y H:i:s',$result->timestamp) . ', ' . intval($result->filesize/1000) . 'k, ' . $result->name . '. Status: ' . $result->status;
+    $files[$fid] = str_replace($price_folder . '/', '', $result->uri) . ', ' . date('m-d-Y H:i:s',$result->timestamp) . ', ' . intval($result->filesize/1000) . 'k, ' . $result->name . '. Status: ' . $result->op_status;
   }
     
     
