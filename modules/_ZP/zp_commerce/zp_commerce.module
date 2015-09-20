@@ -11,15 +11,6 @@ use Drupal\krumong as k;
  */
 function zp_commerce_menu() {
   
-  $items['zp/add_objects'] = array(
-    'title' => 'Add ZP Catalog Objects',
-    'description' => 'Add new ZP Catalog objects: depts, subgroups, products, etc',
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('zp_commerce_addZpCatalogObjects_form'),
-    'access arguments' => array('administer taxonomy'),
-  );
-  
-  
   $items['node/%node/product_entity'] = array(
     'title' => 'Product entity',
     'description' => t('Go to the product Entity, connected to this product Display.'),
@@ -874,37 +865,6 @@ function zp_commerce_buildSidebarFilter_form_submit(&$form, &$form_state) {
 // IMPORT ZP OBJECTS: Depts, products, etc.
 
 
-/**
- * Form builder function to start adding ZP Catalog Objects.
- */
-function zp_commerce_addZpCatalogObjects_form() {
-  
-  $form['description'] = array(
-    '#type' => 'markup',
-    '#markup' => t('Go adding new ZP Catalog objects!'),
-  );
-  
-  if (!empty($_SESSION['zp_current_batch_id'])) {
-    dpm($_SESSION['zp_current_batch_' . $_SESSION['zp_current_batch_id'] . '_results']);
-    $form['continue_interrupted'] = array(
-      '#type' => 'markup',
-      '#markup' => '<div>' . t('Continue the last interrupted ') . l(t('batch with id=') . $_SESSION['zp_current_batch_id'], 'batch', array('query' => array('op' => 'start', 'id' => $_SESSION['zp_current_batch_id']))) . '</div>',
-    );
-  }
-  else {
-    $objects = zp_commerce_prepareZpObjectsToAddToCatalog();
-    dpm($objects);
-    // reset counter for debug information.
-    $_SESSION['http_request_count'] = NULL;
-  }
-
-  $form['submit'] = array(
-    '#type' => 'submit',
-    '#value' => 'Go',
-  );
-  
-  return $form;
-}
 
 /**
  * Builds an array with objects to add to ZP Catalog.
@@ -1042,45 +1002,6 @@ function zp_commerce_prepareZpObjectsToAddToCatalog() {
 }
 
 
-
-/**
- * Hook Form submit to start adding ZP Catalog Objects.
- */
-function zp_commerce_addZpCatalogObjects_form_submit($form, &$form_state) {
-  
-  $objects = zp_commerce_prepareZpObjectsToAddToCatalog();
-
-  $batch = array(
-    'operations' => array(
-      array('zp_commerce_importPriceList_batch_process', array($objects)),
-    ),
-    'finished' => 'zp_commerce_importPriceList_batch_finished',
-    // Message displayed while processing the batch. Available placeholders are:
-    // @current, @remaining, @total, @percentage, @estimate and @elapsed.
-    // These placeholders are replaced with actual values in _batch_process(),
-    // using strtr() instead of t(). The values are determined based on the
-    // number of operations in the 'operations' array (above), NOT by the number
-    // of nodes that will be processed. In this example, there are 20
-    // operations, so @total will always be 20, even though there are multiple
-    // nodes per operation.
-    // Defaults to t('Completed @current of @total.').
-    'title' => t('Add Objects to ZP Catalog'),
-    'init_message' => t('Catalog objects are about to be added to ZP Catalog.'),
-    'progress_message' => t('Adding objects to ZP Catalog Progress: Completed @current of @total objects adding.'),
-    //'redirect' => 'admin/structure/taxonomy',
-    'error_message' => t('ZP Catalog objects adding process has encountered an error.'),
-  );
-  batch_set($batch);
-  
-  
-  // if need to set non-progressive execution here is a trick how to set it before batch_process().
-  // from https://drupal.org/node/638712#comment-2289138
-  // 
-  // $batch =& batch_get();
-  // $batch['progressive'] = FALSE;
-  //
-  //batch_process();
-}
 
 
 /**
@@ -1292,7 +1213,11 @@ Processed: ' . $context['results']['processed'] . '
  */
 function zp_commerce_importPriceList_batch_finished($success, $results, $operations) {
   
+  $title_result_message = 'Results for Op "' . $context['results']['op'] . '" from the file "' . $context['results']['file_path'] . '" ( fid: ' . $context['results']['fid'] . ')';
+  
+  drupal_set_message($title_result_message, 'warning');
   dpm($results);
+  
   if ($success) {
     drupal_set_message(t('@count objects processed in @requests HTTP requests.', array('@count' => $results['processed'], '@requests' => zp_misc_get_http_requests())));
 
