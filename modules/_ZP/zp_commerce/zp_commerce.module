@@ -1138,7 +1138,7 @@ function zp_commerce_importPriceList_batch_process($op, $priceRows, $file, &$con
         'timestamp'=> time(),                
         'uid' => $GLOBALS['user']->uid,
         'batch_id' => $context['results']['zp_current_batch_id'],  
-        'batch_finished'=> 1,//FALSE,
+        'batch_finished'=> 0,//FALSE,
         'status' => $op == 'test' ? 'Start checking...' : 'Start importing...',  
         'errors' => NULL,
         'rows_with_action' => NULL,
