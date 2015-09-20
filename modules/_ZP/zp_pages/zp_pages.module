@@ -872,7 +872,7 @@ function zp_pages_importPrices_formSubmit(&$form, &$form_state) {
     $file = file_load($form_state['values']['files']);
       
     if ($file_data = zp_pages_getPriceFromFile($file)) {
-      zp_pages_importPriceBatch('test', $file_data, zp_misc_getPathFromStreamUri($file->uri));
+      zp_pages_importPriceBatch('test', $file_data, $file);
     }
   }
   elseif ( $form_state['values']['op'] == 'Импортировать/применить выбранный прайс-лист') {
@@ -1015,14 +1015,14 @@ function zp_pages_getPriceFromFile($file = NULL, $fid = NULL) {
 }
 
 
-function zp_pages_importPriceBatch($op, $priceRows, $file_path) {
+function zp_pages_importPriceBatch($op, $priceRows, $file) {
 
   // Создаём массив с данными для батча
   $batch = array(
     'title' => $op == 'test' ? t('Проверка Прайс-листа') : t('Импорт Прайс-листа'),
     'operations' => array(
       //array('zp_pages_importPriceBatch_processRow', array($op, $priceRows, $file_path)),
-      array('zp_commerce_importPriceList_batch_process', array($op, $priceRows, $file_path)),  
+      array('zp_commerce_importPriceList_batch_process', array($op, $priceRows, $file)),  
       
     ),
     'finished' => 'zp_commerce_importPriceList_batch_finished', //'zp_pages_importPriceBatch_onFinish',
