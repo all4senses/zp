@@ -794,7 +794,7 @@ function zp_pages_importPrices_form($form, &$form_state) {
   
   
   if (!empty($_SESSION['zp_current_batch_id'])) {
-    dpm($_SESSION['zp_current_batch_' . $_SESSION['zp_current_batch_id'] . '_results']);
+    dpm(@$_SESSION['zp_current_batch_' . $_SESSION['zp_current_batch_id'] . '_results']);
     $form['continue_interrupted'] = array(
       '#type' => 'markup',
       '#markup' => '<div>' . t('Continue the last interrupted ') . l(t('batch with id=') . $_SESSION['zp_current_batch_id'], 'batch', array('query' => array('op' => 'start', 'id' => $_SESSION['zp_current_batch_id']))) . '</div>',
