@@ -711,6 +711,8 @@ function zp_pages_importPrices_form($form, &$form_state) {
   //dpm($form_state);
   //dpm($form);
   
+  
+  
   $price_folder = 'private://zp_prices_uploaded';
   
   if (@$_GET['action'] == 'done') {
@@ -794,6 +796,7 @@ function zp_pages_importPrices_form($form, &$form_state) {
   
   
   if (!empty($_SESSION['zp_current_batch_id'])) {
+    dpm($_SERVER);
     dpm(@$_SESSION['zp_current_batch_' . $_SESSION['zp_current_batch_id'] . '_results']);
     $form['continue_interrupted'] = array(
       '#type' => 'markup',
