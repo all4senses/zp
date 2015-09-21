@@ -822,6 +822,9 @@ function zp_pages_importPrices_form($form, &$form_state) {
   $query->fields('r', array('batch_id', 'batch_finished', 'op'));
   $query->addField('r', 'status', 'op_status');
   
+  $query->leftJoin('batch', 'b', 'b.bid = r.batch_id');
+  $query->fields('b', array('bid'));
+  
   $query->condition('f.uri', $files, 'IN');
  
   $query->orderBy('f.timestamp', 'DESC');
@@ -835,7 +838,7 @@ function zp_pages_importPrices_form($form, &$form_state) {
   foreach ($results as $fid => $result) {
     $files[$fid] = str_replace($price_folder . '/', '', $result->uri) . ' (fid: ' . $result->fid . '), ' . date('m-d-Y H:i:s',$result->timestamp) . ', ' . intval($result->filesize/1000) . 'k, ' . $result->name . '. Status: ' . $result->op_status;
     
-    if ($result->op_status && !$result->batch_finished) {
+    if ($result->bid && $result->op_status && !$result->batch_finished) {
       $not_finished_batches .= '<div>' . l(t('Продолжить'), 'batch', array('query' => array('op' => 'start', 'id' => $result->batch_id))) . t(' незавершенную пакетную операцию "') . $result->op . '" из файла "' . $result->filename . '" (fid: ' . $result->fid . '), ' . t('batch id=') . $result->batch_id . '</div>';
     }
   }
@@ -946,7 +949,7 @@ function zp_pages_importPrices_formSubmit(&$form, &$form_state) {
     }
     else {
       $query = db_select('zp_price_import_results', 'r')
-        ->fields('r', array('batch_id', 'batch_finished', 'op'));
+        ->fields('r', array('fid', 'filename', 'batch_id', 'batch_finished', 'op'));
       
       $query->leftJoin('batch', 'b', 'b.bid = r.batch_id');
       $query->fields('b', array('bid'));
@@ -960,6 +963,16 @@ function zp_pages_importPrices_formSubmit(&$form, &$form_state) {
 
       $result = $query->execute()->fetchObject();
       dpm($result);
+      
+      if (!$result->bid) {
+        drupal_set_message('Нечего удалять! Операция уже была завершена или отменена/удалена', 'warning');
+      }
+      else {
+        db_delete('batch')
+        ->condition('bid', $result->bid)
+        ->execute();
+        drupal_set_message('Незавершенная операция ' . $result->bid . ' для файла ' . $result->filename . ' (fid: ' . $result->fid . ') была удалена.', 'warning');
+      }
     }
   }
   elseif ( $form_state['values']['op'] == 'Удалить выбранный прайс-лист') {
