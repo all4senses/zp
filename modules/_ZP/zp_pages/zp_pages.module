@@ -747,24 +747,18 @@ function zp_pages_importPrices_form($form, &$form_state) {
     $context['results'] = @$_SESSION['zp_current_batch_' . $_SESSION['zp_current_batch_id'] . '_results'];
     
     if (strpos($_SERVER['HTTP_REFERER'], 'batch?op=start')) {
-    
-      dpm('Temporary file import result has been rewritten to DB', 'warning');
+      
       $title_result_message = 'Results for interrupted Op "' . $context['results']['op'] . '" from the file "' . $context['results']['file_path'] . '" ( fid: ' . $context['results']['fid'] . ')';
       dpm($title_result_message);
       
       //dpm($context['results']);
       krumong('devel')->dpm($context['results']);
+      dpm('Temporary file import result has been rewritten to DB');
       
       $errors_count = count($context['results']['errors']);
       $total_rows = count($context['results']['objects_source']);
 
-//      if ($context['finished'] == 1) {
-//        $status = ($op == 'test' ? 'Checked.' : 'Imported.');
-//      }
-//      else 
-        {
-        $status = ($context['results']['op'] == 'test' ? 'Checking interrupted...' : 'Importing interrupted...') . ' Errors: ' .  $errors_count .  '.';
-      }
+      $status = ($context['results']['op'] == 'test' ? 'Checking interrupted...' : 'Importing interrupted...') . ' Errors: ' .  $errors_count .  '.';
 
       $status = $status . ' Total rows: ' . $total_rows . '. Processed: ' . $context['results']['processed'] . '. Empty rows: ' . $context['results']['processed_empty_row'] . '. Not empty: ' . $context['results']['processed_not_empty'] . '. Empty action rows: ' . $context['results']['processed_empty_action'] . '. Total depts: ' . $context['results']['processed_depts'] . '. Total products: ' . $context['results']['processed_products'] . '. New: ' . count(@$context['results']['processed_by_action']['new']) . '. Delete: ' . count(@$context['results']['processed_by_action']['delete']) . '. Change: ' . count(@$context['results']['processed_by_action']['change']) . '. Hide: ' . count(@$context['results']['processed_by_action']['hide']);
 
