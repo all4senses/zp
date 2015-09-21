@@ -975,7 +975,8 @@ function zp_pages_importPrices_formSubmit(&$form, &$form_state) {
         //$data['objects_source'] = 'Array, just hidden here... look into DB for it'.
         //unset($data['objects_processed']);
         //dpm($data);
-        dpr($data);
+        //dpr($data);
+        krumong('main')->kPrint($data)
       }
     }
     
