@@ -821,6 +821,7 @@ function zp_pages_importPrices_form($form, &$form_state) {
   $query->leftJoin('zp_price_import_results', 'r', 'r.fid = f.fid');
   $query->fields('r', array('batch_id', 'batch_finished', 'op'));
   $query->addField('r', 'status', 'op_status');
+  $query->addField('r', 'filename', 'filename_path');
   
   $query->leftJoin('batch', 'b', 'b.bid = r.batch_id');
   $query->fields('b', array('bid'));
@@ -839,7 +840,7 @@ function zp_pages_importPrices_form($form, &$form_state) {
     $files[$fid] = str_replace($price_folder . '/', '', $result->uri) . ' (fid: ' . $result->fid . '), ' . date('m-d-Y H:i:s',$result->timestamp) . ', ' . intval($result->filesize/1000) . 'k, ' . $result->name . '. Status: ' . $result->op_status;
     
     if ($result->bid && $result->op_status && !$result->batch_finished) {
-      $not_finished_batches .= '<div>' . l(t('Продолжить'), 'batch', array('query' => array('op' => 'start', 'id' => $result->batch_id))) . t(' незавершенную пакетную операцию "') . $result->op . '" из файла "' . $result->filename . '" (fid: ' . $result->fid . '), ' . t('batch id=') . $result->batch_id . '</div>';
+      $not_finished_batches .= '<div>' . l(t('Продолжить'), 'batch', array('query' => array('op' => 'start', 'id' => $result->batch_id))) . t(' незавершенную пакетную операцию "') . $result->op . '" из файла "' . $result->filename_path . '" (fid: ' . $result->fid . '), ' . t('batch id=') . $result->batch_id . '</div>';
     }
   }
     
