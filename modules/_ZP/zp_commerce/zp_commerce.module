@@ -1234,6 +1234,7 @@ function zp_commerce_importPriceList_batch_finished($success, $results, $operati
   }
   
   krumong('devel')->dpm($results);
+  
   //krumong()->kPrint($results);
   //die;  // optionally, you can stop the request right here.
   
