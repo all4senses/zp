@@ -737,65 +737,9 @@ function zp_pages_importPrices_form($form, &$form_state) {
     );
     
     $form['submit'] = array('#type' => 'submit', '#value' => 'Загрузить новый прайс-лист');
-    
-    
   }
   
-  $dir = zp_misc_getPathFromStreamUri($price_folder); //'sites/default/files/jsmin-gv';
-  $files = scandir($dir); // second param =  1 - SCANDIR_SORT_DESCENDING
   
-  
-  foreach ($files as $key => $object) {
-    if ($object == "." || $object == "..") {
-      //unlink($dir . "/" . $object);
-      unset($files[$key]);
-    }
-    else {
-      $files[$key] = $price_folder . '/' . $files[$key];
-    }
-  }
-  
-  //dpm($files);
-  
-  $query = db_select('file_managed', 'f')
-        ->fields('f', array('fid', 'uid', 'filesize', 'status',  'timestamp', 'filename', 'uri'));
-  $query->leftJoin('users', 'u', 'u.uid = f.uid');
-  $query->fields('u', array('name'));
-  
-  $query->leftJoin('zp_price_import_results', 'r', 'r.fid = f.fid');
-  //$query->fields('r', array('status'));
-  $query->addField('r', 'status', 'op_status');
-  
-  $query->condition('f.uri', $files, 'IN');
- 
-  $query->orderBy('f.timestamp', 'DESC');
-  //$query->condition('f.status', 1);
-  $results = $query->execute()->fetchAllAssoc('fid');
-
-  //dpm($results);
-
-  $files = array();
-  foreach ($results as $fid => $result) {
-    $files[$fid] = str_replace($price_folder . '/', '', $result->uri) . ' (fid: ' . $result->fid . '), ' . date('m-d-Y H:i:s',$result->timestamp) . ', ' . intval($result->filesize/1000) . 'k, ' . $result->name . '. Status: ' . $result->op_status;
-  }
-    
-    
-  $form['files-frame'] = array(
-    '#type' => 'fieldset',
-    '#title' => t('Прайс-листы, история'),
-    '#collapsible' => TRUE,  
-    '#description' => t('Выберите файл с прайс-листом для обработки.'),
-    '#attributes' => array('style' => 'max-height: 100px; overflow-y: scroll;'),
-  );
-  $form['files-frame']['files'] = array(
-    '#type' => 'radios',
-    '#default_value' => NULL,
-    '#options' => $files,
-  );
-
-  $form['test_price'] = array('#type' => 'submit', '#value' => 'Проверить выбранный прайс-лист');
-  $form['import_price'] = array('#type' => 'submit', '#value' => 'Импортировать/применить выбранный прайс-лист');
-  $form['delete_price'] = array('#type' => 'submit', '#value' => 'Удалить выбранный прайс-лист');
   
   
   if (!empty($_SESSION['zp_current_batch_id'])) {
@@ -838,16 +782,87 @@ function zp_pages_importPrices_form($form, &$form_state) {
         ->execute();
     }
 
-    $form['continue_interrupted'] = array(
-      '#type' => 'markup',
-      '#markup' => '<div>' . l(t('Продолжить'), 'batch', array('query' => array('op' => 'start', 'id' => $_SESSION['zp_current_batch_id']))) . t(' незавершенную пакетную операцию "') . $context['results']['op'] . '" из файла "' . $context['results']['file_path'] . '" (fid: ' . $context['results']['fid'] . '), ' . t('batch id=') . $_SESSION['zp_current_batch_id'] . '</div>',
-    );
+//    $form['continue_interrupted'] = array(
+//      '#type' => 'markup',
+//      '#markup' => '<div>' . l(t('Продолжить'), 'batch', array('query' => array('op' => 'start', 'id' => $_SESSION['zp_current_batch_id']))) . t(' незавершенную пакетную операцию "') . $context['results']['op'] . '" из файла "' . $context['results']['file_path'] . '" (fid: ' . $context['results']['fid'] . '), ' . t('batch id=') . $_SESSION['zp_current_batch_id'] . '</div>',
+//    );
   }
   else {
     //$objects = zp_commerce_prepareZpObjectsToAddToCatalog();
     //dpm($objects);
     // reset counter for debug information.
     $_SESSION['http_request_count'] = NULL;
+  }
+  
+  
+  
+  
+  
+  $dir = zp_misc_getPathFromStreamUri($price_folder); //'sites/default/files/jsmin-gv';
+  $files = scandir($dir); // second param =  1 - SCANDIR_SORT_DESCENDING
+  
+  foreach ($files as $key => $object) {
+    if ($object == "." || $object == "..") {
+      //unlink($dir . "/" . $object);
+      unset($files[$key]);
+    }
+    else {
+      $files[$key] = $price_folder . '/' . $files[$key];
+    }
+  }
+  
+  //dpm($files);
+  
+  $query = db_select('file_managed', 'f')
+        ->fields('f', array('fid', 'uid', 'filesize', 'status',  'timestamp', 'filename', 'uri'));
+  $query->leftJoin('users', 'u', 'u.uid = f.uid');
+  $query->fields('u', array('name'));
+  
+  $query->leftJoin('zp_price_import_results', 'r', 'r.fid = f.fid');
+  $query->fields('r', array('batch_id', 'batch_finished', 'op'));
+  $query->addField('r', 'status', 'op_status');
+  
+  $query->condition('f.uri', $files, 'IN');
+ 
+  $query->orderBy('f.timestamp', 'DESC');
+  //$query->condition('f.status', 1);
+  $results = $query->execute()->fetchAllAssoc('fid');
+
+  //dpm($results);
+
+  $files = array();
+  $not_finished_batches = NULL;
+  foreach ($results as $fid => $result) {
+    $files[$fid] = str_replace($price_folder . '/', '', $result->uri) . ' (fid: ' . $result->fid . '), ' . date('m-d-Y H:i:s',$result->timestamp) . ', ' . intval($result->filesize/1000) . 'k, ' . $result->name . '. Status: ' . $result->op_status;
+    
+    if (!$result->batch_finished) {
+      $not_finished_batches .= '<div>' . l(t('Продолжить'), 'batch', array('query' => array('op' => 'start', 'id' => $result->batch_id))) . t(' незавершенную пакетную операцию "') . $result->op . '" из файла "' . $result->file_path . '" (fid: ' . $result->fid . '), ' . t('batch id=') . $result->batch_id . '</div>';
+    }
+  }
+    
+    
+  $form['files-frame'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Прайс-листы, история'),
+    '#collapsible' => TRUE,  
+    '#description' => t('Выберите файл с прайс-листом для обработки.'),
+    '#attributes' => array('style' => 'max-height: 100px; overflow-y: scroll;'),
+  );
+  $form['files-frame']['files'] = array(
+    '#type' => 'radios',
+    '#default_value' => NULL,
+    '#options' => $files,
+  );
+
+  $form['test_price'] = array('#type' => 'submit', '#value' => 'Проверить выбранный прайс-лист');
+  $form['import_price'] = array('#type' => 'submit', '#value' => 'Импортировать/применить выбранный прайс-лист');
+  $form['delete_price'] = array('#type' => 'submit', '#value' => 'Удалить выбранный прайс-лист');
+  
+  if ($not_finished_batches) {
+    $form['continue_interrupted'] = array(
+      '#type' => 'markup',
+      '#markup' => $not_finished_batches,
+    );
   }
   
   

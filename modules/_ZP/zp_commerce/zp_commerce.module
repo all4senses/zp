@@ -1059,6 +1059,7 @@ function zp_commerce_importPriceList_batch_process($op, $priceRows, $file, &$con
       ->fields(array(
         'fid'=> $file->fid,
         'filename'=> $file_path,
+        'op' => $op,  
         'timestamp'=> time(),                
         'uid' => $GLOBALS['user']->uid,
         'batch_id' => $context['results']['zp_current_batch_id'],  
