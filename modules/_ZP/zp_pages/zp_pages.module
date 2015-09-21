@@ -1043,6 +1043,7 @@ function zp_pages_importPrices_formSubmit(&$form, &$form_state) {
 function zp_pages_getPriceFromFile($file = NULL, $fid = NULL) {
   
   $file_data = NULL;
+  $file_data_final = NULL;
   
   if (!$file) {
     $file = file_load($fid);
@@ -1150,15 +1151,18 @@ function zp_pages_getPriceFromFile($file = NULL, $fid = NULL) {
         //dpm($file_data);
         
         // Remove empty rows and empty actions rows from a price.
-        foreach ($file_data as $key => $row) {
+        foreach ($file_data as $row) {
           if (empty($row['Название']) || $row['Действие / результат'] == 'Action' || empty($row['Действие / результат'])) {
-            unset($file_data[$key]);
+            continue;
+          }
+          else {
+            $file_data_final[] = $row;
           }
         }
         
       } // End of if (!empty($file_data)) {
 
-      return $file_data;
+      return $file_data_final;
 }
 
 
