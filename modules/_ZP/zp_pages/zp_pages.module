@@ -1071,7 +1071,7 @@ function zp_pages_getPriceFromFile($file = NULL, $fid = NULL) {
                   );
          
           drupal_set_message('Opened Excel from ' . $file_path);
-          drupal_set_message("Rows: " . count($excel_data[0]));
+          drupal_set_message("Rows in Excel file: " . count($excel_data[0]));
           //dpm($excel_data);
           
           if (is_array($excel_data)) {
@@ -1159,7 +1159,7 @@ function zp_pages_getPriceFromFile($file = NULL, $fid = NULL) {
             $file_data_final[] = $row;
           }
         }
-        
+        drupal_set_message("Rows with not empty Action field: " . count($file_data_final));
       } // End of if (!empty($file_data)) {
 
       return $file_data_final;
