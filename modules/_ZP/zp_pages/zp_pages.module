@@ -976,7 +976,8 @@ function zp_pages_importPrices_formSubmit(&$form, &$form_state) {
         //unset($data['objects_processed']);
         //dpm($data);
         //dpr($data);
-        krumong('main')->kPrint($data);
+        //krumong('main')->kPrint($data);
+        krumong('main')->dpm($data);
       }
     }
     
