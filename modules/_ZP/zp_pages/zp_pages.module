@@ -963,7 +963,6 @@ function zp_pages_importPrices_formSubmit(&$form, &$form_state) {
       }
 
       $result = $query->execute()->fetchObject();
-      dpm($result);
       
       if (!$result->bid) {
         drupal_set_message('Нечего удалять! Операция уже была завершена или отменена/удалена', 'warning');
