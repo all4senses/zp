@@ -748,10 +748,12 @@ function zp_pages_importPrices_form($form, &$form_state) {
     
     if (strpos($_SERVER['HTTP_REFERER'], 'batch?op=start')) {
     
+      dpm('Temporary file import result has been rewritten to DB', 'warning');
       $title_result_message = 'Results for interrupted Op "' . $context['results']['op'] . '" from the file "' . $context['results']['file_path'] . '" ( fid: ' . $context['results']['fid'] . ')';
       dpm($title_result_message);
-      dpm('Temporary file import result has been rewritten to DB', 'warning');
-      dpm($context['results']);
+      
+      //dpm($context['results']);
+      krumong('devel')->dpm($context['results']);
       
       $errors_count = count($context['results']['errors']);
       $total_rows = count($context['results']['objects_source']);
