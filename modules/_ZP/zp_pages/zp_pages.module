@@ -860,6 +860,7 @@ function zp_pages_importPrices_form($form, &$form_state) {
 
   $form['test_price'] = array('#type' => 'submit', '#value' => 'Проверить выбранный прайс-лист');
   $form['import_price'] = array('#type' => 'submit', '#value' => 'Импортировать/применить выбранный прайс-лист');
+  $form['batch_results'] = array('#type' => 'submit', '#value' => 'Показать результаты операции по выбранному файлу');
   $form['delete_price'] = array('#type' => 'submit', '#value' => 'Удалить выбранный прайс-лист');
   $form['delete_batch'] = array('#type' => 'submit', '#value' => 'Удалить выбранную незавершенную операцию');
   
@@ -941,6 +942,38 @@ function zp_pages_importPrices_formSubmit(&$form, &$form_state) {
   elseif ( $form_state['values']['op'] == 'Импортировать/применить выбранный прайс-лист') {
     drupal_set_message('Task: import/apply a price-list');
     //dpm($form_state['values']);
+  }
+  elseif ( $form_state['values']['op'] == 'Показать результаты операции по выбранному файлу') {
+    drupal_set_message('Task: Показать результаты операции по выбранному файлу');
+    //dpm($form_state['values']);
+    
+    if (empty($form_state['values']['files'])) {
+      drupal_set_message('Выберите файл для вывода результатов по нему.', 'warning');
+    }
+    else {
+      $query = db_select('zp_price_import_results', 'r')
+        ->fields('r', array('fid', 'filename', 'batch_id', 'batch_finished', 'op', 'data'));
+      
+      $query->leftJoin('batch', 'b', 'b.bid = r.batch_id');
+      $query->fields('b', array('bid'));
+      
+      $query->condition('r.fid', $form_state['values']['files']);
+      
+      if ($GLOBALS['user']->uid != 1) {
+        $query->condition('r.uid', $GLOBALS['user']->uid);
+      }
+
+      $result = $query->execute()->fetchObject();
+      
+      dpm('Результаты выполнения операции ' . $result->op . ' над файлом ' . $result->filename . ':');
+      if (!$result) {
+        dpm('Нет данных по файлу ' . $result->filename, 'warning');
+      }
+      else {
+        dpm(unserialize($result->data));
+      }
+    }
+    
   }
   elseif ( $form_state['values']['op'] == 'Удалить выбранную незавершенную операцию') {
     drupal_set_message('Task: Удалить выбранную незавершенную операцию');
