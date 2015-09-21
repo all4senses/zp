@@ -971,16 +971,16 @@ function zp_pages_importPrices_formSubmit(&$form, &$form_state) {
       }
       else {
         $data = unserialize($result->data);
-        unset($data['objects_source']);
-        //$data['objects_source'] = 'Array, just hidden here... look into DB for it'.
+        //unset($data['objects_source']);
+        $data['objects_source'] = 'Array, just hidden here... look into DB for it'.
         //unset($data['objects_processed']);
-        //dpm($data);
+        dpm($data);
         //dpr($data);
         //krumong('main')->kPrint($data);
         //krumong('devel')->dpm($data);
         
-        krumong()->kPrint($data);
-        die;  // optionally, you can stop the request right here.
+//        krumong()->kPrint($data);
+//        die;  // optionally, you can stop the request right here.
       }
     }
     

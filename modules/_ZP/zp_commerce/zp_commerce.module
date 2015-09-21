@@ -1067,7 +1067,7 @@ function zp_commerce_importPriceList_batch_process($op, $priceRows, $file, &$con
         'status' => $op == 'test' ? 'Start checking...' : 'Start importing...',  
         'errors' => NULL,
         'rows_with_action' => NULL,
-        'data' => serialize($context),
+        'data' => serialize($context['results']),
       ))
       ->execute();
   }
@@ -1196,7 +1196,7 @@ Processed: ' . $context['results']['processed'] . '
         'status' => $status,
         'errors' => $errors_count,
         'rows_with_action' => $context['results']['processed'] - ($context['results']['processed_empty_row'] + $context['results']['processed_empty_action']),
-        'data' => serialize($context),
+        'data' => serialize($context['results']),
       ))
       ->condition('fid', $file->fid)
       ->condition('batch_id', $context['results']['zp_current_batch_id'])      
