@@ -857,6 +857,7 @@ function zp_pages_importPrices_form($form, &$form_state) {
   $form['test_price'] = array('#type' => 'submit', '#value' => 'Проверить выбранный прайс-лист');
   $form['import_price'] = array('#type' => 'submit', '#value' => 'Импортировать/применить выбранный прайс-лист');
   $form['delete_price'] = array('#type' => 'submit', '#value' => 'Удалить выбранный прайс-лист');
+  $form['delete_batch'] = array('#type' => 'submit', '#value' => 'Удалить выбранную незавершенную операцию');
   
   if ($not_finished_batches) {
     $form['continue_interrupted'] = array(
@@ -936,6 +937,29 @@ function zp_pages_importPrices_formSubmit(&$form, &$form_state) {
   elseif ( $form_state['values']['op'] == 'Импортировать/применить выбранный прайс-лист') {
     drupal_set_message('Task: import/apply a price-list');
     //dpm($form_state['values']);
+  }
+  elseif ( $form_state['values']['op'] == 'Удалить выбранную незавершенную операцию') {
+    drupal_set_message('Task: Удалить выбранную незавершенную операцию');
+    //dpm($form_state['values']);
+    if (empty($form_state['values']['files'])) {
+      drupal_set_message('Выберите файл для удаления незавершенной операции до нажатия на кнопку удаления.', 'warning');
+    }
+    else {
+      $query = db_select('zp_price_import_results', 'r')
+        ->fields('r', array('batch_id', 'batch_finished', 'op'));
+      $query->leftJoin('batch', 'b', 'b.bid = r.batch_id');
+      $query->fields('u', array('name'));
+
+      $query->condition('r.fid', $form_state['values']['files']);
+      $query->condition('r.batch_finished', 0);
+      
+      if ($GLOBALS['user']->uid != 1) {
+        $query->condition('f.uid', $GLOBALS['user']->uid);
+      }
+
+      $result = $query->execute()->fetchObject();
+      dpm($result);
+    }
   }
   elseif ( $form_state['values']['op'] == 'Удалить выбранный прайс-лист') {
     drupal_set_message('Task: delete a file...');
