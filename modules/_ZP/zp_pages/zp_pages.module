@@ -971,7 +971,8 @@ function zp_pages_importPrices_formSubmit(&$form, &$form_state) {
       }
       else {
         $data = unserialize($result->data);
-        unset($data['objects_source']);
+        //unset($data['objects_source']);
+        unset($data['objects_processed']);
         dpm($data);
       }
     }
