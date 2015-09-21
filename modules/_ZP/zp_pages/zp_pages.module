@@ -965,9 +965,9 @@ function zp_pages_importPrices_formSubmit(&$form, &$form_state) {
 
       $result = $query->execute()->fetchObject();
       
-      dpm('Результаты выполнения операции ' . $result->op . ' над файлом ' . $result->filename . ':');
+      krumong('devel')->dpm('Результаты выполнения операции ' . $result->op . ' над файлом ' . $result->filename . ':');
       if (!$result) {
-        dpm('Нет данных по файлу ' . $result->filename, 'warning');
+        krumong('devel')->dpm('Нет данных по файлу ' . $result->filename);
       }
       else {
         $data = unserialize($result->data);
@@ -1164,6 +1164,9 @@ function zp_pages_getPriceFromFile($file = NULL, $fid = NULL) {
 
 function zp_pages_importPriceBatch($op, $priceRows, $file) {
 
+  dpm($priceRows);
+  return;
+  
   // Создаём массив с данными для батча
   $batch = array(
     'title' => $op == 'test' ? t('Проверка Прайс-листа') : t('Импорт Прайс-листа'),
