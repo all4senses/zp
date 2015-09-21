@@ -835,8 +835,8 @@ function zp_pages_importPrices_form($form, &$form_state) {
   foreach ($results as $fid => $result) {
     $files[$fid] = str_replace($price_folder . '/', '', $result->uri) . ' (fid: ' . $result->fid . '), ' . date('m-d-Y H:i:s',$result->timestamp) . ', ' . intval($result->filesize/1000) . 'k, ' . $result->name . '. Status: ' . $result->op_status;
     
-    if (!$result->batch_finished) {
-      $not_finished_batches .= '<div>' . l(t('Продолжить'), 'batch', array('query' => array('op' => 'start', 'id' => $result->batch_id))) . t(' незавершенную пакетную операцию "') . $result->op . '" из файла "' . $result->file_path . '" (fid: ' . $result->fid . '), ' . t('batch id=') . $result->batch_id . '</div>';
+    if ($result->op_status && !$result->batch_finished) {
+      $not_finished_batches .= '<div>' . l(t('Продолжить'), 'batch', array('query' => array('op' => 'start', 'id' => $result->batch_id))) . t(' незавершенную пакетную операцию "') . $result->op . '" из файла "' . $result->filename . '" (fid: ' . $result->fid . '), ' . t('batch id=') . $result->batch_id . '</div>';
     }
   }
     
