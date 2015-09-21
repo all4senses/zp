@@ -947,6 +947,7 @@ function zp_pages_importPrices_formSubmit(&$form, &$form_state) {
     drupal_set_message('Task: Показать результаты операции по выбранному файлу');
     //dpm($form_state['values']);
     
+    return;
     if (empty($form_state['values']['files'])) {
       drupal_set_message('Выберите файл для вывода результатов по нему.', 'warning');
     }
