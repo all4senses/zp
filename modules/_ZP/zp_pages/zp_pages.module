@@ -1168,8 +1168,8 @@ function zp_pages_getPriceFromFile($file = NULL, $fid = NULL) {
 
 function zp_pages_importPriceBatch($op, $priceRows, $file) {
 
-  dpm($priceRows);
-  return;
+  //dpm($priceRows);
+  //return;
   
   // Создаём массив с данными для батча
   $batch = array(
