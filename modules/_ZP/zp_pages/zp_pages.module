@@ -970,7 +970,9 @@ function zp_pages_importPrices_formSubmit(&$form, &$form_state) {
         dpm('Нет данных по файлу ' . $result->filename, 'warning');
       }
       else {
-        //dpm(unserialize($result->data));
+        $data = unserialize($result->data);
+        unset($data['objects_source']);
+        dpm($data);
       }
     }
     
