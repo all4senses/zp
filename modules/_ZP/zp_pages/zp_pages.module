@@ -1168,7 +1168,7 @@ function zp_pages_importPriceBatch($op, $priceRows, $file) {
     //'file' => drupal_get_path('module', 'title_changer') . '/title_changer.batch.inc',
       
     'init_message' => t('Обработка прайс-листа начинается...'),
-    'progress_message' => t('Выполнение операции @current из @total.'),
+    'progress_message' => t('Выполнено операций @current из @total.'),
     'error_message' => t('Во время обработки прайс-листа возникла ошибка.'),  
   );
  
