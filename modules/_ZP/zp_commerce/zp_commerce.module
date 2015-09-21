@@ -1217,7 +1217,9 @@ function zp_commerce_importPriceList_batch_finished($success, $results, $operati
   $title_result_message = 'Results for Op "' . $context['results']['op'] . '" from the file "' . $context['results']['file_path'] . '" ( fid: ' . $context['results']['fid'] . ')';
   
   drupal_set_message($title_result_message, 'warning');
-  dpm($results);
+  //dpm($results);
+  
+  
   
   if ($success) {
     drupal_set_message(t('@count objects processed in @requests HTTP requests.', array('@count' => $results['processed'], '@requests' => zp_misc_get_http_requests())));
@@ -1230,6 +1232,10 @@ function zp_commerce_importPriceList_batch_finished($success, $results, $operati
     $error_operation = reset($operations);
     drupal_set_message(t('An error occurred while processing @operation with arguments : @args', array('@operation' => $error_operation[0], '@args' => print_r($error_operation[0], TRUE))));
   }
+  
+  krumong('devel')->dpm($results);
+  //krumong()->kPrint($results);
+  //die;  // optionally, you can stop the request right here.
   
   // Clear caches, etc after adding new ZP Catalog objects.
   ////menu_cache_clear_all();

@@ -974,13 +974,13 @@ function zp_pages_importPrices_formSubmit(&$form, &$form_state) {
         //unset($data['objects_source']);
         $data['objects_source'] = 'Array, just hidden here... look into DB for it'.
         //unset($data['objects_processed']);
-        dpm($data);
+        //dpm($data);
         //dpr($data);
         //krumong('main')->kPrint($data);
-        //krumong('devel')->dpm($data);
+        krumong('devel')->dpm($data);
         
 //        krumong()->kPrint($data);
-//        die;  // optionally, you can stop the request right here.
+        die;  // optionally, you can stop the request right here.
       }
     }
     
@@ -1148,7 +1148,15 @@ function zp_pages_getPriceFromFile($file = NULL, $fid = NULL) {
       if (!empty($file_data)) {
         drupal_set_message('Got the data! Ready for importing.');
         //dpm($file_data);
-      }
+        
+        // Remove empty rows and empty actions rows from a price.
+        foreach ($file_data as $key => $row) {
+          if (empty($row['Название']) || $row['Действие / результат'] == 'Action' || empty($row['Действие / результат'])) {
+            unset($file_data[$key]);
+          }
+        }
+        
+      } // End of if (!empty($file_data)) {
 
       return $file_data;
 }
