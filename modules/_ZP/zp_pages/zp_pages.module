@@ -947,14 +947,15 @@ function zp_pages_importPrices_formSubmit(&$form, &$form_state) {
     else {
       $query = db_select('zp_price_import_results', 'r')
         ->fields('r', array('batch_id', 'batch_finished', 'op'));
+      
       $query->leftJoin('batch', 'b', 'b.bid = r.batch_id');
-      $query->fields('u', array('name'));
-
+      $query->fields('b', array('bid'));
+      
       $query->condition('r.fid', $form_state['values']['files']);
       $query->condition('r.batch_finished', 0);
       
       if ($GLOBALS['user']->uid != 1) {
-        $query->condition('f.uid', $GLOBALS['user']->uid);
+        $query->condition('r.uid', $GLOBALS['user']->uid);
       }
 
       $result = $query->execute()->fetchObject();
