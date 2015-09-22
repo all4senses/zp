@@ -1016,7 +1016,7 @@ Processed: ' . $context['results']['processed'] . '
   
   // If no error, Inform the batch engine that we are not finished,
   // and provide an estimation of the completion level we reached.
-  if ($error_message /*&& $op != 'test'*/) {
+  if ($error_message && $op != 'test') {
     // If $op == 'test' we don't stop processing and just collect all errors.
 
     // Stop processing because of the error!
