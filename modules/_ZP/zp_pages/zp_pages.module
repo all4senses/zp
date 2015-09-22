@@ -1087,7 +1087,7 @@ function zp_pages_getPriceFromFile($file = NULL, $fid = NULL) {
 //                          $col_data = explode('","', $col_data);
 //                        }
 
-                        $row_data[$col_name] = $col_data;
+                        $row_data[trim($col_name)] = trim($col_data);
 
                     }
                     $file_data[] = $row_data;
