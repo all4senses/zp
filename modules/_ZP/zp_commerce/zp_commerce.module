@@ -1145,7 +1145,7 @@ function zp_commerce_processPriceList_mapPriceRowToCatalogObject($row, &$error) 
   
   foreach ($row as $key => $value) {
     dpm('..key: >' . $key . '<');
-    if (isset($map[$key])) {
+    if (array_key_exists($key, $map)) {
       dpm('...' . $key . ' -> ' . $map[$key]);
       if (!$map[$key]) {
         // Remove a field that is NULL in the map array.
