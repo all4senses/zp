@@ -940,11 +940,11 @@ function zp_commerce_importPriceList_batch_process($op, $priceRows, $file, &$con
   $row = $priceRows[$current_object_id];
   
   if (empty($row['Название']) || $row['Действие / результат'] == 'Action') {
-          $current_object_result_message = $current_object_title = 'id: ' . $current_object_id . ', Empty row.';
+          $current_object_result_message = $current_object_title = 'zp_id: ' . $row['zp_id'] . ', Empty row.';
           $context['results']['processed_empty_row']++;
   }
    elseif (empty($row['Действие / результат'])) {
-          $current_object_result_message = $current_object_title = 'id: ' . $current_object_id . ($row['Тип записи'] == 'отдел' ? ' ----> ОТДЕЛ' : '') .', EMPTY ACTION for "' . $row['Название'] . '"';
+          $current_object_result_message = $current_object_title = 'zp_id: ' . $row['zp_id'] . ($row['Тип записи'] == 'отдел' ? ' ----> ОТДЕЛ' : '') .', EMPTY ACTION for "' . $row['Название'] . '"';
           $context['results']['processed_empty_action']++;
           $context['results']['processed_not_empty']++;
   }
@@ -953,7 +953,7 @@ function zp_commerce_importPriceList_batch_process($op, $priceRows, $file, &$con
           $context['results']['processed_not_empty']++;
           $context['results']['processed_by_action'][$row['Действие / результат']][$current_object_id] = $row['Название'];
           
-          $current_object_title = 'id: ' . $current_object_id . ($row['Тип записи'] == 'отдел' ? ' ----> ОТДЕЛ' : '') . ', "' . $row['Название'] . '"';
+          $current_object_title = 'zp_id: ' . $row['zp_id'] . ($row['Тип записи'] == 'отдел' ? ' ----> ОТДЕЛ' : '') . ', "' . $row['Название'] . '"';
           
           if (!$error_message = zp_commerce_processPriceList_row($op, $row, TRUE)) {
             $current_object_result_message = 'Success: "' . $row['Действие / результат'] . '", ' . $current_object_title;
@@ -966,7 +966,7 @@ function zp_commerce_importPriceList_batch_process($op, $priceRows, $file, &$con
   }
   
   if (!empty($row['Название'])) {
-    $context['results']['last_not_empty_object_id'] = $current_object_id;
+    $context['results']['last_not_empty_object_id'] = $row['zp_id'];
     if ($row['Тип записи'] == 'отдел') {
       $context['results']['processed_depts']++;
     } 
