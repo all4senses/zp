@@ -1162,8 +1162,8 @@ function zp_commerce_processPriceList_mapPriceRowToCatalogObject($row, &$error) 
   if ($row['Тип записи'] == 'отдел') {
     $catalogObject['type'] = 'department';
     
-    $catalogObject['parent_zp_id'] = $row['Магазин'] + $row['Товар / родительский отдел'];
-    $catalogObject['zp_id'] = $row['Магазин'] + $row['Отдел'];
+    $catalogObject['parent_zp_id'] = $row['Магазин'] . $row['Товар / родительский отдел'];
+    $catalogObject['zp_id'] = $row['Магазин'] . $row['Отдел'];
   }
   elseif (strpos($row['Тип записи'], 'товар') !== FALSE) {
     $catalogObject['product_display'] = 'product_a';
@@ -1172,8 +1172,8 @@ function zp_commerce_processPriceList_mapPriceRowToCatalogObject($row, &$error) 
     $catalogObject['currency'] = (int) $row['Магазин'] > 2 ? 'RUB' : 'UAH';
     $catalogObject['price'] = $row['Цена'];
     
-    $catalogObject['parent_zp_id'] = $row['Магазин'] + $row['Отдел'];
-    $catalogObject['zp_id'] = $row['Магазин'] + $row['Отдел'] + $row['Товар / родительский отдел'];
+    $catalogObject['parent_zp_id'] = $row['Магазин'] . $row['Отдел'];
+    $catalogObject['zp_id'] = $row['Магазин'] . $row['Отдел'] . $row['Товар / родительский отдел'];
   }
   else {
     $error = 'Неправильный тип объекта';
@@ -1189,8 +1189,16 @@ function zp_commerce_processPriceList_mapPriceRowToCatalogObject($row, &$error) 
   $fields_to_change = array();
   foreach ($catalogObject as $key => $value) {
     if (strpos($value, '###') !== FALSE) {
-      list($catalogObject[$key], )  = explode('###', $value);
-      $fields_to_change[] = $key;
+      $history = explode('###', $value);
+      if (!$history[0]) {
+        // ###123###543, so it's a field to be changed (though with a history)...
+        $catalogObject[$key] = $history[1];
+        $fields_to_change[] = $key;
+      }
+      else {
+        // 123###543, so it's a field just with a history, not to be changed...
+        $catalogObject[$key] = $history[0];
+      }
     }
   }
   
