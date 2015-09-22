@@ -861,146 +861,10 @@ function zp_commerce_buildSidebarFilter_form_submit(&$form, &$form_state) {
 
 
 
+
+
 //- ----------------------------------------------------------------------
 // IMPORT ZP OBJECTS: Depts, products, etc.
-
-
-
-/**
- * Builds an array with objects to add to ZP Catalog.
- */
-function zp_commerce_prepareZpObjectsToAddToCatalog() {
-  
-  $objects = array();
-  
-  $objects[] = array(
-    'type' => 'department',
-    'title' => 'Напитки',
-    'description' => 'Описание отдела Напитки', 
-    'summary' => 'Краткое описание отдела Напитки',
-    'zp_id' => 'z003',
-    'parent_zp_id' => 'z001',
-    'weight' => 5,
-  );
-  
-  $objects[] = array(
-    'type' => 'department',
-    'title' => 'Алкогольные напитки',
-    'description' => 'Описание отдела Алкогольные напитки', 
-    'summary' => 'Краткое описание отдела Алкогольные напитки',
-    'zp_id' => 'z004',
-    'parent_zp_id' => 'z003',
-    'weight' => 5,
-  );
-  
-  $objects[] = array(
-    'type' => 'department',
-    'title' => 'Безалкогольные напитки',
-    'description' => 'Описание отдела Безлкогольные напитки', 
-    'summary' => 'Краткое описание отдела Безалкогольные напитки',
-    'zp_id' => 'z005',
-    'parent_zp_id' => 'z003',
-    'weight' => 6,
-  );
-    
-  $objects[] = array(
-    'type' => 'subgroup',
-    'title' => 'подгруппа Вино',
-    'description' => 'Описание подгруппы Вино', 
-    //'zp_id' => 'z007',
-    'parent_zp_id' => 'z004',
-    'weight' => 2,
-  );  
-
-  $objects[] = array(
-    'type' => 'subgroup',
-    'title' => 'подгруппа Бормотуха',
-    'description' => 'Описание подгруппы Бормотуха', 
-    //'zp_id' => 'z007',
-    'parent_zp_id' => 'z004',
-    'weight' => 1,
-  );
-  
-  $objects[] = array(
-    'product_display' => 'product_a',
-    'product_type' => 'product',
-    'status' => TRUE,
-    'price' => 99.09,
-    'currency' => 'UAH',
-    'title' => 'Вино 1',
-    'description' => 'Описание продукта Вино 1', 
-    'summary' => 'Краткое описание продукта Вино 1',
-    'zp_id' => 'z010',
-    'parent_zp_id' => 'z007',
-    'subgroup' => 'подгруппа Вино',
-    'weight' => 1,
-  );
-  
-  $objects[] = array(
-    'product_display' => 'product_a',
-    'product_type' => 'product',
-    'status' => TRUE,
-    'price' => 99.09,
-    'currency' => 'UAH',
-    'title' => 'Вино 2',
-    'description' => 'Описание продукта Вино 2', 
-    'summary' => 'Краткое описание продукта Вино 2',
-    'zp_id' => 'z009',
-    'parent_zp_id' => 'z007',
-    'subgroup' => 'подгруппа Вино',
-    'weight' => 3,
-  );
-  
-  $objects[] = array(
-    'product_display' => 'product_a',
-    'product_type' => 'product',
-    'status' => TRUE,
-    'price' => 99.09,
-    'currency' => 'UAH',
-    'title' => 'Вино 3',
-    'description' => 'Описание продукта Вино 3', 
-    'summary' => 'Краткое описание продукта Вино 3',
-    'zp_id' => 'z008',
-    'parent_zp_id' => 'z004',
-    'subgroup' => 'подгруппа Вино',
-    'weight' => 2,
-  );
-  
-  
-  $objects[] = array(
-    'product_display' => 'product_a',
-    'product_type' => 'product',
-    'status' => TRUE,
-    'price' => 99.09,
-    'currency' => 'UAH',
-    'title' => 'Бормотуха 1',
-    'description' => 'Описание продукта Бормотуха 1', 
-    'summary' => 'Краткое описание продукта Бормотуха 1',
-    'zp_id' => 'z011',
-    'parent_zp_id' => 'z004',
-    'subgroup' => 'подгруппа Бормотуха',
-    'weight' => 2,
-  );
-  
-//  for($i = 1; $i< 1000; $i++) {
-//    $objects[] = array(
-//      'product_display' => 'product_a',
-//      'product_type' => 'product',
-//      'status' => TRUE,
-//      'price' => 99.09,
-//      'currency' => 'UAH',
-//      'title' => 'Бормотуха ' . ($i+3),
-//      'description' => 'Описание продукта Бормотуха 1', 
-//      'summary' => 'Краткое описание продукта Бормотуха 1',
-//      'zp_id' => 'z011',
-//      'parent_zp_id' => 'z004',
-//      'subgroup' => 'подгруппа Бормотуха',
-//      'weight' => 2,
-//    );
-//  }
-  return $objects;
-}
-
 
 
 
@@ -1247,17 +1111,264 @@ function zp_commerce_importPriceList_batch_finished($success, $results, $operati
 
 
 
+/**
+ * Builds an array with objects to add to ZP Catalog.
+ */
+function zp_commerce_processPriceList_mapPriceRowToCatalogObject($row, &$error) {
+  
+  
+  if (empty($row['Название']) ||  empty($row['Тип записи']) ||  empty($row['Магазин']) || empty($row['Отдел']) || empty($row['Товар / родительский отдел'])) {
+    $error = 'Не задано одно или несколько из обязательных полей';
+    return NULL;
+  }
+  
+  
+  $catalogObject = array();
+  
+  $map = array(
+      'Вес элемента в группе' => 'weight',
+      'Название' => 'title',
+      'Маркеры группы и примечания' => NULL,
+      'Ряд и примечания' => NULL,
+      'Магазин' => NULL,
+      'Отдел' => NULL,
+      'Товар / родительский отдел' => NULL,
+      'Цена' => NULL,
+      'Описание внешнее' => NULL,
+      'Описание локальное (отдела, магазина, района и т.д.)' => NULL,
+      'Краткое описание' => NULL,
+      'Тип записи' => NULL,
+  );
+  
+  foreach ($row as $key => $value) {
+    if (isset($map[$key])) {
+      if (!$map[$key]) {
+        // Remove a field that is NULL in the map array.
+        continue;
+      }
+      else {
+        // Change a name of a field (map it)
+        $catalogObject[$map[$key]] = $value;
+      }
+    }
+    else {
+      $catalogObject[$key] = $value;
+    }
+  } // End of foreach ($row as $key => $value) {
+  
+  if ($row['Тип записи'] == 'отдел') {
+    $catalogObject['type'] = 'department';
+    
+    $catalogObject['parent_zp_id'] = $row['Магазин'] + $row['Товар / родительский отдел'];
+    $catalogObject['zp_id'] = $row['Магазин'] + $row['Отдел'];
+  }
+  elseif (strpos($row['Тип записи'], 'товар') !== FALSE) {
+    $catalogObject['product_display'] = 'product_a';
+    $catalogObject['product_type'] = 'product';
+    $catalogObject['status'] = TRUE;
+    $catalogObject['currency'] = (int) $row['Магазин'] > 2 ? 'RUB' : 'UAH';
+    $catalogObject['price'] = $row['Цена'];
+    
+    $catalogObject['parent_zp_id'] = $row['Магазин'] + $row['Отдел'];
+    $catalogObject['zp_id'] = $row['Магазин'] + $row['Отдел'] + $row['Товар / родительский отдел'];
+  }
+  else {
+    $error = 'Неправильный тип объекта';
+    return NULL;
+  }
+  
+  
+          
+  $catalogObject['description'] = $row['Описание внешнее'] ? $row['Описание внешнее'] : $row['Описание локальное (отдела, магазина, района и т.д.)'];
+  $catalogObject['summary'] = !empty($row['Краткое описание']) ? $row['Краткое описание'] : $catalogObject['description'];
+  
+  // Strip history and cnahge ### markers and leave only the last value (###123###543 -> 123, ###123 -> 123)
+  $fields_to_change = array();
+  foreach ($catalogObject as $key => $value) {
+    if (strpos($value, '###') !== FALSE) {
+      list($catalogObject[$key], )  = explode('###', $value);
+      $fields_to_change[] = $key;
+    }
+  }
+  
+  $catalogObject['fields_to_change'] = $fields_to_change;
+  
+  // Create shorten summary if it's not defined.
+  if (empty($row['Краткое описание']) && !empty($catalogObject['description'])) {
+    $summary_length = 150;
+    $summary = drupal_substr($catalogObject['description'], 0, $summary_length);
+    $last_pos = strrpos($summary, ' ');
+    $catalogObject['summary'] = substr_replace($summary, '...', $last_pos);
+  }
+  
+  return $catalogObject;
+  
+  
+  
+  $objects[] = array(
+    'product_display' => 'product_a',
+    'product_type' => 'product',
+    'status' => TRUE,
+    'price' => 99.09,
+    'currency' => 'UAH',
+    'title' => 'Вино 1',
+    'description' => 'Описание продукта Вино 1', 
+    'summary' => 'Краткое описание продукта Вино 1',
+    'zp_id' => 'z010',
+    'parent_zp_id' => 'z007',
+    'subgroup' => 'подгруппа Вино',
+    'weight' => 1,
+  );
+  
+  
+  
+  
+  
+  $objects[] = array(
+    'type' => 'department',
+    'title' => 'Напитки',
+    'description' => 'Описание отдела Напитки', 
+    'summary' => 'Краткое описание отдела Напитки',
+    'zp_id' => 'z003',
+    'parent_zp_id' => 'z001',
+    'weight' => 5,
+  );
+  
+  $objects[] = array(
+    'type' => 'department',
+    'title' => 'Алкогольные напитки',
+    'description' => 'Описание отдела Алкогольные напитки', 
+    'summary' => 'Краткое описание отдела Алкогольные напитки',
+    'zp_id' => 'z004',
+    'parent_zp_id' => 'z003',
+    'weight' => 5,
+  );
+  
+  $objects[] = array(
+    'type' => 'department',
+    'title' => 'Безалкогольные напитки',
+    'description' => 'Описание отдела Безлкогольные напитки', 
+    'summary' => 'Краткое описание отдела Безалкогольные напитки',
+    'zp_id' => 'z005',
+    'parent_zp_id' => 'z003',
+    'weight' => 6,
+  );
+    
+  $objects[] = array(
+    'type' => 'subgroup',
+    'title' => 'подгруппа Вино',
+    'description' => 'Описание подгруппы Вино', 
+    //'zp_id' => 'z007',
+    'parent_zp_id' => 'z004',
+    'weight' => 2,
+  );  
+
+  $objects[] = array(
+    'type' => 'subgroup',
+    'title' => 'подгруппа Бормотуха',
+    'description' => 'Описание подгруппы Бормотуха', 
+    //'zp_id' => 'z007',
+    'parent_zp_id' => 'z004',
+    'weight' => 1,
+  );
+  
+  $objects[] = array(
+    'product_display' => 'product_a',
+    'product_type' => 'product',
+    'status' => TRUE,
+    'price' => 99.09,
+    'currency' => 'UAH',
+    'title' => 'Вино 1',
+    'description' => 'Описание продукта Вино 1', 
+    'summary' => 'Краткое описание продукта Вино 1',
+    'zp_id' => 'z010',
+    'parent_zp_id' => 'z007',
+    'subgroup' => 'подгруппа Вино',
+    'weight' => 1,
+  );
+  
+  $objects[] = array(
+    'product_display' => 'product_a',
+    'product_type' => 'product',
+    'status' => TRUE,
+    'price' => 99.09,
+    'currency' => 'UAH',
+    'title' => 'Вино 2',
+    'description' => 'Описание продукта Вино 2', 
+    'summary' => 'Краткое описание продукта Вино 2',
+    'zp_id' => 'z009',
+    'parent_zp_id' => 'z007',
+    'subgroup' => 'подгруппа Вино',
+    'weight' => 3,
+  );
+  
+  $objects[] = array(
+    'product_display' => 'product_a',
+    'product_type' => 'product',
+    'status' => TRUE,
+    'price' => 99.09,
+    'currency' => 'UAH',
+    'title' => 'Вино 3',
+    'description' => 'Описание продукта Вино 3', 
+    'summary' => 'Краткое описание продукта Вино 3',
+    'zp_id' => 'z008',
+    'parent_zp_id' => 'z004',
+    'subgroup' => 'подгруппа Вино',
+    'weight' => 2,
+  );
+  
+  
+  $objects[] = array(
+    'product_display' => 'product_a',
+    'product_type' => 'product',
+    'status' => TRUE,
+    'price' => 99.09,
+    'currency' => 'UAH',
+    'title' => 'Бормотуха 1',
+    'description' => 'Описание продукта Бормотуха 1', 
+    'summary' => 'Краткое описание продукта Бормотуха 1',
+    'zp_id' => 'z011',
+    'parent_zp_id' => 'z004',
+    'subgroup' => 'подгруппа Бормотуха',
+    'weight' => 2,
+  );
+  
+//  for($i = 1; $i< 1000; $i++) {
+//    $objects[] = array(
+//      'product_display' => 'product_a',
+//      'product_type' => 'product',
+//      'status' => TRUE,
+//      'price' => 99.09,
+//      'currency' => 'UAH',
+//      'title' => 'Бормотуха ' . ($i+3),
+//      'description' => 'Описание продукта Бормотуха 1', 
+//      'summary' => 'Краткое описание продукта Бормотуха 1',
+//      'zp_id' => 'z011',
+//      'parent_zp_id' => 'z004',
+//      'subgroup' => 'подгруппа Бормотуха',
+//      'weight' => 2,
+//    );
+//  }
+  return $objects;
+}
 
 
 /**
  * Creates new ZP object: dept, subgroup, product, etc.
  */
-function zp_commerce_processPriceList_row($op, $object, $test = FALSE){
+function zp_commerce_processPriceList_row($op, $row, $test = FALSE){
+  
+  if (!$object = zp_commerce_processPriceList_mapPriceRowToCatalogObject($row, $error)) {
+    return $error;
+  }
+  else {
+    dpm($object);
+  }
   
   if ($test) {
     //sleep(1);
     //dpm($object['Название']);
-    if ($object['zp_id'] == 'z010') {
+    if ($row['zp_id'] == 'z010') {
       return 'Error with z010';
     }
     else {
@@ -1265,16 +1376,16 @@ function zp_commerce_processPriceList_row($op, $object, $test = FALSE){
     }
   }
   
-  return;
+  
   
   switch ($object['Действие / результат']) {
     case 'new':
         return zp_commerce_processPriceList_row_add($op, $object, $test);
       break;
     
-    case 'delete':
-        return zp_commerce_processPriceList_row_delete($op, $object, $test);
-      break;
+//    case 'delete':
+//        return zp_commerce_processPriceList_row_delete($op, $object, $test);
+//      break;
     
 //    case 'change':
 //        return zp_commerce_processPriceList_row_change($op, $object, $test);
