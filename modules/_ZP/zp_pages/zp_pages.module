@@ -838,7 +838,7 @@ function zp_pages_importPrices_form($form, &$form_state) {
   $not_finished_batches = NULL;
   foreach ($results as $fid => $result) {
     
-    $errors = $result['errors'] ? 'Done with ' . $result['errors'] . ' error(s). ' : '';
+    $errors = $result->errors ? 'Done with ' . $result->errors . ' error(s). ' : '';
       
     $files[$fid] = str_replace($price_folder . '/', '', $result->uri) . ' (fid: ' . $result->fid . '), ' . date('m-d-Y H:i:s',$result->timestamp) . ', ' . intval($result->filesize/1000) . 'k, ' . $result->name . ($result->bid ? ' -------(batch MAY be continued)-------': '') . '. Status: ' . $errors . $result->op_status;
     
