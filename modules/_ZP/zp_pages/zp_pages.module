@@ -758,7 +758,9 @@ function zp_pages_importPrices_form($form, &$form_state) {
       $title_result_message = 'Результаты прерванной операции "' . $context['results']['op'] . '" from the file "' . $context['results']['file_path'] . '" ( fid: ' . $context['results']['fid'] . ')';
       krumong('devel')->dpm($title_result_message);
       
-      krumong('devel')->dpm('Статус выполненной операции: ' . $context['results']['status']);
+      $errors = $context['results']['op'] ? 'Done with ' . count($context['results']['op']) . ' errors. ' : '';
+    
+      krumong('devel')->dpm('Статус выполненной операции: ' . $errors . $context['results']['status']);
       
       //dpm($context['results']);
       krumong('devel')->dpm($context['results']);
