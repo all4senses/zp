@@ -922,7 +922,7 @@ function zp_pages_importPrices_formSubmit(&$form, &$form_state) {
     $uploaded = file_save($file);
     
     if ($uploaded == TRUE) {
-      drupal_set_message('The file has been uploaded.');
+      drupal_set_message('The file ' . zp_misc_getPathFromStreamUri($file->uri) . ' has been uploaded.');
     } // End of if ($uploaded == TRUE) {
     
   } // if ($form_state['values']['op'] == 'Import from file') {
@@ -935,11 +935,11 @@ function zp_pages_importPrices_formSubmit(&$form, &$form_state) {
       zp_pages_importPriceBatch('test', $file_data, $file);
     }
   }
-  elseif ( $form_state['values']['op'] == 'Импортировать/применить выбранный прайс-лист') {
+  elseif ($form_state['values']['op'] == 'Импортировать/применить выбранный прайс-лист') {
     drupal_set_message('Task: import/apply a price-list');
     //dpm($form_state['values']);
   }
-  elseif ( $form_state['values']['op'] == 'Показать результаты операции по выбранному файлу') {
+  elseif ($form_state['values']['op'] == 'Показать результаты операции по выбранному файлу') {
     drupal_set_message('Task: Показать результаты операции по выбранному файлу');
     //dpm($form_state['values']);
     
