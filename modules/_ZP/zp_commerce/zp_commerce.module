@@ -1131,8 +1131,7 @@ function zp_commerce_processPriceList_mapPriceRowToCatalogObject($row, &$error) 
     return NULL;
   }
   
-  dpm($row);
-  
+  //dpm($row);
   
   $catalogObject = array();
   
@@ -1377,7 +1376,7 @@ function zp_commerce_processPriceList_row($op, $row, $test = FALSE){
     return $error;
   }
   else {
-    dpm($object);
+    //dpm($object);
     return 'test';
   }
   
