@@ -1053,7 +1053,7 @@ Processed: ' . $context['results']['processed'] . '
       $status = ($op == 'test' ? 'Checking...' : 'Importing...');
     }
     
-    $errors_message = $errors_count ? ' Errors: ' .  $errors_count .  ' on ' . $context['sandbox']['progress'] . ' out of ' . $context['sandbox']['max'] . '.' : '';
+    $errors_message = $errors_count ? ' Errors: ' .  $errors_count .  ' on ' . ($context['sandbox']['progress'] - 1) . ' out of ' . $context['sandbox']['max'] . '.' : '';
     
     $status = $status . $errors_message . ' Processed: ' . $context['results']['processed'] . '. Empty rows: ' . $context['results']['processed_empty_row'] . '. Not empty: ' . $context['results']['processed_not_empty'] . '. Empty action rows: ' . $context['results']['processed_empty_action'] . '. Total depts: ' . $context['results']['processed_depts'] . '. Total products: ' . $context['results']['processed_products'] . '. New: ' . count(@$context['results']['processed_by_action']['new']) . '. Delete: ' . count(@$context['results']['processed_by_action']['delete']) . '. Change: ' . count(@$context['results']['processed_by_action']['change']) . '. Hide: ' . count(@$context['results']['processed_by_action']['hide']);
     $context['results']['status'] = $status;
