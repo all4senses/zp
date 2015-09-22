@@ -1136,7 +1136,7 @@ function zp_commerce_processPriceList_mapPriceRowToCatalogObject($row, &$error) 
       'Магазин' => NULL,
       'Отдел' => NULL,
       'Товар / родительский отдел' => NULL,
-      'Цена' => NULL,
+      'Цена (за продажную единицу)' => NULL,
       'Описание внешнее' => NULL,
       'Описание локальное (отдела, магазина, района и т.д.)' => NULL,
       'Краткое описание' => NULL,
@@ -1144,16 +1144,12 @@ function zp_commerce_processPriceList_mapPriceRowToCatalogObject($row, &$error) 
   );
   
   foreach ($row as $key => $value) {
-    dpm('..key: >' . $key . '<');
     if (array_key_exists($key, $map)) {
-      dpm('...' . $key . ' -> ' . $map[$key]);
       if (!$map[$key]) {
         // Remove a field that is NULL in the map array.
-        dpm('--------');
         continue;
       }
       else {
-        dpm('+++++++');
         // Change a name of a field (map it)
         $catalogObject[$map[$key]] = $value;
       }
@@ -1174,7 +1170,7 @@ function zp_commerce_processPriceList_mapPriceRowToCatalogObject($row, &$error) 
     $catalogObject['product_type'] = 'product';
     $catalogObject['status'] = TRUE;
     $catalogObject['currency'] = (int) $row['Магазин'] > 2 ? 'RUB' : 'UAH';
-    $catalogObject['price'] = $row['Цена'];
+    $catalogObject['price'] = $row['Цена (за продажную единицу)'];
     
     $catalogObject['parent_zp_id'] = 'z' . $row['Магазин'] . $row['Отдел'];
     $catalogObject['zp_id'] = 'z' . $row['Магазин'] . $row['Отдел'] . $row['Товар / родительский отдел'];
