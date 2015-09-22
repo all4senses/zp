@@ -1147,6 +1147,7 @@ function zp_commerce_processPriceList_mapPriceRowToCatalogObject($row, &$error) 
     if (isset($map[$key])) {
       if (!$map[$key]) {
         // Remove a field that is NULL in the map array.
+        dpm($key);
         continue;
       }
       else {
@@ -1162,8 +1163,8 @@ function zp_commerce_processPriceList_mapPriceRowToCatalogObject($row, &$error) 
   if ($row['Тип записи'] == 'отдел') {
     $catalogObject['type'] = 'department';
     
-    $catalogObject['parent_zp_id'] = $row['Магазин'] . $row['Товар / родительский отдел'];
-    $catalogObject['zp_id'] = $row['Магазин'] . $row['Отдел'];
+    $catalogObject['parent_zp_id'] = 'z' . $row['Магазин'] . $row['Товар / родительский отдел'];
+    $catalogObject['zp_id'] = 'z' . $row['Магазин'] . $row['Отдел'];
   }
   elseif (strpos($row['Тип записи'], 'товар') !== FALSE) {
     $catalogObject['product_display'] = 'product_a';
@@ -1172,8 +1173,8 @@ function zp_commerce_processPriceList_mapPriceRowToCatalogObject($row, &$error) 
     $catalogObject['currency'] = (int) $row['Магазин'] > 2 ? 'RUB' : 'UAH';
     $catalogObject['price'] = $row['Цена'];
     
-    $catalogObject['parent_zp_id'] = $row['Магазин'] . $row['Отдел'];
-    $catalogObject['zp_id'] = $row['Магазин'] . $row['Отдел'] . $row['Товар / родительский отдел'];
+    $catalogObject['parent_zp_id'] = 'z' . $row['Магазин'] . $row['Отдел'];
+    $catalogObject['zp_id'] = 'z' . $row['Магазин'] . $row['Отдел'] . $row['Товар / родительский отдел'];
   }
   else {
     $error = 'Неправильный тип объекта';
