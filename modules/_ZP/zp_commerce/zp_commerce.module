@@ -1144,7 +1144,7 @@ function zp_commerce_processPriceList_mapPriceRowToCatalogObject($row, &$error) 
   );
   
   foreach ($row as $key => $value) {
-    dpm('..key: ' . $key);
+    dpm('..key: >' . $key . '<');
     if (isset($map[$key])) {
       dpm('...' . $key . ' -> ' . $map[$key]);
       if (!$map[$key]) {
