@@ -1163,8 +1163,7 @@ function zp_commerce_processPriceList_mapPriceRowToCatalogObject($row, &$error) 
   elseif (strpos($row['Тип записи'], 'товар') !== FALSE) {
     $catalogObject['product_display'] = 'product_a';
     $catalogObject['product_type'] = 'product';
-    $catalogObject['status'] = TRUE;
-    $catalogObject['currency'] = (int) $row['Магазин'] > 2 ? 'RUB' : 'UAH';
+    $catalogObject['Валюта'] = (int) $row['Магазин'] > 2 ? 'RUB' : 'UAH';
     
     $catalogObject['parent_zp_id'] = 'z' . $row['Магазин'] . $row['Отдел'];
     $catalogObject['zp_id'] = 'z' . $row['Магазин'] . $row['Отдел'] . $row['Товар / родительский отдел'];
