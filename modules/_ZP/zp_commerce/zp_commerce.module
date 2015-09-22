@@ -990,6 +990,8 @@ function zp_commerce_importPriceList_batch_process($op, $priceRows, $file, &$con
     '#value' => $context['results']['history'],
   );
 
+  $errors_count = count($context['results']['errors']);
+  
   $context['message'] = $message . ' ' 
                       . render($text_field)
                       . '
@@ -1005,7 +1007,9 @@ Processed: ' . $context['results']['processed'] . '
 <br><br>New: ' . count(@$context['results']['processed_by_action']['new']) . '
 <br>Delete: ' . count(@$context['results']['processed_by_action']['delete']) . '
 <br>Change: ' . count(@$context['results']['processed_by_action']['change']) . '  
-<br>Hide: ' . count(@$context['results']['processed_by_action']['hide']) . '<br><br>'
+<br>Hide: ' . count(@$context['results']['processed_by_action']['hide']) . '
+
+<br><br>Errors: ' . $errors_count . '<br><br>'
                       . l('Stop the batch', /*'zp/add_objects'*/ 'admin/content/import-price');
 
   $context['results']['history'] = $message . '
@@ -1040,7 +1044,7 @@ Processed: ' . $context['results']['processed'] . '
             
   if ($context['finished'] == 1 || $error_message) {
     
-    $errors_count = count($context['results']['errors']);
+    
   
     if ($context['finished'] == 1) {
       $status = ($op == 'test' ? 'Checked.' : 'Imported.');
