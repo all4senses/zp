@@ -758,7 +758,7 @@ function zp_pages_importPrices_form($form, &$form_state) {
       $title_result_message = 'Результаты прерванной операции "' . $context['results']['op'] . '" from the file "' . $context['results']['file_path'] . '" ( fid: ' . $context['results']['fid'] . ')';
       krumong('devel')->dpm($title_result_message);
       
-      $errors = $context['results']['op'] ? 'Done with ' . count($context['results']['op']) . ' errors. ' : '';
+      $errors = $context['results']['errors'] ? 'Done with ' . count($context['results']['errors']) . ' error(s). ' : '';
     
       krumong('devel')->dpm('Статус выполненной операции: ' . $errors . $context['results']['status']);
       
@@ -819,7 +819,7 @@ function zp_pages_importPrices_form($form, &$form_state) {
   $query->fields('u', array('name'));
   
   $query->leftJoin('zp_price_import_results', 'r', 'r.fid = f.fid');
-  $query->fields('r', array('batch_id', 'batch_finished', 'op'));
+  $query->fields('r', array('batch_id', 'batch_finished', 'op', 'errors'));
   $query->addField('r', 'status', 'op_status');
   $query->addField('r', 'filename', 'filename_path');
   
@@ -837,7 +837,10 @@ function zp_pages_importPrices_form($form, &$form_state) {
   $files = array();
   $not_finished_batches = NULL;
   foreach ($results as $fid => $result) {
-    $files[$fid] = str_replace($price_folder . '/', '', $result->uri) . ' (fid: ' . $result->fid . '), ' . date('m-d-Y H:i:s',$result->timestamp) . ', ' . intval($result->filesize/1000) . 'k, ' . $result->name . ($result->bid ? ' -------(batch MAY be continued)-------': '') . '. Status: ' . $result->op_status;
+    
+    $errors = $result['errors'] ? 'Done with ' . $result['errors'] . ' error(s). ' : '';
+      
+    $files[$fid] = str_replace($price_folder . '/', '', $result->uri) . ' (fid: ' . $result->fid . '), ' . date('m-d-Y H:i:s',$result->timestamp) . ', ' . intval($result->filesize/1000) . 'k, ' . $result->name . ($result->bid ? ' -------(batch MAY be continued)-------': '') . '. Status: ' . $errors . $result->op_status;
     
     if ($result->bid && $result->op_status && !$result->batch_finished) {
       $not_finished_batches .= '<div>' . l(t('Продолжить'), 'batch', array('query' => array('op' => 'start', 'id' => $result->batch_id))) . t(' незавершенную пакетную операцию "') . $result->op . '" из файла "' . $result->filename_path . '" (fid: ' . $result->fid . '), ' . t('batch id=') . $result->batch_id . '</div>';

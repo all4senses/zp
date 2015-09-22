@@ -1083,7 +1083,7 @@ function zp_commerce_importPriceList_batch_finished($success, $results, $operati
   
   drupal_set_message($title_result_message, 'warning');
   
-  $errors = $results['op'] ? 'Done with ' . count($results['op']) . ' errors. ' : '';
+  $errors = $results['errors'] ? 'Done with ' . count($results['errors']) . ' error(s). ' : '';
   
   krumong('devel')->dpm('Статус выполненной операции: ' . $errors . $results['status']);
   
