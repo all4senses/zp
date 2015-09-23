@@ -1165,18 +1165,17 @@ function zp_pages_getPriceFromFile($file = NULL, $fid = NULL) {
             $object = zp_commerce_processPriceList_mapPriceRowToCatalogObject($row, &$error);
             $file_data_final[] = $object;
             if ($error) {
-              dpm($error);
               end($file_data_final);
               $errors[key($file_data_final)] = $error;
             }
           }
         }
         drupal_set_message("Rows with not empty Action field: " . count($file_data_final));
-        ////if (!empty($errors)) 
-          {
-          $file_data_final = NULL;
+        if (!empty($errors)) {
           drupal_set_message('Некоторые строки/поля содержат ошибки (см. ниже список). Исправьте их, перезагрузите файл и попробуйте обработать его заново.');
+          dpm($file_data_final);
           dpm($errors);
+          $file_data_final = NULL;
         }
         
       } // End of if (!empty($file_data)) {
