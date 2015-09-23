@@ -1156,15 +1156,16 @@ function zp_pages_getPriceFromFile($file = NULL, $fid = NULL) {
         
         
         $errors = array();
-        foreach ($file_data as $file_key => $row) {
+        foreach ($file_data as $row) {
           // Remove empty rows and empty actions rows from a price.
           if (empty($row['Название']) || $row['Действие / результат'] == 'Action' || empty($row['Действие / результат'])) {
             continue;
           }
           else {
-            $file_data_final[] = zp_commerce_processPriceList_mapPriceRowToCatalogObject($row, &$error);
+            $object = zp_commerce_processPriceList_mapPriceRowToCatalogObject($row, &$error);
+            $file_data_final[] = $object;
             if ($error) {
-              $errors[$file_key] = $error;
+              $errors[key($file_data_final)] = $error;
             }
           }
         }
