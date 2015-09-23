@@ -883,7 +883,7 @@ function zp_commerce_importPriceList_batch_process($op, $priceRows, $file, &$con
     $context['sandbox']['progress'] = 0;
    
     // Save object count for the termination message.
-    $context['sandbox']['max'] = count($priceRows) - 1;
+    $context['sandbox']['max'] = count($priceRows);
    
     $file_path = zp_misc_getPathFromStreamUri($file->uri);
     $context['results']['finished'] = FALSE;
