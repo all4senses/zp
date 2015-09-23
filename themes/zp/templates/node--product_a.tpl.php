@@ -78,6 +78,7 @@
           hide($content['links']);
           hide($content['field_topics']);
           
+          dpm($content);
           if (!$page) {
             //dpm($content);
 
