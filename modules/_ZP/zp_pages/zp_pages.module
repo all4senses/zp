@@ -1165,6 +1165,7 @@ function zp_pages_getPriceFromFile($file = NULL, $fid = NULL) {
             $object = zp_commerce_processPriceList_mapPriceRowToCatalogObject($row, &$error);
             $file_data_final[] = $object;
             if ($error) {
+              dpm($error);
               $errors[array_search($object, $file_data_final)] = $error;
             }
           }
