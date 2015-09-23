@@ -1555,7 +1555,7 @@ function zp_commerce_addNewDeptAndMenuItem($op, $object) {
   
   // Create a term in the menu Catalog and connect it to the just created department node.
   // ---------------------------------------------------------------------------------------------------
-  zp_commerce_addNewCatalogTerm($object);
+  zp_commerce_addNewCatalogTerm($op, $object);
   
   // Taxonomy term itself will be assigned to this node automatically on taxonomy_menu item creation via hook zp_commerce_taxonomy_menu_save.
   
