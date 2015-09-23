@@ -270,6 +270,8 @@ function zp_commerce_formCart_submit($form, &$form_state) {
  */
 function zp_commerce_getShopData($zp_id) {
   
+  dpm(debug_backtrace());
+  
   $query = db_select('field_data_field_zp_id', 'zpid');
   $query->condition('zpid.field_zp_id_value', $zp_id);
   //$query->fields('zpid', array('entity_id'));
