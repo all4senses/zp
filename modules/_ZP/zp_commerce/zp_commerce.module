@@ -1606,12 +1606,13 @@ function zp_commerce_addNewProductAndConnectItToSubgroupCatalogTerm($op, $object
  
   // Find parent term tid by parent_zp_id.
   if (!$parent_tid = zp_misc_fieldRead_idByValue_single('zp_id', $object['parent_zp_id'], 'taxonomy_term', 'catalog')) {
-    $error_message = 'There is no dept with zp_id ' . $object['parent_zp_id'];
+    $error_message = 'Нет отдела с zp_id ' . $object['parent_zp_id'] . ', заданного как родительский для данного товара';
     drupal_set_message($error_message, 'warning');
     return $error_message;
   }
   
   // Search for term which is a child of this product parent dept (and just found parent term) and has a name of subgroup which is set in object
+  /*
   $query = db_select('taxonomy_term_data', 'td');
   $query->fields('td', array('tid'))
         ->condition('name', $object['subgroup']);
@@ -1622,6 +1623,7 @@ function zp_commerce_addNewProductAndConnectItToSubgroupCatalogTerm($op, $object
     drupal_set_message($error_message, 'warning');
     return $error_message;
   }
+  */
   
   //dpm($subgroup_term_tid);
   
@@ -1641,17 +1643,17 @@ function zp_commerce_addNewProductAndConnectItToSubgroupCatalogTerm($op, $object
   // Generate a new product object
   $new_product = commerce_product_new($object['product_type']);
 
-  $new_product->status = isset($object['status']) ? $object['status'] : TRUE;
+  $new_product->status = TRUE; //isset($object['status']) ? $object['status'] : TRUE;
   $new_product->uid = $GLOBALS['user']->uid;
 
   $new_product->sku = $object['zp_id'];
-  $new_product->title = $object['title'];
+  $new_product->title = $object['Название'];
   $new_product->created = $new_product->changed = time();
 
   //commerce_price[und][0][amount]
   $price = array(LANGUAGE_NONE => array(0 => array(
-    'amount' => $object['price'] * 100,
-    'currency_code' => $object['currency'], //commerce_default_currency(),
+    'amount' => $object['Цена (за продажную единицу)'] * 100,
+    'currency_code' => $object['Валюта'], //commerce_default_currency(),
   )));
   $form_state['values']['commerce_price'] = $price;
 
@@ -1661,7 +1663,7 @@ function zp_commerce_addNewProductAndConnectItToSubgroupCatalogTerm($op, $object
   commerce_product_save($new_product);
   
   if (empty($new_product->product_id)) {
-    $error_message = '0.Error has occured while creating a Product type "' . $object['title'] . '" with zp_id ' . $object['zp_id'];
+    $error_message = '0.Error has occured while creating a Product type "' . $object['Название'] . '" with zp_id ' . $object['zp_id'];
     drupal_set_message($error_message, 'error');
     return $error_message;
   }
@@ -1685,7 +1687,7 @@ function zp_commerce_addNewProductAndConnectItToSubgroupCatalogTerm($op, $object
   $node->created = $current_time;
   $node->changed = $current_time;
   
-  $node->title = $object['title'];
+  $node->title = $object['Название'];
   $node->language = LANGUAGE_NONE; //$language->language; 
   $node->uid = $GLOBALS['user']->uid;
   $node->status = 1;
@@ -1694,15 +1696,15 @@ function zp_commerce_addNewProductAndConnectItToSubgroupCatalogTerm($op, $object
   $node->comment = 0;
   
   $node->body[$node->language][0]['format'] = 'full_html';
-  $node->body[$node->language][0]['value'] = $object['description'];
-  $node->body[$node->language][0]['summary'] = $object['summary'];
-  $node->body[$node->language][0]['safe_value'] = check_plain($object['description']);
-  $node->body[$node->language][0]['safe_summary'] = check_plain($object['summary']);
+  $node->body[$node->language][0]['value'] = $object['Описание'];
+  $node->body[$node->language][0]['summary'] = $object['Краткое описание'];
+  $node->body[$node->language][0]['safe_value'] = check_plain(@$object['Описание']);
+  $node->body[$node->language][0]['safe_summary'] = check_plain(@$object['Краткое описание']);
   
   $node->field_zp_id[$node->language][0]['value'] = $object['zp_id'];
   $node->field_parent_zp_id[$node->language][0]['value'] = $object['parent_zp_id'];
   
-  $node->field_c_weight[$node->language][0]['value'] = $object['weight'];
+  $node->field_c_weight[$node->language][0]['value'] = $object['Вес элемента в группе'];
 
   $node->{'field_' . $product_type}[$node->language][0]['product_id'] = $product_id;
   
@@ -1722,24 +1724,24 @@ function zp_commerce_addNewProductAndConnectItToSubgroupCatalogTerm($op, $object
   */
   
   if (!$node = node_submit($node)) {
-    $error_message = '1.Error has occured while saving a Product display "' . $object['title'] . '" with zp_id ' . $object['zp_id'];
+    $error_message = '1. Ошибка при создании Дисплея продукта "' . $object['Название'] . '" с zp_id ' . $object['zp_id'];
     drupal_set_message($error_message, 'error');
     return $error_message;
   }
 
   node_save($node);
   if (empty($node->nid)) {
-    $error_message = '2.Error has occured while saving a Product display "' . $object['title'] . '" with zp_id ' . $object['zp_id'];
+    $error_message = '2. Ошибка при сохранении Дисплея продукта "' . $object['Название'] . '" с zp_id ' . $object['zp_id'];
     drupal_set_message($error_message, 'error');
     return $error_message;
   }
   
-  drupal_set_message('A new Product display "' . $object['title'] . '" with zp_id ' . $object['zp_id'] . ' was created, Success!', 'warning');
+  drupal_set_message('Успешно создан новый Дисплей продукта "' . $object['Название'] . '" с zp_id ' . $object['zp_id'], 'warning');
 
   
   // Connect the subgroup term (found above) to this product node.
-  zp_misc_fieldTermReferenceSave('catalog', $node->nid, $subgroup_term_tid, 'node', $product_display);
-  drupal_set_message('The Product display "' . $object['title'] . '" has been connected to a corresponding Product type and the subgroup term "' . $subgroup_term_tid . '".', 'warning');
+//  zp_misc_fieldTermReferenceSave('catalog', $node->nid, $subgroup_term_tid, 'node', $product_display);
+//  drupal_set_message('The Product display "' . $object['Название'] . '" has been connected to a corresponding Product type and the subgroup term "' . $subgroup_term_tid . '".', 'warning');
   
   
   /*
