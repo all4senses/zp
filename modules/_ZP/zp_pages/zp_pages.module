@@ -1166,7 +1166,8 @@ function zp_pages_getPriceFromFile($file = NULL, $fid = NULL) {
             $file_data_final[] = $object;
             if ($error) {
               dpm($error);
-              $errors[current($file_data_final)] = $error;
+              end($file_data_final);
+              $errors[key($file_data_final)] = $error;
             }
           }
         }
