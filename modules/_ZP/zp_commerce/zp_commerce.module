@@ -1128,10 +1128,10 @@ function zp_commerce_importPriceList_batch_finished($success, $results, $operati
  */
 function zp_commerce_processPriceList_mapPriceRowToCatalogObject($row, &$error) {
   
-  $error = '...test error...'; //NULL;
+  //$error = '...test error...'; //NULL;
   
   if (empty($row['Название']) ||  empty($row['Тип записи']) ||  empty($row['Магазин']) || empty($row['Отдел']) || empty($row['Товар / родительский отдел'])) {
-    $error = 'Не задано одно или несколько из обязательных полей';
+    $error = $row['Название'] . ': Не задано одно или несколько из обязательных полей';
     return NULL;
   }
   

@@ -1169,7 +1169,8 @@ function zp_pages_getPriceFromFile($file = NULL, $fid = NULL) {
           }
         }
         drupal_set_message("Rows with not empty Action field: " . count($file_data_final));
-        if (!empty($errors)) {
+        ////if (!empty($errors)) 
+          {
           $file_data_final = NULL;
           drupal_set_message('Некоторые строки/поля содержат ошибки (см. ниже список). Исправьте их, перезагрузите файл и попробуйте обработать его заново.');
           dpm($errors);
