@@ -945,6 +945,12 @@ function zp_pages_importPrices_formSubmit(&$form, &$form_state) {
   elseif ($form_state['values']['op'] == 'Импортировать/применить выбранный прайс-лист') {
     drupal_set_message('Task: import/apply a price-list');
     //dpm($form_state['values']);
+    
+    $file = file_load($form_state['values']['files']);
+      
+    if ($file_data = zp_pages_getPriceFromFile($file)) {
+      zp_pages_importPriceBatch('import', $file_data, $file);
+    }
   }
   elseif ($form_state['values']['op'] == 'Показать результаты операции по выбранному файлу') {
     drupal_set_message('Task: Показать результаты операции по выбранному файлу');
@@ -968,11 +974,12 @@ function zp_pages_importPrices_formSubmit(&$form, &$form_state) {
 
       $result = $query->execute()->fetchObject();
       
-      krumong('devel')->dpm('Результаты выполнения операции ' . $result->op . ' над файлом ' . $result->filename . ':');
+      
       if (!$result) {
         krumong('devel')->dpm('Нет данных по файлу ' . $result->filename);
       }
       else {
+        krumong('devel')->dpm('Результаты выполнения операции ' . $result->op . ' над файлом ' . $result->filename . ':');
         $data = unserialize($result->data);
         //unset($data['objects_source']);
         $data['objects_source'] = 'Array, just hidden here... look into DB for it'.

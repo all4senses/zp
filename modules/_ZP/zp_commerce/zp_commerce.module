@@ -955,7 +955,7 @@ function zp_commerce_importPriceList_batch_process($op, $priceRows, $file, &$con
           
           $current_object_title = 'zp_id: ' . $row['zp_id'] . ($row['Тип записи'] == 'отдел' ? ' ----> ОТДЕЛ' : '') . ', "' . $row['Название'] . '"';
           
-          if (!$error_message = zp_commerce_processPriceList_row($op, $row, TRUE)) {
+          if (!$error_message = zp_commerce_processPriceList_row($op, $row, FALSE)) {
             $current_object_result_message = 'Success: "' . $row['Действие / результат'] . '", ' . $current_object_title;
           }
           else {
@@ -1401,7 +1401,7 @@ function zp_commerce_processPriceList_mapPriceRowToCatalogObject($row, &$error) 
  */
 function zp_commerce_processPriceList_row($op, $object, $test = FALSE){
   
-  if ($test) {
+  if ($op == 'test') {
     //sleep(1);
     //dpm($object['Название']);
     if ($object['zp_id'] == 'z010') {
@@ -1414,7 +1414,9 @@ function zp_commerce_processPriceList_row($op, $object, $test = FALSE){
   
   switch ($object['Действие / результат']) {
     case 'new':
-        return zp_commerce_processPriceList_row_add($op, $object, $test);
+        //return zp_commerce_processPriceList_row_add($op, $object, $test);
+        zp_commerce_processPriceList_row_add($op, $object, $test);
+        return 'test add....';
       break;
     
 //    case 'delete':
@@ -1493,7 +1495,7 @@ function zp_commerce_addNewDeptAndMenuItem($op, $object) {
   $node->created = $current_time;
   $node->changed = $current_time;
   
-  $node->title = $object['title'];
+  $node->title = $object['Название'];
   $node->language = LANGUAGE_NONE; //$language->language; 
   $node->uid = $user->uid;
   $node->status = 1;
@@ -1502,13 +1504,13 @@ function zp_commerce_addNewDeptAndMenuItem($op, $object) {
   $node->comment = 0;
   
   $node->body[$node->language][0]['format'] = 'full_html';
-  $node->body[$node->language][0]['value'] = $object['description'];
-  $node->body[$node->language][0]['summary'] = $object['summary'];
-  $node->body[$node->language][0]['safe_value'] = check_plain($object['description']);
-  $node->body[$node->language][0]['safe_summary'] = check_plain($object['summary']);
+  $node->body[$node->language][0]['value'] = @$object['Описание'];
+  $node->body[$node->language][0]['summary'] = @$object['Краткое описание'];
+  $node->body[$node->language][0]['safe_value'] = check_plain(@$object['Описание']);
+  $node->body[$node->language][0]['safe_summary'] = check_plain(@$object['Краткое описание']);
   
   $node->field_zp_id[$node->language][0]['value'] = $object['zp_id'];
-  $node->field_c_weight[$node->language][0]['value'] = $object['weight'];
+  $node->field_c_weight[$node->language][0]['value'] = @$object['Вес элемента в группе'];
 
   /*
   $node->field_zp_id[$node->language][0] = array(
@@ -1527,19 +1529,19 @@ function zp_commerce_addNewDeptAndMenuItem($op, $object) {
   */
   
   if (!$node = node_submit($node)) {
-    $error_message = '1.Error has occured while saving a Department ' . $object['title'];
+    $error_message = '1. Ошибка при сохранении отдела "' . $object['Название'] . '"';
     drupal_set_message($error_message, 'error');
     return $error_message;
   }
 
   node_save($node);
   if (empty($node->nid)) {
-    $error_message = '2.Error has occured while saving a Department ' . $object['title'];
+    $error_message = '2. Ошибка при сохранении отдела "' . $object['Название'] . '"';
     drupal_set_message($error_message, 'error');
     return $error_message;
   }
   
-  drupal_set_message('A new department "' . $object['title']. '" was created, Success!', 'warning');
+  drupal_set_message('Новый отдел "' . $object['Название'] . '" был создан Успешно!', 'warning');
 
   
   
@@ -1571,10 +1573,10 @@ function zp_commerce_addNewCatalogTerm($op, $object) {
   $parent_tid = zp_misc_fieldRead_idByValue_single('zp_id', $object['parent_zp_id'], 'taxonomy_term', 'catalog');
   
   $catalog_term = (object) array(
-    'name' => !empty($object['menu_item_title']) ? $object['menu_item_title'] : $object['title'],
+    'name' => !empty($object['menu_item_title']) ? $object['menu_item_title'] : $object['Название'],
     'vid' => $catalog_voc->vid,
     'parent' => array($parent_tid),
-    'weight' => $object['weight'],
+    'weight' => @$object['Вес элемента в группе'],
     'field_zp_id' => !empty($object['zp_id']) ? array('und' => array(0 => array('value' => $object['zp_id']))) : NULL,
   );
   
@@ -1789,7 +1791,7 @@ function zp_commerce_taxonomy_menu_save($term, $menu_link, $mlid) {
       
     // If there is a dept/shop/etc connected to this term, show link to this dept instead the link to the term.
     if ($object_nid = zp_commerce_findDeptOrShopOrCityByZpIDofTerm_andConnectItToTerm($term)) {
-      // dpm($term);
+       dpm($term);
       // And save the renewed item again, as in taxonomy_menu_menu_link_prepare($term, $menu_name).
       $menu_link['link_path'] = 'node/' . $object_nid;
     }
@@ -1804,6 +1806,7 @@ function zp_commerce_taxonomy_menu_save($term, $menu_link, $mlid) {
       }
       menu_link_delete($menu_link['mlid']);
       _taxonomy_menu_delete_item($catalog_voc->vid, $term->tid);
+      dpm('Completely remove already created menu item (originally connected to taxonomy/term/xxx) from the menu');
       return FALSE;
     }
     
@@ -1818,7 +1821,7 @@ function zp_commerce_taxonomy_menu_save($term, $menu_link, $mlid) {
     
     $mlid = menu_link_save($menu_link);
     
-    //dpm($menu_link);
+    dpm($menu_link);
 
 }
 
