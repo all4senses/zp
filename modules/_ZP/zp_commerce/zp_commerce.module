@@ -901,6 +901,8 @@ function zp_commerce_importPriceList_batch_process($op, $priceRows, $file, &$con
     $context['results']['processed_depts'] = 0;
     $context['results']['processed_products'] = 0;
     
+    $context['results']['status'] = NULL;
+    
     $context['results']['errors'] = NULL;
     
     $context['results']['zp_current_batch_id'] = $_GET['id'];
@@ -1514,6 +1516,7 @@ function zp_commerce_addNewDeptAndMenuItem($op, $object) {
   $node->body[$node->language][0]['safe_summary'] = check_plain(@$object['Краткое описание']);
   
   $node->field_zp_id[$node->language][0]['value'] = $object['zp_id'];
+  $node->field_parent_zp_id[$node->language][0]['value'] = $object['parent_zp_id'];
   $node->field_c_weight[$node->language][0]['value'] = $object['Вес элемента в группе'];
 
   /*
@@ -1583,6 +1586,9 @@ function zp_commerce_addNewCatalogTerm($op, $object) {
     'weight' => $object['Вес элемента в группе'],
     'field_zp_id' => !empty($object['zp_id']) ? array('und' => array(0 => array('value' => $object['zp_id']))) : NULL,
   );
+  
+  dpm($object);
+  dpm($catalog_term);
   
   taxonomy_term_save($catalog_term);
   //dpm($menu_item_term);
