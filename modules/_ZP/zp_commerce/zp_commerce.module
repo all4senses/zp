@@ -966,7 +966,7 @@ function zp_commerce_importPriceList_batch_process($op, $priceRows, $file, &$con
   }
   
   if (!empty($row['Название'])) {
-    $context['results']['last_not_empty_object_id'] = $row['id'];
+    $context['results']['last_not_empty_object_id'] = $current_object_id;
     $context['results']['last_not_empty_object_zp_id'] = $row['zp_id'];
     if ($row['Тип записи'] == 'отдел') {
       $context['results']['processed_depts']++;
