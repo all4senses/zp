@@ -1134,7 +1134,7 @@ function zp_commerce_processPriceList_mapPriceRowToCatalogObject($row, &$error) 
   $not_filled_fields = NULL;
   
   foreach ($must_be_filled as $field) {
-    if (empty($row[$field]) {
+    if (empty($row[$field])) {
       $not_filled_fields[] = $field;
     }
   }
