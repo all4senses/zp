@@ -342,7 +342,7 @@ function zp_commerce_form_commerce_cart_add_to_cart_form_alter(&$form, &$form_st
   if (!$field_qmeasure) {
     $field_qmeasure = 'items';
   }
-  //dpm($form);
+  dpm($form);
   //dpm($field_qmeasure);
   // Set quantity measure suffix mark (items, kg, g, etc).
   $form['quantity']['#suffix'] = '<div class="qmeasure">' . $field_qmeasure . '</div>';
