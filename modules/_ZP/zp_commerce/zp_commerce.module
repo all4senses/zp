@@ -883,7 +883,7 @@ function zp_commerce_importPriceList_batch_process($op, $priceRows, $file, &$con
     $context['sandbox']['progress'] = 0;
    
     // Save object count for the termination message.
-    $context['sandbox']['max'] = count($priceRows);
+    $context['sandbox']['max'] = count($priceRows) - 1;
    
     $file_path = zp_misc_getPathFromStreamUri($file->uri);
     $context['results']['finished'] = FALSE;
@@ -1028,7 +1028,12 @@ Processed: ' . $context['results']['processed'] . '
     $context['finished'] = 1;
   }
   elseif ($context['sandbox']['progress'] != $context['sandbox']['max']) {
-    $context['finished'] = ($context['sandbox']['progress'] / $context['sandbox']['max']);
+    if ($context['sandbox']['progress'] >= $context['sandbox']['max']) {
+      $context['finished'] = 1;
+    }
+    else {
+      $context['finished'] = ($context['sandbox']['progress'] / $context['sandbox']['max']);
+    }
   }
   
   if ($context['finished'] < 1) {
