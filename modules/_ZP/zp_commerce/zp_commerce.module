@@ -1241,6 +1241,10 @@ function zp_commerce_processPriceList_mapPriceRowToCatalogObject($row, &$error) 
     unset($catalogObject['Краткое описание']);
   }
   
+  if (empty($catalogObject['Вес элемента в группе'])) {
+    $catalogObject['Вес элемента в группе'] = 0;
+  }
+  
   return $catalogObject;
   
   
@@ -1510,7 +1514,7 @@ function zp_commerce_addNewDeptAndMenuItem($op, $object) {
   $node->body[$node->language][0]['safe_summary'] = check_plain(@$object['Краткое описание']);
   
   $node->field_zp_id[$node->language][0]['value'] = $object['zp_id'];
-  $node->field_c_weight[$node->language][0]['value'] = @$object['Вес элемента в группе'];
+  $node->field_c_weight[$node->language][0]['value'] = $object['Вес элемента в группе'];
 
   /*
   $node->field_zp_id[$node->language][0] = array(
@@ -1576,7 +1580,7 @@ function zp_commerce_addNewCatalogTerm($op, $object) {
     'name' => !empty($object['menu_item_title']) ? $object['menu_item_title'] : $object['Название'],
     'vid' => $catalog_voc->vid,
     'parent' => array($parent_tid),
-    'weight' => @$object['Вес элемента в группе'],
+    'weight' => $object['Вес элемента в группе'],
     'field_zp_id' => !empty($object['zp_id']) ? array('und' => array(0 => array('value' => $object['zp_id']))) : NULL,
   );
   
