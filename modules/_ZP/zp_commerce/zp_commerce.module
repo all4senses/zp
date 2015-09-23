@@ -1130,8 +1130,16 @@ function zp_commerce_processPriceList_mapPriceRowToCatalogObject($row, &$error) 
   
   //$error = '...test error...'; //NULL;
   
-  if (empty($row['Название']) ||  empty($row['Тип записи']) ||  empty($row['Магазин']) || empty($row['Отдел']) || empty($row['Товар / родительский отдел'])) {
-    $error = $row['Название'] . ': Не задано одно или несколько из обязательных полей';
+  $must_be_filled = array('Название', 'Тип записи', 'Магазин', 'Отдел', 'Товар / родительский отдел');
+  $not_filled_fields = NULL;
+  
+  foreach ($must_be_filled as $field) {
+    if (empty($row[$field]) {
+      $not_filled_fields[] = $field;
+    }
+  }
+  if (!empty($not_filled_fields)) {
+    $error = $row['Название'] . ': Не задано одно или несколько из обязательных полей -> ' . implode(',', $not_filled_fields);
     return NULL;
   }
   
