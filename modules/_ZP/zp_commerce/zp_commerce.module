@@ -1128,7 +1128,7 @@ function zp_commerce_importPriceList_batch_finished($success, $results, $operati
  */
 function zp_commerce_processPriceList_mapPriceRowToCatalogObject($row, &$error) {
   
-  //$error = '...test error...'; //NULL;
+  $error = NULL;
   
   $must_be_filled = array('Название', 'Тип записи', 'Магазин', 'Отдел', 'Товар / родительский отдел');
   $not_filled_fields = NULL;
