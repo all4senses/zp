@@ -1204,6 +1204,7 @@ function zp_commerce_processPriceList_mapPriceRowToCatalogObject($row, &$error) 
   $catalogObject['Описание'] = $row['Описание внешнее'] ? $row['Описание внешнее'] : $row['Описание локальное (отдела, магазина, района и т.д.)'];
   $catalogObject['Краткое описание'] = !empty($row['Краткое описание']) ? $row['Краткое описание'] : $catalogObject['Описание'];
   
+  
   // Strip history and cnahge ### markers and leave only the last value (###123###543 -> 123, ###123 -> 123)
   $fields_to_change = array();
   foreach ($catalogObject as $key => $value) {
@@ -1229,6 +1230,13 @@ function zp_commerce_processPriceList_mapPriceRowToCatalogObject($row, &$error) 
     $summary = drupal_substr($catalogObject['Описание'], 0, $summary_length);
     $last_pos = strrpos($summary, ' ');
     $catalogObject['Краткое описание'] = substr_replace($summary, '...', $last_pos);
+  }
+  
+  if (!$catalogObject['Описание']) {
+    unset($catalogObject['Описание']);
+  }
+  if (!$catalogObject['Краткое описание']) {
+    unset($catalogObject['Краткое описание']);
   }
   
   return $catalogObject;
