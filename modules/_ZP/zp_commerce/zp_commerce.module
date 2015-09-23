@@ -131,7 +131,7 @@ function zp_commerce_form_alter(&$form, &$form_state, $form_id) {
       
       
       
-      
+      dpm('1: ' . $order->field_u_order_shop_zp_id['und'][0]['value']);
       $current_cart_shop_data = zp_commerce_getShopData($order->field_u_order_shop_zp_id['und'][0]['value']);
       //dpm('$current_cart_shop_data');
       //dpm($current_cart_shop_data);
@@ -287,7 +287,7 @@ function zp_commerce_getShopData($zp_id) {
   dpm('$zp_id = ' . $zp_id);
   //dpm($shop);
   if ($zp_id == 'z0') {
-    dpm(debug_backtrace());
+    //dpm(debug_backtrace());
   }
     
   $query = db_select('field_data_field_zp_access', 'a');
@@ -401,10 +401,12 @@ function zp_commerce_form_commerce_cart_add_to_cart_form_alter(&$form, &$form_st
     
     // Define this variable not inside of condition ELSE below, 
     // because it will be used later in hook  function zp_commerce_entity_view_alter(&$build, $type) for prices visibility for current user.
+    dpm('2: ' . $current_page_products_shop_zp_id);
     $current_page_products_shop_data = zp_commerce_getShopData($current_page_products_shop_zp_id);
     
     if ($current_cart_shop_zp_id && $current_page_products_shop_zp_id != $current_cart_shop_zp_id) {
       // If in cart the same shop that on the current page products.
+      dpm('3: ' . $current_cart_shop_zp_id);
       $current_cart_shop_data = zp_commerce_getShopData($current_cart_shop_zp_id);
       $deny_addtocart_message = 'There are already products of other shop ' .  $current_cart_shop_data['title'] . ' (' . $current_cart_shop_data['extra_data']['address'] . ') in the cart cart! You have to remove all products of that shop from the cart and after that add products of the current shop.';
     }
