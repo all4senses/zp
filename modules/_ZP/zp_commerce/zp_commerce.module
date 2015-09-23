@@ -270,7 +270,7 @@ function zp_commerce_formCart_submit($form, &$form_state) {
  */
 function zp_commerce_getShopData($zp_id) {
   
-  dpm(debug_backtrace());
+  //dpm(debug_backtrace());
   
   $query = db_select('field_data_field_zp_id', 'zpid');
   $query->condition('zpid.field_zp_id_value', $zp_id);
@@ -342,7 +342,7 @@ function zp_commerce_form_commerce_cart_add_to_cart_form_alter(&$form, &$form_st
   if (!$field_qmeasure) {
     $field_qmeasure = 'items';
   }
-  dpm($form);
+  //dpm($form);
   //dpm($field_qmeasure);
   // Set quantity measure suffix mark (items, kg, g, etc).
   $form['quantity']['#suffix'] = '<div class="qmeasure">' . $field_qmeasure . '</div>';
