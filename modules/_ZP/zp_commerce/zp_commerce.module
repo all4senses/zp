@@ -363,10 +363,10 @@ function zp_commerce_form_commerce_cart_add_to_cart_form_alter(&$form, &$form_st
   global $current_page_products_shop_zp_id, $current_cart_shop_zp_id, $addtocart_access_processed, $deny_addtocart_message,
           $current_cart_shop_data, $current_page_products_shop_data, $current_user_data, $current_page_products_are_not_user_favorite;
   
-  dpm('$addtocart_access_processed = '. $addtocart_access_processed);
+  //dpm('$addtocart_access_processed = '. $addtocart_access_processed);
   
   if (!$addtocart_access_processed) {
-     dpm('2---$addtocart_access_processed = '. $addtocart_access_processed);
+     //dpm('2---$addtocart_access_processed = '. $addtocart_access_processed);
     // Get access based on the first product on the page.
     $addtocart_access_processed = TRUE;
     
