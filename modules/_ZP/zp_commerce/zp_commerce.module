@@ -285,8 +285,11 @@ function zp_commerce_getShopData($zp_id) {
   
   $shop['extra_data'] = unserialize($shop['extra_data']);
   dpm('$zp_id = ' . $zp_id);
-  dpm($shop);
-  
+  //dpm($shop);
+  if ($zp_id == 'z0') {
+    dpm(debug_backtrace());
+  }
+    
   $query = db_select('field_data_field_zp_access', 'a');
   $query->condition('a.entity_id', $shop['nid']);
   $query->addField('a', 'field_zp_access_value', 'zp_access');
