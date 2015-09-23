@@ -78,7 +78,7 @@
           hide($content['links']);
           hide($content['field_topics']);
           
-          dpm($content);
+          
           if (!$page) {
             //dpm($content);
 
@@ -88,7 +88,7 @@
             
             hide($content['field_product'][0]['line_item_fields']['field_u_product_comment']);
           }
-          
+          dpm($content);
           echo render($content);
         ?>
       </div>
