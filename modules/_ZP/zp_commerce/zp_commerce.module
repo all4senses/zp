@@ -1667,10 +1667,10 @@ function zp_commerce_addNewProductAndConnectItToSubgroupCatalogTerm($op, $object
     drupal_set_message($error_message, 'error');
     return $error_message;
   }
-  
-  $product_id = $new_product->product_id;
-  dpm('product_id = ' . $product_id);
-  
+  else {
+    $product_id = $new_product->product_id;
+    drupal_set_message('Создан новый Commerce продукт с product_id = ' . $product_id . ' для zp_id ' . $object['zp_id']);
+  }
   
   
   // Create a Product Display node for the product,
