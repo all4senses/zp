@@ -1139,7 +1139,7 @@ function zp_commerce_processPriceList_mapPriceRowToCatalogObject($row, &$error) 
     }
   }
   if (!empty($not_filled_fields)) {
-    $error = $row['Название'] . ': Не задано одно или несколько из обязательных полей -> ' . implode(', ', $not_filled_fields);
+    $error = 'z' . $row['Магазин'] . $row['Отдел'] . $row['Товар / родительский отдел'] . ' -->' . $row['Название'] . ': Не задано одно или несколько из обязательных полей -> ' . implode(', ', $not_filled_fields);
     return NULL;
   }
   
