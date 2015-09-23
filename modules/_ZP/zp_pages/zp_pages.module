@@ -1097,6 +1097,7 @@ function zp_pages_getPriceFromFile($file = NULL, $fid = NULL) {
                         $row_data[trim($col_name)] = trim($col_data);
 
                     }
+                    
                     $file_data[] = $row_data;
               
             } // End of foreach ($excel_data[0] as $number => $row) {
@@ -1153,16 +1154,27 @@ function zp_pages_getPriceFromFile($file = NULL, $fid = NULL) {
         drupal_set_message('Got the data! Ready for importing.');
         //dpm($file_data);
         
-        // Remove empty rows and empty actions rows from a price.
+        
+        $errors = array();
         foreach ($file_data as $row) {
+          // Remove empty rows and empty actions rows from a price.
           if (empty($row['Название']) || $row['Действие / результат'] == 'Action' || empty($row['Действие / результат'])) {
             continue;
           }
           else {
-            $file_data_final[] = $row;
+            $file_data_final[] = zp_commerce_processPriceList_mapPriceRowToCatalogObject($row, &$error);
+            if ($error) {
+              $errors[] = $error;
+            }
           }
         }
         drupal_set_message("Rows with not empty Action field: " . count($file_data_final));
+        if (!empty($errors)) {
+          $file_data_final = NULL;
+          drupal_set_message('Некоторые строки/поля содержат ошибки (см. ниже список). Исправьте их, перезагрузите файл и попробуйте обработать его заново.');
+          dpm($errors);
+        }
+        
       } // End of if (!empty($file_data)) {
 
       return $file_data_final;

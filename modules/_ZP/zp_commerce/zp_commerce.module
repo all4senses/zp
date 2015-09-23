@@ -1128,7 +1128,7 @@ function zp_commerce_importPriceList_batch_finished($success, $results, $operati
  */
 function zp_commerce_processPriceList_mapPriceRowToCatalogObject($row, &$error) {
   
-  
+  $error = '...test error...'; //NULL;
   
   if (empty($row['Название']) ||  empty($row['Тип записи']) ||  empty($row['Магазин']) || empty($row['Отдел']) || empty($row['Товар / родительский отдел'])) {
     $error = 'Не задано одно или несколько из обязательных полей';
@@ -1150,6 +1150,12 @@ function zp_commerce_processPriceList_mapPriceRowToCatalogObject($row, &$error) 
   );
   
   foreach ($row as $key => $value) {
+    
+    // Remove empty fields.
+    if (!$value) {
+      continue;
+    }
+    
     if (array_key_exists($key, $map)) {
       if (!$map[$key]) {
         // Remove a field that is NULL in the map array.
@@ -1374,28 +1380,18 @@ function zp_commerce_processPriceList_mapPriceRowToCatalogObject($row, &$error) 
 /**
  * Creates new ZP object: dept, subgroup, product, etc.
  */
-function zp_commerce_processPriceList_row($op, $row, $test = FALSE){
-  
-  if (!$object = zp_commerce_processPriceList_mapPriceRowToCatalogObject($row, $error)) {
-    return $error;
-  }
-  else {
-    //dpm($object);
-    return 'test';
-  }
+function zp_commerce_processPriceList_row($op, $object, $test = FALSE){
   
   if ($test) {
     //sleep(1);
     //dpm($object['Название']);
-    if ($row['zp_id'] == 'z010') {
+    if ($object['zp_id'] == 'z010') {
       return 'Error with z010';
     }
     else {
       return NULL;
     }
   }
-  
-  
   
   switch ($object['Действие / результат']) {
     case 'new':
