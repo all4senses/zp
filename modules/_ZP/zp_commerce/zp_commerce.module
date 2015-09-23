@@ -1653,6 +1653,8 @@ function zp_commerce_addNewProductAndConnectItToSubgroupCatalogTerm($op, $object
   $new_product->title = $object['Название'];
   $new_product->created = $new_product->changed = time();
 
+  $new_product->field_qmeasure['und'][0]['value'] = $object['Продажная единица (шт, кг и т.д.)'];
+  
   //commerce_price[und][0][amount]
   $price = array(LANGUAGE_NONE => array(0 => array(
     'amount' => $object['Цена (за продажную единицу)'] * 100,
