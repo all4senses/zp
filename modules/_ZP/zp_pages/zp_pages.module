@@ -1156,7 +1156,7 @@ function zp_pages_getPriceFromFile($file = NULL, $fid = NULL) {
         
         
         $errors = array();
-        foreach ($file_data as $key => $row) {
+        foreach ($file_data as $file_key => $row) {
           // Remove empty rows and empty actions rows from a price.
           if (empty($row['Название']) || $row['Действие / результат'] == 'Action' || empty($row['Действие / результат'])) {
             continue;
@@ -1164,7 +1164,7 @@ function zp_pages_getPriceFromFile($file = NULL, $fid = NULL) {
           else {
             $file_data_final[] = zp_commerce_processPriceList_mapPriceRowToCatalogObject($row, &$error);
             if ($error) {
-              $errors[$key] = $error;
+              $errors[$file_key] = $error;
             }
           }
         }
