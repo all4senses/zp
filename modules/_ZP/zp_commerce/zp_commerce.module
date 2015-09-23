@@ -1421,8 +1421,8 @@ function zp_commerce_processPriceList_row($op, $object, $test = FALSE){
   switch ($object['Действие / результат']) {
     case 'new':
         //return zp_commerce_processPriceList_row_add($op, $object, $test);
-        zp_commerce_processPriceList_row_add($op, $object, $test);
-        return 'test add....';
+        return zp_commerce_processPriceList_row_add($op, $object, $test);
+        //return 'test add....';
       break;
     
 //    case 'delete':
@@ -1461,7 +1461,8 @@ function zp_commerce_processPriceList_row_add($op, $object, $test = FALSE) {
     //  return zp_commerce_addNewCatalogTerm($op, $object);
     case 'product':
     case 'product_a':
-      return zp_commerce_addNewProductAndConnectItToSubgroupCatalogTerm($op, $object);
+      zp_commerce_addNewProductAndConnectItToSubgroupCatalogTerm($op, $object);
+      return 'test add product....';
   }
 }
 
@@ -1587,8 +1588,8 @@ function zp_commerce_addNewCatalogTerm($op, $object) {
     'field_zp_id' => !empty($object['zp_id']) ? array('und' => array(0 => array('value' => $object['zp_id']))) : NULL,
   );
   
-  dpm($object);
-  dpm($catalog_term);
+  //dpm($object);
+  //dpm($catalog_term);
   
   taxonomy_term_save($catalog_term);
   //dpm($menu_item_term);
@@ -1801,7 +1802,7 @@ function zp_commerce_taxonomy_menu_save($term, $menu_link, $mlid) {
       
     // If there is a dept/shop/etc connected to this term, show link to this dept instead the link to the term.
     if ($object_nid = zp_commerce_findDeptOrShopOrCityByZpIDofTerm_andConnectItToTerm($term)) {
-       dpm($term);
+       //dpm($term);
       // And save the renewed item again, as in taxonomy_menu_menu_link_prepare($term, $menu_name).
       $menu_link['link_path'] = 'node/' . $object_nid;
     }
@@ -1816,7 +1817,7 @@ function zp_commerce_taxonomy_menu_save($term, $menu_link, $mlid) {
       }
       menu_link_delete($menu_link['mlid']);
       _taxonomy_menu_delete_item($catalog_voc->vid, $term->tid);
-      dpm('Completely remove already created menu item (originally connected to taxonomy/term/xxx) from the menu');
+      //dpm('Completely remove already created menu item (originally connected to taxonomy/term/xxx) from the menu');
       return FALSE;
     }
     
@@ -1831,7 +1832,7 @@ function zp_commerce_taxonomy_menu_save($term, $menu_link, $mlid) {
     
     $mlid = menu_link_save($menu_link);
     
-    dpm($menu_link);
+    //dpm($menu_link);
 
 }
 
