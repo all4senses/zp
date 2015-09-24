@@ -974,6 +974,7 @@ function zp_commerce_importPriceList_batch_process($op, $priceRows, $file, &$con
             $current_object_result_message = 'Success: "' . $row['Действие / результат'] . '", ' . $current_object_title . ':';
             
             if ($result_messages) {
+              dpm($result_messages);
               $result_messages = implode('
 ---> ', $result_messages);
             }
