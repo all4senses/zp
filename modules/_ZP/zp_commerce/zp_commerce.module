@@ -1105,11 +1105,11 @@ Processed: ' . $context['results']['processed'] . '
  */
 function zp_commerce_importPriceList_batch_finished($success, $results, $operations) {
   
-  $title_result_message = 'Результаты операции "' . $results['op'] . '", файл "' . $results['file_path'] . '" ( fid: ' . $results['fid'] . ')';
+  $title_result_message = 'Результаты операции "' . @$results['op'] . '", файл "' . @$results['file_path'] . '" ( fid: ' . @$results['fid'] . ')';
   krumong('devel')->dpm($title_result_message);
   
-  $errors = $results['errors'] ? 'Done with ' . count($results['errors']) . ' error(s). ' : '';
-  krumong('devel')->dpm('Статус выполненной операции: ' . $errors . $results['status']);
+  $errors = $results['errors'] ? 'Done with ' . count(@$results['errors']) . ' error(s). ' : '';
+  krumong('devel')->dpm('Статус выполненной операции: ' . $errors . @$results['status']);
   
   //dpm($results);
   
