@@ -84,7 +84,7 @@
 
             //hide($content['body']);
             echo render($content['body']);
-            echo 'summary...';
+            //echo 'summary...';
             
             hide($content['field_product'][0]['line_item_fields']['field_u_product_comment']);
           }
