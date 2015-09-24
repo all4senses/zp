@@ -969,8 +969,15 @@ function zp_commerce_importPriceList_batch_process($op, $priceRows, $file, &$con
           
           $current_object_title = 'zp_id: ' . $row['zp_id'] . ($row['Тип записи'] == 'отдел' ? ' ----> ОТДЕЛ' : '') . ', "' . $row['Название'] . '"';
           
-          if (!$error_message = zp_commerce_processPriceList_row($op, $row, FALSE)) {
-            $current_object_result_message = 'Success: "' . $row['Действие / результат'] . '", ' . $current_object_title;
+          $result_messages = NULL;
+          if (!$error_message = zp_commerce_processPriceList_row($op, $row, $result_messages)) {
+            $current_object_result_message = 'Success: "' . $row['Действие / результат'] . '", ' . $current_object_title . ':';
+            
+            if ($result_messages) {
+              $result_messages = implode('
+---> ', $result_messages);
+            }
+            
           }
           else {
             $current_object_result_message = 'Error: ' . $current_object_title . ' 
@@ -1028,7 +1035,7 @@ Processed: ' . $context['results']['processed'] . '
                       . l('Stop the batch', /*'zp/add_objects'*/ 'admin/content/import-price');
 
   $context['results']['history'] = $message . '
-' . $context['results']['history']; 
+' . $result_messages . $context['results']['history']; 
   
   // We can stop batch and then continue it using stored id of batch.
   $_SESSION['zp_current_batch_' . $context['results']['zp_current_batch_id'] . '_results'] = $context['results'];
@@ -1417,7 +1424,7 @@ function zp_commerce_processPriceList_mapPriceRowToCatalogObject($row, &$error) 
 /**
  * Creates new ZP object: dept, subgroup, product, etc.
  */
-function zp_commerce_processPriceList_row($op, $object, $test = FALSE){
+function zp_commerce_processPriceList_row($op, $object, &$result_messages){
   
   if ($op == 'test') {
     //sleep(1);
@@ -1432,19 +1439,19 @@ function zp_commerce_processPriceList_row($op, $object, $test = FALSE){
   
   switch ($object['Действие / результат']) {
     case 'new':
-        return zp_commerce_processPriceList_row_add($op, $object, $test);
+        return zp_commerce_processPriceList_row_add($op, $object, $result_messages);
       break;
     
     case 'delete':
-        return zp_commerce_processPriceList_row_delete($op, $object, $test);
+        return zp_commerce_processPriceList_row_delete($op, $object, $result_messages);
       break;
     
 //    case 'change':
-//        return zp_commerce_processPriceList_row_change($op, $object, $test);
+//        return zp_commerce_processPriceList_row_change($op, $object, $result_messages);
 //      break;
 //    
 //    case 'hide':
-//        return zp_commerce_processPriceList_row_hide($op, $object, $test);
+//        return zp_commerce_processPriceList_row_hide($op, $object, $result_messages);
 //      break;
   }
   
@@ -1455,7 +1462,7 @@ function zp_commerce_processPriceList_row($op, $object, $test = FALSE){
  *  Add a new dept or product.
  * 
 **/
-function zp_commerce_processPriceList_row_add($op, $object, $test = FALSE) {
+function zp_commerce_processPriceList_row_add($op, $object, &$result_messages) {
   
   if (isset($object['type'])) {
     $type = $object['type'];
@@ -1466,22 +1473,22 @@ function zp_commerce_processPriceList_row_add($op, $object, $test = FALSE) {
     
   switch ($type) {
     case 'department':
-      return zp_commerce_addNewDeptAndMenuItem($op, $object);
+      return zp_commerce_addNewDeptAndMenuItem($op, $object, $result_messages);
     //case 'subgroup':
-    //  return zp_commerce_addNewCatalogTerm($op, $object);
+    //  return zp_commerce_addNewCatalogTerm($op, $object, $result_messages);
     case 'product':
     case 'product_a':
-      zp_commerce_addNewProduct($op, $object);
+      zp_commerce_addNewProduct($op, $object, $result_messages);
       return 'test add product....';
   }
 }
 
 
-function zp_commerce_processPriceList_row_change($op, $object, $test = FALSE) {
+function zp_commerce_processPriceList_row_change($op, $object, &$result_messages) {
   
 }
 
-function zp_commerce_processPriceList_row_delete($op, $object, $test = FALSE) {
+function zp_commerce_processPriceList_row_delete($op, $object, &$result_messages) {
   
    if (isset($object['type'])) {
     $type = $object['type'];
@@ -1492,22 +1499,22 @@ function zp_commerce_processPriceList_row_delete($op, $object, $test = FALSE) {
     
   switch ($type) {
     case 'department':
-      //return zp_commerce_deleteDeptAndMenuItem($op, $object);
+      //return zp_commerce_deleteDeptAndMenuItem($op, $object, $result_messages);
     //case 'subgroup':
     //  return zp_commerce_deleteCatalogTerm($op, $object);
     case 'product':
     case 'product_a':
-      zp_commerce_deleteProductAndDisplay($op, $object);
+      zp_commerce_deleteProductAndDisplay($op, $object, $result_messages);
       return 'delete product....';
   }
 }
 
-function zp_commerce_processPriceList_row_hide($op, $object, $test = FALSE) {
+function zp_commerce_processPriceList_row_hide($op, $object, &$result_messages) {
   
 }
 
 
-function zp_commerce_deleteProductAndDisplay($op, $object) {
+function zp_commerce_deleteProductAndDisplay($op, $object, &$result_messages) {
   
   $error = NULL;
 
@@ -1517,10 +1524,14 @@ function zp_commerce_deleteProductAndDisplay($op, $object) {
   if ($nid = $query->execute()->fetchField()) {
     //dpm('Display nid ' . $nid);
     node_delete($nid);
+    
+    $result_message = 'Succcessfully deleted product display with zp_id ' . $object['zp_id'];
+    //dpm($result_message);
+    $result_messages[] = $result_message;
   }
   else {
     $error = 'No display with zp_id ' . $object['zp_id'];
-    dpm($error);
+    //dpm($error);
   }
 
   // Remove this product from orders/carts if there are any...
@@ -1528,7 +1539,9 @@ function zp_commerce_deleteProductAndDisplay($op, $object) {
     ->fields('l', array('order_id', 'line_item_id'));
   $query->condition('l.line_item_label', $object['zp_id']);
   if ($orders_line_items = $query->execute()->fetchAllAssoc('order_id')) {
-    dpm('Product is added to one or several orders/carts (#' . (implode(', ', array_keys($orders_line_items))) . ') and will be deleted from there:');
+    $result_message = 'Product is added to one or several orders/carts (#' . (implode(', ', array_keys($orders_line_items))) . ') and will be deleted from there:';
+    //dpm($result_message);
+    $result_messages[] = $result_message;
     //dpm($orders_line_items);
     foreach($orders_line_items as $order_id => $data) {
        commerce_line_item_delete($data->line_item_id);
@@ -1543,16 +1556,18 @@ function zp_commerce_deleteProductAndDisplay($op, $object) {
   if ($product_id = $query->execute()->fetchField()) {
     //dpm('Product id ' . $product_id);
     if (commerce_product_delete($product_id)) {
-      dpm('Succcessfully deleted product with zp_id ' . $object['zp_id']);
+      $result_message = 'Succcessfully deleted product with zp_id ' . $object['zp_id'];
+      //dpm($result_message);
+      $result_messages[] = $result_message;
     }
     else {
       $error = 'Продукт с zp_id ' . $object['zp_id'] . ' не был удалён. Возможно, он где-то ещё используется';
-      dpm($error);
+      //dpm($error);
     }
   }
   else {
     $error = 'No product with zp_id ' . $object['zp_id'];
-    dpm($error);
+    //dpm($error);
   }
 
   return $error;
@@ -1561,7 +1576,7 @@ function zp_commerce_deleteProductAndDisplay($op, $object) {
 /**
  * 
  */
-function zp_commerce_addNewDeptAndMenuItem($op, $object) {
+function zp_commerce_addNewDeptAndMenuItem($op, $object, &$result_messages) {
  
   // Creat a node for the department.
   // ---------------------------------------------------------------------------------------------------
@@ -1614,19 +1629,20 @@ function zp_commerce_addNewDeptAndMenuItem($op, $object) {
   
   if (!$node = node_submit($node)) {
     $error_message = '1. Ошибка при сохранении отдела "' . $object['Название'] . '"';
-    drupal_set_message($error_message, 'error');
+    //drupal_set_message($error_message, 'error');
     return $error_message;
   }
 
   node_save($node);
   if (empty($node->nid)) {
     $error_message = '2. Ошибка при сохранении отдела "' . $object['Название'] . '"';
-    drupal_set_message($error_message, 'error');
+    //drupal_set_message($error_message, 'error');
     return $error_message;
   }
   
-  drupal_set_message('Новый отдел "' . $object['Название'] . '" был создан Успешно!', 'warning');
-
+  $result_message = 'Новый отдел "' . $object['Название'] . '" был создан Успешно!';
+  //drupal_set_message($result_message);
+  $result_messages[] = $result_message;
   
   
   
@@ -1646,7 +1662,7 @@ function zp_commerce_addNewDeptAndMenuItem($op, $object) {
  * If there is a dept with such a zp_id, it will be connected to that dept, 
  * or else no menu item will be created at all.
  */
-function zp_commerce_addNewCatalogTerm($op, $object) {
+function zp_commerce_addNewCatalogTerm($op, $object, &$result_messages) {
   
   static $catalog_voc;
   if (!$catalog_voc) {
@@ -1681,12 +1697,12 @@ function zp_commerce_addNewCatalogTerm($op, $object) {
 /**
  * Create a new product and connect it to the Catalog term by zp_id.
  */
-function zp_commerce_addNewProduct($op, $object) {
+function zp_commerce_addNewProduct($op, $object, &$result_messages) {
  
   // Find parent term tid by parent_zp_id.
   if (!$parent_tid = zp_misc_fieldRead_idByValue_single('zp_id', $object['parent_zp_id'], 'taxonomy_term', 'catalog')) {
     $error_message = 'Нет отдела с zp_id ' . $object['parent_zp_id'] . ', заданного как родительский для данного товара';
-    drupal_set_message($error_message, 'warning');
+    //drupal_set_message($error_message, 'warning');
     return $error_message;
   }
   
@@ -1745,12 +1761,14 @@ function zp_commerce_addNewProduct($op, $object) {
   
   if (empty($new_product->product_id)) {
     $error_message = '0.Error has occured while creating a Product type "' . $object['Название'] . '" with zp_id ' . $object['zp_id'];
-    drupal_set_message($error_message, 'error');
+    //drupal_set_message($error_message, 'error');
     return $error_message;
   }
   else {
     $product_id = $new_product->product_id;
-    drupal_set_message('Создан новый Commerce продукт с product_id = ' . $product_id . ' для zp_id ' . $object['zp_id']);
+    $result_message = 'Создан новый Commerce продукт с product_id = ' . $product_id . ' для zp_id ' . $object['zp_id'];
+    //drupal_set_message($result_message);
+    $result_messages[] = $result_message;
   }
   
   
@@ -1806,19 +1824,20 @@ function zp_commerce_addNewProduct($op, $object) {
   
   if (!$node = node_submit($node)) {
     $error_message = '1. Ошибка при создании Дисплея продукта "' . $object['Название'] . '" с zp_id ' . $object['zp_id'];
-    drupal_set_message($error_message, 'error');
+    //drupal_set_message($error_message, 'error');
     return $error_message;
   }
 
   node_save($node);
   if (empty($node->nid)) {
     $error_message = '2. Ошибка при сохранении Дисплея продукта "' . $object['Название'] . '" с zp_id ' . $object['zp_id'];
-    drupal_set_message($error_message, 'error');
+    //drupal_set_message($error_message, 'error');
     return $error_message;
   }
   
-  drupal_set_message('Успешно создан новый Дисплей продукта "' . $object['Название'] . '" с zp_id ' . $object['zp_id']);
-
+  $result_message = 'Успешно создан новый Дисплей продукта "' . $object['Название'] . '" с zp_id ' . $object['zp_id'];
+  //drupal_set_message($result_message);
+  $result_messages[] = $result_message;
   
   // Connect the subgroup term (found above) to this product node.
 //  zp_misc_fieldTermReferenceSave('catalog', $node->nid, $subgroup_term_tid, 'node', $product_display);
