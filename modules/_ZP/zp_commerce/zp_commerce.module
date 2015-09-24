@@ -1146,7 +1146,8 @@ function zp_commerce_importPriceList_batch_finished($success, $results, $operati
     '#type' => 'textarea',
     '#value' => $results['history'],
   );
-  krumong('devel')->dpm($history_text);
+  //krumong('devel')->dpm($history_text);
+  drupal_set_message($history_text);
   
   //krumong()->kPrint($results);
   //die;  // optionally, you can stop the request right here.
