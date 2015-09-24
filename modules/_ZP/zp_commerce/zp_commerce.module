@@ -982,10 +982,10 @@ function zp_commerce_importPriceList_batch_process($op, $priceRows, $file, &$con
   }
   
   if ($result_messages) {
-    dpm($result_messages);
-    $result_messages = '
----> ' . implode('
----> ', $result_messages);
+    //dpm($result_messages);
+    $result_messages = '---> ' . implode('
+---> ', $result_messages) . '
+';
   }
   
   if (!empty($row['Название'])) {
