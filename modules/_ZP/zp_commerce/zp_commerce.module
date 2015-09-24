@@ -1770,7 +1770,7 @@ function zp_commerce_addNewProduct($op, $object) {
     return $error_message;
   }
   
-  drupal_set_message('Успешно создан новый Дисплей продукта "' . $object['Название'] . '" с zp_id ' . $object['zp_id'], 'warning');
+  drupal_set_message('Успешно создан новый Дисплей продукта "' . $object['Название'] . '" с zp_id ' . $object['zp_id']);
 
   
   // Connect the subgroup term (found above) to this product node.
