@@ -953,6 +953,8 @@ function zp_commerce_importPriceList_batch_process($op, $priceRows, $file, &$con
   $current_object_id = $context['results']['current_object_id'];
   $row = $priceRows[$current_object_id];
   
+  $result_messages = NULL;
+  
   if (empty($row['Название']) || $row['Действие / результат'] == 'Action') {
           $current_object_result_message = $current_object_title = 'zp_id: ' . $row['zp_id'] . ', Empty row.';
           $context['results']['processed_empty_row']++;
@@ -969,22 +971,20 @@ function zp_commerce_importPriceList_batch_process($op, $priceRows, $file, &$con
           
           $current_object_title = 'zp_id: ' . $row['zp_id'] . ($row['Тип записи'] == 'отдел' ? ' ----> ОТДЕЛ' : '') . ', "' . $row['Название'] . '"';
           
-          $result_messages = NULL;
           if (!$error_message = zp_commerce_processPriceList_row($op, $row, $result_messages)) {
             $current_object_result_message = 'Success: "' . $row['Действие / результат'] . '", ' . $current_object_title . ':';
-            
-            if ($result_messages) {
-              dpm($result_messages);
-              $result_messages = implode('
----> ', $result_messages);
-            }
-            
           }
           else {
             $current_object_result_message = 'Error: ' . $current_object_title . ' 
         -> ' . $error_message;
             $context['results']['errors'][] = $current_object_result_message;
           }
+  }
+  
+  if ($result_messages) {
+    dpm($result_messages);
+    $result_messages = implode('
+---> ', $result_messages);
   }
   
   if (!empty($row['Название'])) {
