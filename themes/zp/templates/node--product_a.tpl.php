@@ -88,7 +88,7 @@
             
             hide($content['field_product'][0]['line_item_fields']['field_u_product_comment']);
           }
-          dpm($content);
+          //dpm($content);
           echo render($content);
         ?>
       </div>

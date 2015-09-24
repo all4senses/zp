@@ -418,10 +418,10 @@ function zp_commerce_form_commerce_cart_add_to_cart_form_alter(&$form, &$form_st
         // Anonimous user.
         if (in_array('add_to_cart_denied_for_anonimous', $current_page_products_shop_data['zp_access']) || in_array('prices_invisible_for_anonimous', $current_page_products_shop_data['zp_access'])) {
           // Anonimous user is denied to add to cart from this shop.
-          $deny_addtocart_message = 'Sorry, anonimous users cannot add to cart products from the shop ' .  $current_page_products_shop_data['title'] . ' (' . $current_page_products_shop_data['extra_data']['address'] 
-                  . ')! You have to ' 
+          $deny_addtocart_message = 'К сожалению, анонимные пользователи не могут добавлять в корзину товары из магазина ' .  $current_page_products_shop_data['title'] . ' (' . $current_page_products_shop_data['extra_data']['address'] 
+                  . ')! Вам необходимо авторизоваться ' 
                   . '<a id="click-to-login" href="#">login/register</a>'
-                  . ' first.';
+                  . ' сначала.';
         }
       }
       else {
@@ -436,7 +436,7 @@ function zp_commerce_form_commerce_cart_add_to_cart_form_alter(&$form, &$form_st
           // Just in case, find out if the user has access to all city's shops
           $current_page_products_city_zp_id = drupal_substr($form['line_item_fields']['#entity']->line_item_label, 0, 1);
           if (!in_array($current_page_products_city_zp_id, $current_user_data['favorite_shops'])) {
-            $deny_addtocart_message = 'Sorry, you cannot buy products from the shop ' .  $current_page_products_shop_data['title'] . ' (' . $current_page_products_shop_data['extra_data']['address'] . '), (perhapse because its not in your city, or for some other reason). Please contact administration if you are not agree.';
+            $deny_addtocart_message = 'К сожалению, Вы не можете покупать товары в магазине  ' .  $current_page_products_shop_data['title'] . ' (' . $current_page_products_shop_data['extra_data']['address'] . '), (perhapse because its not in your city, or for some other reason). Please contact administration if you are not agree.';
             $current_page_products_are_not_user_favorite = TRUE;
           }
         }
@@ -551,18 +551,20 @@ function zp_commerce_entity_view_alter(&$build, $type) {
       // These global variables was defined a bit earlier in function zp_commerce_form_commerce_cart_add_to_cart_form_alter(&$form, &$form_state) {
       global $current_page_products_shop_data, $current_user_data, $current_page_products_are_not_user_favorite;
 
-      if (empty($current_user_data) && in_array('prices_invisible_for_anonimous', $current_page_products_shop_data['zp_access'])) {
-        // Anonimous user.
-        //dpm($build);
-        //dpm('in product entity view alter, anonymous, type: ' . $type);
-        $build['product:commerce_price']['#access']=FALSE;
-      }
-      elseif ($current_page_products_are_not_user_favorite && in_array('prices_invisible_for_authorized_not_favorite', $current_page_products_shop_data['zp_access'])) {
-        // Authorized user.
-        //dpm($build);
-        //dpm('in product entity view alter, not favorite, type: ' . $type);
-        $build['product:commerce_price']['#access']=FALSE;
-      }
+      if (is_array($current_page_products_shop_data['zp_access'])) {
+          if (empty($current_user_data) && in_array('prices_invisible_for_anonimous', $current_page_products_shop_data['zp_access'])) {
+            // Anonimous user.
+            //dpm($build);
+            //dpm('in product entity view alter, anonymous, type: ' . $type);
+            $build['product:commerce_price']['#access']=FALSE;
+          }
+          elseif ($current_page_products_are_not_user_favorite && in_array('prices_invisible_for_authorized_not_favorite', $current_page_products_shop_data['zp_access'])) {
+            // Authorized user.
+            //dpm($build);
+            //dpm('in product entity view alter, not favorite, type: ' . $type);
+            $build['product:commerce_price']['#access']=FALSE;
+          }
+      } // End of if (!empty($current_page_products_shop_data['zp_access'])) {
   }
 }
 
@@ -1430,14 +1432,12 @@ function zp_commerce_processPriceList_row($op, $object, $test = FALSE){
   
   switch ($object['Действие / результат']) {
     case 'new':
-        //return zp_commerce_processPriceList_row_add($op, $object, $test);
         return zp_commerce_processPriceList_row_add($op, $object, $test);
-        //return 'test add....';
       break;
     
-//    case 'delete':
-//        return zp_commerce_processPriceList_row_delete($op, $object, $test);
-//      break;
+    case 'delete':
+        return zp_commerce_processPriceList_row_delete($op, $object, $test);
+      break;
     
 //    case 'change':
 //        return zp_commerce_processPriceList_row_change($op, $object, $test);
@@ -1471,7 +1471,7 @@ function zp_commerce_processPriceList_row_add($op, $object, $test = FALSE) {
     //  return zp_commerce_addNewCatalogTerm($op, $object);
     case 'product':
     case 'product_a':
-      zp_commerce_addNewProductAndConnectItToSubgroupCatalogTerm($op, $object);
+      zp_commerce_addNewProduct($op, $object);
       return 'test add product....';
   }
 }
@@ -1483,6 +1483,23 @@ function zp_commerce_processPriceList_row_change($op, $object, $test = FALSE) {
 
 function zp_commerce_processPriceList_row_delete($op, $object, $test = FALSE) {
   
+   if (isset($object['type'])) {
+    $type = $object['type'];
+  }
+  else {
+    $type = isset($object['product_display']) ? $object['product_display'] : (isset($object['product_type']) ? $object['product_type'] : NULL);
+  }
+    
+  switch ($type) {
+    case 'department':
+      //return zp_commerce_deleteDeptAndMenuItem($op, $object);
+    //case 'subgroup':
+    //  return zp_commerce_deleteCatalogTerm($op, $object);
+    case 'product':
+    case 'product_a':
+      zp_commerce_deleteProductAndDisplay($op, $object);
+      return 'delete product....';
+  }
 }
 
 function zp_commerce_processPriceList_row_hide($op, $object, $test = FALSE) {
@@ -1490,7 +1507,9 @@ function zp_commerce_processPriceList_row_hide($op, $object, $test = FALSE) {
 }
 
 
-
+function zp_commerce_deleteProductAndDisplay($op, $object) {
+  
+}
 
 /**
  * 
@@ -1609,10 +1628,13 @@ function zp_commerce_addNewCatalogTerm($op, $object) {
 
 }
 
+
+
+
 /**
  * Create a new product and connect it to the Catalog term by zp_id.
  */
-function zp_commerce_addNewProductAndConnectItToSubgroupCatalogTerm($op, $object) {
+function zp_commerce_addNewProduct($op, $object) {
  
   // Find parent term tid by parent_zp_id.
   if (!$parent_tid = zp_misc_fieldRead_idByValue_single('zp_id', $object['parent_zp_id'], 'taxonomy_term', 'catalog')) {
