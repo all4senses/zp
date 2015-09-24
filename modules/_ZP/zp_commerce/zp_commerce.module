@@ -1044,7 +1044,12 @@ Processed: ' . $context['results']['processed'] . '
   
   // If no error, Inform the batch engine that we are not finished,
   // and provide an estimation of the completion level we reached.
-  if ($error_message && $op != 'test') {
+  
+  if ($context['sandbox']['progress'] >= 2) {
+    // Stop processing because of the TEST!
+    $context['finished'] = 1;
+  }
+  elseif ($error_message && $op != 'test') {
     // If $op == 'test' we don't stop processing and just collect all errors.
 
     // Stop processing because of the error!
@@ -1480,8 +1485,8 @@ function zp_commerce_processPriceList_row_add($op, $object, &$result_messages) {
     //  return zp_commerce_addNewCatalogTerm($op, $object, $result_messages);
     case 'product':
     case 'product_a':
-      zp_commerce_addNewProduct($op, $object, $result_messages);
-      return 'test add product....';
+      return zp_commerce_addNewProduct($op, $object, $result_messages);
+      //return 'test add product....';
   }
 }
 
@@ -1506,8 +1511,8 @@ function zp_commerce_processPriceList_row_delete($op, $object, &$result_messages
     //  return zp_commerce_deleteCatalogTerm($op, $object);
     case 'product':
     case 'product_a':
-      zp_commerce_deleteProductAndDisplay($op, $object, $result_messages);
-      return 'delete product....';
+      return zp_commerce_deleteProductAndDisplay($op, $object, $result_messages);
+      //return 'delete product....';
   }
 }
 
