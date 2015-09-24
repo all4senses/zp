@@ -1509,6 +1509,53 @@ function zp_commerce_processPriceList_row_hide($op, $object, $test = FALSE) {
 
 function zp_commerce_deleteProductAndDisplay($op, $object) {
   
+  $error = NULL;
+
+  $query = db_select('field_revision_field_zp_id', 'z')
+    ->fields('z', array('entity_id'));
+  $query->condition('z.field_zp_id_value', $object['zp_id']);
+  if ($nid = $query->execute()->fetchField()) {
+    //dpm('Display nid ' . $nid);
+    node_delete($nid);
+  }
+  else {
+    $error = 'No display with zp_id ' . $object['zp_id'];
+    dpm($error);
+  }
+
+  // Remove this product from orders/carts if there are any...
+  $query = db_select('commerce_line_item', 'l')
+    ->fields('l', array('order_id', 'line_item_id'));
+  $query->condition('l.line_item_label', $object['zp_id']);
+  if ($orders_line_items = $query->execute()->fetchAllAssoc('order_id')) {
+    dpm('Product is added to one or several orders/carts (#' . (implode(', ', array_keys($orders_line_items))) . ') and will be deleted from there:');
+    //dpm($orders_line_items);
+    foreach($orders_line_items as $order_id => $data) {
+       commerce_line_item_delete($data->line_item_id);
+    }
+  }
+
+
+
+  $query = db_select('commerce_product', 'p')
+    ->fields('p', array('product_id'));
+  $query->condition('p.sku', $object['zp_id']);
+  if ($product_id = $query->execute()->fetchField()) {
+    //dpm('Product id ' . $product_id);
+    if (commerce_product_delete($product_id)) {
+      dpm('Succcessfully deleted product with zp_id ' . $object['zp_id']);
+    }
+    else {
+      $error = 'Продукт с zp_id ' . $object['zp_id'] . ' не был удалён. Возможно, он где-то ещё используется';
+      dpm($error);
+    }
+  }
+  else {
+    $error = 'No product with zp_id ' . $object['zp_id'];
+    dpm($error);
+  }
+
+  return $error;
 }
 
 /**
