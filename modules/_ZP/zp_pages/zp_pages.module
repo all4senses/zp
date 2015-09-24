@@ -861,6 +861,12 @@ function zp_pages_importPrices_form($form, &$form_state) {
     '#options' => $files,
   );
 
+  $form['options']['reverse_process'] = array(
+    '#type' => 'checkbox',
+    '#title' => 'Обрабатывать прайс-лист в обратном порядке (от последней к первой записи)',
+    '#default_value' => NULL,
+  );
+  
   $form['test_price'] = array('#type' => 'submit', '#value' => 'Проверить выбранный прайс-лист');
   $form['import_price'] = array('#type' => 'submit', '#value' => 'Импортировать/применить выбранный прайс-лист');
   $form['batch_results'] = array('#type' => 'submit', '#value' => 'Показать результаты операции по выбранному файлу');
@@ -903,7 +909,7 @@ function zp_pages_importPrices_form($form, &$form_state) {
 function zp_pages_importPrices_formSubmit(&$form, &$form_state) {
 
   //dpm($_POST);
-  //dpm($form_state);
+  dpm($form_state);
   
   $file_data = array();
   $get = $_GET;
