@@ -1592,7 +1592,7 @@ function zp_commerce_deleteProductAndDisplay($op, $object, &$result_messages) {
 
 
 
-function zp_commerce_deleteDeptAndMenuItem($op, $object, $result_messages) {
+function zp_commerce_deleteDeptAndMenuItem($op, $object, &$result_messages) {
 
   $error = NULL;
   
