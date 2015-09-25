@@ -1598,8 +1598,8 @@ function zp_commerce_deleteDeptAndMenuItem($op, $object, $result_messages) {
   
   // If there any children object of this department... like subdepartments, products...
   $query = db_select('field_revision_field_parent_zp_id', 'p')
-    ->fields('z', array('entity_id'));
-  $query->condition('z.field_parent_zp_id_value', $object['zp_id']);
+    ->fields('p', array('entity_id'));
+  $query->condition('p.field_parent_zp_id_value', $object['zp_id']);
   if ($nids = $query->execute()->fetchAll()) {
     $error = 'Данный Отдел с zp_id ' . $object['zp_id'] . ' содержит ' . count($nids) . ' подотделов и/или товаров и не может быть удалён. Сначала удалите отделы/товары, которые в нём содержатся.';
     return $error;
