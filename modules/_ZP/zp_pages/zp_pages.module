@@ -1185,6 +1185,7 @@ function zp_pages_getPriceFromFile($file = NULL, $fid = NULL, $reverse_process =
         }
         
         for ($i = $start_index; ($i*$increment) <= $end_index; $i+=$increment) {
+          dpm('$i = ' . $i);
           $row = $file_data[$i];
           dpm('$row = ' . $row);
           // Remove empty rows and empty actions rows from a price.
