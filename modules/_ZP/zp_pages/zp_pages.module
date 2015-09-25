@@ -939,23 +939,19 @@ function zp_pages_importPrices_formSubmit(&$form, &$form_state) {
     } // End of if ($uploaded == TRUE) {
     
   } // if ($form_state['values']['op'] == 'Import from file') {
-  elseif ( $form_state['values']['op'] == 'Проверить выбранный прайс-лист') {
-    drupal_set_message('Task: test a price-list');
-    //dpm($form_state['values']);
-    $file = file_load($form_state['values']['files']);
-      
-    if ($file_data = zp_pages_getPriceFromFile($file, NULL, $form_state['values']['reverse_process'])) {
-      zp_pages_importPriceBatch('test', $file_data, $file);
+  elseif ($form_state['values']['op'] == 'Проверить выбранный прайс-лист' || $form_state['values']['op'] == 'Импортировать/применить выбранный прайс-лист') {
+    drupal_set_message($form_state['values']['op'] == 'Проверить выбранный прайс-лист' ? 'Task: test a price-list' : 'Task: import/apply a price-list');
+    if (!$form_state['values']['files']) {
+          drupal_set_message('Выберите файл для обработки.', 'warning');
     }
-  }
-  elseif ($form_state['values']['op'] == 'Импортировать/применить выбранный прайс-лист') {
-    drupal_set_message('Task: import/apply a price-list');
-    //dpm($form_state['values']);
-    
-    $file = file_load($form_state['values']['files']);
-      
-    if ($file_data = zp_pages_getPriceFromFile($file, NULL, $form_state['values']['reverse_process'])) {
-      zp_pages_importPriceBatch('import', $file_data, $file);
+    else {
+          //dpm($form_state['values']);
+          if (!$file = file_load($form_state['values']['files'])) {
+            drupal_set_message('Ошибка при открытии файла с fid = ' . $form_state['values']['files'], 'warning');
+          }
+          elseif ($file_data = zp_pages_getPriceFromFile($file, NULL, $form_state['values']['reverse_process'])) {
+            zp_pages_importPriceBatch($form_state['values']['op'] == 'Проверить выбранный прайс-лист' ? 'test' : 'import', $file_data, $file);
+          }
     }
   }
   elseif ($form_state['values']['op'] == 'Показать результаты операции по выбранному файлу') {
