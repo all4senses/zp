@@ -1600,8 +1600,8 @@ function zp_commerce_deleteDeptAndMenuItem($op, $object, $result_messages) {
   $query = db_select('field_revision_field_parent_zp_id', 'p')
     ->fields('z', array('entity_id'));
   $query->condition('z.field_parent_zp_id_value', $object['zp_id']);
-  if ($nids = $query->execute()->fetchиAll()) {
-    $error = 'Данный Отдел с zp_id ' . $object['zp_id'] . ' содержит ' . count($nids) . ' подотделов и/или товаров и не может быть удалёт. Сначала удалите отделы/товары, которые в нём содержатся.';
+  if ($nids = $query->execute()->fetchAll()) {
+    $error = 'Данный Отдел с zp_id ' . $object['zp_id'] . ' содержит ' . count($nids) . ' подотделов и/или товаров и не может быть удалён. Сначала удалите отделы/товары, которые в нём содержатся.';
     return $error;
   }
 
@@ -1713,7 +1713,9 @@ function zp_commerce_addNewDeptAndMenuItem($op, $object, &$result_messages) {
   
   // Create a term in the menu Catalog and connect it to the just created department node.
   // ---------------------------------------------------------------------------------------------------
-  zp_commerce_addNewCatalogTerm($op, $object);
+  if ($error = zp_commerce_addNewCatalogTerm($op, $object, $result_messages)) {
+    return $error;
+  }
   
   // Taxonomy term itself will be assigned to this node automatically on taxonomy_menu item creation via hook zp_commerce_taxonomy_menu_save.
   
@@ -1729,13 +1731,18 @@ function zp_commerce_addNewDeptAndMenuItem($op, $object, &$result_messages) {
  */
 function zp_commerce_addNewCatalogTerm($op, $object, &$result_messages) {
   
+  $error = NULL;
+  
   static $catalog_voc;
   if (!$catalog_voc) {
     $catalog_voc = taxonomy_vocabulary_machine_name_load('catalog');
   }
   
   // Find parent term tid by parent_zp_id.
-  $parent_tid = zp_misc_fieldRead_idByValue_single('zp_id', $object['parent_zp_id'], 'taxonomy_term', 'catalog');
+  if (!$parent_tid = zp_misc_fieldRead_idByValue_single('zp_id', $object['parent_zp_id'], 'taxonomy_term', 'catalog')) {
+    $error = 'Элемент с указанным родительским parent_zp_id не найден.';
+    return $error;
+  }
   
   $catalog_term = (object) array(
     'name' => !empty($object['menu_item_title']) ? $object['menu_item_title'] : $object['Название'],
@@ -1748,12 +1755,21 @@ function zp_commerce_addNewCatalogTerm($op, $object, &$result_messages) {
   //dpm($object);
   //dpm($catalog_term);
   
-  taxonomy_term_save($catalog_term);
+  if (taxonomy_term_save($catalog_term)) {
+    $result_message = 'Новый терм словаря меню Каталог "' . $object['Название'] . '" был создан Успешно!';
+    $result_messages[] = $result_message;
+  }
+  else {
+    $error = 'Новый терм словаря меню Каталог "' . $object['Название'] . '" НЕ БЫЛ создан по какой-то причине!';
+    return $error;
+  }
   //dpm($menu_item_term);
   
   // If there is a dept/shop/etc connectd to this term by zp_id, this term will be assigned to that node automatically on taxonomy_menu item creation via hook zp_commerce_taxonomy_menu_save.
   // If this term doesn't have zp_id - this is subgroup and will not be assigned to anything.
-
+  
+  // Success.
+  return NULL;
 }
 
 
