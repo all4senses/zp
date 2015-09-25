@@ -944,7 +944,7 @@ function zp_pages_importPrices_formSubmit(&$form, &$form_state) {
     //dpm($form_state['values']);
     $file = file_load($form_state['values']['files']);
       
-    if ($file_data = zp_pages_getPriceFromFile($file)) {
+    if ($file_data = zp_pages_getPriceFromFile($file, NULL, $form_state['values']['reverse_process'])) {
       zp_pages_importPriceBatch('test', $file_data, $file);
     }
   }
@@ -954,7 +954,7 @@ function zp_pages_importPrices_formSubmit(&$form, &$form_state) {
     
     $file = file_load($form_state['values']['files']);
       
-    if ($file_data = zp_pages_getPriceFromFile($file)) {
+    if ($file_data = zp_pages_getPriceFromFile($file, NULL, $form_state['values']['reverse_process'])) {
       zp_pages_importPriceBatch('import', $file_data, $file);
     }
   }
@@ -1056,7 +1056,7 @@ function zp_pages_importPrices_formSubmit(&$form, &$form_state) {
 }
 
 
-function zp_pages_getPriceFromFile($file = NULL, $fid = NULL) {
+function zp_pages_getPriceFromFile($file = NULL, $fid = NULL, $reverse_process = FALSE) {
   
   $file_data = NULL;
   $file_data_final = NULL;
@@ -1169,6 +1169,40 @@ function zp_pages_getPriceFromFile($file = NULL, $fid = NULL) {
         
         
         $errors = array();
+        
+        //$file_data = array(1,2,3,4,5,6,7);
+        //$reverse_process = TRUE;
+        
+        if ($reverse_process) {
+          $start_index = count($file_data) - 1;
+          $end_index = 0;
+          $increment = -1;
+        }
+        else {
+          $start_index = 0;
+          $end_index = count($file_data) - 1;
+          $increment = 1;
+        }
+        
+        for ($i = $start_index; ($i*$increment) <= $end_index; $i+=$increment) {
+          $row = $file_data[$i];
+          //dpm('$row = ' . $row);
+          // Remove empty rows and empty actions rows from a price.
+          if (empty($row['Название']) || $row['Действие / результат'] == 'Action' || empty($row['Действие / результат'])) {
+            continue;
+          }
+          else {
+            $object = zp_commerce_processPriceList_mapPriceRowToCatalogObject($row, &$error);
+            $file_data_final[] = $object;
+            if ($error) {
+              end($file_data_final);
+              $errors[key($file_data_final)] = $error;
+            }
+          } // End of else of if (empty($row['Название']) || $row['Действие / результат'] == 'Action' || empty($row['Действие / результат'])) {
+        } // End of for ($i = $start_index; ($i*$increment) <= $end_index; $i+=$increment) {
+
+        
+        /*
         foreach ($file_data as $row) {
           // Remove empty rows and empty actions rows from a price.
           if (empty($row['Название']) || $row['Действие / результат'] == 'Action' || empty($row['Действие / результат'])) {
@@ -1183,6 +1217,9 @@ function zp_pages_getPriceFromFile($file = NULL, $fid = NULL) {
             }
           }
         }
+        */
+        
+        
         drupal_set_message("Rows with not empty Action field: " . count($file_data_final));
         if (!empty($errors)) {
           drupal_set_message('Некоторые строки/поля содержат ошибки (см. ниже список). Исправьте их, перезагрузите файл и попробуйте обработать его заново.');
