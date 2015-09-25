@@ -1514,7 +1514,7 @@ function zp_commerce_processPriceList_row_delete($op, $object, &$result_messages
     
   switch ($type) {
     case 'department':
-      //return zp_commerce_deleteDeptAndMenuItem($op, $object, $result_messages);
+      return zp_commerce_deleteDeptAndMenuItem($op, $object, $result_messages);
     //case 'subgroup':
     //  return zp_commerce_deleteCatalogTerm($op, $object);
     case 'product':
@@ -1536,6 +1536,8 @@ function zp_commerce_deleteProductAndDisplay($op, $object, &$result_messages) {
   $query = db_select('field_revision_field_zp_id', 'z')
     ->fields('z', array('entity_id'));
   $query->condition('z.field_zp_id_value', $object['zp_id']);
+  $query->condition('z.bundle', $object['product_display']);
+  
   if ($nid = $query->execute()->fetchField()) {
     //dpm('Display nid ' . $nid);
     node_delete($nid);
@@ -1587,6 +1589,54 @@ function zp_commerce_deleteProductAndDisplay($op, $object, &$result_messages) {
 
   return $error;
 }
+
+
+
+function zp_commerce_deleteDeptAndMenuItem($op, $object, $result_messages) {
+
+  $error = NULL;
+  
+  // If there any children object of this department... like subdepartments, products...
+  $query = db_select('field_revision_field_parent_zp_id', 'p')
+    ->fields('z', array('entity_id'));
+  $query->condition('z.field_parent_zp_id_value', $object['zp_id']);
+  if ($nids = $query->execute()->fetchиAll()) {
+    $error = 'Данный Отдел с zp_id ' . $object['zp_id'] . ' содержит ' . count($nids) . ' подотделов и/или товаров и не может быть удалёт. Сначала удалите отделы/товары, которые в нём содержатся.';
+    return $error;
+  }
+
+  $query = db_select('field_revision_field_zp_id', 'z')
+    ->fields('z', array('entity_id'));
+  $query->condition('z.field_zp_id_value', $object['zp_id']);
+  $query->condition('z.bundle', 'department');
+  if (!$nid = $query->execute()->fetchField()) {
+    $error = 'Отдела с zp_id ' . $object['zp_id'] . ' не существует. Проверьте zp_id.';
+    return $error;
+  }
+  
+  //dpm('Display nid ' . $nid);
+  node_delete($nid);
+
+  $result_message = 'Успешно удалён Отдел с zp_id ' . $object['zp_id'];
+  //dpm($result_message);
+  $result_messages[] = $result_message;
+    
+  $query = db_select('field_data_field_zp_id', 'z');
+  $query->fields('z', array('entity_id'))
+        ->condition('field_zp_id_value', $object['zp_id'])
+        ->condition('entity_type', 'taxonomy_term');
+  if ($tid = $query->execute()->fetchField()) {
+    $result_message = 'Найдёт терм словаря меню Каталог, привязанный к данному отделу.';
+    //dpm('tid = '. $tid);
+    if (taxonomy_term_delete($tid)) {
+      $result_message .= ' Успешно удалён (т.е. удалён пункт меню с таким же названием, как каталог).';
+    }
+    $result_messages[] = $result_message;
+  }
+  
+  return $error;
+}
+
 
 /**
  * 
