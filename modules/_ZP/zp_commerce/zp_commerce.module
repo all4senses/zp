@@ -1969,6 +1969,7 @@ function zp_commerce_changeTitle($entity_type, $entity_id, $title, $clear_cache 
   $query->condition($entity_id_field, $entity_id);
   $entity = $query->execute()->fetchObject();
   
+  dpm($entity);
   
   $success = db_update($entity_type)
     ->fields(array(
@@ -1978,6 +1979,7 @@ function zp_commerce_changeTitle($entity_type, $entity_id, $title, $clear_cache 
     ->execute();
 
   if (!$success) {
+    dpm('---1');
     return FALSE;
   }
 
@@ -1990,6 +1992,7 @@ function zp_commerce_changeTitle($entity_type, $entity_id, $title, $clear_cache 
     ->execute();
 
   if (!$success) {
+    dpm('---2');
     return FALSE;
   }
   
