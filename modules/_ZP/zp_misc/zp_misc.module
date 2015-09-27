@@ -660,14 +660,12 @@ function zp_misc_fieldSave($field_name, $entity_id, $data, $entity_type = 'node'
   $query->condition($entity_id_field, $entity_id);
   $entity = $query->execute()->fetchObject();
   
+  dpm($entity);
+  
   if(!$bundle) {
     $bundle = $entity->bundle;
   }
     
-    
-  if(!$bundle) {
-    $bundle = $entity_type;
-  }
   
   $query = db_select('field_data_field_' . $field_name, 'f');
   $query->fields('f', array('field_' . $field_name . '_value', 'revision_id'))

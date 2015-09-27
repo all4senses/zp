@@ -1179,7 +1179,7 @@ function zp_commerce_processPriceList_mapPriceRowToCatalogObject($row, &$error) 
   
   
   $product_fields_only = array(
-      'Кол-во', 'Производитель/Поставщие/Бренд', 
+      'Кол-во', 'Производитель/Поставщик/Бренд', 
       'Категория 1', 'Категория 2', 'Род.Отдел/Категория 3', 
       'Вес/объём, мера', 'Вес/объём, значение', 
       'Продажная единица (шт, кг и т.д.)', 
@@ -1570,7 +1570,7 @@ function zp_commerce_processPriceList_row_change($op, $object, &$result_messages
   }
   
   $bulk_change_fields_map = array(
-      'Производитель/Поставщие/Бренд' => 'brand',
+      'Производитель/Поставщик/Бренд' => 'brand',
       'Вес элемента в группе' => 'c_weight',
   );
   
