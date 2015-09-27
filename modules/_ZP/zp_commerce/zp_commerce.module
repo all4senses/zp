@@ -1200,7 +1200,7 @@ function zp_commerce_processPriceList_mapPriceRowToCatalogObject($row, &$error) 
   //dpm($row);
   
   // By default, aall elements are visible, if not set any different...
-  if (!array_key_exists($row['Статус элемента'])) {
+  if (!array_key_exists('Статус элемента', $row)) {
     $row['Статус элемента'] = 1;
   }
   
