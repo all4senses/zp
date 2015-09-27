@@ -1271,7 +1271,7 @@ function zp_commerce_processPriceList_mapPriceRowToCatalogObject($row, &$error) 
   
           
   $catalogObject['Описание'] = $row['Описание внешнее'] ? $row['Описание внешнее'] : $row['Описание локальное'];
-  $catalogObject['Краткое описание'] = !empty($row['Краткое описание']) ? $row['Краткое описание'] : $catalogObject['Описание'];
+  $catalogObject['Описание краткое'] = !empty($row['Описание краткое']) ? $row['Описание краткое'] : $catalogObject['Описание'];
   
   
   // Strip history and cnahge ### markers and leave only the last value (###123###543 -> 123, ###123 -> 123)
@@ -1308,18 +1308,18 @@ function zp_commerce_processPriceList_mapPriceRowToCatalogObject($row, &$error) 
   $catalogObject['fields_to_change'] = $fields_to_change;
   
   // Create shorten summary if it's not defined.
-  if (empty($row['Краткое описание']) && !empty($catalogObject['Описание'])) {
+  if (empty($row['Описание краткое']) && !empty($catalogObject['Описание'])) {
     $summary_length = 150;
     $summary = drupal_substr($catalogObject['Описание'], 0, $summary_length);
     $last_pos = strrpos($summary, ' ');
-    $catalogObject['Краткое описание'] = substr_replace($summary, '...', $last_pos);
+    $catalogObject['Описание краткое'] = substr_replace($summary, '...', $last_pos);
   }
   
   if (!$catalogObject['Описание']) {
     unset($catalogObject['Описание']);
   }
-  if (!$catalogObject['Краткое описание']) {
-    unset($catalogObject['Краткое описание']);
+  if (!$catalogObject['Описание краткое']) {
+    unset($catalogObject['Описание краткое']);
   }
   
   if (empty($catalogObject['Вес элемента в группе'])) {
@@ -1711,19 +1711,62 @@ function zp_commerce_processPriceList_row_change($op, $object, &$result_messages
             if (!zp_misc_fieldSave(/*$field_name*/'visibility_status', /*$entity_id*/$entity_id, /*$data*/$object[$field_to_change], /*$entity_type*/'node', /*$bundle*/$bundle, /*$clear_cache*/ FALSE)) {
               return 'Ошибка при изменении статуса видимости отдела';
             }
+
+            // Update visibility for the connected menu item
+            $tid = zp_misc_fieldRead_idByValue_single('zp_id', $object['zp_id'], 'taxonomy_term', 'catalog');
+            $term = taxonomy_term_load($tid);
+            $term->field_visibility_status['und'][0]['value'] = $object[$field_to_change];
+            if(!taxonomy_term_save($term)) {
+              return 'Ошибка при изменении статуса видимости привязанного пункта меню каталога';
+            }
             
-            
-          }
-        }
+          } // End of if ($object[$field_to_change]) {
+          
+          $result_messages[] = 'Статус отдела (и привязанного пункта меню) обновлён.';
+          
+        } // End of elseif ($type == 'department') {
+        
         break; 
       
+        
+        
+        
+        
       case 'Название':
+        
+        if (!zp_commerce_changeTitle('node', $entity_id, $object[$field_to_change], FALSE)) {
+          return 'Ошибка при изменении названия отдела или дисплея товара';
+        }
+        if ($type == 'product') {
+          if (!zp_commerce_changeTitle('commerce_product', $product_id, $object[$field_to_change], FALSE)) {
+            return 'Ошибка при изменении названия товара';
+          }
+        }
+        $result_messages[] = 'Название обновлёно успешно.';
         
         break;
       
+        
+        
+        
       case 'Описание':
         
+        if (!zp_commerce_changeBodyAndSummary('node', $entity_id, $object[$field_to_change], NULL, FALSE)) {
+          return 'Ошибка при изменении названия отдела или дисплея товара';
+        }
+        
         break;
+      
+      
+      case 'Описание краткое':
+        
+        if (!zp_commerce_changeBodyAndSummary('node', $entity_id, NULL, $object[$field_to_change], FALSE)) {
+          return 'Ошибка при изменении названия отдела или дисплея товара';
+        }
+        
+        break;
+        
+        
       
       case 'Ключевые слова':
         
@@ -1769,14 +1812,198 @@ function zp_commerce_processPriceList_row_change($op, $object, &$result_messages
         break;      
       
       
-           
-
-      
-      
     } // End of switch($object[$field]) {
   } // End of foreach (fields_to_change as $field) {
 }
 
+
+/**
+ * 
+ * @param type $entity_type
+ * @param type $entity_id
+ * @param type $body
+ * @param type $summary
+ * @param type $clear_cache
+ * @return boolean
+ * 
+ * 
+ */
+function zp_commerce_changeBodyAndSummary($entity_type, $entity_id, $body = NULL, $summary = NULL, $clear_cache = TRUE) {
+  // Get revision_id and bundle 
+  if ($entity_type == 'node') {
+    $entity_id_field = 'nid';
+    $bundle_field = 'type';
+    $revision_id_field = 'vid';
+  }
+  else {
+    return FALSE;
+  }
+  
+  $query = db_select($entity_type, 'e');
+  $query->addField('e', $bundle_field, 'bundle');
+  $query->addField('e', $revision_field, 'revision_id');
+  $query->condition($entity_id_field, $entity_id);
+  $entity = $query->execute()->fetchObject();
+  
+  
+  $fields = array();
+  if ($body) {
+    $fields['body_value'] = $body;
+  }
+  if ($summary) {
+    $fields['body_summary'] = $summary;
+  }
+  
+  $query = db_select('field_data_body', 'f');
+  $query->fields('f', array('body_value', 'revision_id'))
+        ->condition('f.entity_id', $entity_id)
+        ->condition('f.entity_type', $entity_type);
+  $result = $query->execute()->fetchObject(); //->fetchField();
+  
+  //if ($result->rowCount()) {
+  if ($result) {  
+        // Update a value.
+        $success = db_update('field_data_body')
+          ->fields($fields)
+          ->condition($entity_id_field, $entity_id)
+          ->execute();
+
+        if (!$success) {
+          return FALSE;
+        }
+
+        $success = db_update('field_revision_body')
+          ->fields($fields)
+          ->condition($entity_id_field, $entity_id)
+          ->condition($revision_id_field, $entity->revision_id)
+          ->execute();
+
+        if (!$success) {
+          return FALSE;
+        }
+  }
+  else {
+       // Need create a new field.
+    $success = db_insert('field_data_body') 
+      ->fields(array(
+        'entity_type'=> $entity_type,
+        'bundle'=> $bundle,
+        'deleted'=> 0,                
+        'entity_id' => $entity_id,
+        'delta' => 0,  
+        'revision_id'=> $entity->revision_id,
+        'language'=> 'und',  
+        'body_value' => $body,
+        'body_summary' => $summary,  
+        'body_format' => 'full_html',
+      ))
+      ->execute();
+
+    if (!$success) {
+      return FALSE;
+    }
+    
+    $success = db_insert('field_revision_body')
+      ->fields(array(
+        'entity_type'=> $entity_type,
+        'bundle'=> $bundle,
+        'deleted'=> 0,                
+        'entity_id' => $entity_id,
+        'delta' => 0,  
+        'revision_id'=> $entity->revision_id,
+        'language'=> 'und',  
+        'body_value' => $body,
+        'body_summary' => $summary,  
+        'body_format' => 'full_html',  
+      ))
+      ->execute();
+    
+    if (!$success) {
+      return FALSE;
+    }
+       
+  }
+  
+   if ($clear_cache) {
+    field_cache_clear();
+  }
+  
+  return TRUE;
+}
+
+
+/**
+ * 
+ * @param type $entity_type
+ * @param type $entity_id
+ * @param type $title
+ * @param type $clear_cache
+ * @return boolean
+ * 
+ * 
+ */
+function zp_commerce_changeTitle($entity_type, $entity_id, $title, $clear_cache = TRUE) {
+  
+  // Get revision_id and bundle 
+  if ($entity_type == 'node') {
+    $entity_id_field = 'nid';
+    //$bundle_field = 'type';
+    $revision_id_field = 'vid';
+  }
+  elseif ($entity_type == 'commerce_product') {
+    $entity_id_field = 'product_id';
+    //$bundle_field = 'type';
+    $revision_id_field = 'revision_id';
+  }
+  
+  $query = db_select($entity_type, 'e');
+  $query->addField('e', $revision_id_field, 'revision_id');
+  $query->condition($entity_id_field, $entity_id);
+  $entity = $query->execute()->fetchObject();
+  
+  
+  $success = db_update($entity_type)
+    ->fields(array(
+      'title' => $title,
+    ))
+    ->condition($entity_id_field, $entity_id)
+    ->execute();
+
+  if (!$success) {
+    return FALSE;
+  }
+
+  $success = db_update($entity_type . '_revision')
+    ->fields(array(
+      'title' => $title,
+    ))
+    ->condition($entity_id_field, $entity_id)
+    ->condition($revision_id_field, $entity->revision_id)
+    ->execute();
+
+  if (!$success) {
+    return FALSE;
+  }
+  
+  
+  if ($clear_cache) {
+    field_cache_clear();
+  }
+  
+  return TRUE;
+}
+
+
+/**
+ * 
+ * @param type $op
+ * @param type $object
+ * @param type $result_messages
+ * @param type $type
+ * @return type
+ * 
+ * 
+ */
 function zp_commerce_processPriceList_row_delete($op, $object, &$result_messages, $type) {
   
   switch ($type) {
@@ -1935,9 +2162,9 @@ function zp_commerce_addNewDeptAndMenuItem($op, $object, &$result_messages) {
   
   $node->body[$node->language][0]['format'] = 'full_html';
   $node->body[$node->language][0]['value'] = @$object['Описание'];
-  $node->body[$node->language][0]['summary'] = @$object['Краткое описание'];
+  $node->body[$node->language][0]['summary'] = @$object['Описание краткое'];
   $node->body[$node->language][0]['safe_value'] = check_plain(@$object['Описание']);
-  $node->body[$node->language][0]['safe_summary'] = check_plain(@$object['Краткое описание']);
+  $node->body[$node->language][0]['safe_summary'] = check_plain(@$object['Описание краткое']);
   
   $node->field_zp_id[$node->language][0]['value'] = $object['zp_id'];
   $node->field_parent_zp_id[$node->language][0]['value'] = $object['parent_zp_id'];
@@ -2017,6 +2244,8 @@ function zp_commerce_addNewCatalogTerm($op, $object, &$result_messages) {
     'parent' => array($parent_tid),
     'weight' => $object['Вес элемента в группе'],
     'field_zp_id' => !empty($object['zp_id']) ? array('und' => array(0 => array('value' => $object['zp_id']))) : NULL,
+    // Possibility to hide a menu item.
+    'field_visibility_status' => array('und' => array(0 => array('value' => $object['Статус элемента']))),
   );
   
   //dpm($object);
@@ -2173,9 +2402,9 @@ function zp_commerce_addNewProduct($op, $object, &$result_messages) {
   
   $node->body[$node->language][0]['format'] = 'full_html';
   $node->body[$node->language][0]['value'] = $object['Описание'];
-  $node->body[$node->language][0]['summary'] = $object['Краткое описание'];
+  $node->body[$node->language][0]['summary'] = $object['Описание краткое'];
   $node->body[$node->language][0]['safe_value'] = check_plain(@$object['Описание']);
-  $node->body[$node->language][0]['safe_summary'] = check_plain(@$object['Краткое описание']);
+  $node->body[$node->language][0]['safe_summary'] = check_plain(@$object['Описание краткое']);
   
   $node->field_zp_id[$node->language][0]['value'] = $object['zp_id'];
   $node->field_parent_zp_id[$node->language][0]['value'] = $object['parent_zp_id'];
@@ -2320,7 +2549,7 @@ function zp_commerce_taxonomy_menu_save($term, $menu_link, $mlid) {
     
     $mlid = menu_link_save($menu_link);
     
-    dpm($menu_link);
+    //dpm($menu_link);
 
 }
 
