@@ -1544,6 +1544,8 @@ function zp_commerce_processPriceList_row_add($op, $object, &$result_messages, $
 
 function zp_commerce_processPriceList_row_change($op, $object, &$result_messages) {
   
+  $fields_to_change = $object['fields_to_change'];
+  
   if (!$entity_id = zp_misc_fieldRead_idByValue_single('zp_id', $object['zp_id'], /*$entity_type*/'node', $bundle)) {
     return 'Не найден объект с zp_id = ' . $object['zp_id'];
   }
@@ -1576,11 +1578,11 @@ function zp_commerce_processPriceList_row_change($op, $object, &$result_messages
   
   if (in_array('Артикул производителя', $fields_to_change) && in_array('Артикул поставщика', $fields_to_change)) {
     zp_commerce_clarifyArtikulProducer($object, $result_messages);
-    unset(key($fields_to_change['Артикул поставщика']));
+    unset($fields_to_change[array_search('Артикул поставщика', $fields_to_change)]);
   }
   elseif (in_array('Артикул поставщика', $fields_to_change)) {
     $object['Артикул производителя'] = $object['Артикул поставщика'];
-    unset($object['Артикул поставщика'], key($fields_to_change['Артикул поставщика']));
+    unset($object['Артикул поставщика'], $fields_to_change[array_search('Артикул поставщика', $fields_to_change)]);
     $result_messages[] = 'Внимание!!!!!!! Как Артикул производителя будет задан Артикул поставщика (так как для Артикула производителя и Артикула поставщика предусмотрено только одно общее поле)';
   }
       
