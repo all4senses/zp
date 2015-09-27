@@ -906,6 +906,7 @@ function zp_commerce_importPriceList_batch_process($op, $priceRows, $file, $reve
     $context['results']['last_not_empty_object_id'] = 0;
     $context['results']['op'] = $op;
     $context['results']['objects_source'] = $priceRows;
+    $context['results']['processed'] = 0;
     $context['results']['processed_not_empty'] = 0;
     $context['results']['processed_by_action'] = array();
     $context['results']['processed_empty_row'] = 0;
@@ -914,6 +915,8 @@ function zp_commerce_importPriceList_batch_process($op, $priceRows, $file, $reve
     $context['results']['processed_depts'] = 0;
     $context['results']['processed_products'] = 0;
     
+    $context['results']['history'] = NULL;
+            
     $context['results']['status'] = NULL;
     
     $context['results']['errors'] = NULL;
@@ -1224,7 +1227,7 @@ function zp_commerce_processPriceList_mapPriceRowToCatalogObject($row, &$error) 
       'Отдел' => NULL,
       'Товар / родительский отдел' => NULL,
       'Finish' => NULL,
-      'Тип записи' => NULL,
+      //'Тип записи' => NULL,
   );
   
   foreach ($row as $key => $value) {
@@ -1596,12 +1599,14 @@ function zp_commerce_processPriceList_row_change($op, $object, &$result_messages
       if (!zp_misc_fieldSave(/*$field_name*/$bulk_change_fields_map[$field_to_change], /*$entity_id*/$entity_id, /*$data*/$object[$field_to_change], /*$entity_type*/'node', /*$bundle*/$bundle, /*$clear_cache*/ FALSE)) {
         return 'Ошибка при создании или изменении поля "' . $field_to_change . '"';
       }
+      $result_messages[] = 'Успешно изменено поле "' . $field_to_change . '"';
       continue;
     }
     if (isset($bulk_change_fields_map_product[$field_to_change])) {
       if (!zp_misc_fieldSave(/*$field_name*/$bulk_change_fields_map_product[$field_to_change], /*$entity_id*/$product_id, /*$data*/$object[$field_to_change], /*$entity_type*/'commerce_product', /*$bundle*/'product', /*$clear_cache*/ FALSE)) {
         return 'Ошибка при создании или изменении поля товара "' . $field_to_change . '"';
       }
+      $result_messages[] = 'Успешно изменено поле товара "' . $field_to_change . '"';
       continue;
     }
     
@@ -1755,7 +1760,7 @@ function zp_commerce_processPriceList_row_change($op, $object, &$result_messages
       case 'Описание':
         
         if (!zp_commerce_changeBodyAndSummary('node', $entity_id, $object[$field_to_change], NULL, FALSE)) {
-          return 'Ошибка при изменении названия отдела или дисплея товара';
+          return 'Ошибка при изменении описания отдела или дисплея товара';
         }
         
         break;
@@ -1764,7 +1769,7 @@ function zp_commerce_processPriceList_row_change($op, $object, &$result_messages
       case 'Описание краткое':
         
         if (!zp_commerce_changeBodyAndSummary('node', $entity_id, NULL, $object[$field_to_change], FALSE)) {
-          return 'Ошибка при изменении названия отдела или дисплея товара';
+          return 'Ошибка при изменении краткого описания отдела или дисплея товара';
         }
         
         break;
