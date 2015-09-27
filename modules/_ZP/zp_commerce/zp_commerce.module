@@ -1546,15 +1546,10 @@ function zp_commerce_processPriceList_row_change($op, $object, &$result_messages
   
   $fields_to_change = $object['fields_to_change'];
   
-  
-  
   // If it's a product
   if (@$object['product_display']) {
     $bundle = $object['product_display'];
     $type = 'product';
-    if (!$product_id = zp_misc_fieldRead_valueById_single(/*$field_name*/'product', $entity_id, /*$entity_type = */'node', /*$bundle = */$bundle/*'product_a'*/, 'field_product_product_id')) {
-      return 'Не найден товар (product) с zp_id = ' . $object['zp_id'];
-    }        
   }
   else {
     $bundle = $object['type'];
@@ -1563,6 +1558,12 @@ function zp_commerce_processPriceList_row_change($op, $object, &$result_messages
   
   if (!$entity_id = zp_misc_fieldRead_idByValue_single('zp_id', $object['zp_id'], /*$entity_type*/'node', $bundle)) {
     return 'Не найден объект с zp_id = ' . $object['zp_id'];
+  }
+  
+  if (@$object['product_display']) {
+    if (!$product_id = zp_misc_fieldRead_valueById_single(/*$field_name*/'product', $entity_id, /*$entity_type = */'node', /*$bundle = */$bundle/*'product_a'*/, 'field_product_product_id')) {
+      return 'Не найден товар (product) с zp_id = ' . $object['zp_id'];
+    }        
   }
   
   $bulk_change_fields_map = array(
