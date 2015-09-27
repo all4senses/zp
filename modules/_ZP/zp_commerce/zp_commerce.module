@@ -2311,9 +2311,9 @@ function zp_commerce_taxonomy_menu_save($term, $menu_link, $mlid) {
     
     
     // Hide (aka disable) menu item, if a corresponding term is hidden by setting its $visibility_status to 0;
-    if (array_key_exists('und', $term->visibility_status)) {
-      dpm('exists = ' . $term->visibility_status['und'][0]['value']);
-      $menu_link['hidden'] = !$term->visibility_status['und'][0]['value'];
+    if (array_key_exists('und', $term->field_visibility_status)) {
+      dpm('exists = ' . $term->field_visibility_status['und'][0]['value']);
+      $menu_link['hidden'] = !$term->field_visibility_status['und'][0]['value'];
     }
     else {
       dpm('not exists');
