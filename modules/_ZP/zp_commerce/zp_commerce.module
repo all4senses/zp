@@ -1120,6 +1120,9 @@ Processed: ' . $context['results']['processed'] . '
  */
 function zp_commerce_importPriceList_batch_finished($success, $results, $operations) {
   
+  // Clear fields cache becasue many fields could have been changed.
+  field_cache_clear();
+  
   $title_result_message = 'Результаты операции "' . @$results['op'] . '", файл "' . @$results['file_path'] . '" ( fid: ' . @$results['fid'] . ')';
   krumong('devel')->dpm($title_result_message);
   
@@ -1170,6 +1173,18 @@ function zp_commerce_processPriceList_mapPriceRowToCatalogObject($row, &$error) 
   $error = NULL;
   
   $must_be_filled = array('Название', 'Тип записи', 'Магазин', 'Отдел', 'Товар / родительский отдел');
+  
+  
+  $product_fields_only = array(
+      'Кол-во', 'Производитель/Поставщие/Бренд', 
+      'Категория 1', 'Категория 2', 'Род.Отдел/Категория 3', 
+      'Вес/объём, мера', 'Вес/объём, значение', 
+      'Продажная единица (шт, кг и т.д.)', 
+      'Цена (за продажную единицу)', 
+      'Ш-код междунар. или локальный', 'Артикул магазина', 'Артикул производителя', 'Артикул поставщика', 
+      'Срок хранения', 
+      'Другие атрибуты товара');
+  
   $not_filled_fields = NULL;
   
   foreach ($must_be_filled as $field) {
@@ -1183,6 +1198,22 @@ function zp_commerce_processPriceList_mapPriceRowToCatalogObject($row, &$error) 
   }
   
   //dpm($row);
+  
+  // By default, aall elements are visible, if not set any different...
+  if (!array_key_exists($row['Статус элемента'])) {
+    $row['Статус элемента'] = 1;
+  }
+  
+  if ($row['Действие / результат'] == 'hide') {
+    $row['Действие / результат'] = 'change';
+    $row['Статус элемента'] = '###hidden';
+  }
+  elseif ($row['Действие / результат'] == 'show' || $row['Действие / результат'] == 'unhide') {
+    $row['Действие / результат'] = 'change';
+    // kind of empty field, mut means not hidden, normal state
+    $row['Статус элемента'] = '###';
+  }
+  
   
   $catalogObject = array();
   
@@ -1239,14 +1270,26 @@ function zp_commerce_processPriceList_mapPriceRowToCatalogObject($row, &$error) 
   
   
           
-  $catalogObject['Описание'] = $row['Описание внешнее'] ? $row['Описание внешнее'] : $row['Описание локальное (отдела, магазина, района и т.д.)'];
+  $catalogObject['Описание'] = $row['Описание внешнее'] ? $row['Описание внешнее'] : $row['Описание локальное'];
   $catalogObject['Краткое описание'] = !empty($row['Краткое описание']) ? $row['Краткое описание'] : $catalogObject['Описание'];
   
   
   // Strip history and cnahge ### markers and leave only the last value (###123###543 -> 123, ###123 -> 123)
   $fields_to_change = array();
   foreach ($catalogObject as $key => $value) {
-    if (strpos($value, '###') !== FALSE) {
+    
+    if ($value && in_array($key, $product_fields_only) && $row['Тип записи'] == 'отдел') {
+      // Dept can not have filled/changed fields that only products have.
+      $error = 'Для отдела задано поле "' . $key . '", которое может содержать только товар';
+      return NULL;
+    }
+    
+    if ($value == '###') {
+      // A field should be changed and set to empty.
+      $catalogObject[$key] = '';
+      $fields_to_change[] = $key;
+    }
+    elseif (strpos($value, '###') !== FALSE) {
       $history = explode('###', $value);
       if (!$history[0]) {
         // ###123###543, so it's a field to be changed (though with a history)...
@@ -1258,6 +1301,8 @@ function zp_commerce_processPriceList_mapPriceRowToCatalogObject($row, &$error) 
         $catalogObject[$key] = $history[0];
       }
     }
+    
+    
   }
   
   $catalogObject['fields_to_change'] = $fields_to_change;
@@ -1430,9 +1475,11 @@ function zp_commerce_processPriceList_mapPriceRowToCatalogObject($row, &$error) 
 //      'weight' => 2,
 //    );
 //  }
-  */
+  
   
   return $objects;
+  
+  */
 }
 
 
@@ -1452,22 +1499,25 @@ function zp_commerce_processPriceList_row($op, $object, &$result_messages){
     }
   }
   
+  if (isset($object['type'])) {
+    $type = $object['type'];
+  }
+  else {
+    $type = isset($object['product_display']) ? $object['product_display'] : (isset($object['product_type']) ? $object['product_type'] : NULL);
+  }
+  
   switch ($object['Действие / результат']) {
     case 'new':
-        return zp_commerce_processPriceList_row_add($op, $object, $result_messages);
+        return zp_commerce_processPriceList_row_add($op, $object, $result_messages, $type);
       break;
     
     case 'delete':
-        return zp_commerce_processPriceList_row_delete($op, $object, $result_messages);
+        return zp_commerce_processPriceList_row_delete($op, $object, $result_messages, $type);
       break;
     
-//    case 'change':
-//        return zp_commerce_processPriceList_row_change($op, $object, $result_messages);
-//      break;
-//    
-//    case 'hide':
-//        return zp_commerce_processPriceList_row_hide($op, $object, $result_messages);
-//      break;
+    case 'change':
+        return zp_commerce_processPriceList_row_change($op, $object, $result_messages, $type);
+      break;
   }
   
 }
@@ -1477,14 +1527,7 @@ function zp_commerce_processPriceList_row($op, $object, &$result_messages){
  *  Add a new dept or product.
  * 
 **/
-function zp_commerce_processPriceList_row_add($op, $object, &$result_messages) {
-  
-  if (isset($object['type'])) {
-    $type = $object['type'];
-  }
-  else {
-    $type = isset($object['product_display']) ? $object['product_display'] : (isset($object['product_type']) ? $object['product_type'] : NULL);
-  }
+function zp_commerce_processPriceList_row_add($op, $object, &$result_messages, $type) {
     
   switch ($type) {
     case 'department':
@@ -1501,17 +1544,239 @@ function zp_commerce_processPriceList_row_add($op, $object, &$result_messages) {
 
 function zp_commerce_processPriceList_row_change($op, $object, &$result_messages) {
   
-}
-
-function zp_commerce_processPriceList_row_delete($op, $object, &$result_messages) {
+  if (!$entity_id = zp_misc_fieldRead_idByValue_single('zp_id', $object['zp_id'], /*$entity_type*/'node', $bundle)) {
+    return 'Не найден объект с zp_id = ' . $object['zp_id'];
+  }
   
-   if (isset($object['type'])) {
-    $type = $object['type'];
+  // If it's a product
+  if (@$object['product_display']) {
+    $bundle = $object['product_display'];
+    $type = 'product';
+    if (!$product_id = zp_misc_fieldRead_valueById_single(/*$field_name*/'product', $entity_id, /*$entity_type = */'node', /*$bundle = */$bundle/*'product_a'*/, 'field_product_product_id')) {
+      return 'Не найден товар (product) с zp_id = ' . $object['zp_id'];
+    }        
   }
   else {
-    $type = isset($object['product_display']) ? $object['product_display'] : (isset($object['product_type']) ? $object['product_type'] : NULL);
+    $bundle = $object['type'];
+    $type = $object['type'];
   }
+  
+  $bulk_change_fields_map = array(
+      'Производитель/Поставщие/Бренд' => 'brand',
+      'Вес элемента в группе' => 'c_weight',
+  );
+  
+  $bulk_change_fields_map_product = array(
+      'Продажная единица (шт, кг и т.д.)' => 'qmeasure',
+      'Ш-код междунар. или локальный' => 'bar',
+      'Артикул магазина' => 'artikul_shop',
+      'Артикул производителя' => 'artikul_producer',
+  );
+  
+  
+  if (in_array('Артикул производителя', $fields_to_change) && in_array('Артикул поставщика', $fields_to_change)) {
+    zp_commerce_clarifyArtikulProducer($object, $result_messages);
+    unset(key($fields_to_change['Артикул поставщика']));
+  }
+  elseif (in_array('Артикул поставщика', $fields_to_change)) {
+    $object['Артикул производителя'] = $object['Артикул поставщика'];
+    unset($object['Артикул поставщика'], key($fields_to_change['Артикул поставщика']));
+    $result_messages[] = 'Внимание!!!!!!! Как Артикул производителя будет задан Артикул поставщика (так как для Артикула производителя и Артикула поставщика предусмотрено только одно общее поле)';
+  }
+      
+  
+  foreach ($fields_to_change as $field_to_change) {
     
+    if (isset($bulk_change_fields_map[$field_to_change])) {
+      if (!zp_misc_fieldSave(/*$field_name*/$bulk_change_fields_map[$field_to_change], /*$entity_id*/$entity_id, /*$data*/$object[$field_to_change], /*$entity_type*/'node', /*$bundle*/$bundle, /*$clear_cache*/ FALSE)) {
+        return 'Ошибка при создании или изменении поля "' . $field_to_change . '"';
+      }
+      continue;
+    }
+    if (isset($bulk_change_fields_map_product[$field_to_change])) {
+      if (!zp_misc_fieldSave(/*$field_name*/$bulk_change_fields_map_product[$field_to_change], /*$entity_id*/$product_id, /*$data*/$object[$field_to_change], /*$entity_type*/'commerce_product', /*$bundle*/'product', /*$clear_cache*/ FALSE)) {
+        return 'Ошибка при создании или изменении поля товара "' . $field_to_change . '"';
+      }
+      continue;
+    }
+    
+            
+    switch($field_to_change) {
+
+      // Product only fields -----------------------------------------------------------------------------------------------
+      
+      case 'Цена (за продажную единицу)':
+        
+        // https://drupalcommerce.org/discussions/3971/how-alter-lineitem-price-programmatically
+        // http://stackoverflow.com/questions/13491983/drupal-commerce-line-items-alter-the-price
+        
+        // http://drupal.stackexchange.com/questions/23168/commerce-product-programatically-with-price
+        // http://drupal.stackexchange.com/questions/46254/alter-cart-unit-price-and-total-amount
+        // http://drupal.stackexchange.com/questions/101119/drupal-commerce-order-total-amount-not-update-after-i-programmatically-changed-l
+        
+        
+        $product = commerce_product_load($product_id);
+        $old_price = $product->commerce_price['und'][0]['amount']/100;
+        $product->commerce_price['und'][0]['amount'] = $object[$field_to_change] * 100;
+        if (commerce_product_save( $product )) {
+          $result_messages[] = 'Изменена цена товара с ' . $old_price . $object['Валюта'] . ' на ' . $object[$field_to_change] . $object['Валюта'];
+        }
+        break;
+
+      
+      
+      case 'Кол-во':
+        
+        break;      
+      
+
+      
+      case 'Категория 1':
+        
+        break;      
+
+      case 'Категория 2':
+        
+        break;      
+
+      case 'Род.Отдел/Категория 3':
+        
+        break;      
+      
+      
+      
+      case 'Вес/объём, мера':
+        
+        break;      
+
+      case 'Вес/объём, значение':
+        
+        break;      
+      
+      case 'Срок хранения':
+        
+        break;      
+      
+      case 'Другие атрибуты товара':
+        
+        break;      
+      
+      
+      
+            
+      // Products and departments fields -----------------------------------------------------------------------------------------------
+      	
+      case 'Статус элемента':
+        
+        if ($type == 'product') {
+
+                      $query = db_select('commerce_product', 'p');
+                      $query->fields('p', array('revision_id'))
+                        ->condition('product_id', $product_id);
+                      if (!$revision_id = $query->execute()->fetchField()) {
+                        return 'Не удалось определить номер ревизии для товара';
+                      }
+
+                      $success = db_update('commerce_product')
+                        ->fields(array(
+                          'status' => $object[$field_to_change],
+                        ))
+                        ->condition('product_id', $product_id)
+                        ->execute();
+
+                      if (!$success) {
+                        return 'Не удалось обновить статус для товара';
+                      }
+
+                      $success = db_update('commerce_product_revision')
+                        ->fields(array(
+                          'status' => $object[$field_to_change],
+                        ))
+                        ->condition('revision_id', $revision_id)
+                        ->execute();
+
+                      if (!$success) {
+                        return 'Не удалось обновить статус для ревизии товара';
+                      }
+
+                      $result_messages[] = 'Статус товара обновлён.';
+                      
+        } // End of if ($type == 'product') {
+        elseif ($type == 'department') {
+          // Status 0 for department means that connected products, subdepartments and Catalog menu item for it will be hidden, and 
+          if ($object[$field_to_change]) {
+
+            if (!zp_misc_fieldSave(/*$field_name*/'visibility_status', /*$entity_id*/$entity_id, /*$data*/$object[$field_to_change], /*$entity_type*/'node', /*$bundle*/$bundle, /*$clear_cache*/ FALSE)) {
+              return 'Ошибка при изменении статуса видимости отдела';
+            }
+            
+            
+          }
+        }
+        break; 
+      
+      case 'Название':
+        
+        break;
+      
+      case 'Описание':
+        
+        break;
+      
+      case 'Ключевые слова':
+        
+        break; 
+      
+      
+      
+      
+      case 'Логотип':
+        
+        break;      
+
+      case 'Каталог с картинками':
+        
+        break;      
+      
+      case 'Ссылка на первый файл':
+        
+        break;      
+      
+      case 'Кол-во картинок':
+        
+        break;      
+      
+      case 'На основе чего формируется название картинок':
+        
+        break;      
+      
+      case 'Ориентация картинок':
+        
+        break;      
+      
+      
+      
+      
+      
+      case 'Коэффициент доставки':
+        
+        break;      
+      
+      case 'Коэффициент минимальной суммы покупки (корзины)':
+        
+        break;      
+      
+      
+           
+
+      
+      
+    } // End of switch($object[$field]) {
+  } // End of foreach (fields_to_change as $field) {
+}
+
+function zp_commerce_processPriceList_row_delete($op, $object, &$result_messages, $type) {
+  
   switch ($type) {
     case 'department':
       return zp_commerce_deleteDeptAndMenuItem($op, $object, $result_messages);
@@ -1524,9 +1789,6 @@ function zp_commerce_processPriceList_row_delete($op, $object, &$result_messages
   }
 }
 
-function zp_commerce_processPriceList_row_hide($op, $object, &$result_messages) {
-  
-}
 
 
 function zp_commerce_deleteProductAndDisplay($op, $object, &$result_messages) {
@@ -1666,6 +1928,9 @@ function zp_commerce_addNewDeptAndMenuItem($op, $object, &$result_messages) {
   $node->sticky = 0;
   $node->comment = 0;
   
+  
+  $node->field_visibility_status[$node->language][0]['value'] = @$object['Статус элемента'];
+  
   $node->body[$node->language][0]['format'] = 'full_html';
   $node->body[$node->language][0]['value'] = @$object['Описание'];
   $node->body[$node->language][0]['summary'] = @$object['Краткое описание'];
@@ -1773,6 +2038,25 @@ function zp_commerce_addNewCatalogTerm($op, $object, &$result_messages) {
 }
 
 
+/**
+ * 
+ * @param type $object
+ * @param type $result_messages
+ * 
+ */
+function zp_commerce_clarifyArtikulProducer(&$object, &$result_messages) {
+  
+  if ($object['Артикул производителя'] && $object['Артикул поставщика']) {
+    $result_messages[] = 'Внимание!!!!!!! Заданы одновременно Артикул производителя и Артикул поставщика, но использован будет только Артикул производителя (так как для Артикула производителя и Артикула поставщика предусмотрено только одно общее поле)';
+  }
+  else {
+    $object['Артикул производителя'] = $object['Артикул производителя'] ? $object['Артикул производителя'] : $object['Артикул поставщика'];
+    if ($object['Артикул поставщика']) {
+      $result_messages[] = 'Внимание!!!!!!! Как Артикул производителя будет задан Артикул поставщика (так как для Артикула производителя и Артикула поставщика предусмотрено только одно общее поле)';
+    }
+  }
+  unset($object['Артикул поставщика']); 
+}
 
 
 /**
@@ -1819,7 +2103,10 @@ function zp_commerce_addNewProduct($op, $object, &$result_messages) {
   // Generate a new product object
   $new_product = commerce_product_new($object['product_type']);
 
-  $new_product->status = TRUE; //isset($object['status']) ? $object['status'] : TRUE;
+  $new_product->language = LANGUAGE_NONE; //$language->language; 
+  
+  $new_product->status = @$object['Статус элемента'];
+  
   $new_product->uid = $GLOBALS['user']->uid;
 
   $new_product->sku = $object['zp_id'];
@@ -1827,6 +2114,13 @@ function zp_commerce_addNewProduct($op, $object, &$result_messages) {
   $new_product->created = $new_product->changed = time();
 
   $new_product->field_qmeasure['und'][0]['value'] = $object['Продажная единица (шт, кг и т.д.)'];
+  $new_product->field_bar['und'][0]['value'] = $object['Ш-код междунар. или локальный'];
+  $new_product->field_artikul_shop['und'][0]['value'] = $object['Артикул магазина'];
+  
+  zp_commerce_clarifyArtikulProducer($object, $result_messages);
+  $new_product->field_artikul_producer['und'][0]['value'] = $object['Артикул производителя'];
+  
+  
   
   //commerce_price[und][0][amount]
   $price = array(LANGUAGE_NONE => array(0 => array(
@@ -2015,7 +2309,7 @@ function zp_commerce_taxonomy_menu_save($term, $menu_link, $mlid) {
     
     $mlid = menu_link_save($menu_link);
     
-    //dpm($menu_link);
+    dpm($menu_link);
 
 }
 
@@ -2507,7 +2801,7 @@ function zp_commerce_update_views_edit_quantity(&$form, &$form_state) {
 
       //dpm('$product');
       //dpm($product);
-      // a4s fix 2. Allow decimal anly for non empty and non items/шт. qmeasure for each specified product.
+      // a4s fix 2. Allow decimal only for non empty and non items/шт. qmeasure for each specified product.
       $field_qmeasure = $product->field_qmeasure['und'][0]['value'];
       if (!$field_qmeasure || strpos($field_qmeasure, 'шт') !== FALSE || strpos($field_qmeasure, 'item') !== FALSE) {
         return;

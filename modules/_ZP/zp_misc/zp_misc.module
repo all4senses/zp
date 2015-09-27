@@ -593,9 +593,15 @@ function zp_misc_fieldDelete($field_name, $entity_id, $target_field_name = NULL,
 /**
  * Read  a field value by entity_id.
  */
-function zp_misc_fieldRead_valueById_single($field_name, $entity_id, $entity_type = 'node', $bundle = 'product_a') {
+function zp_misc_fieldRead_valueById_single($field_name, $entity_id, $entity_type = 'node', $bundle = 'product_a', $field_name_full = NULL) {
   $query = db_select('field_data_field_' . $field_name, 'f');
-  $query->fields('f', array('field_' . $field_name . '_value'))
+  if ($field_name_full) {
+    $field_name = $field_name_full;
+  }
+  else {
+    $field_name = 'field_' . $field_name . '_value';
+  }
+  $query->fields('f', array($field_name))
         ->condition('f.entity_id', $entity_id)
         ->condition('f.entity_type', $entity_type)
         ->condition('f.bundle', $bundle);
@@ -634,72 +640,105 @@ function zp_misc_fieldTermReferenceRead_idByValue_single($field_name, $field_val
 /**
  * Saves or updates a field.
  */
-function zp_misc_fieldSave($field_name, $entity_id, $data, $entity_type = 'node', $bundle = NULL) {
+function zp_misc_fieldSave($field_name, $entity_id, $data, $entity_type = 'node', $bundle = NULL, $clear_cache = TRUE) {
   
   if(!$bundle) {
     $bundle = $entity_type;
   }
   
   $query = db_select('field_data_field_' . $field_name, 'f');
-  $query->fields('f', array('field_' . $field_name . '_value'))
+  $query->fields('f', array('field_' . $field_name . '_value', 'revision_id'))
         ->condition('f.entity_id', $entity_id)
         ->condition('f.entity_type', $entity_type);
-  $result = $query->execute(); //->fetchField();
+  $result = $query->execute()->fetchObject(); //->fetchField();
   
-  if ($result->rowCount()) {
+  //if ($result->rowCount()) {
+  if ($result) {  
     // Need update an existing field.
-    db_update('field_data_field_' . $field_name)
+    $success = db_update('field_data_field_' . $field_name)
       ->fields(array(
-        //'entity_id' => $entity_id,
         //'delta' => 0,  
-        //'revision_id'=> $entity_id,    
         'field_' . $field_name . '_value' => $data,
       ))
       ->condition('entity_id', $entity_id)
       ->condition('entity_type', $entity_type)
       ->execute();
 
-    db_update('field_revision_field_' . $field_name)
+    if (!$success) {
+      return FALSE;
+    }
+    
+    $success = db_update('field_revision_field_' . $field_name)
       ->fields(array(
-        //'entity_id' => $entity_id,
         //'delta' => 0,  
-        //'revision_id'=> $entity_id,     
         'field_' . $field_name . '_value' => $data,
       ))
       ->condition('entity_id', $entity_id)
+      ->condition('revision_id', $result->revision_id)
       ->condition('entity_type', $entity_type)
       ->execute();
+    
+    if (!$success) {
+      return FALSE;
+    }
   }
   else {
+    // Get revision ID for the parent entity of this field.
+    if ($entity_type == 'node') {
+      $revision_id_field = 'vid';
+      $entity_id_field = 'nid';
+    }
+    elseif (strpos($entity_type, 'commerce_') !== FALSE) {
+      $entity_id_field = str_replace('commerce_', '', $entity_type) . '_id';
+      $revision_id_field = 'revision_id';
+    }
+    
+    $query = db_select($entity_type . '_revision', 'r');
+    $query->fields('r', array($revision_field))
+          ->condition($entity_id_field, $entity_id);
+    $revision_id = $query->execute()->fetchField(); //->fetchField();
+  
     // Need create a new field.
-    db_insert('field_data_field_' . $field_name) 
+    $success = db_insert('field_data_field_' . $field_name) 
       ->fields(array(
         'entity_type'=> $entity_type,
         'bundle'=> $bundle,
         'deleted'=> 0,                
         'entity_id' => $entity_id,
         'delta' => 0,  
-        'revision_id'=> $entity_id,
+        'revision_id'=> $revision_id,
         'language'=> 'und',  
         'field_' . $field_name . '_value' => $data,
       ))
       ->execute();
 
-    db_insert('field_revision_field_' . $field_name)
+    if (!$success) {
+      return FALSE;
+    }
+    
+    $success = db_insert('field_revision_field_' . $field_name)
       ->fields(array(
         'entity_type'=> $entity_type,
         'bundle'=> $bundle,
         'deleted'=> 0,                
         'entity_id' => $entity_id,
         'delta' => 0,  
-        'revision_id'=> $entity_id,
+        'revision_id'=> $revision_id,
         'language'=> 'und',  
         'field_' . $field_name . '_value' => $data,
       ))
       ->execute();
+    
+    if (!$success) {
+      return FALSE;
+    }
   }
 
-  field_cache_clear();
+  if ($clear_cache) {
+    field_cache_clear();
+  }
+  
+  return TRUE;
 }
 
 
