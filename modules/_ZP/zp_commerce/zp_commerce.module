@@ -2346,7 +2346,7 @@ function zp_commerce_addNewProduct($op, $object, &$result_messages) {
   $query->addField('e', 'product_id');
   $query->condition('sku', $object['zp_id']);
   if ($product_id = $query->execute()->fetchField()) {
-    $error_message = 'Нельзя создать товара, так как Уже существует товар с zp_id ' . $object['zp_id'];
+    $error_message = 'Нельзя создать товар, так как Уже существует товар с zp_id ' . $object['zp_id'];
     return $error_message;
   }
   
@@ -2445,7 +2445,7 @@ function zp_commerce_addNewProduct($op, $object, &$result_messages) {
   node_object_prepare($node);
   
   $current_time = time();
-  $node->date = $current_time;
+  //$node->date = $current_time;
   $node->created = $current_time;
   $node->changed = $current_time;
   
