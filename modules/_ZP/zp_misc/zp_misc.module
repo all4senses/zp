@@ -673,6 +673,10 @@ function zp_misc_fieldSave($field_name, $entity_id, $data, $entity_type = 'node'
         ->condition('f.entity_type', $entity_type);
   $result = $query->execute()->fetchObject(); //->fetchField();
   
+  
+  dpm('$field_name = ' . $field_name);
+  dpm('$entity_id = ' . $entity_id);
+  dpm('$entity_type = ' . $entity_type);
   dpm($result);
   
   //if ($result->rowCount()) {
