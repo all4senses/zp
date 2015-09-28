@@ -1902,7 +1902,7 @@ function zp_commerce_changeBodyAndSummary($entity_type, $entity_id, $data = arra
         $success = db_update('field_revision_body')
           ->fields($fields)
           ->condition('entity_id', $entity_id)
-          ->condition($revision_id_field, $entity->revision_id)
+          ->condition('revision_id', $entity->revision_id)
           ->execute();
 
         if (!$success) {
