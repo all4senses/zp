@@ -1989,7 +1989,7 @@ function zp_commerce_changeTitle($entity_type, $entity_id, $title, $clear_cache 
   $query->condition($entity_id_field, $entity_id);
   $entity = $query->execute()->fetchObject();
   
-  dpm($entity);
+  //dpm($entity);
   if ($entity->title == $title) {
     // Nothing to change.
     return TRUE;
@@ -2003,7 +2003,7 @@ function zp_commerce_changeTitle($entity_type, $entity_id, $title, $clear_cache 
     ->execute();
 
   if (!$success) {
-    dpm('---1');
+    //dpm('---1');
     return FALSE;
   }
 
@@ -2016,7 +2016,7 @@ function zp_commerce_changeTitle($entity_type, $entity_id, $title, $clear_cache 
     ->execute();
 
   if (!$success) {
-    dpm('---2');
+    //dpm('---2');
     return FALSE;
   }
   

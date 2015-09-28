@@ -674,7 +674,13 @@ function zp_misc_fieldSave($field_name, $entity_id, $data, $entity_type = 'node'
   $result = $query->execute()->fetchObject(); //->fetchField();
   
   //if ($result->rowCount()) {
-  if ($result) {  
+  if ($result) { 
+    
+    if ($result->{'field_' . $field_name . '_value'} == $data) {
+      // Nothing changed.
+      return TRUE;
+    }
+    
     // Need update an existing field.
     $success = db_update('field_data_field_' . $field_name)
       ->fields(array(
