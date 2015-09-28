@@ -2343,7 +2343,7 @@ function zp_commerce_addNewProduct($op, $object, &$result_messages) {
   }
   
   $query = db_select('commerce_product', 'e');
-  $query->addField('e', 'entity_id');
+  $query->addField('e', 'product_id');
   $query->condition('sku', $object['zp_id']);
   if ($product_id = $query->execute()->fetchField()) {
     $error_message = 'Нельзя создать товара, так как Уже существует товар с zp_id ' . $object['zp_id'];
