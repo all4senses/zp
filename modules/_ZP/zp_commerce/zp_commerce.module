@@ -1914,7 +1914,7 @@ function zp_commerce_changeBodyAndSummary($entity_type, $entity_id, $data = arra
     $success = db_insert('field_data_body') 
       ->fields(array(
         'entity_type'=> $entity_type,
-        'bundle'=> $bundle,
+        'bundle'=> $entity->bundle,
         'deleted'=> 0,                
         'entity_id' => $entity_id,
         'delta' => 0,  
@@ -1933,7 +1933,7 @@ function zp_commerce_changeBodyAndSummary($entity_type, $entity_id, $data = arra
     $success = db_insert('field_revision_body')
       ->fields(array(
         'entity_type'=> $entity_type,
-        'bundle'=> $bundle,
+        'bundle'=> $entity->bundle,
         'deleted'=> 0,                
         'entity_id' => $entity_id,
         'delta' => 0,  
