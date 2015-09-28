@@ -2336,7 +2336,20 @@ function zp_commerce_clarifyArtikulProducer(&$object, &$result_messages) {
  * Create a new product and connect it to the Catalog term by zp_id.
  */
 function zp_commerce_addNewProduct($op, $object, &$result_messages) {
- 
+  
+  if (zp_misc_fieldRead_idByValue_single('zp_id', $object['zp_id'], 'node', $object['product_display'])) {
+    $error_message = 'Нельзя создать дисплей товара, так как Уже существует дисплей товара с zp_id ' . $object['zp_id'];
+    return $error_message;
+  }
+  
+  $query = db_select($entity_type, 'e');
+  $query->addField('e', 'entity_id');
+  $query->condition('sku', $object['zp_id']);
+  if ($product_id = $query->execute()->fetchField()) {
+    $error_message = 'Нельзя создать товара, так как Уже существует товар с zp_id ' . $object['zp_id'];
+    return $error_message;
+  }
+  
   // Find parent term tid by parent_zp_id.
   if (!$parent_tid = zp_misc_fieldRead_idByValue_single('zp_id', $object['parent_zp_id'], 'taxonomy_term', 'catalog')) {
     $error_message = 'Нет отдела с zp_id ' . $object['parent_zp_id'] . ', заданного как родительский для данного товара';
