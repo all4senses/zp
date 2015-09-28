@@ -1836,7 +1836,7 @@ function zp_commerce_processPriceList_row_change($op, $object, &$result_messages
  * 
  * 
  */
-function zp_commerce_changeBodyAndSummary($entity_type, $entity_id, $body = NULL, $summary = NULL, $clear_cache = TRUE) {
+function zp_commerce_changeBodyAndSummary($entity_type, $entity_id, $data = array(), $clear_cache = TRUE) {
   // Get revision_id and bundle 
   if ($entity_type == 'node') {
     $entity_id_field = 'nid';
@@ -1855,21 +1855,40 @@ function zp_commerce_changeBodyAndSummary($entity_type, $entity_id, $body = NULL
   
   
   $fields = array();
-  if ($body) {
-    $fields['body_value'] = $body;
+  $body_set = $summary_set = FALSE;
+  if (array_key_exists('body', $data)) {
+    $fields['body_value'] = $data['body'];
+    $body_set = TRUE;
   }
-  if ($summary) {
-    $fields['body_summary'] = $summary;
+  if (array_key_exists('summary', $data)) {
+    $fields['body_summary'] = $data['summary'];
+    $summary_set = TRUE;
   }
   
   $query = db_select('field_data_body', 'f');
-  $query->fields('f', array('body_value', 'revision_id'))
+  $query->fields('f', array('body_value', 'revision_id', 'body_value', 'body_summary'))
         ->condition('f.entity_id', $entity_id)
         ->condition('f.entity_type', $entity_type);
   $result = $query->execute()->fetchObject(); //->fetchField();
   
   //if ($result->rowCount()) {
   if ($result) {  
+    
+        // Skip updating not changed values.
+        if ($body_set && $result->body_value == $data['body']) {
+          if (!$summary_set) {
+            return TRUE;
+          }
+          elseif ($result->body_summary == $data['summary']) { 
+            return TRUE;
+          }
+        }
+        if ($summary_set && $result->body_summary == $data['summary']) {
+          if (!$body_set) {
+            return TRUE;
+          }
+        }
+    
         // Update a value.
         $success = db_update('field_data_body')
           ->fields($fields)
@@ -1965,11 +1984,16 @@ function zp_commerce_changeTitle($entity_type, $entity_id, $title, $clear_cache 
   }
   
   $query = db_select($entity_type, 'e');
+  $query->addField('e', 'title');
   $query->addField('e', $revision_id_field, 'revision_id');
   $query->condition($entity_id_field, $entity_id);
   $entity = $query->execute()->fetchObject();
   
   dpm($entity);
+  if ($entity->title == $title) {
+    // Nothing to change.
+    return TRUE;
+  }
   
   $success = db_update($entity_type)
     ->fields(array(
