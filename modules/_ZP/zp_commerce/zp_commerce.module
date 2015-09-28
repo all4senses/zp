@@ -1849,7 +1849,7 @@ function zp_commerce_changeBodyAndSummary($entity_type, $entity_id, $data = arra
   
   $query = db_select($entity_type, 'e');
   $query->addField('e', $bundle_field, 'bundle');
-  $query->addField('e', $revision_field, 'revision_id');
+  $query->addField('e', $revision_id_field, 'revision_id');
   $query->condition($entity_id_field, $entity_id);
   $entity = $query->execute()->fetchObject();
   
