@@ -1759,7 +1759,7 @@ function zp_commerce_processPriceList_row_change($op, $object, &$result_messages
         
       case 'Описание':
         
-        if (!zp_commerce_changeBodyAndSummary('node', $entity_id, $object[$field_to_change], NULL, FALSE)) {
+        if (!zp_commerce_changeBodyAndSummary('node', $entity_id, array('body' => $object[$field_to_change]), FALSE)) {
           return 'Ошибка при изменении описания отдела или дисплея товара';
         }
         
@@ -1768,7 +1768,7 @@ function zp_commerce_processPriceList_row_change($op, $object, &$result_messages
       
       case 'Описание краткое':
         
-        if (!zp_commerce_changeBodyAndSummary('node', $entity_id, NULL, $object[$field_to_change], FALSE)) {
+        if (!zp_commerce_changeBodyAndSummary('node', $entity_id, array('summary' => $object[$field_to_change]), FALSE)) {
           return 'Ошибка при изменении краткого описания отдела или дисплея товара';
         }
         
