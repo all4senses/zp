@@ -2384,7 +2384,9 @@ function zp_commerce_addNewProduct($op, $object, &$result_messages) {
 
   $new_product->sku = $object['zp_id'];
   $new_product->title = $object['Название'];
-  $new_product->created = $new_product->changed = time();
+  $time = time();
+  $new_product->created = $time;
+  $new_product->changed = $time;
 
   $new_product->field_qmeasure['und'][0]['value'] = $object['Продажная единица (шт, кг и т.д.)'];
   $new_product->field_bar['und'][0]['value'] = $object['Ш-код междунар. или локальный'];
@@ -2455,7 +2457,7 @@ function zp_commerce_addNewProduct($op, $object, &$result_messages) {
 
   $node->{'field_' . $product_type}[$node->language][0]['product_id'] = $product_id;
   
-  
+  dpm($node);
   /*
   $node->field_zp_id[$node->language][0] = array(
     'value' => $object['zp_id'],
