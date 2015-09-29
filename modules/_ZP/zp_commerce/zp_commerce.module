@@ -2401,19 +2401,19 @@ function zp_commerce_addNewProduct($op, $object, &$result_messages) {
   $new_product->created = $time;
   $new_product->changed = $time;
 
-  $new_product->field_qmeasure['und'][0]['value'] = $object['Продажная единица (шт, кг и т.д.)'];
-  $new_product->field_bar['und'][0]['value'] = $object['Ш-код междунар. или локальный'];
-  $new_product->field_artikul_shop['und'][0]['value'] = $object['Артикул магазина'];
+  $new_product->field_qmeasure['und'][0]['value'] = @$object['Продажная единица (шт, кг и т.д.)'];
+  $new_product->field_bar['und'][0]['value'] = @$object['Ш-код междунар. или локальный'];
+  $new_product->field_artikul_shop['und'][0]['value'] = @$object['Артикул магазина'];
   
   zp_commerce_clarifyArtikulProducer($object, $result_messages);
-  $new_product->field_artikul_producer['und'][0]['value'] = $object['Артикул производителя'];
+  $new_product->field_artikul_producer['und'][0]['value'] = @$object['Артикул производителя'];
   
   
   
   //commerce_price[und][0][amount]
   $price = array(LANGUAGE_NONE => array(0 => array(
-    'amount' => $object['Цена (за продажную единицу)'] * 100,
-    'currency_code' => $object['Валюта'], //commerce_default_currency(),
+    'amount' => @$object['Цена (за продажную единицу)'] * 100,
+    'currency_code' => @$object['Валюта'], //commerce_default_currency(),
   )));
   $form_state['values']['commerce_price'] = $price;
 
