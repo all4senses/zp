@@ -1837,6 +1837,7 @@ function zp_commerce_processPriceList_row_change($op, $object, &$result_messages
  * 
  */
 function zp_commerce_changeBodyAndSummary($entity_type, $entity_id, $data = array(), $clear_cache = TRUE) {
+  
   // Get revision_id and bundle 
   if ($entity_type == 'node') {
     $entity_id_field = 'nid';
@@ -1853,17 +1854,17 @@ function zp_commerce_changeBodyAndSummary($entity_type, $entity_id, $data = arra
   $query->condition($entity_id_field, $entity_id);
   $entity = $query->execute()->fetchObject();
   
-  dpm($entity);
+  //dpm($entity);
   
   $fields = array();
   $body_set = $summary_set = FALSE;
   if (array_key_exists('body', $data)) {
-    dpm('1. isset body');
+    //dpm('1. isset body');
     $fields['body_value'] = $data['body'];
     $body_set = TRUE;
   }
   if (array_key_exists('summary', $data)) {
-    dpm('2. isset summary');
+    //dpm('2. isset summary');
     $fields['body_summary'] = $data['summary'];
     $summary_set = TRUE;
   }
@@ -1873,11 +1874,11 @@ function zp_commerce_changeBodyAndSummary($entity_type, $entity_id, $data = arra
         ->condition('f.entity_id', $entity_id)
         ->condition('f.entity_type', $entity_type);
   $result = $query->execute()->fetchObject(); //->fetchField();
-  dpm($result);
+  //dpm($result);
   //if ($result->rowCount()) {
   if ($result) { 
     
-    dpm('3. update');
+    //dpm('3. update');
     
         // Skip updating not changed values.
         if ($body_set && $result->body_value == $data['body']) {
@@ -1916,7 +1917,7 @@ function zp_commerce_changeBodyAndSummary($entity_type, $entity_id, $data = arra
   }
   else {
     
-    dpm('3. insert');
+    //dpm('3. insert');
        // Need create a new field.
     $success = db_insert('field_data_body') 
       ->fields(array(
@@ -1933,9 +1934,9 @@ function zp_commerce_changeBodyAndSummary($entity_type, $entity_id, $data = arra
       ))
       ->execute();
 
-    if (!$success) {
-      return FALSE;
-    }
+//    if (!$success) {
+//      return FALSE;
+//    }
     
     $success = db_insert('field_revision_body')
       ->fields(array(
@@ -1952,9 +1953,9 @@ function zp_commerce_changeBodyAndSummary($entity_type, $entity_id, $data = arra
       ))
       ->execute();
     
-    if (!$success) {
-      return FALSE;
-    }
+//    if (!$success) {
+//      return FALSE;
+//    }
        
   }
   
