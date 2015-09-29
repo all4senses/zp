@@ -1597,9 +1597,9 @@ function zp_commerce_processPriceList_row_change($op, $object, &$result_messages
     
     if (isset($bulk_change_fields_map[$field_to_change])) {
       if (!zp_misc_fieldSave(/*$field_name*/$bulk_change_fields_map[$field_to_change], /*$entity_id*/$entity_id, /*$data*/$object[$field_to_change], /*$entity_type*/'node', /*$bundle*/$bundle, /*$clear_cache*/ FALSE)) {
-        return 'Ошибка при создании или изменении поля "' . $field_to_change . '"';
+        return 'Ошибка при создании или изменении поля отдела или дисплея товара "' . $field_to_change . '"';
       }
-      $result_messages[] = 'Успешно изменено поле "' . $field_to_change . '"';
+      $result_messages[] = 'Успешно изменено поле отдела или дисплея товара "' . $field_to_change . '"';
       continue;
     }
     if (isset($bulk_change_fields_map_product[$field_to_change])) {

@@ -732,6 +732,7 @@ function zp_misc_fieldSave($field_name, $entity_id, $data, $entity_type = 'node'
       ->execute();
 
     if (!$success) {
+      dpm('insert. error on data');
       return FALSE;
     }
     
@@ -749,6 +750,7 @@ function zp_misc_fieldSave($field_name, $entity_id, $data, $entity_type = 'node'
       ->execute();
     
     if (!$success) {
+      dpm('insert. error on rev');
       return FALSE;
     }
   }
