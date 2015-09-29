@@ -731,11 +731,10 @@ function zp_misc_fieldSave($field_name, $entity_id, $data, $entity_type = 'node'
       ))
       ->execute();
 
-    dpm('$success data = ' . $success);
-    if (!$success) {
-      dpm('insert. error on data');
-      return FALSE;
-    }
+//    if (!$success) {
+//      dpm('insert. error on data');
+//      return FALSE;
+//    }
     
     $success = db_insert('field_revision_field_' . $field_name)
       ->fields(array(
@@ -750,11 +749,10 @@ function zp_misc_fieldSave($field_name, $entity_id, $data, $entity_type = 'node'
       ))
       ->execute();
     
-    dpm('$success rev = ' . $success);
-    if (!$success) {
-      dpm('insert. error on rev');
-      return FALSE;
-    }
+//    if (!$success) {
+//      dpm('insert. error on rev');
+//      return FALSE;
+//    }
   }
 
   if ($clear_cache) {
