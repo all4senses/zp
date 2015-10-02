@@ -330,7 +330,7 @@ function zp_commerce_form_commerce_cart_add_to_cart_form_alter(&$form, &$form_st
     // Seems a product is disabled, so this Add to cart form is empty.
     // So we skip it.
     $form['submit'] = array(
-      '#markup' => '<div class="deny-message"><a href="#">' . t('Товара нет в наличии') . '</a></div>',
+      '#markup' => '<div class="deny-message">' . t('Товара нет в наличии') . '</div>',
       '#weight' => 50,
     );
     // Just in case, define own stubs instead of any other functions.
