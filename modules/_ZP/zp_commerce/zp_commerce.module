@@ -329,6 +329,14 @@ function zp_commerce_form_commerce_cart_add_to_cart_form_alter(&$form, &$form_st
   if (empty($form['product_id'])) {
     // Seems a product is disabled, so this Add to cart form is empty.
     // So we skip it.
+    $form['submit'] = array(
+      '#markup' => '<div class="deny-message"><a href="#">' . t('Товара нет в наличии') . '</a></div>',
+      '#weight' => 50,
+    );
+    // Just in case, define own stubs instead of any other functions.
+    $form['#validate'] = array(); //'zp_commerce_cart_add_to_cart_form_validate';
+    $form['#submit'] = array(); //'zp_commerce_cart_add_to_cart_form_submit';
+    
     return;
   }
   
