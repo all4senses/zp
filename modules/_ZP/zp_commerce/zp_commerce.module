@@ -1213,6 +1213,9 @@ function zp_commerce_processPriceList_mapPriceRowToCatalogObject($row, &$error) 
   if (!array_key_exists('Статус элемента', $row) || $row['Статус элемента'] === '') {
     $row['Статус элемента'] = 1;
   }
+  elseif ($row['Статус элемента'] === 'hidden') {
+    $row['Статус элемента'] = 0;
+  }
 
   
   if ($row['Действие / результат'] == 'hide') {
@@ -2417,7 +2420,7 @@ function zp_commerce_addNewProduct($op, $object, &$result_messages) {
   zp_commerce_clarifyArtikulProducer($object, $result_messages);
   $new_product->field_artikul_producer['und'][0]['value'] = @$object['Артикул производителя'];
   
-  
+  dpm($new_product);
   
   //commerce_price[und][0][amount]
   $price = array(LANGUAGE_NONE => array(0 => array(
@@ -2443,6 +2446,7 @@ function zp_commerce_addNewProduct($op, $object, &$result_messages) {
     $result_messages[] = $result_message;
   }
   
+  dpm($new_product);
   
   // Create a Product Display node for the product,
   // And connect to it just created Product Type entity.
