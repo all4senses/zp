@@ -1084,11 +1084,17 @@ Processed: ' . $context['results']['processed'] . '
     
     
   
-    if ($context['finished'] == 1) {
+    if ($context['finished'] == 1 && !$error_message) {
       $status = ($op == 'test' ? 'Checked.' : 'Imported.');
+      $context['results']['history'] = '
+--->> Обработка УСПЕШНО завершена.
+' . $context['results']['history'];
     }
     else {
       $status = ($op == 'test' ? 'Checking...' : 'Importing...');
+      $context['results']['history'] = '
+--->> Завершено С ОШИБКАМИ.
+' . $context['results']['history'];
     }
     
     $errors_message = $errors_count ? ' Errors: ' .  $errors_count .  ' on ' . ($context['sandbox']['progress'] - 1) . ' out of ' . $context['sandbox']['max'] . '.' : '';
@@ -1135,9 +1141,9 @@ function zp_commerce_importPriceList_batch_finished($success, $results, $operati
   //dpm($results);
   
   if ($success) {
-    drupal_set_message(t('@count объектов обработано за @requests HTTP запросов.', array('@count' => $results['processed'], '@requests' => zp_misc_get_http_requests())));
+    drupal_set_message(t('---> @count объектов обработано за @requests HTTP запросов.', array('@count' => $results['processed'], '@requests' => zp_misc_get_http_requests())));
 
-    drupal_set_message(t('Прайс-лист успешно обработан. Последний обработанный объект "%final"', array('%final' => $results['objects_source'][$results['last_not_empty_object_id']]['Название'])));
+    drupal_set_message(t('------> OK! Прайс-лист успешно обработан. Последний обработанный объект "%final"', array('%final' => $results['objects_source'][$results['last_not_empty_object_id']]['Название'])));
   }
   else {
     // An error occurred.
