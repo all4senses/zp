@@ -2420,6 +2420,7 @@ function zp_commerce_addNewProduct($op, $object, &$result_messages) {
   zp_commerce_clarifyArtikulProducer($object, $result_messages);
   $new_product->field_artikul_producer['und'][0]['value'] = @$object['Артикул производителя'];
   
+  dpm($object);
   dpm($new_product);
   
   //commerce_price[und][0][amount]
