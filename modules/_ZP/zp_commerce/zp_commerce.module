@@ -326,8 +326,14 @@ function zp_commerce_getUserData($uid) {
  */
 function zp_commerce_form_commerce_cart_add_to_cart_form_alter(&$form, &$form_state) {
   
-  dpm($form);
-  dpm($form_state);
+  if (empty($form['product_id'])) {
+    // Seems a product is disabled, so this Add to cart form is empty.
+    // So we skip it.
+    return;
+  }
+  
+  //dpm($form);
+  //dpm($form_state);
   
   // Allow decimal only for non empty and non items/шт. qmeasure for each specified product.
   // 
