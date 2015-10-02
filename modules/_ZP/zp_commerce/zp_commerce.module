@@ -326,7 +326,7 @@ function zp_commerce_getUserData($uid) {
  */
 function zp_commerce_form_commerce_cart_add_to_cart_form_alter(&$form, &$form_state) {
   
-  
+  dpm($form);
   
   // Allow decimal only for non empty and non items/шт. qmeasure for each specified product.
   // 
@@ -2417,15 +2417,11 @@ function zp_commerce_addNewProduct($op, $object, &$result_messages) {
   $new_product->field_bar['und'][0]['value'] = @$object['Штрихкод'];
   $new_product->field_artikul_shop['und'][0]['value'] = @$object['Артикул магазина'];
   
-  dpm('@$object[Штрихкод] = ' . @$object['Штрихкод']);
-  dpm($object);
-  dpm($new_product); 
-  
   zp_commerce_clarifyArtikulProducer($object, $result_messages);
   $new_product->field_artikul_producer['und'][0]['value'] = @$object['Артикул производителя'];
   
-  dpm($object);
-  dpm($new_product); 
+  //dpm($object);
+  //dpm($new_product); 
   
   //commerce_price[und][0][amount]
   $price = array(LANGUAGE_NONE => array(0 => array(
