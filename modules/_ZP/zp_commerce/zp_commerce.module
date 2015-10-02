@@ -1180,7 +1180,7 @@ function zp_commerce_processPriceList_mapPriceRowToCatalogObject($row, &$error) 
   
   $product_fields_only = array(
       'Кол-во', 'Производитель/Поставщик/Бренд', 
-      'Категория 1', 'Категория 2', 'Род.Отдел/Категория 3', 
+      'Категория 1', 'Категория 2',
       'Вес/объём, мера', 'Вес/объём, значение', 
       'Продажная единица (шт, кг и т.д.)', 
       'Цена (за продажную единицу)', 
@@ -1684,7 +1684,7 @@ function zp_commerce_processPriceList_row_change($op, $object, &$result_messages
                       $query->fields('p', array('revision_id'))
                         ->condition('product_id', $product_id);
                       if (!$revision_id = $query->execute()->fetchField()) {
-                        return 'Не удалось определить номер ревизии для товара';
+                        return 'Изменение статуса: Не удалось определить номер ревизии для товара';
                       }
 
                       $success = db_update('commerce_product')
@@ -1743,14 +1743,14 @@ function zp_commerce_processPriceList_row_change($op, $object, &$result_messages
       case 'Название':
         
         if (!zp_commerce_changeTitle('node', $entity_id, $object[$field_to_change], FALSE)) {
-          return 'Ошибка при изменении названия отдела или дисплея товара';
+          return 'Ошибка при изменении названия отдела или дисплея товара на "' . $object[$field_to_change] . '"';
         }
         if ($type == 'product') {
           if (!zp_commerce_changeTitle('commerce_product', $product_id, $object[$field_to_change], FALSE)) {
-            return 'Ошибка при изменении названия товара';
+            return 'Ошибка при изменении названия товара на "' . $object[$field_to_change] . '"';
           }
         }
-        $result_messages[] = 'Название обновлёно успешно.';
+        $result_messages[] = 'Название обновлёно успешно на "' . $object[$field_to_change] . '"';
         
         break;
       
