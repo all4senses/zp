@@ -1191,7 +1191,7 @@ function zp_commerce_processPriceList_mapPriceRowToCatalogObject($row, &$error) 
       'Вес/объём, мера', 'Вес/объём, значение', 
       'Продажная единица (шт, кг и т.д.)', 
       'Цена (за продажную единицу)', 
-      'Ш-код междунар. или локальный', 'Артикул магазина', 'Артикул производителя', 'Артикул поставщика', 
+      'Штрихкод', 'Артикул магазина', 'Артикул производителя', 'Артикул поставщика', 
       'Срок хранения', 
       'Другие атрибуты товара');
   
@@ -1587,7 +1587,7 @@ function zp_commerce_processPriceList_row_change($op, $object, &$result_messages
   
   $bulk_change_fields_map_product = array(
       'Продажная единица (шт, кг и т.д.)' => 'qmeasure',
-      'Ш-код междунар. или локальный' => 'bar',
+      'Штрихкод' => 'bar',
       'Артикул магазина' => 'artikul_shop',
       'Артикул производителя' => 'artikul_producer',
   );
@@ -2414,10 +2414,10 @@ function zp_commerce_addNewProduct($op, $object, &$result_messages) {
   $new_product->changed = $time;
 
   $new_product->field_qmeasure['und'][0]['value'] = @$object['Продажная единица (шт, кг и т.д.)'];
-  $new_product->field_bar['und'][0]['value'] = @$object['Ш-код междунар. или локальный'];
+  $new_product->field_bar['und'][0]['value'] = @$object['Штрихкод'];
   $new_product->field_artikul_shop['und'][0]['value'] = @$object['Артикул магазина'];
   
-  dpm('@$object[Ш-код междунар. или локальный] = ' . @$object['Ш-код междунар. или локальный']);
+  dpm('@$object[Штрихкод] = ' . @$object['Штрихкод']);
   dpm($object);
   dpm($new_product); 
   
