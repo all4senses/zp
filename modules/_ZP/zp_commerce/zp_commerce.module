@@ -1049,11 +1049,12 @@ Processed: ' . $context['results']['processed'] . '
   // If no error, Inform the batch engine that we are not finished,
   // and provide an estimation of the completion level we reached.
   
-  if ($context['sandbox']['progress'] >= 2) {
-    // Stop processing because of the TEST!
-    $context['finished'] = 1;
-  }
-  elseif ($error_message && $op != 'test') {
+//  if ($context['sandbox']['progress'] >= 2) {
+//    // Stop processing because of the TEST!
+//    $context['finished'] = 1;
+//  }
+//  else
+    if ($error_message && $op != 'test') {
     // If $op == 'test' we don't stop processing and just collect all errors.
 
     // Stop processing because of the error!
@@ -1209,9 +1210,10 @@ function zp_commerce_processPriceList_mapPriceRowToCatalogObject($row, &$error) 
   //dpm($row);
   
   // By default, aall elements are visible, if not set any different...
-  if (!array_key_exists('Статус элемента', $row)) {
+  if (!array_key_exists('Статус элемента', $row) || $row['Статус элемента'] === '') {
     $row['Статус элемента'] = 1;
   }
+
   
   if ($row['Действие / результат'] == 'hide') {
     $row['Действие / результат'] = 'change';
