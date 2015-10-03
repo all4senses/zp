@@ -1355,6 +1355,16 @@ function zp_commerce_processPriceList_mapPriceRowToCatalogObject($row, &$error) 
     $catalogObject['Вес элемента в группе'] = 0;
   }
   
+  // We need to update all three category fields if at least one of them has to be updated.
+  $categories_fields = array('Категория 1', 'Категория 2', 'Род.Отдел/Категория 3');
+  if (!empty(array_intersect( $catalogObject['fields_to_change'], $categories_fields))) {
+    foreach ($categories_fields as $categories_field) {
+      if (!in_array($categories_field,  $catalogObject['fields_to_change'])) {
+        $catalogObject['fields_to_change'][] = $categories_field;
+      }
+    }
+  }
+  
   return $catalogObject;
   
   
@@ -1617,7 +1627,8 @@ function zp_commerce_processPriceList_row_change($op, $object, &$result_messages
     unset($object['Артикул поставщика'], $fields_to_change[array_search('Артикул поставщика', $fields_to_change)]);
     $result_messages[] = 'Внимание!!!!!!! Как Артикул производителя будет задан Артикул поставщика (так как для Артикула производителя и Артикула поставщика предусмотрено только одно общее поле)';
   }
-      
+   
+  $all_categories_removed = FALSE;
   
   foreach ($fields_to_change as $field_to_change) {
     
@@ -1668,22 +1679,28 @@ function zp_commerce_processPriceList_row_change($op, $object, &$result_messages
 
       
       case 'Категория 1':
-        
-        
-        
-        break;      
-
-      
-      
-      
       case 'Категория 2':
-        
-        break;      
-
       case 'Род.Отдел/Категория 3':
         
+          if (!$all_categories_removed && (in_array('Категория 1', $fields_to_change) || in_array('Категория 2', $fields_to_change) || in_array('Род.Отдел/Категория 3', $fields_to_change)) ) {
+            // If we have to change categorues (main or others) thet we need to update everything. So we'll need update data from all three these fields.
+            // So we remove all categories and will add again all cats from scratch (see below).
+            if($error = zp_commerce_removeCategoriesFromProduct($entity_id, $bundle, $results)) {
+              return $error;
+            }
+            $result_messages[] = 'Удалены все категории товара, для дальнейшего обновления...';
+            $all_categories_removed = TRUE;
+          }
+
+
+        if($error = zp_commerce_addCategoriesToProduct($entity_id, $field_to_change, $object[$field_to_change], $results)) {
+          return $error;
+        }
+        
         break;      
-      
+
+        
+        
       
       
       case 'Вес/объём, мера':
@@ -1853,6 +1870,142 @@ function zp_commerce_processPriceList_row_change($op, $object, &$result_messages
       
     } // End of switch($object[$field]) {
   } // End of foreach (fields_to_change as $field) {
+}
+
+
+/**
+ * 
+ * @param type $entity_id
+ * @param type $entity_type
+ * @param type $bundle
+ * @param type $results
+ * 
+ */
+function zp_commerce_removeCategoriesFromProduct($entity_id, $bundle, &$results) {
+  $taxonomy_field_names = array('Category main' => 'category_main', 'Categories other' => 'categories_other');
+
+  foreach ($taxonomy_field_names as $key => $field_name) {
+    zp_misc_fieldTermReferenceDelete($field_name, $entity_id, $bundle);
+  }
+  
+  //Success.
+  return FALSE;
+}
+
+
+/**
+ * 
+ * @global type $vocs
+ * @param type $entity_id
+ * @param type $field_to_change
+ * @param type $field_data
+ * @param type $results
+ * @return boolean
+ * 
+  */
+function zp_commerce_addCategoriesToProduct($entity_id, $field_to_change, $field_data, &$results) {
+  
+  //$field_data = 'Вид блюда: Мясо и птица***Жульен###Прочие категории: Диетическое питание***Холодные блюда';
+  //$field_data = 'Вид блюда: Мясо и птица***Жульен';
+  //dpr($field_data);
+
+
+  //$field_to_change = 'Категория 1';
+  //$entity_id = 138;
+  
+  $vocs_names = array('Category main' => 'category_main', 'Categories other' => 'categories_other');
+
+  // Define vocabularies.
+  global $vocs;
+  if (!$vocs) {
+
+    foreach ($vocs_names as $vocs_name => $voc_machine_name) {
+      $query = db_select('taxonomy_vocabulary', 'v')  
+            ->fields('v', array('vid'));
+      $query->condition('v.name', $vocs_name);
+      if($vid = $query->execute()->fetchField()) {
+        $vocs[$vocs_name] = $vid;
+      }
+      else {
+
+              // The vocabulary name is not recognized.
+              taxonomy_vocabulary_save((object) array(
+                'name' => $vocs_name,
+                'machine_name' => $voc_machine_name,
+              ));
+              $query = db_select('taxonomy_vocabulary', 'v')  
+                    ->fields('v', array('vid'));
+              $query->condition('v.name', $vocs_name);
+              if($vid = $query->execute()->fetchField()) {
+                $vocs[$vocs_name] = $vid;
+                $result_messages[] = 'Создан новый словарь "' . $vocs_name . '"';
+              }
+              else {
+                dpr('Словарь "' . $vocs_name . '" не существовал в базе, а при попытке его создании возникла ошибка.');
+                return 'Словарь "' . $vocs_name . '" не существовал в базе, а при попытке его создании возникла ошибка.';
+              }
+
+      } // End of else of if($vid = $query->execute()->fetchField()) {
+    } // End of foreach ($vocs_names as $vocs_name => $voc_machine_name) {
+  } // End of if (!$vocs) {
+
+
+
+  // The product can have several categories, delimited by ###.
+  $cats = explode('###', $field_data);
+
+  foreach ($cats as $key => $cat) {
+    dpr($key . ': ' . $cat);
+    $cat = explode(':', $cat);
+
+    // Category group term name.
+    $cat_name = trim($cat[0]);
+
+    if (empty($cat[1])) {
+      return 'Не заданы значения для категории "' . $cat_name . '". После двоеточия должна быть строка со значением для данной категории';
+    }
+
+    dpr('cat_name: ' . $cat_name);
+    
+    // If it's Cat 1 field, add the first cat value(s) to the Category main voc.
+    // In all other cases add all values to Categories other voc.
+    if ($field_to_change == 'Категория 1' && $key == 0) {
+      // Category main vocabulary.
+      $voc_name = 'Category main';
+      $vid = $vocs[$voc_name];
+    }
+    else {
+      $voc_name = 'Categories other';
+      $vid = $vocs[$voc_name];
+    }
+
+    // Check if there is a Category group term name is in the voc.
+    // And create it if not exists.
+    if (!$category_tid = zp_misc_createTerm_ifNotExists($vid, $cat_name, 0, $results)) {
+      dpr('Ошибка при создании нового терма для названия категории (группы) "' . $cat_name . '".');
+      return 'Ошибка при создании нового терма для названия категории (группы) "' . $cat_name . '".';
+    }
+
+    // The product can have several values in each category.
+    $terms = explode('***', $cat[1]);
+    foreach ($terms as $term_key => $term_name) {
+      $term_name = trim($term_name);
+      dpr('---> term ' . $term_key . ' name: ' . $term_name);
+      if (!$term_tid = zp_misc_createTerm_ifNotExists($vid, $term_name, $category_tid, $results)) {
+        dpr('Ошибка при создании нового терма для названия конечного терма "' . $term_name . '".');
+        return 'Ошибка при создании нового терма для названия конечного терма "' . $term_name . '".';
+      }
+      //Connect a term to the node.
+      //zp_misc_fieldTermReferenceSave_insertMultiply(/*'category_main'*/$vocs_names[$voc_name], 138, /*74*/$term_tid, 'node', NULL, TRUE);
+      zp_misc_fieldTermReferenceSave_insertMultiply(/*$field_name = */$vocs_names[$voc_name], $entity_id, /*$data = */$term_tid, /*$entity_type = */'node', /*$bundle = */NULL, /*$clear_cache = */FALSE);
+      $result_messages[] = 'К товару добавлен (или обновлён) терм "' . $term_name . '"';
+    } // foreach ($terms as $term_key => $term_name) {
+
+  }
+  //dpr($result_messages);
+
+  // Success.
+  return FALSE;
 }
 
 
@@ -2501,10 +2654,11 @@ function zp_commerce_addNewProduct($op, $object, &$result_messages) {
   $node->field_parent_zp_id[$node->language][0]['value'] = $object['parent_zp_id'];
   
   $node->field_c_weight[$node->language][0]['value'] = $object['Вес элемента в группе'];
+  $node->field_brand[$node->language][0]['value'] = $object['Производитель/Поставщик/Бренд'];
 
   $node->{'field_' . $product_type}[$node->language][0]['product_id'] = $product_id;
   
-  dpm($node);
+  //dpm($node);
   /*
   $node->field_zp_id[$node->language][0] = array(
     'value' => $object['zp_id'],

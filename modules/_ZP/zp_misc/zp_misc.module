@@ -549,6 +549,34 @@ function zp_misc_loadUserExtendedData($uid) {
 }
 
 
+function zp_misc_fieldTermReferenceDelete($field_name, $entity_id, $bundle, $entity_type = 'node' ) {
+  
+  
+  $query = db_select('field_data_field_' . $field_name, 'f');
+  $query->fields('f', array('field_' . $field_name . '_tid', $field_value))
+        ->condition('f.entity_id', $entity_id)
+        ->condition('f.entity_type', $entity_type)
+        ->condition('f.bundle', $bundle);
+  
+  if($tids = $query->execute()->fetchCol()) {
+      
+        // Clear taxonomy fields.
+        db_delete('field_data_field_' . $field_name)
+          ->condition($target_field_name, $target_field_id)
+          ->execute();
+        db_delete('field_revision_field_' . $field_name)
+          ->condition($target_field_name, $target_field_id)
+          ->execute();
+        
+        // Clear taxonomy node index.
+        db_delete('taxonomy_index')
+          ->condition('nid', $entity_id)
+          ->condition('tid', $tids, 'IN')      
+          ->execute();
+  }
+  
+}
+
 /**
  * Saves or updates a field.
  */
