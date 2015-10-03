@@ -898,6 +898,34 @@ function zp_misc_fieldTermReferenceSave($field_name, $entity_id, $data, $entity_
 }
 
 
+/**
+ * 
+ * @param type $vid
+ * @param type $term_name
+ * @param type $parent
+ * @return type
+ * 
+  */
+function zp_misc_createTerm_ifNotExists($vid, $term_name, $parent) {
+  // Check if there is a Category group term name is in the voc.
+  $query = db_select('taxonomy_term_data', 'td')  
+          ->fields('td', array('tid'));
+  $query->join('taxonomy_term_hierarchy', 'th', 'th.tid = td.tid AND th.parent = ' . $parent);
+  //$query->fields('th');
+  $query->condition('td.name', $term_name);
+  if(!$tid = $query->execute()->fetchField()) {
+    // Term (Category name) is not found. Let's create it first.
+    $term = new stdClass();
+    $term->name = $term_name;
+    $term->vid = $vid;
+    $term->parent = $parent; 
+    //$term->field_new[LANGUAGE_NONE][0]['value'] = 'Value for this field'; 
+    taxonomy_term_save($term);
+    $tid = @$term->tid;
+  } // End of if(!$category_tid = $query->execute()->fetchField()) {
+  return $tid;
+}
+
 
 /**
  * Saves or updates a Term Reference field.
@@ -928,6 +956,18 @@ function zp_misc_fieldTermReferenceSave_insertMultiply($field_name, $entity_id, 
   }
   
   // Try to get the existing field from DB
+  $query = db_select('field_data_field_' . $field_name, 'f');
+  $query->fields('f', array('field_' . $field_name . '_tid', 'delta'))
+        ->condition('f.entity_id', $entity_id)
+        ->condition('f.entity_type', $entity_type)
+        ->condition('f.bundle', $bundle)
+        ->condition('f.field_' . $field_name . '_tid', $data);  
+  if ($result = $query->execute()->fetchField()) {
+    dpr('Term is already connected to entity');
+    // The term is already connected to the entity.
+    return TRUE;
+  }
+  
   $query = db_select('field_data_field_' . $field_name, 'f');
   $query->fields('f', array('field_' . $field_name . '_tid', 'delta'))
         ->condition('f.entity_id', $entity_id)
