@@ -1224,23 +1224,23 @@ function zp_commerce_processPriceList_mapPriceRowToCatalogObject($row, &$error) 
   
   //dpm($row);
   
+  
+  if ($row['Действие / результат'] == 'hide') {
+    $row['Действие / результат'] = 'change';
+    $row['Статус элемента'] = '###0';
+  }
+  elseif ($row['Действие / результат'] == 'show' || $row['Действие / результат'] == 'unhide') {
+    $row['Действие / результат'] = 'change';
+    // kind of empty field, mut means not hidden, normal state
+    $row['Статус элемента'] = '###1';
+  }
+  
   // By default, aall elements are visible, if not set any different...
   if (!array_key_exists('Статус элемента', $row) || $row['Статус элемента'] === '') {
     $row['Статус элемента'] = 1;
   }
   elseif ($row['Статус элемента'] === 'hidden') {
     $row['Статус элемента'] = 0;
-  }
-
-  
-  if ($row['Действие / результат'] == 'hide') {
-    $row['Действие / результат'] = 'change';
-    $row['Статус элемента'] = '###hidden';
-  }
-  elseif ($row['Действие / результат'] == 'show' || $row['Действие / результат'] == 'unhide') {
-    $row['Действие / результат'] = 'change';
-    // kind of empty field, mut means not hidden, normal state
-    $row['Статус элемента'] = '###';
   }
   
   
@@ -1364,6 +1364,12 @@ function zp_commerce_processPriceList_mapPriceRowToCatalogObject($row, &$error) 
         $catalogObject['fields_to_change'][] = $categories_field;
       }
     }
+  }
+  
+  
+  // If 'Действие / результат' was to hide/unhide, let's remain only this one change, and remove other (even marked with ###) fields changing.
+  if ($row['Действие / результат'] == 'show' || $row['Действие / результат'] == 'unhide' || $row['Действие / результат'] == 'hide') {
+    $catalogObject['fields_to_change'] = array('Действие / результат');
   }
   
   return $catalogObject;
