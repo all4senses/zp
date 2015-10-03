@@ -906,7 +906,7 @@ function zp_misc_fieldTermReferenceSave($field_name, $entity_id, $data, $entity_
  * @return type
  * 
   */
-function zp_misc_createTerm_ifNotExists($vid, $term_name, $parent) {
+function zp_misc_createTerm_ifNotExists($vid, $term_name, $parent, &$results) {
   // Check if there is a Category group term name is in the voc.
   $query = db_select('taxonomy_term_data', 'td')  
           ->fields('td', array('tid'));
@@ -921,7 +921,9 @@ function zp_misc_createTerm_ifNotExists($vid, $term_name, $parent) {
     $term->parent = $parent; 
     //$term->field_new[LANGUAGE_NONE][0]['value'] = 'Value for this field'; 
     taxonomy_term_save($term);
-    $tid = @$term->tid;
+    if ($tid = @$term->tid) {
+      $results[] = 'Создан новый терм для названия ' . ($parent == 0 ? 'категории (группы)' : 'конечного терма') . ' "' . $term_name . '"';
+    }
   } // End of if(!$category_tid = $query->execute()->fetchField()) {
   return $tid;
 }
