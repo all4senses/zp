@@ -847,9 +847,10 @@ function zp_misc_fieldTermReferenceSave($field_name, $entity_id, $data, $entity_
       ))
       ->execute();
     
-    if (!$success) {
-      return FALSE;
-    }
+//    if (!$success) {
+//      dpm('Error on inserting in field_data_field_' . $field_name);
+//      return FALSE;
+//    }
 
     $success = db_insert('field_revision_field_' . $field_name)
       ->fields(array(
@@ -864,9 +865,28 @@ function zp_misc_fieldTermReferenceSave($field_name, $entity_id, $data, $entity_
       ))
       ->execute();
     
-    if (!$success) {
-      return FALSE;
-    }
+//    if (!$success) {
+//      dpm('Error on inserting in field_revision_field_' . $field_nam);
+//      return FALSE;
+//    }
+    
+    // Connect this tid to node in taxonomy_index as well.
+    if ($entity_type == 'node') {
+      
+          $success = db_insert('taxonomy_index')
+            ->fields(array(
+              'nid' => $entity_id,
+              'tid' => $data,  
+              'created'=> time(),  
+            ))
+            ->execute();
+
+//          if (!$success) {
+//            dpm('Error on inserting in taxonomy_index');
+//            return FALSE;
+//          }
+          
+    } // if ($entity_type == 'node') {
     
   }
 
@@ -876,6 +896,118 @@ function zp_misc_fieldTermReferenceSave($field_name, $entity_id, $data, $entity_
   
   return TRUE;
 }
+
+
+
+/**
+ * Saves or updates a Term Reference field.
+ */
+function zp_misc_fieldTermReferenceSave_insertMultiply($field_name, $entity_id, $data, $entity_type = 'node', $bundle = NULL, $clear_cache = TRUE) {
+  
+  // Get revision_id and bundle 
+  if ($entity_type == 'node') {
+    $entity_id_field = 'nid';
+    $bundle_field = 'type';
+    $revision_field = 'vid';
+  }
+  elseif ($entity_type == 'commerce_product') {
+    $entity_id_field = 'product_id';
+    $bundle_field = 'type';
+    $revision_field = 'revision_id';
+  }
+  
+  // Define parent entity revision, bundle, etc
+  $query = db_select($entity_type, 'e');
+  $query->addField('e', $bundle_field, 'bundle');
+  $query->addField('e', $revision_field, 'revision_id');
+  $query->condition($entity_id_field, $entity_id);
+  $entity = $query->execute()->fetchObject();
+  
+  if(!$bundle) {
+    $bundle = $entity->bundle;
+  }
+  
+  // Try to get the existing field from DB
+  $query = db_select('field_data_field_' . $field_name, 'f');
+  $query->fields('f', array('field_' . $field_name . '_tid', 'delta'))
+        ->condition('f.entity_id', $entity_id)
+        ->condition('f.entity_type', $entity_type)
+        ->condition('f.bundle', $bundle);
+  $query->orderBy('f.delta', 'DESC');
+  $result = $query->execute()->fetchObject();
+  
+  if ($result) {
+    $delta = $result->delta + 1;
+  }
+  else {
+    $delta = 0;
+  }
+  
+
+  // Need add a new field.
+  $success = db_insert('field_data_field_' . $field_name) 
+    ->fields(array(
+      'entity_type'=> $entity_type,
+      'bundle'=> $bundle,
+      'deleted'=> 0,                
+      'entity_id' => $entity_id,
+      'delta' => $delta,  
+      'revision_id' => $entity->revision_id,
+      'language'=> 'und',  
+      'field_' . $field_name . '_tid' => $data,
+    ))
+    ->execute();
+
+//    if (!$success) {
+//      dpm('Error on inserting in field_data_field_' . $field_name);
+//      return FALSE;
+//    }
+
+  $success = db_insert('field_revision_field_' . $field_name)
+    ->fields(array(
+      'entity_type'=> $entity_type,
+      'bundle'=> $bundle,
+      'deleted'=> 0,                
+      'entity_id' => $entity_id,
+      'delta' => $delta,  
+      'revision_id' => $entity->revision_id,
+      'language'=> 'und',  
+      'field_' . $field_name . '_tid' => $data,
+    ))
+    ->execute();
+
+//    if (!$success) {
+//      dpm('Error on inserting in field_revision_field_' . $field_nam);
+//      return FALSE;
+//    }
+
+  // Connect this tid to node in taxonomy_index as well.
+  if ($entity_type == 'node') {
+
+        $success = db_insert('taxonomy_index')
+          ->fields(array(
+            'nid' => $entity_id,
+            'tid' => $data,  
+            'created'=> time(),  
+          ))
+          ->execute();
+
+//          if (!$success) {
+//            dpm('Error on inserting in taxonomy_index');
+//            return FALSE;
+//          }
+
+  } // if ($entity_type == 'node') {
+    
+
+
+  if ($clear_cache) {
+    field_cache_clear();
+  }
+  
+  return TRUE;
+}
+
 
 
 /**

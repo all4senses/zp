@@ -1669,8 +1669,13 @@ function zp_commerce_processPriceList_row_change($op, $object, &$result_messages
       
       case 'Категория 1':
         
+        
+        
         break;      
 
+      
+      
+      
       case 'Категория 2':
         
         break;      
