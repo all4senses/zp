@@ -1357,7 +1357,8 @@ function zp_commerce_processPriceList_mapPriceRowToCatalogObject($row, &$error) 
   
   // We need to update all three category fields if at least one of them has to be updated.
   $categories_fields = array('Категория 1', 'Категория 2', 'Род.Отдел/Категория 3');
-  if (!empty(array_intersect( $catalogObject['fields_to_change'], $categories_fields))) {
+  $intersected = array_intersect($catalogObject['fields_to_change'], $categories_fields);
+  if (!empty($intersected)) {
     foreach ($categories_fields as $categories_field) {
       if (!in_array($categories_field,  $catalogObject['fields_to_change'])) {
         $catalogObject['fields_to_change'][] = $categories_field;
