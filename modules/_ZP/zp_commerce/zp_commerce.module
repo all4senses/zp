@@ -1151,7 +1151,7 @@ function zp_commerce_importPriceList_batch_finished($success, $results, $operati
   $title_result_message = 'Результаты операции "' . @$results['op'] . '", файл "' . @$results['file_path'] . '" ( fid: ' . @$results['fid'] . ')';
   krumong('devel')->dpm($title_result_message);
   
-  $errors = $results['errors'] ? 'Done with ' . count(@$results['errors']) . ' error(s). ' : '';
+  $errors = $results['errors'] ? 'Done with ' . count(@$results['errors']) . ' error(s). ' : NULL;
   krumong('devel')->dpm('Статус выполненной операции: ' . $errors . @$results['status']);
   
   //dpm($results);
@@ -1159,14 +1159,20 @@ function zp_commerce_importPriceList_batch_finished($success, $results, $operati
   if ($success) {
     drupal_set_message(t('---> @count объектов обработано за @requests HTTP запросов.', array('@count' => $results['processed'], '@requests' => zp_misc_get_http_requests())));
 
-    drupal_set_message(t('------> OK! Прайс-лист успешно обработан. Последний обработанный объект "%final"', array('%final' => $results['objects_source'][$results['last_not_empty_object_id']]['Название'])));
+    if (!$errors) {
+      drupal_set_message(t('------> OK! Прайс-лист успешно обработан. Последний обработанный объект "%final"', array('%final' => $results['objects_source'][$results['last_not_empty_object_id']]['Название'])));
+    }
+    else {
+      drupal_set_message(t('-> Завершено С ОШИБКАМИ! Последний обработанный объект "%final"', array('%final' => $results['objects_source'][$results['last_not_empty_object_id']]['Название'])));  
+    }
+    
   }
   else {
     // An error occurred.
     // $operations contains the operations that remained unprocessed.
     $error_operation = reset($operations);
     //drupal_set_message(t('An error occurred while processing @operation with arguments : @args', array('@operation' => $error_operation[0], '@args' => print_r($error_operation[0], TRUE))));
-    drupal_set_message(t('Возникло ошибки время выполнения операции "@operation" с аргументами "@args".', array('@operation' => $error_operation[0], '@args' => print_r($error_operation[0], TRUE))));
+    drupal_set_message(t('Возникли ошибки время выполнения операции "@operation" с аргументами "@args".', array('@operation' => $error_operation[0], '@args' => print_r($error_operation[0], TRUE))));
   }
   
   krumong('devel')->dpm($results);
@@ -1228,11 +1234,16 @@ function zp_commerce_processPriceList_mapPriceRowToCatalogObject($row, &$error) 
   if ($row['Действие / результат'] == 'hide') {
     $row['Действие / результат'] = 'change';
     $row['Статус элемента'] = '###0';
+    $show_hide_action = TRUE;
   }
   elseif ($row['Действие / результат'] == 'show' || $row['Действие / результат'] == 'unhide') {
     $row['Действие / результат'] = 'change';
     // kind of empty field, mut means not hidden, normal state
     $row['Статус элемента'] = '###1';
+    $show_hide_action = TRUE;
+  }
+  else {
+    $show_hide_action = FALSE;
   }
   
   // By default, aall elements are visible, if not set any different...
@@ -1368,7 +1379,7 @@ function zp_commerce_processPriceList_mapPriceRowToCatalogObject($row, &$error) 
   
   
   // If 'Действие / результат' was to hide/unhide, let's remain only this one change, and remove other (even marked with ###) fields changing.
-  if ($row['Действие / результат'] == 'show' || $row['Действие / результат'] == 'unhide' || $row['Действие / результат'] == 'hide') {
+  if ($show_hide_action) {
     $catalogObject['fields_to_change'] = array('Действие / результат');
   }
   
@@ -1736,10 +1747,14 @@ function zp_commerce_processPriceList_row_change($op, $object, &$result_messages
         if ($type == 'product') {
 
                       $query = db_select('commerce_product', 'p');
-                      $query->fields('p', array('revision_id'))
+                      $query->fields('p', array('revision_id', 'status'))
                         ->condition('product_id', $product_id);
-                      if (!$revision_id = $query->execute()->fetchField()) {
+                      if (!$result = $query->execute()->fetchObject()) {
                         return 'Изменение статуса: Не удалось определить номер ревизии для товара';
+                      }
+                      
+                      if ($result->status == $object[$field_to_change]) {
+                        $result_messages[] = 'Статус товара не изменился.';
                       }
 
                       $success = db_update('commerce_product')
@@ -1757,14 +1772,14 @@ function zp_commerce_processPriceList_row_change($op, $object, &$result_messages
                         ->fields(array(
                           'status' => $object[$field_to_change],
                         ))
-                        ->condition('revision_id', $revision_id)
+                        ->condition('revision_id', $result->revision_id)
                         ->execute();
 
                       if (!$success) {
                         return 'Не удалось обновить статус для ревизии товара';
                       }
 
-                      $result_messages[] = 'Статус товара обновлён.';
+                      $result_messages[] = 'Статус товара обновлён на ' . $object[$field_to_change];
                       
         } // End of if ($type == 'product') {
         elseif ($type == 'department') {
