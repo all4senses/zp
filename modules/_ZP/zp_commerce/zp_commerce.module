@@ -1692,9 +1692,17 @@ function zp_commerce_processPriceList_row_change($op, $object, &$result_messages
         
         $product = commerce_product_load($product_id);
         $old_price = $product->commerce_price['und'][0]['amount']/100;
-        $product->commerce_price['und'][0]['amount'] = $object[$field_to_change] * 100;
-        if (commerce_product_save( $product )) {
-          $result_messages[] = 'Изменена цена товара с ' . $old_price . $object['Валюта'] . ' на ' . $object[$field_to_change] . $object['Валюта'];
+        if ($old_price == $object[$field_to_change]) {
+          $result_messages[] = 'Цена товара не изменилась (' . $old_price . $object['Валюта'] . ').';
+        }
+        else {
+          $product->commerce_price['und'][0]['amount'] = $object[$field_to_change] * 100;
+          if (commerce_product_save( $product )) {
+            $result_messages[] = 'Изменена цена товара с ' . $old_price . $object['Валюта'] . ' на ' . $object[$field_to_change] . $object['Валюта'];
+          }
+          else {
+            return 'Ошибка при изменении цены товара на ' . $object[$field_to_change] . $object['Валюта'];
+          }
         }
         break;
 
