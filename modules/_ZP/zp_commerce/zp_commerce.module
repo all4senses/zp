@@ -1259,6 +1259,9 @@ function zp_commerce_processPriceList_mapPriceRowToCatalogObject($row, &$error) 
     $row['Статус элемента'] = 0;
   }
   
+  // Correct the decimal point, just in case.
+  $row['Цена (за продажную единицу)'] = str_replace(',', '.', $row['Цена (за продажную единицу)']);
+  
   
   $catalogObject = array();
   
