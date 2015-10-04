@@ -1691,10 +1691,10 @@ function zp_commerce_processPriceList_row_change($op, $object, &$result_messages
         dpm('$field_to_change = ' . $field_to_change);
         $product = commerce_product_load($product_id);
         dpm($product);
-        $new_price = $object[$field_to_change] * 100;
+        $new_price = $object[$field_to_change];
         dpm('$new_price = ' . $new_price);
         $old_price = $product->commerce_price['und'][0]['amount']/100;
-        $product->commerce_price['und'][0]['amount'] = $new_price;
+        $product->commerce_price['und'][0]['amount'] = $new_price * 100;
         dpm($product);
         if (commerce_product_save( $product )) {
           $result_messages[] = 'Изменена цена товара с ' . $old_price . $object['Валюта'] . ' на ' . ($new_price/100) . $object['Валюта'];
