@@ -1576,7 +1576,6 @@ function zp_commerce_processPriceList_row($op, $object, &$result_messages){
     case 'unhide':  
     case 'show':  
     case 'change':
-        dpm('in change or hide/unhide');
         return zp_commerce_processPriceList_row_change($op, $object, $result_messages, $type);
       break;
   }
@@ -1747,11 +1746,9 @@ function zp_commerce_processPriceList_row_change($op, $object, &$result_messages
       // Products and departments fields -----------------------------------------------------------------------------------------------
       	
       case 'Статус элемента':
-        dpm('Изменение Статус элемента');
+
         if ($type == 'product') {
           
-          dpm('Изменение Статус элемента -- продукт');
-
                       $query = db_select('commerce_product', 'p');
                       $query->fields('p', array('revision_id', 'status'))
                         ->condition('product_id', $product_id);
@@ -1788,7 +1785,6 @@ function zp_commerce_processPriceList_row_change($op, $object, &$result_messages
                       }
 
                       $result_messages[] = 'Статус товара обновлён на ' . $object[$field_to_change];
-                      dpm('Статус товара обновлён на ' . $object[$field_to_change]);
                       
         } // End of if ($type == 'product') {
         elseif ($type == 'department') {
