@@ -397,8 +397,8 @@ function zp_commerce_form_commerce_cart_add_to_cart_form_alter(&$form, &$form_st
         
         if (!empty($order->commerce_line_items['und'])) {
           $first_cart_product = commerce_line_item_load($order->commerce_line_items['und'][0]['line_item_id']);
-          //dpr('$first_cart_product');
-          //dpr($first_cart_product);
+          //dpm('$first_cart_product');
+          //dpm($first_cart_product);
           $current_cart_shop_zp_id = $order->field_u_order_shop_zp_id['und'][0]['value'] = drupal_substr($first_cart_product->line_item_label, 0, 3);
           // Update the order (cart).
           commerce_order_save($order);
@@ -1929,7 +1929,7 @@ function zp_commerce_addCategoriesToProduct($entity_id, $field_to_change, $field
   
   //$field_data = 'Вид блюда: Мясо и птица***Жульен###Прочие категории: Диетическое питание***Холодные блюда';
   //$field_data = 'Вид блюда: Мясо и птица***Жульен';
-  //dpr($field_data);
+  //dpm($field_data);
 
 
   //$field_to_change = 'Категория 1';
@@ -1963,7 +1963,7 @@ function zp_commerce_addCategoriesToProduct($entity_id, $field_to_change, $field
                 $result_messages[] = 'Создан новый словарь "' . $vocs_name . '"';
               }
               else {
-                dpr('Словарь "' . $vocs_name . '" не существовал в базе, а при попытке его создании возникла ошибка.');
+                dpm('Словарь "' . $vocs_name . '" не существовал в базе, а при попытке его создании возникла ошибка.');
                 return 'Словарь "' . $vocs_name . '" не существовал в базе, а при попытке его создании возникла ошибка.';
               }
 
@@ -1977,7 +1977,7 @@ function zp_commerce_addCategoriesToProduct($entity_id, $field_to_change, $field
   $cats = explode('###', $field_data);
 
   foreach ($cats as $key => $cat) {
-    dpr($key . ': ' . $cat);
+    dpm($key . ': ' . $cat);
     $cat = explode(':', $cat);
 
     // Category group term name.
@@ -1987,7 +1987,7 @@ function zp_commerce_addCategoriesToProduct($entity_id, $field_to_change, $field
       return 'Не заданы значения для категории "' . $cat_name . '". После двоеточия должна быть строка со значением для данной категории';
     }
 
-    dpr('cat_name: ' . $cat_name);
+    dpm('cat_name: ' . $cat_name);
     
     // If it's Cat 1 field, add the first cat value(s) to the Category main voc.
     // In all other cases add all values to Categories other voc.
@@ -2004,7 +2004,7 @@ function zp_commerce_addCategoriesToProduct($entity_id, $field_to_change, $field
     // Check if there is a Category group term name is in the voc.
     // And create it if not exists.
     if (!$category_tid = zp_misc_createTerm_ifNotExists($vid, $cat_name, 0, $results)) {
-      dpr('Ошибка при создании нового терма для названия категории (группы) "' . $cat_name . '".');
+      dpm('Ошибка при создании нового терма для названия категории (группы) "' . $cat_name . '".');
       return 'Ошибка при создании нового терма для названия категории (группы) "' . $cat_name . '".';
     }
 
@@ -2012,9 +2012,9 @@ function zp_commerce_addCategoriesToProduct($entity_id, $field_to_change, $field
     $terms = explode('***', $cat[1]);
     foreach ($terms as $term_key => $term_name) {
       $term_name = trim($term_name);
-      dpr('---> term ' . $term_key . ' name: ' . $term_name);
+      dpm('---> term ' . $term_key . ' name: ' . $term_name);
       if (!$term_tid = zp_misc_createTerm_ifNotExists($vid, $term_name, $category_tid, $results)) {
-        dpr('Ошибка при создании нового терма для названия конечного терма "' . $term_name . '".');
+        dpm('Ошибка при создании нового терма для названия конечного терма "' . $term_name . '".');
         return 'Ошибка при создании нового терма для названия конечного терма "' . $term_name . '".';
       }
       //Connect a term to the node.
@@ -2024,7 +2024,7 @@ function zp_commerce_addCategoriesToProduct($entity_id, $field_to_change, $field
     } // foreach ($terms as $term_key => $term_name) {
 
   }
-  //dpr($result_messages);
+  //dpm($result_messages);
 
   // Success.
   return FALSE;

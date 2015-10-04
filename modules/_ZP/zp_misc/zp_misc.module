@@ -993,7 +993,7 @@ function zp_misc_fieldTermReferenceSave_insertMultiply($field_name, $entity_id, 
         ->condition('f.bundle', $bundle)
         ->condition('f.field_' . $field_name . '_tid', $data);  
   if ($result = $query->execute()->fetchField()) {
-    dpr('Term is already connected to entity');
+    dpm('Term is already connected to entity');
     // The term is already connected to the entity.
     return TRUE;
   }
