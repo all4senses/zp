@@ -1380,7 +1380,7 @@ function zp_commerce_processPriceList_mapPriceRowToCatalogObject($row, &$error) 
   
   // If 'Действие / результат' was to hide/unhide, let's remain only this one change, and remove other (even marked with ###) fields changing.
   if ($show_hide_action) {
-    $catalogObject['fields_to_change'] = array('Действие / результат');
+    $catalogObject['fields_to_change'] = array('Статус элемента');
   }
   
   return $catalogObject;
@@ -1986,7 +1986,7 @@ function zp_commerce_addCategoriesToProduct($entity_id, $field_to_change, $field
   $cats = explode('###', $field_data);
 
   foreach ($cats as $key => $cat) {
-    dpm($key . ': ' . $cat);
+    //dpm($key . ': ' . $cat);
     $cat = explode(':', $cat);
 
     // Category group term name.
@@ -1996,7 +1996,7 @@ function zp_commerce_addCategoriesToProduct($entity_id, $field_to_change, $field
       return 'Не заданы значения для категории "' . $cat_name . '". После двоеточия должна быть строка со значением для данной категории';
     }
 
-    dpm('cat_name: ' . $cat_name);
+    //dpm('cat_name: ' . $cat_name);
     
     // If it's Cat 1 field, add the first cat value(s) to the Category main voc.
     // In all other cases add all values to Categories other voc.
@@ -2013,7 +2013,7 @@ function zp_commerce_addCategoriesToProduct($entity_id, $field_to_change, $field
     // Check if there is a Category group term name is in the voc.
     // And create it if not exists.
     if (!$category_tid = zp_misc_createTerm_ifNotExists($vid, $cat_name, 0, $result_messages)) {
-      dpm('Ошибка при создании нового терма для названия категории (группы) "' . $cat_name . '".');
+      //dpm('Ошибка при создании нового терма для названия категории (группы) "' . $cat_name . '".');
       return 'Ошибка при создании нового терма для названия категории (группы) "' . $cat_name . '".';
     }
 
@@ -2021,15 +2021,15 @@ function zp_commerce_addCategoriesToProduct($entity_id, $field_to_change, $field
     $terms = explode('***', $cat[1]);
     foreach ($terms as $term_key => $term_name) {
       $term_name = trim($term_name);
-      dpm('---> term ' . $term_key . ' name: ' . $term_name);
+      //dpm('---> term ' . $term_key . ' name: ' . $term_name);
       if (!$term_tid = zp_misc_createTerm_ifNotExists($vid, $term_name, $category_tid, $result_messages)) {
-        dpm('Ошибка при создании нового терма для названия конечного терма "' . $term_name . '".');
-        return 'Ошибка при создании нового терма для названия конечного терма "' . $term_name . '".';
+        //dpm('Ошибка при создании нового терма для названия конечного терма "' . $term_name . '".');
+        return 'Ошибка при создании нового терма для названия конечного терма "' . $term_name . '" (категория "' . $cat_name . '")';
       }
       //Connect a term to the node.
       //zp_misc_fieldTermReferenceSave_insertMultiply(/*'category_main'*/$vocs_names[$voc_name], 138, /*74*/$term_tid, 'node', NULL, TRUE);
       zp_misc_fieldTermReferenceSave_insertMultiply(/*$field_name = */$vocs_names[$voc_name], $entity_id, /*$data = */$term_tid, /*$entity_type = */'node', /*$bundle = */NULL, /*$clear_cache = */FALSE);
-      $result_messages[] = 'К товару добавлен (или обновлён) терм "' . $term_name . '"';
+      $result_messages[] = 'К товару добавлен (или обновлён) терм "' . $term_name . '" (категория "' . $cat_name . '")';
     } // foreach ($terms as $term_key => $term_name) {
 
   }
