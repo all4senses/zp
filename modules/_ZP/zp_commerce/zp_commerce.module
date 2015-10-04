@@ -1690,22 +1690,12 @@ function zp_commerce_processPriceList_row_change($op, $object, &$result_messages
         // http://drupal.stackexchange.com/questions/46254/alter-cart-unit-price-and-total-amount
         // http://drupal.stackexchange.com/questions/101119/drupal-commerce-order-total-amount-not-update-after-i-programmatically-changed-l
         
-        dpm($object);
-        dpm('$field_to_change = ' . $field_to_change);
         $product = commerce_product_load($product_id);
-        dpm($product);
-        $new_price = $object[$field_to_change];
-        dpm('$new_price = ' . $new_price);
         $old_price = $product->commerce_price['und'][0]['amount']/100;
-        $product->commerce_price['und'][0]['amount'] = $new_price * 100;
-        dpm($product);
+        $product->commerce_price['und'][0]['amount'] = $object[$field_to_change] * 100;
         if (commerce_product_save( $product )) {
-          $result_messages[] = 'Изменена цена товара с ' . $old_price . $object['Валюта'] . ' на ' . ($new_price/100) . $object['Валюта'];
+          $result_messages[] = 'Изменена цена товара с ' . $old_price . $object['Валюта'] . ' на ' . $object[$field_to_change] . $object['Валюта'];
         }
-        dpm($product);
-        
-        $product = commerce_product_load($product_id);
-        dpm($product);
         break;
 
       
