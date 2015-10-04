@@ -1707,7 +1707,7 @@ function zp_commerce_processPriceList_row_change($op, $object, &$result_messages
           if (!$all_categories_removed && (in_array('Категория 1', $fields_to_change) || in_array('Категория 2', $fields_to_change) || in_array('Род.Отдел/Категория 3', $fields_to_change)) ) {
             // If we have to change categorues (main or others) thet we need to update everything. So we'll need update data from all three these fields.
             // So we remove all categories and will add again all cats from scratch (see below).
-            if($error = zp_commerce_removeCategoriesFromProduct($entity_id, $bundle, $results)) {
+            if($error = zp_commerce_removeCategoriesFromProduct($entity_id, $bundle, $result_messages)) {
               return $error;
             }
             $result_messages[] = 'Удалены все категории товара, для дальнейшего обновления...';
@@ -1715,7 +1715,7 @@ function zp_commerce_processPriceList_row_change($op, $object, &$result_messages
           }
 
 
-        if($error = zp_commerce_addCategoriesToProduct($entity_id, $field_to_change, $object[$field_to_change], $results)) {
+        if($error = zp_commerce_addCategoriesToProduct($entity_id, $field_to_change, $object[$field_to_change], $result_messages)) {
           return $error;
         }
         
@@ -1909,10 +1909,10 @@ function zp_commerce_processPriceList_row_change($op, $object, &$result_messages
  * @param type $entity_id
  * @param type $entity_type
  * @param type $bundle
- * @param type $results
+ * @param type $result_messages
  * 
  */
-function zp_commerce_removeCategoriesFromProduct($entity_id, $bundle, &$results) {
+function zp_commerce_removeCategoriesFromProduct($entity_id, $bundle, &$result_messages) {
   $taxonomy_field_names = array('Category main' => 'category_main', 'Categories other' => 'categories_other');
 
   foreach ($taxonomy_field_names as $key => $field_name) {
@@ -1930,11 +1930,11 @@ function zp_commerce_removeCategoriesFromProduct($entity_id, $bundle, &$results)
  * @param type $entity_id
  * @param type $field_to_change
  * @param type $field_data
- * @param type $results
+ * @param type $result_messages
  * @return boolean
  * 
   */
-function zp_commerce_addCategoriesToProduct($entity_id, $field_to_change, $field_data, &$results) {
+function zp_commerce_addCategoriesToProduct($entity_id, $field_to_change, $field_data, &$result_messages) {
   
   //$field_data = 'Вид блюда: Мясо и птица***Жульен###Прочие категории: Диетическое питание***Холодные блюда';
   //$field_data = 'Вид блюда: Мясо и птица***Жульен';
@@ -2012,7 +2012,7 @@ function zp_commerce_addCategoriesToProduct($entity_id, $field_to_change, $field
 
     // Check if there is a Category group term name is in the voc.
     // And create it if not exists.
-    if (!$category_tid = zp_misc_createTerm_ifNotExists($vid, $cat_name, 0, $results)) {
+    if (!$category_tid = zp_misc_createTerm_ifNotExists($vid, $cat_name, 0, $result_messages)) {
       dpm('Ошибка при создании нового терма для названия категории (группы) "' . $cat_name . '".');
       return 'Ошибка при создании нового терма для названия категории (группы) "' . $cat_name . '".';
     }
@@ -2022,7 +2022,7 @@ function zp_commerce_addCategoriesToProduct($entity_id, $field_to_change, $field
     foreach ($terms as $term_key => $term_name) {
       $term_name = trim($term_name);
       dpm('---> term ' . $term_key . ' name: ' . $term_name);
-      if (!$term_tid = zp_misc_createTerm_ifNotExists($vid, $term_name, $category_tid, $results)) {
+      if (!$term_tid = zp_misc_createTerm_ifNotExists($vid, $term_name, $category_tid, $result_messages)) {
         dpm('Ошибка при создании нового терма для названия конечного терма "' . $term_name . '".');
         return 'Ошибка при создании нового терма для названия конечного терма "' . $term_name . '".';
       }
