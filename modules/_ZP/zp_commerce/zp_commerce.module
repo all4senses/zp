@@ -1184,6 +1184,11 @@ function zp_commerce_importPriceList_batch_finished($success, $results, $operati
   drupal_set_message('История операций, выполненных во время обработки прайс-листа:');
   drupal_set_message(render($history_text));
   
+  if (@$results['errors']) {
+    krumong('devel')->dpm('Ошибки, возникшие при обработке прайс-листа:');
+    krumong('devel')->dpm($results['errors']);
+  }
+  
   //krumong()->kPrint($results);
   //die;  // optionally, you can stop the request right here.
   
@@ -1758,7 +1763,6 @@ function zp_commerce_processPriceList_row_change($op, $object, &$result_messages
                       
                       if ($result->status == $object[$field_to_change]) {
                         $result_messages[] = 'Статус товара не изменился.';
-                        dpm('Статус товара не изменился.');
                         continue;
                       }
 
