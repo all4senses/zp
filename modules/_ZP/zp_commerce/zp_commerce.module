@@ -1729,7 +1729,7 @@ function zp_commerce_processPriceList_row_change($op, $object, &$result_messages
           }
 
 
-        if($error = zp_commerce_addCategoriesToProduct($entity_id, $field_to_change, $object[$field_to_change], $result_messages)) {
+        if($object[$field_to_change] && $error = zp_commerce_addCategoriesToProduct($entity_id, $field_to_change, $object[$field_to_change], $result_messages)) {
           return $error;
         }
         
