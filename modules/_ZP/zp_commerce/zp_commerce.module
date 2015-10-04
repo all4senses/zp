@@ -3387,3 +3387,17 @@ function zp_commerce_field_widget_form_alter(&$element, &$form_state, $context) 
   }
 }
 
+
+
+/**
+ * Allows for alterations to the searcher definitions.
+ *
+ * @param array &$searcher_info
+ *   The return values of hook_facetapi_searcher_info() implementations.
+ *
+ * @see hook_facetapi_searcher_info()
+ */
+function zp_commerce_facetapi_searcher_info_alter(array &$searcher_info) {
+  //$searcher_info['search']['label'] = t('Core search module');
+  dpm($searcher_info);
+}
