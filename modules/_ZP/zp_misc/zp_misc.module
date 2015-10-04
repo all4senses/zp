@@ -562,10 +562,10 @@ function zp_misc_fieldTermReferenceDelete($field_name, $entity_id, $bundle, $ent
       
         // Clear taxonomy fields.
         db_delete('field_data_field_' . $field_name)
-          ->condition($target_field_name, $target_field_id)
+          ->condition('entity_id', $entity_id)
           ->execute();
         db_delete('field_revision_field_' . $field_name)
-          ->condition($target_field_name, $target_field_id)
+          ->condition('entity_id', $entity_id)
           ->execute();
         
         // Clear taxonomy node index.
