@@ -1232,12 +1232,12 @@ function zp_commerce_processPriceList_mapPriceRowToCatalogObject($row, &$error) 
   
   
   if ($row['Действие / результат'] == 'hide') {
-    $row['Действие / результат'] = 'change';
+    //$row['Действие / результат'] = 'change';
     $row['Статус элемента'] = '###0';
     $show_hide_action = TRUE;
   }
   elseif ($row['Действие / результат'] == 'show' || $row['Действие / результат'] == 'unhide') {
-    $row['Действие / результат'] = 'change';
+    //$row['Действие / результат'] = 'change';
     // kind of empty field, mut means not hidden, normal state
     $row['Статус элемента'] = '###1';
     $show_hide_action = TRUE;
@@ -1572,6 +1572,9 @@ function zp_commerce_processPriceList_row($op, $object, &$result_messages){
         return zp_commerce_processPriceList_row_delete($op, $object, $result_messages, $type);
       break;
     
+    case 'hide':
+    case 'unhide':  
+    case 'show':  
     case 'change':
         return zp_commerce_processPriceList_row_change($op, $object, $result_messages, $type);
       break;
