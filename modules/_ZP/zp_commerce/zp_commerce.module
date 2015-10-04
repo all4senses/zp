@@ -3415,6 +3415,8 @@ function zp_commerce_facetapi_searcher_info_alter(array &$searcher_info) {
 function zp_commerce_facetapi_realm_info_alter(array &$realm_info) {
   //$realm_info['block']['weight'] = 5;
   dpm($realm_info);
+  
+  $realm_info['block']['default widget'] = 'facetapi_checkbox_links';
 }
 
 
