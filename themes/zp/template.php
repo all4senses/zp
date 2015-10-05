@@ -958,8 +958,8 @@ function zp_preprocess_html(&$vars) {
 }
 
 //function theme_facetapi_title($variables) {
-function zp_facetapi_title($variables) {
-  //return t('Filter by @title:', array('@title' => drupal_strtolower($variables['title'])));
-  
-  dpm($variables);
-}
+//function zp_facetapi_title($variables) {
+//  //return t('Filter by @title:', array('@title' => drupal_strtolower($variables['title'])));
+//  
+//  dpm($variables);
+//}

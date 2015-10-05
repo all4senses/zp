@@ -3498,5 +3498,15 @@ function zp_commerce_theme_registry_alter(&$theme_registry) {
   
 //  $theme_registry['theme_name']['theme path'] = 'path/to/your/module'; 
 //  $theme_registry['theme_name']['function'] = 'mymodule_function_name'; 
+  
+  $theme_registry['facetapi_title']['theme path'] = 'sites/all/modules/_ZP/zp_commerce'; 
+  $theme_registry['facetapi_title']['function'] = 'zp_commerce_facetapi_title'; 
   dpm($theme_registry);
+}
+
+
+function zp_commerce_facetapi_title($variables) {
+  //return t('Filter by @title:', array('@title' => drupal_strtolower($variables['title'])));
+  
+  dpm($variables);
 }
