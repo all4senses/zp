@@ -200,6 +200,8 @@ class SearchApiViewsFacetsBlockDisplay extends views_plugin_display_block {
 
     $results = $this->view->query->getSearchApiResults();
 
+    dpm($results);
+    
     if (empty($results['search_api_facets']['search_api_views_facets_block'])) {
       return NULL;
     }
@@ -244,7 +246,7 @@ class SearchApiViewsFacetsBlockDisplay extends views_plugin_display_block {
         'path' => $this->view->query->getOption('search_api_base_path'),
         'count' => $term['count'],
         'options' => array(
-          'attributes' => array('class' => 'facetapi-inactive'),
+          'attributes' => array('class' => 'facetapi-inactiveeeeeeee'),
           'html' => FALSE,
           'query' => $query,
         ),
@@ -252,7 +254,7 @@ class SearchApiViewsFacetsBlockDisplay extends views_plugin_display_block {
 
       // Themes the link, adds row to facets.
       $facets[] = array(
-        'class' => array('leaf'),
+        'class' => array('leaffffff'),
         'data' => theme('facetapi_link_inactive', $variables),
       );
     }
