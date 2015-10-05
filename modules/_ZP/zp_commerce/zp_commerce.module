@@ -3479,9 +3479,9 @@ function zp_commerce_facet_items_alter(&$build, &$settings) {
 //    }
 //  }
   
-  
-  $build['!']['#markup'] = 'Other';
-          
+  if (!empty($build['!']['#markup'])) {
+    $build['!']['#markup'] = 'Other';
+  }
   //$settings->settings['widget'] = 'facetapi_links';
   dpm($build);
   dpm($settings);
