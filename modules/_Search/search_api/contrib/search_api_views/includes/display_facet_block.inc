@@ -226,8 +226,8 @@ class SearchApiViewsFacetsBlockDisplay extends views_plugin_display_block {
 
     $index = $this->view->query->getIndex();
     
-    ////dpm($this->view);
-    ////dpm($index);
+    dpm($this->view);
+    dpm($index);
     
     $options['field'] = $index->options['fields'][$facet_field];
     $options['field']['key'] = $facet_field;
@@ -280,7 +280,7 @@ class SearchApiViewsFacetsBlockDisplay extends views_plugin_display_block {
   }
 
   public function execute(){
-    $info['content'] = $this->render();
+    $info['content'] = '<div class="xyz"></div>' . $this->render();
     $info['content']['more'] = $this->render_more_link();
     $info['subject'] = filter_xss_admin($this->view->get_title());
     return $info;
