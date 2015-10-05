@@ -225,12 +225,15 @@ class SearchApiViewsFacetsBlockDisplay extends views_plugin_display_block {
     }
 
     $index = $this->view->query->getIndex();
+    dpm($this->view);
+    dpm($index);
     $options['field'] = $index->options['fields'][$facet_field];
     $options['field']['key'] = $facet_field;
     $options['index id'] = $index->machine_name;
     $options['value callback'] = '_search_api_facetapi_facet_create_label';
     $map = search_api_facetapi_facet_map_callback($filters, $options);
 
+    dpm($map);
     $facets = array();
     $prefix = rawurlencode($facet_field) . ':';
     foreach ($terms as $term) {
@@ -252,6 +255,8 @@ class SearchApiViewsFacetsBlockDisplay extends views_plugin_display_block {
         ),
       );
 
+      dpm($variables);
+      
       // Themes the link, adds row to facets.
       $facets[] = array(
         'class' => array('leaffffff'),
