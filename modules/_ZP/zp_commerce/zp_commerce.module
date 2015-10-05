@@ -3486,3 +3486,11 @@ function zp_commerce_facet_items_alter(&$build, &$settings) {
   
   
 }
+
+
+//function theme_facetapi_title($variables) {
+function zp_commerce_facetapi_title($variables) {
+  //return t('Filter by @title:', array('@title' => drupal_strtolower($variables['title'])));
+  
+  dpm($variables);
+}
