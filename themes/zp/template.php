@@ -956,3 +956,10 @@ function zp_preprocess_html(&$vars) {
   //$vars['classes_array'][] = css_browser_selector();
 
 }
+
+//function theme_facetapi_title($variables) {
+function zp_facetapi_title($variables) {
+  //return t('Filter by @title:', array('@title' => drupal_strtolower($variables['title'])));
+  
+  dpm($variables);
+}
