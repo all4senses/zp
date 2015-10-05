@@ -701,6 +701,7 @@ function zp_preprocess_region(&$variables, $hook) {
  *   The name of the template being rendered ("block" in this case.)
  */
 function zp_preprocess_block(&$variables, $hook) {
+  dpm($variables);
   // Use a bare template for the page's main content.
   if ($variables['block_html_id'] == 'block-system-main') {
     $variables['theme_hook_suggestions'][] = 'block__bare';
@@ -725,6 +726,7 @@ function zp_preprocess_block(&$variables, $hook) {
  *   The name of the template being rendered ("block" in this case.)
  */
 function zp_process_block(&$variables, $hook) {
+  dpm($variables);
   // Drupal 7 should use a $title variable instead of $block->subject.
   $variables['title'] = $variables['block']->subject;
 }
@@ -956,10 +958,3 @@ function zp_preprocess_html(&$vars) {
   //$vars['classes_array'][] = css_browser_selector();
 
 }
-
-//function theme_facetapi_title($variables) {
-//function zp_facetapi_title($variables) {
-//  //return t('Filter by @title:', array('@title' => drupal_strtolower($variables['title'])));
-//  
-//  dpm($variables);
-//}
