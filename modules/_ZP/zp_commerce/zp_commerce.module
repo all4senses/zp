@@ -55,7 +55,8 @@ function zp_commerce_menu() {
 function zp_commerce_form_alter(&$form, &$form_state, $form_id) {
 
   
-  //dpm($form_id);  //dpm($form);
+  dpm($form_id);  
+  dpm($form);
   // $conf['locale_custom_strings_en']['old string'] = 'new string'
   
   //Hack quantity form in each view to accept fractional quantities
@@ -445,7 +446,7 @@ function zp_commerce_form_commerce_cart_add_to_cart_form_alter(&$form, &$form_st
         dpm('$current_cart_shop_zp_id: ' . $current_page_products_shop_zp_id);
         
         //dpm('$current_user_data');
-        dpm($current_user_data);
+        ////dpm($current_user_data);
         
         if (!in_array($current_page_products_shop_zp_id, $current_user_data['favorite_shops'])) {
           // Just in case, find out if the user has access to all city's shops
@@ -3414,9 +3415,11 @@ function zp_commerce_facetapi_searcher_info_alter(array &$searcher_info) {
  */
 function zp_commerce_facetapi_realm_info_alter(array &$realm_info) {
   //$realm_info['block']['weight'] = 5;
-  dpm($realm_info);
   
-  $realm_info['block']['default widget'] = 'facetapi_checkbox_links';
+  
+//  dpm($realm_info);
+//  
+//  $realm_info['block']['default widget'] = 'facetapi_checkbox_links';
 }
 
 
@@ -3463,6 +3466,6 @@ function hook_facetapi_enabled_facets_alter(array &$enabled_facets, $searcher, $
 //    }
 //  }
   
-  dpm($enabled_facets);
+//  dpm($enabled_facets);
 }
 
