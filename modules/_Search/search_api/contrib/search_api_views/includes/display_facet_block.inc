@@ -173,6 +173,9 @@ class SearchApiViewsFacetsBlockDisplay extends views_plugin_display_block {
         'limit' => $limit,
         'missing' => FALSE,
         'min_count' => 1,
+        // a4s
+        'operator' => 'or',  
+          
       );
     }
     $query_options['search_api_base_path'] = $base_path;
