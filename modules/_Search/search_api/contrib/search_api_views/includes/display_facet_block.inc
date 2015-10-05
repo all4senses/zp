@@ -280,7 +280,7 @@ class SearchApiViewsFacetsBlockDisplay extends views_plugin_display_block {
   }
 
   public function execute(){
-    $info['content'] = '<div class="xyz"></div>' . $this->render();
+    $info['content'] = '<<div class="xyz"></div>' . $this->render();
     $info['content']['more'] = $this->render_more_link();
     $info['subject'] = filter_xss_admin($this->view->get_title());
     return $info;
