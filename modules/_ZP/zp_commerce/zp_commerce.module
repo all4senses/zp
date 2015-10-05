@@ -3479,6 +3479,10 @@ function zp_commerce_facet_items_alter(&$build, &$settings) {
 //    }
 //  }
   
+  
+  $settings->settings['widget'] = 'facetapi_links';
   dpm($build);
   dpm($settings);
+  
+  
 }
