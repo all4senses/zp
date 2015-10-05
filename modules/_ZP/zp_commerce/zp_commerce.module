@@ -3456,7 +3456,7 @@ function zp_commerce_facetapi_facet_info_alter(array &$facet_info, array $search
  * @param $realm_name
  *   The machine readable name of the realm.
  */
-function hook_facetapi_enabled_facets_alter(array &$enabled_facets, $searcher, $realm_name) {
+function zp_commerce_facetapi_enabled_facets_alter(array &$enabled_facets, $searcher, $realm_name) {
 //  if ($searcher == 'something') {
 //    // Put facet1 to the end.
 //    if (!empty($enabled_facets['facet1'])) {
@@ -3469,3 +3469,16 @@ function hook_facetapi_enabled_facets_alter(array &$enabled_facets, $searcher, $
 //  dpm($enabled_facets);
 }
 
+
+
+
+function zp_commerce_facet_items_alter(&$build, &$settings) {
+//  if ($settings->facet == "YOUR_FACET_NAME") {
+//    foreach($build as $key => $item) {
+//      $build[$key]["#markup"] = drupal_strtoupper($item["#markup"]);
+//    }
+//  }
+  
+  dpm($build);
+  dpm($settings);
+}
