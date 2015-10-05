@@ -200,7 +200,7 @@ class SearchApiViewsFacetsBlockDisplay extends views_plugin_display_block {
 
     $results = $this->view->query->getSearchApiResults();
 
-    ////dpm($results);
+    dpm($results);
     
     if (empty($results['search_api_facets']['search_api_views_facets_block'])) {
       return NULL;

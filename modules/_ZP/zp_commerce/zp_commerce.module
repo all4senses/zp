@@ -3490,9 +3490,13 @@ function zp_commerce_facet_items_alter(&$build, &$settings) {
 }
 
 
-//function theme_facetapi_title($variables) {
-function zp_commerce_facetapi_title($variables) {
-  //return t('Filter by @title:', array('@title' => drupal_strtolower($variables['title'])));
+
+/** 
+ * Implements hook_theme_registry_alter 
+ */ 
+function zp_commerce_theme_registry_alter(&$theme_registry) { 
   
-  dpm($variables);
+//  $theme_registry['theme_name']['theme path'] = 'path/to/your/module'; 
+//  $theme_registry['theme_name']['function'] = 'mymodule_function_name'; 
+  dpm($theme_registry);
 }
