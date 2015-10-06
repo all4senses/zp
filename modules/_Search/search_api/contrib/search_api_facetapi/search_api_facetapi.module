@@ -309,7 +309,7 @@ function search_api_facetapi_facet_map_callback(array $values, array $options = 
     if ($value == '!') {
       // The "missing" filter is usually always the same, but we allow an easy
       // override via the "missing label" map option.
-      $map['!'] = isset($options['missing label']) ? $options['missing label'] : '(' . t('none-----') . ')';
+      $map['!'] = isset($options['missing label']) ? $options['missing label'] : '(' . t('none') . ')';
       continue;
     }
     $length = strlen($value);
