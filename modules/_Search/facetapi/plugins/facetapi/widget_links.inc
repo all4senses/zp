@@ -64,7 +64,8 @@ class FacetapiWidgetLinks extends FacetapiWidget {
    * @see theme_facetapi_link_inactive()
    */
   protected function setThemeHooks(array &$build) {
-    dpm($build);
+    // a4s
+    //dpm($build);
     foreach ($build as $value => &$item) {
       $item['#theme'] = ($item['#active']) ? 'facetapi_link_active' : 'facetapi_link_inactive';
       if (!empty($item['#item_children'])) {

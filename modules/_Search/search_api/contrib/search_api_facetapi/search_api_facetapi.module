@@ -355,6 +355,8 @@ function search_api_facetapi_facet_map_callback(array $values, array $options = 
     }
   }
 
+  dpm($map);
+  
   return $map;
 }
 
