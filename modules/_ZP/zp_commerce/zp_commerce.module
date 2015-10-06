@@ -3441,7 +3441,13 @@ function zp_commerce_facetapi_facet_info_alter(array &$facet_info, array $search
 //  }
   
   //$facet_info['field_brand']['default widget'] = 'facetapi_checkbox_links';
+  
+  
+  $facet_info['field_brand']['missing label'] = 'xxxxx';
+  
   dpm($facet_info);
+  
+  
 }
 
 
@@ -3479,9 +3485,9 @@ function zp_commerce_facet_items_alter(&$build, &$settings) {
 //    }
 //  }
   
-  if (!empty($build['!']['#markup'])) {
-    $build['!']['#markup'] = 'Other';
-  }
+//  if (!empty($build['!']['#markup'])) {
+//    $build['!']['#markup'] = 'Other';
+//  }
   //$settings->settings['widget'] = 'facetapi_links';
   dpm($build);
   dpm($settings);
