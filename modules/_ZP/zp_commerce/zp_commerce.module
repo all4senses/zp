@@ -3443,9 +3443,13 @@ function zp_commerce_facetapi_facet_info_alter(array &$facet_info, array $search
   //$facet_info['field_brand']['default widget'] = 'facetapi_checkbox_links';
   
 
-  $facet_info['field_brand']['map options']['missing label'] = 'xxxxx';
+  // Works
+  $facet_info['field_brand']['map options']['missing label'] = 'Прочее';
   
-  $facet_info['field_brand']['map callback'] = 'zp_commerce_search_api_facetapi_facet_map_callback';
+  // Work, but we don't use it here.
+  //$facet_info['field_brand']['map callback'] = 'zp_commerce_search_api_facetapi_facet_map_callback';
+  
+  // Doesnt work
   $facet_info['field_brand']['default widget'] = 'links';
   
   dpm($facet_info);

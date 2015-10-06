@@ -265,6 +265,8 @@ class SearchApiViewsFacetsBlockDisplay extends views_plugin_display_block {
         'class' => array('leaffffff'),
         'data' => theme('facetapi_link_inactive', $variables),
       );
+      
+      dpm($facets);
     }
 
     if (!$facets) {
