@@ -3599,7 +3599,7 @@ function zp_commerce_facet_items_alter(&$build, &$settings) {
     $item = $build['spar'];
     unset($build['spar']);
     $build['spar'] = $item;
-    $build['spar']['#markup'] = '<div class="tag-title">Tag title 1</div>' . $build['spar']['#markup'];
+    $build['spar']['#markup'] = '<div class="tag-title" style="display: hidden;">Tag title 1</div>' . $build['spar']['#markup'];
     $build['spar']['#html'] = TRUE;
     
     //$build['spar--xxx'] = $item;
