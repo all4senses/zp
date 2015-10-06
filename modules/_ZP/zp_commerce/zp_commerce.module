@@ -3441,7 +3441,7 @@ function zp_commerce_facetapi_facet_info_alter(array &$facet_info, array $search
 //  }
   
   //$facet_info['field_brand']['default widget'] = 'facetapi_checkbox_links';
-  //dpm($facet_info);
+  dpm($facet_info);
 }
 
 
