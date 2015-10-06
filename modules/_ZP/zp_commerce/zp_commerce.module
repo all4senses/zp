@@ -3446,7 +3446,7 @@ function zp_commerce_facetapi_facet_info_alter(array &$facet_info, array $search
   //$facet_info['field_brand']['missing label'] = 'xxxxx';
   
   $facet_info['field_brand']['map callback'] = 'zp_commerce_search_api_facetapi_facet_map_callback';
-   
+  $facet_info['field_brand']['default widget'] = 'facetapi_links';
   
   dpm($facet_info);
   
@@ -3569,7 +3569,7 @@ function zp_commerce_facetapi_enabled_facets_alter(array &$enabled_facets, $sear
 //    }
 //  }
   
-//  dpm($enabled_facets);
+  dpm($enabled_facets);
 }
 
 
