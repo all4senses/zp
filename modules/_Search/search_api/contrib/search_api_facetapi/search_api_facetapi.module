@@ -290,6 +290,7 @@ function search_api_facetapi_get_taxonomy_hierarchy(array $values) {
  *   An array mapping raw filter values to their labels.
  */
 function search_api_facetapi_facet_map_callback(array $values, array $options = array()) {
+  
   dpm($options);
   $map = array();
   // See if we have an additional map callback.

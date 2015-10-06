@@ -3444,13 +3444,17 @@ function zp_commerce_facetapi_facet_info_alter(array &$facet_info, array $search
   
   
   $facet_info['field_brand']['missing label'] = 'xxxxx';
+  $facet_info['field_brand']['map callback'] = 'zp_commerce_facetapi_xxx';
+   
   
   dpm($facet_info);
   
   
 }
 
-
+function zp_commerce_facetapi_xxx(array $values, array $options = array()) {
+  
+}
 
 /**
  * Allows for alterations of the facets on the fly, without caching.
