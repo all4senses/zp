@@ -44,6 +44,9 @@ function theme_facetapi_title($variables) {
  */
 function theme_facetapi_link_inactive($variables) {
   dpm($variables);
+  if ($variables['options']['attributes']['class'][0] == 'facetapi-checkbox') {
+    unset($variables['options']['attributes']['class'][0]);
+  }
   // Builds accessible markup.
   // @see http://drupal.org/node/1316580
   $accessible_vars = array(
