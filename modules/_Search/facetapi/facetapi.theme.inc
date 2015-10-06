@@ -43,6 +43,7 @@ function theme_facetapi_title($variables) {
  * @ingroup themeable
  */
 function theme_facetapi_link_inactive($variables) {
+  dpm($variables);
   // Builds accessible markup.
   // @see http://drupal.org/node/1316580
   $accessible_vars = array(
