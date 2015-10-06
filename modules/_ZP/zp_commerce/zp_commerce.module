@@ -3400,7 +3400,7 @@ function zp_commerce_field_widget_form_alter(&$element, &$form_state, $context) 
  */
 function zp_commerce_facetapi_searcher_info_alter(array &$searcher_info) {
   //$searcher_info['search']['label'] = t('Core search module');
-  //dpm($searcher_info);
+  dpm($searcher_info);
 }
 
 
@@ -3417,7 +3417,7 @@ function zp_commerce_facetapi_realm_info_alter(array &$realm_info) {
   //$realm_info['block']['weight'] = 5;
   
   
-//  dpm($realm_info);
+  dpm($realm_info);
 //  
 //  $realm_info['block']['default widget'] = 'facetapi_checkbox_links';
 }
