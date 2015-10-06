@@ -226,8 +226,8 @@ class SearchApiViewsFacetsBlockDisplay extends views_plugin_display_block {
 
     $index = $this->view->query->getIndex();
     
-    dpm($this->view);
-    dpm($index);
+    //dpm($this->view);
+    //dpm($index);
     
     $options['field'] = $index->options['fields'][$facet_field];
     $options['field']['key'] = $facet_field;
@@ -269,7 +269,7 @@ class SearchApiViewsFacetsBlockDisplay extends views_plugin_display_block {
       
     }
 
-    dpm($facets);
+    //dpm($facets);
     
     if (!$facets) {
       return NULL;

@@ -3583,9 +3583,9 @@ function zp_commerce_facetapi_enabled_facets_alter(array &$enabled_facets, $sear
 
 function zp_commerce_facet_items_alter(&$build, &$settings) {
 //  if ($settings->facet == "YOUR_FACET_NAME") {
-//    foreach($build as $key => $item) {
-//      $build[$key]["#markup"] = drupal_strtoupper($item["#markup"]);
-//    }
+    foreach($build as $key => $item) {
+      $build[$key]["#markup"] = drupal_strtoupper($item["#markup"]);
+    }
 //  }
   
 //  if (!empty($build['!']['#markup'])) {
@@ -3598,7 +3598,10 @@ function zp_commerce_facet_items_alter(&$build, &$settings) {
   
 }
 
-
+function zp_commerce_block_view_alter(&$data, $block) {
+  dpm($data);
+  dpm($block);
+}
 
 /** 
  * Implements hook_theme_registry_alter 
