@@ -3446,7 +3446,7 @@ function zp_commerce_facetapi_facet_info_alter(array &$facet_info, array $search
   //$facet_info['field_brand']['missing label'] = 'xxxxx';
   
   $facet_info['field_brand']['map callback'] = 'zp_commerce_search_api_facetapi_facet_map_callback';
-  $facet_info['field_brand']['default widget'] = 'facetapi_links';
+  $facet_info['field_brand']['default widget'] = 'links';
   
   dpm($facet_info);
   
