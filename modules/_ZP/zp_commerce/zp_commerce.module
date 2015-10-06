@@ -3442,7 +3442,7 @@ function zp_commerce_facetapi_facet_info_alter(array &$facet_info, array $search
   
   //$facet_info['field_brand']['default widget'] = 'facetapi_checkbox_links';
   
-
+  // Title of items that dont fall up to the shown
   // Works
   $facet_info['field_brand']['map options']['missing label'] = 'Прочее';
   
@@ -3452,8 +3452,60 @@ function zp_commerce_facetapi_facet_info_alter(array &$facet_info, array $search
   // Doesnt work
   $facet_info['field_brand']['default widget'] = 'links';
   
-  dpm($facet_info);
+  //dpm($facet_info);
   
+  /*
+  type (Array, 24 elements)
+title (Array, 24 elements)
+status (Array, 24 elements)
+changed (Array, 24 elements)
+field_zp_id (Array, 24 elements)
+field_parent_zp_id (Array, 24 elements)
+field_visibility_status (Array, 24 elements)
+field_display_type (Array, 24 elements)
+field_brand (Array, 24 elements)
+        label (String, 5 characters ) Brand
+        description (String, 16 characters ) Filter by Brand.
+        allowed operators (Array, 2 elements)
+        dependency plugins (Array, 3 elements)
+        facet missing allowed (Boolean) TRUE
+        facet mincount allowed (Boolean) TRUE
+        map callback (String, 38 characters ) search_api_facetapi_facet_map_callback | (Callback) search_api_facetapi_facet_map_callback();
+        map options (Array, 4 elements)
+        field type (String, 6 characters ) string
+        field api name (String, 11 characters ) field_brand
+        name (String, 11 characters ) field_brand
+        field (String, 11 characters ) field_brand
+        field alias (String, 11 characters ) field_brand
+        field api bundles (Array, 0 elements)
+        query types (Array, 1 element)
+        alter callbacks (Array, 0 elements)
+        default widget (String, 5 characters ) links
+        weight (Integer) 0
+        hierarchy callback (Boolean) FALSE
+        values callback (Boolean) FALSE
+        min callback (Boolean) FALSE
+        max callback (Boolean) FALSE
+        default sorts (Array, 3 elements)
+        type (Integer) 0
+search_api_language (Array, 24 elements)
+field_product_commerce_price_amount_decimal_asc (Array, 25 elements)
+field_product_commerce_price_amount_decimal_desc (Array, 25 elements)
+body:value (Array, 24 elements)
+body:summary (Array, 24 elements)
+field_product:status (Array, 24 elements)
+field_product:changed (Array, 24 elements)
+field_product:field_artikul_shop (Array, 24 elements)
+field_product:field_bar (Array, 24 elements)
+field_category_main:name (Array, 24 elements)
+field_category_main:parent (Array, 25 elements)
+field_categories_other:name (Array, 24 elements)
+field_categories_other:parent (Array, 25 elements)
+field_product:commerce_price:amount (Array, 24 elements)
+field_product:commerce_price:amount_decimal (Array, 24 elements)
+  
+  
+  */
   
 }
 
@@ -3575,7 +3627,45 @@ function zp_commerce_facetapi_enabled_facets_alter(array &$enabled_facets, $sear
 //    }
 //  }
   
-  dpm($enabled_facets);
+  
+  
+  
+  
+  
+  //dpm($enabled_facets);
+  /*
+  
+  ... (Array, 4 elements)
+field_brand (Array, 24 elements)
+    label (String, 5 characters ) Brand
+    description (String, 16 characters ) Filter by Brand.
+    allowed operators (Array, 2 elements)
+    dependency plugins (Array, 3 elements)
+    facet missing allowed (Boolean) TRUE
+    facet mincount allowed (Boolean) TRUE
+    map callback (String, 38 characters ) search_api_facetapi_facet_map_callback | (Callback) search_api_facetapi_facet_map_callback();
+    map options (Array, 3 elements)
+    field type (String, 6 characters ) string
+    field api name (String, 11 characters ) field_brand
+    name (String, 11 characters ) field_brand
+    field (String, 11 characters ) field_brand
+    field alias (String, 11 characters ) field_brand
+    field api bundles (Array, 0 elements)
+    query types (Array, 1 element)
+    alter callbacks (Array, 0 elements)
+    default widget (Boolean) FALSE
+    weight (Integer) 0
+    hierarchy callback (Boolean) FALSE
+    values callback (Boolean) FALSE
+    min callback (Boolean) FALSE
+    max callback (Boolean) FALSE
+    default sorts (Array, 3 elements)
+    type (Integer) 0
+field_category_main:name (Array, 24 elements)
+field_categories_other:name (Array, 24 elements)
+field_product:commerce_price:amount_decimal (Array, 24 elements)
+   * 
+  */
 }
 
 
