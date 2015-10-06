@@ -3600,8 +3600,8 @@ function zp_commerce_facet_items_alter(&$build, &$settings) {
     unset($build['spar']);
     $build['spar'] = $item;
     $build['spar']['#markup'] = '32323232';
-    $build['spar--xxx'] = $item;
-    $build['spar--xxx']['#markup'] = 'spar--xxx';
+    //$build['spar--xxx'] = $item;
+    //$build['spar--xxx']['#markup'] = 'spar--xxx';
   }
 }
 
