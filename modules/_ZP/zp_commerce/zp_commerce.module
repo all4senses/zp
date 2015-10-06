@@ -3605,17 +3605,17 @@ function zp_commerce_facet_items_alter(&$build, &$settings) {
     //$build['spar--xxx'] = $item;
     //$build['spar--xxx']['#markup'] = 'spar--xxx';
     
-    $build['tag_1'] = array(
-        '#markup' => 'Tag 1',
-        '#path' => NULL,
-        '#html' => FALSE,
-        '#indexed_value' => '',
-        '#count' => 0,
-        '#active' => 0,
-        '#item_parents' => NULL,
-        '#item_children' => NULL,
-        '#query' => NULL,
-    );
+//    $build['tag_1'] = array(
+//        '#markup' => 'Tag 1',
+//        '#path' => NULL,
+//        '#html' => FALSE,
+//        '#indexed_value' => '',
+//        '#count' => 0,
+//        '#active' => 0,
+//        '#item_parents' => NULL,
+//        '#item_children' => NULL,
+//        '#query' => NULL,
+//    );
     
     
   }
