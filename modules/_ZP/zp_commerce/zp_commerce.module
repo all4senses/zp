@@ -3545,6 +3545,8 @@ function zp_commerce_search_api_facetapi_facet_map_callback(array $values, array
     }
   }
 
+  dpm($map);
+  
   return $map;
   
 }
