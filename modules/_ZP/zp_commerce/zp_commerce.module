@@ -3442,7 +3442,7 @@ function zp_commerce_facetapi_facet_info_alter(array &$facet_info, array $search
   
   //$facet_info['field_brand']['default widget'] = 'facetapi_checkbox_links';
   
-  // Doesnt work...
+
   $facet_info['field_brand']['map options']['missing label'] = 'xxxxx';
   
   $facet_info['field_brand']['map callback'] = 'zp_commerce_search_api_facetapi_facet_map_callback';
@@ -3481,7 +3481,7 @@ function zp_commerce_facetapi_facet_info_alter(array &$facet_info, array $search
  *   An array mapping raw filter values to their labels.
  */
 function zp_commerce_search_api_facetapi_facet_map_callback(array $values, array $options = array()) {
-  dpm($options);
+  dpm($values);
   $map = array();
   // See if we have an additional map callback.
   if (isset($options['map callback']) && is_callable($options['map callback'])) {
