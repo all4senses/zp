@@ -3758,8 +3758,10 @@ function zp_commerce_facet_items_alter(&$build, &$settings) {
     $query->leftJoin('taxonomy_term_data', 'td', "td.tid = th.parent");
     $query->fields('th', array('tid'));
     $query->fields('td', array('name'));
+    $query->groupBy('name');
       //$query->addField('term', 'name', 'subgroup_name');
-    $parents = $query->execute()->fetchAllAssoc('name');
+    //$parents = $query->execute()->fetchAllAssoc('tid');
+    $parents = $query->execute()->fetchAll();
     dpm($parents);
   }
   
