@@ -3765,13 +3765,28 @@ function zp_commerce_facet_items_alter(&$build, &$settings) {
     
     $new_build = array();
     foreach ($categories as $tid => $category) {
-      $new_build[$category][$tid] = $build[$tid];
+      $new_build[$category][$tid] = $build[$tid]['#markup'];
     }
+    
+    dpm($new_build);
+    
+    foreach ($new_build as $category => $data) {
+      natcasesort($new_build[$category]);
+    }
+    
     dpm($new_build);
   }
   
 }
 
+
+/**
+ * 
+ * @param type $data
+ * @param type $block
+ * 
+ * 
+ */
 function zp_commerce_block_view_alter(&$data, $block) {
   
   if (!empty($block->info) && (strpos($block->info, 'zp_hidden_facet_block') !== FALSE) )
