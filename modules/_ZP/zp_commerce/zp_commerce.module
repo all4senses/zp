@@ -3788,6 +3788,7 @@ function zp_commerce_facet_items_alter(&$build, &$settings) {
     
     dpm($new_build);
     dpm($result_build);
+    $build = $result_build;
   }
   
 }
