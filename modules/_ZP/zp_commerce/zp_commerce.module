@@ -3752,7 +3752,7 @@ function zp_commerce_facet_items_alter(&$build, &$settings) {
       unset($tid_other);
     }
     
-    dpm($tids);
+    //dpm($tids);
     $query = db_select('taxonomy_term_hierarchy', 'th');
     $query->condition('th.tid', $tids, 'IN');
     $query->leftJoin('taxonomy_term_data', 'td', "td.tid = th.parent");
@@ -3761,7 +3761,7 @@ function zp_commerce_facet_items_alter(&$build, &$settings) {
     
     //$categories = $query->execute()->fetchAllAssoc('tid');
     $categories = $query->execute()->fetchAllKeyed();
-    dpm($categories);
+    //dpm($categories);
     
     natcasesort($categories);
     
@@ -3772,7 +3772,7 @@ function zp_commerce_facet_items_alter(&$build, &$settings) {
       $new_build[$category][$tid] = $build[$tid];
     }
     
-    dpm($new_build);
+    //dpm($new_build);
     
     foreach ($new_build as $category => $category_array) {
       //natcasesort($new_build[$category]);
@@ -3786,10 +3786,11 @@ function zp_commerce_facet_items_alter(&$build, &$settings) {
       }
     }
     
-    
-    dpm($new_build);
-    dpm($result_build);
-    $build = $result_build;
+    if (@$result_build) {
+      //dpm($new_build);
+      //dpm($result_build);
+      $build = $result_build;
+    }
   }
   
 }
