@@ -3763,6 +3763,9 @@ function zp_commerce_facet_items_alter(&$build, &$settings) {
     $categories = $query->execute()->fetchAllKeyed();
     dpm($categories);
     
+    uasort($categories);
+    
+            
     $new_build = array();
     foreach ($categories as $tid => $category) {
       //$new_build[$category][$tid] = $build[$tid]['#markup'];
@@ -3771,13 +3774,20 @@ function zp_commerce_facet_items_alter(&$build, &$settings) {
     
     dpm($new_build);
     
-    foreach ($new_build as $category => $data) {
+    foreach ($new_build as $category => $category_array) {
       //natcasesort($new_build[$category]);
       uasort($new_build[$category], 'zp_commerce_sortArrayBuildByCatName');
+      
+      $count = 0;
+      foreach ($new_build[$category] as $tid => $data) {
+        $data['#markup'] = ($count++ == 0 ? '<div class="cat-name" style="display: none">' . $category . '</div>' : '') . $data['#markup'];
+        $result_build[$tid] = $data;
+      }
     }
     
     
     dpm($new_build);
+    dpm($result_build);
   }
   
 }
