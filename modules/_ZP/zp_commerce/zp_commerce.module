@@ -3765,14 +3765,17 @@ function zp_commerce_facet_items_alter(&$build, &$settings) {
     
     $new_build = array();
     foreach ($categories as $tid => $category) {
-      $new_build[$category][$tid] = $build[$tid]['#markup'];
+      //$new_build[$category][$tid] = $build[$tid]['#markup'];
+      $new_build[$category][$tid] = $build[$tid];
     }
     
     dpm($new_build);
     
     foreach ($new_build as $category => $data) {
-      natcasesort($new_build[$category]);
+      //natcasesort($new_build[$category]);
+      uasort($new_build[$category], 'zp_commerce_sortArrayBuildByCatName');
     }
+    
     
     dpm($new_build);
   }
@@ -3780,13 +3783,23 @@ function zp_commerce_facet_items_alter(&$build, &$settings) {
 }
 
 
+
 /**
+ * Helper function for sorting providers by erating with uasort function.
  * 
- * @param type $data
- * @param type $block
+ * Example of using:
  * 
- * 
+ * uasort($array_with_elements_contained_key_name, 'gv_misc_sortArrayBlockedIPsByCountyAmount');
  */
+function zp_commerce_sortArrayBuildByCatName($a, $b) {
+  
+  if ($a['#count'] == $b['#count']) {
+      return 0;
+  }
+  return ($a['#count'] > $b['#count']) ? -1 : 1;
+}
+
+
 function zp_commerce_block_view_alter(&$data, $block) {
   
   if (!empty($block->info) && (strpos($block->info, 'zp_hidden_facet_block') !== FALSE) )
