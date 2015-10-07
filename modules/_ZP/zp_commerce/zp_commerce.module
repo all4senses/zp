@@ -3526,8 +3526,7 @@ field_product:commerce_price:amount_decimal (Array, 24 elements)
   
   // Doesnt work
   //$facet_info['field_brand']['default widget'] = 'links';
-  
-  $facet_info['field_brand']['default widget'] = 'facetapi_links'; // 'facetapi_checkbox_links'
+  //$facet_info['field_brand']['default widget'] = 'facetapi_links'; // 'facetapi_checkbox_links'
   
 }
 
@@ -3536,6 +3535,8 @@ field_product:commerce_price:amount_decimal (Array, 24 elements)
  * NOT USED NOW
  * 
  * a4s
+ * 
+ * may be set in hook function zp_commerce_facetapi_facet_info_alter(), see above
  * 
  * altered function search_api_facetapi_facet_map_callback(array $values, array $options = array()) {
  * 
@@ -3708,7 +3709,7 @@ function zp_commerce_facet_items_alter(&$build, &$settings) {
   dpm($build);
   dpm($settings);
   
-  if ($settings->facet == 'field_brand') {
+  if ($settings->facet == 'field_brand' && !empty($build['spar'])) {
     $item = $build['spar'];
     unset($build['spar']);
     $build['spar'] = $item;
