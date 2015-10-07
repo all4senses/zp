@@ -3457,7 +3457,7 @@ function zp_commerce_facetapi_facet_info_alter(array &$facet_info, array $search
 //  }
   
   
-  dpm($facet_info);
+  dpm($facet_info); 
   
   /*
   type (Array, 24 elements)
