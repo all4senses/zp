@@ -3765,7 +3765,7 @@ function zp_commerce_facet_items_alter(&$build, &$settings) {
     
     $new_build = array();
     foreach ($categories as $tid => $category) {
-      $new_build[$category][$tid] = $build[$tid]['#markup'];
+      $new_build[$category][$tid] = $build[$tid];
     }
     dpm($new_build);
   }
