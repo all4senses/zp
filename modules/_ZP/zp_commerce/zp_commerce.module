@@ -3760,8 +3760,8 @@ function zp_commerce_facet_items_alter(&$build, &$settings) {
     $query->fields('td', array('name'));
     $query->groupBy('name');
       //$query->addField('term', 'name', 'subgroup_name');
-    //$parents = $query->execute()->fetchAllAssoc('tid');
-    $parents = $query->execute()->fetchAll();
+    $parents = $query->execute()->fetchAllAssoc('tid');
+    //$parents = $query->execute()->fetchAll();
     dpm($parents);
   }
   
