@@ -3762,6 +3762,7 @@ function zp_commerce_facet_items_alter(&$build, &$settings) {
     $query->groupBy('cat');
       //$query->addField('term', 'name', 'subgroup_name');
     //$parents = $query->execute()->fetchAllAssoc('tid');
+    dpm((string) $query);
     $parents = $query->execute()->fetchAll();
     dpm($parents);
   }
