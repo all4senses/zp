@@ -3730,10 +3730,10 @@ function zp_commerce_block_view_alter(&$data, $block) {
   
   if (!empty($block->info) && (strpos($block->info, 'zp_hidden_facet_block') !== FALSE) )
   {            
-    dpm($data);
-    dpm($block);
+    //dpm($data);
+    //dpm($block);
     dpm('Unsetted ' . $block->info);
-    //unset($data['content']);
+    unset($data['content']);
   }
   
 }
