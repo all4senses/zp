@@ -3417,8 +3417,23 @@ function zp_commerce_facetapi_realm_info_alter(array &$realm_info) {
   //$realm_info['block']['weight'] = 5;
   
   
-  dpm($realm_info);
-//  
+  //dpm($realm_info);
+  /*
+  ... (Array, 1 element)
+      block (Array, 8 elements)
+          label (String, 6 characters ) Blocks
+          weight (Integer) -10
+          sortable (Boolean) FALSE
+          default widget (String, 14 characters ) facetapi_links
+          element type (String, 5 characters ) links
+          description (String, 185 characters ) The <em>Blocks</em> realm displays each facet i...
+              The <em>Blocks</em> realm displays each facet in a separate <a href="/admin/structure/block?destination=node">block</a>. Users are able to refine their searches in a drill-down fashion.
+          name (String, 5 characters ) block
+          settings callback (Boolean) FALSE
+  
+  */
+  
+// Doesnt work?  
 //  $realm_info['block']['default widget'] = 'facetapi_checkbox_links';
 }
 
@@ -3712,8 +3727,14 @@ function zp_commerce_facet_items_alter(&$build, &$settings) {
 }
 
 function zp_commerce_block_view_alter(&$data, $block) {
-  dpm($data);
-  dpm($block);
+  
+  if (strpos($data['info'], 'facet_block_') !== FALSE) {
+    dpm($data);
+    dpm($block);
+    dpm('unsetted');
+    unset($data['content']);
+  }
+  
 }
 
 /** 
