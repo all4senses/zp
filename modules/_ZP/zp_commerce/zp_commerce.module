@@ -3732,8 +3732,8 @@ function zp_commerce_block_view_alter(&$data, $block) {
                 {
     dpm($data);
     dpm($block);
-    //dpm('unsetted');
-    //unset($data['content']);
+    dpm('unsetted');
+    unset($data['content']);
   }
   
 }
