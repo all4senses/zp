@@ -3728,7 +3728,7 @@ function zp_commerce_facet_items_alter(&$build, &$settings) {
 
 function zp_commerce_block_view_alter(&$data, $block) {
   
-  if (strpos($data['info'], 'facet_block_') !== FALSE) {
+  if (strpos(@$block['info'], 'facet_block_') !== FALSE) {
     dpm($data);
     dpm($block);
     dpm('unsetted');
