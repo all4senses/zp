@@ -3450,24 +3450,14 @@ function zp_commerce_facetapi_realm_info_alter(array &$realm_info) {
  * @see hook_facetapi_facet_info()
  */
 function zp_commerce_facetapi_facet_info_alter(array &$facet_info, array $searcher_info) {
+  
   // Change the author index field for Apache Solr searchers indexing node data.
 //  if ('apachesolr' == $searcher_info['adapter'] && isset($searcher_info['types']['node'])) {
 //    $facet_info['author']['field'] = 'is_uid';
 //  }
   
-  //$facet_info['field_brand']['default widget'] = 'facetapi_checkbox_links';
   
-  // Title of items that dont fall up to the shown
-  // Works
-  $facet_info['field_brand']['map options']['missing label'] = 'Прочее';
-  
-  // Work, but we don't use it here.
-  //$facet_info['field_brand']['map callback'] = 'zp_commerce_search_api_facetapi_facet_map_callback';
-  
-  // Doesnt work
-  $facet_info['field_brand']['default widget'] = 'links';
-  
-  //dpm($facet_info);
+  dpm($facet_info);
   
   /*
   type (Array, 24 elements)
@@ -3522,10 +3512,28 @@ field_product:commerce_price:amount_decimal (Array, 24 elements)
   
   */
   
+  
+  
+  
+  
+  // Title of items that dont fall up to the shown
+  // Works
+  $facet_info['field_brand']['map options']['missing label'] = $facet_info['field_category_main:name']['map options']['missing label'] = 'Прочее';
+  
+    
+  // Work, but we don't use it here.
+  //$facet_info['field_brand']['map callback'] = 'zp_commerce_search_api_facetapi_facet_map_callback';
+  
+  // Doesnt work
+  //$facet_info['field_brand']['default widget'] = 'links';
+  
+  $facet_info['field_brand']['default widget'] = 'facetapi_links'; // 'facetapi_checkbox_links'
+  
 }
 
 
 /**
+ * NOT USED NOW
  * 
  * a4s
  * 
@@ -3552,7 +3560,7 @@ field_product:commerce_price:amount_decimal (Array, 24 elements)
  *   An array mapping raw filter values to their labels.
  */
 function zp_commerce_search_api_facetapi_facet_map_callback(array $values, array $options = array()) {
-  dpm($values);
+  //dpm($values);
   $map = array();
   // See if we have an additional map callback.
   if (isset($options['map callback']) && is_callable($options['map callback'])) {
@@ -3616,7 +3624,7 @@ function zp_commerce_search_api_facetapi_facet_map_callback(array $values, array
     }
   }
 
-  dpm($map);
+  //dpm($map);
   
   return $map;
   
