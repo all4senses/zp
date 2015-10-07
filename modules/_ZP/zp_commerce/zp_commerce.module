@@ -3763,7 +3763,7 @@ function zp_commerce_facet_items_alter(&$build, &$settings) {
     $categories = $query->execute()->fetchAllKeyed();
     dpm($categories);
     
-    uasort($categories);
+    natcasesort($categories);
     
             
     $new_build = array();
