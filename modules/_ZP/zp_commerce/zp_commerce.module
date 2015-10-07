@@ -3758,7 +3758,9 @@ function zp_commerce_facet_items_alter(&$build, &$settings) {
     $query->leftJoin('taxonomy_term_data', 'td', "td.tid = th.parent");
     $query->fields('th', array('tid'));
     $query->addField('td', 'name', 'category');
-    $categories = $query->execute()->fetchAllAssoc('tid');
+    
+    //$categories = $query->execute()->fetchAllAssoc('tid');
+    $categories = $query->execute()->fetchAllKeyed();
     dpm($categories);
     
     $new_build = array();
