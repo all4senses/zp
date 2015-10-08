@@ -3790,6 +3790,8 @@ function zp_commerce_facet_items_alter(&$build, &$settings) {
       if ($tid_other) {
         // Put back the "Other" item.
         $result_build['!'] = $build['!'];
+        $result_build['!']['#html'] = TRUE;
+        $result_build['!']['#markup'] = '<div class="cat-other">' . $result_build['!']['#markup'] . '</div>';
       }
       $build = $result_build;
 
