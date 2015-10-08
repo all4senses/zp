@@ -3746,7 +3746,7 @@ function zp_commerce_facet_items_alter(&$build, &$settings) {
     
   }
   
-  if ($settings->facet == 'field_categories_other') {
+  if ($settings->facet == 'field_categories_main' || $settings->facet == 'field_categories_other') {
     $tids = array_keys($build);
     if ($tid_other = array_search ( '!', $tids)) {
       unset($tid_other);
@@ -3790,25 +3790,24 @@ function zp_commerce_facet_items_alter(&$build, &$settings) {
       //dpm($new_build);
       //dpm($result_build);
       $build = $result_build;
-      
+
+      static $cat_name_js_is_loaded;
+      if (!$cat_name_js_is_loaded) {
+        $path_to_js = drupal_get_path('module', 'zp_commerce') . '/js/zp_commerce_setFacetCategories.js';
+        drupal_add_js($path_to_js);
+        $cat_name_js_is_loaded = TRUE;
+        dpm('$cat_name_js_is_loaded!!!');
+      }
+      else {
+        dpm('NOT $cat_name_js_is_loaded!!!');
+      }
+
+  
     }
   }
   
   
   
-  if (@$result_build) {
-    
-    
-    $path_to_js = drupal_get_path('module', 'zp_commerce') . '/js/zp_commerce_setFacetCategories.js';
-    drupal_add_js($path_to_js);
-/*
-    drupal_add_js(array('gv_misc' => array(
-      'addParamToProviderUrl' => array(
-        'uid' => $user->uid,
-      ),
-    )), 'setting'); 
-    */
-  }
   
 }
 
