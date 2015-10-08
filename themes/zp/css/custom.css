@@ -113,7 +113,7 @@ ul.nice-menu .menu-1614 ul li {width: 230px;}
 
 ul.nice-menu-down ul li:hover {background: #f8fafb;}
 
-ul.nice-menu-down .menuparent ul a {font-weight: normal; padding-left: 16px; background: url("/sites/all/themes/gv_orange/css/images/sprite-04.png") no-repeat scroll -234px -148px transparent; margin-left: 5px;}
+ul.nice-menu-down .menuparent ul a {font-weight: normal; padding-left: 16px;  margin-left: 5px;}
 
 
 
@@ -277,7 +277,7 @@ body.not-admin #om-menu-main-om-menu li.om-leaf.leaf-write-review{background: no
 
 .om-maximenu-simple .om-maximenu-middle{color: white; padding: 0; }
 
-.om-maximenu-simple .om-maximenu-middle a{color: white; background: url("/sites/all/themes/gv_orange/css/images/sprite-04.png") no-repeat scroll -226px -265px #adadad; padding: 7px 10px 7px 22px; display: block; width: auto; box-shadow: inset 3px 1px 2px -2px gray;}
+.om-maximenu-simple .om-maximenu-middle a{color: white; padding: 7px 10px 7px 22px; display: block; width: auto; box-shadow: inset 3px 1px 2px -2px gray;}
 
 
 .om-maximenu-simple .om-maximenu-middle a:hover {background-color: #8e8e8e; color: white; text-decoration: none;}
@@ -691,7 +691,7 @@ font-weight: normal;
 text-shadow: 1px 1px 1px gray;
 }
 
-.sidebar h3.block-title {background: url(/sites/all/themes/gv_orange/css/images/sprite-04.png) no-repeat 0px -1122px transparent; font-weight: normal; text-shadow: none; color: #444444; padding: 23px 10px 7px 10px; border-radius: 0; font-size: 19px;}
+.sidebar h3.block-title {font-weight: normal; text-shadow: none; color: #444444; padding: 23px 10px 7px 10px; border-radius: 0; font-size: 19px;}
 
 
 
