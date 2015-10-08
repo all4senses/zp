@@ -122,9 +122,14 @@ function search_api_sorts_index_select(array $form, array &$form_state, SearchAp
     foreach ($sorts as $key => $sort) {
       if (!empty($fields[$key])) {
         $new_fields[$key] = $fields[$key];
+        // a4s patch
+        // https://www.drupal.org/node/2202093
+        unset($fields[$key]);
       }
     }
     $fields = $new_fields;
+    // a4s patch
+    $fields = $new_fields + $fields;
 
     foreach ($fields as $key => $field) {
       if (!$field['indexed']) {
