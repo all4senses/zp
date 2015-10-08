@@ -1,7 +1,9 @@
 (function ($) {
 
-  Drupal.behaviors.gv_newsletterSubscribe_fieldHints = {
+  Drupal.behaviors.zp_commerce_setFacetCategories = {
     attach: function (context, settings) {
+      
+      console.log('zp_commerce_setFacetCategories.....');
       
       $('.block-facetapi .content .item-list li').each(function(){
         
