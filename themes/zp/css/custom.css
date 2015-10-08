@@ -355,11 +355,11 @@ body.sidebar-second #sidebar-second{float: right; margin-right: 18px; padding: 1
 .sidebar .block.first {margin-top: 14px;}
 
 .sidebar .block-title,
-#highlighted .block-title {background: url("images/sprite-04.png") no-repeat 0px -720px #fbd8ba; border-radius: 5px 5px 0 0; padding: 10px; margin: 0; font-size: 16px; font-weight: bold; text-transform: capitalize; line-height: 18px; color: white;}
+#highlighted .block-title {border-radius: 5px 5px 0 0; padding: 10px; margin: 0; font-size: 16px; font-weight: bold; text-transform: capitalize; line-height: 18px; color: white;}
 .sidebar .block li {list-style: none; clear: both;}
 
 .block-thumb{float: left; margin: 10px 10px 0 5px; min-height: 60px;}
-.date-icon{height: 55px; float: left; text-align: center; margin: 3px 10px 0 3px; background: url('images/sprite-04.png') no-repeat -185px -113px; width: 50px; color: white;}
+.date-icon{height: 55px; float: left; text-align: center; margin: 3px 10px 0 3px; width: 50px; color: white;}
 .date-icon span span span{color: orange; font-weight: bold; padding: 5px 0 0 0; display: block; line-height: 19px;}
 
 .sidebar #block-system-user-menu .content{padding: 10px 0 10px 0;}
@@ -649,9 +649,9 @@ body.one-sidebar.sidebar-second #main {background: none repeat scroll 0 0 white;
 .social-buttons a.linkedin-share{width: 95px; background-position: -294px 30px; padding-right: 10px;}
 
 
-a.yt-direct{background: url("images/sprite-04.png") no-repeat -150px -112px; display: block; width: 40px; margin: 0 0 0 6px; outline: none; height: 39px;}
+a.yt-direct{display: block; width: 40px; margin: 0 0 0 6px; outline: none; height: 39px;}
 
-a.yt-direct:hover{background: url("images/sprite-04.png") no-repeat -150px -109px; outline: none;}
+a.yt-direct:hover{outline: none;}
 a.yt-direct:active{outline: none;}
 
 .yt-direct-label {display: none;}
@@ -699,8 +699,8 @@ text-shadow: 1px 1px 1px gray;
 .pager.custom .newer {margin: 0 20px 0 -10px;}
 
 /* Get rid of extra images to load */
-#cboxTopCenter {background: url("images/sprite-04.png") repeat-x 0 -562px transparent;} 
-#cboxBottomCenter {background: url("images/sprite-04.png") repeat-x 0 -592px transparent;}
+#cboxTopCenter {background: white repeat-x 0 -562px transparent;} 
+#cboxBottomCenter {background: white repeat-x 0 -592px transparent;}
 #cboxLoadingOverlay {background: none;}
 
 .ui-state-default, .ui-widget-content .ui-state-default, .ui-widget-header .ui-state-default {background: #f1f1f1/*#e6e6e6 url(images/ui-bg_glass_75_e6e6e6_1x400.png) 50% 50% repeat-x*/;}
