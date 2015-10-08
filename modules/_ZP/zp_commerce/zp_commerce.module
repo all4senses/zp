@@ -3790,7 +3790,24 @@ function zp_commerce_facet_items_alter(&$build, &$settings) {
       //dpm($new_build);
       //dpm($result_build);
       $build = $result_build;
+      
     }
+  }
+  
+  
+  
+  if (@$result_build) {
+    
+    
+    $path_to_js = drupal_get_path('module', 'zp_commerce') . '/js/zp_commerce_setFacetCategories.js';
+
+/*
+    drupal_add_js(array('gv_misc' => array(
+      'addParamToProviderUrl' => array(
+        'uid' => $user->uid,
+      ),
+    )), 'setting'); 
+    */
   }
   
 }
