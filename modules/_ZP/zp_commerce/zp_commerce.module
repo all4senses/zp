@@ -3718,8 +3718,8 @@ function zp_commerce_facet_items_alter(&$build, &$settings) {
 //    $build['!']['#markup'] = 'Other';
 //  }
   //$settings->settings['widget'] = 'facetapi_links';
-  dpm($build);
-  dpm($settings);
+  //dpm($build);
+  //dpm($settings);
   
   if ($settings->facet == 'field_brand' && !empty($build['spar'])) {
     $item = $build['spar'];
@@ -3748,12 +3748,11 @@ function zp_commerce_facet_items_alter(&$build, &$settings) {
   
   if ($settings->facet == 'field_category_main' || $settings->facet == 'field_categories_other') {
     $tids = array_keys($build);
-    dpm($tids);
     if ($tid_other = array_search ( '!', $tids)) {
       unset($tids[$tid_other]);
     }
     
-    dpm($tids);
+    //dpm($tids);
     $query = db_select('taxonomy_term_hierarchy', 'th');
     $query->condition('th.tid', $tids, 'IN');
     $query->leftJoin('taxonomy_term_data', 'td', "td.tid = th.parent");
@@ -3788,23 +3787,17 @@ function zp_commerce_facet_items_alter(&$build, &$settings) {
     }
     
     if (@$result_build) {
-      //dpm($new_build);
-      //dpm($result_build);
       if ($tid_other) {
+        // Put back the "Other" item.
         $result_build['!'] = $build['!'];
       }
       $build = $result_build;
-
 
       static $cat_name_js_is_loaded;
       if (!$cat_name_js_is_loaded) {
         $path_to_js = drupal_get_path('module', 'zp_commerce') . '/js/zp_commerce_setFacetCategories.js';
         drupal_add_js($path_to_js);
         $cat_name_js_is_loaded = TRUE;
-        dpm('$cat_name_js_is_loaded!!!');
-      }
-      else {
-        dpm('NOT $cat_name_js_is_loaded!!!');
       }
 
   
