@@ -3819,7 +3819,7 @@ function zp_commerce_block_view_alter(&$data, $block) {
   {            
     //dpm($data);
     //dpm($block);
-    dpm('Unsetted ' . $block->info);
+    //dpm('Unsetted ' . $block->info);
     unset($data['content']);
   }
   
