@@ -3791,7 +3791,7 @@ function zp_commerce_facet_items_alter(&$build, &$settings) {
       //dpm($new_build);
       //dpm($result_build);
       if ($tid_other) {
-        $result_build['!'] = $build[$tid_other];
+        $result_build['!'] = $build['!'];
       }
       $build = $result_build;
 
