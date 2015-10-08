@@ -321,10 +321,6 @@ function search_api_sorts_search_api_query_alter(SearchApiQueryInterface $query)
     return;
   }
 
-  // Static save current search query
-  $_query = &drupal_static(__FUNCTION__, array());
-  $_query = $query;
-
   // There's already an existing sort, so abort!
   $existing = $query->getSort();
   if (!empty($existing)) {
@@ -355,6 +351,10 @@ function search_api_sorts_search_api_query_alter(SearchApiQueryInterface $query)
   if (!empty($order) && !empty($sort)) {
     $query->sort($sort, $order);
   }
+  
+  // Static save current search query
+  $_query = &drupal_static(__FUNCTION__, array());
+  $_query = $query;
 }
 
 /*
