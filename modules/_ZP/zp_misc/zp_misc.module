@@ -2179,7 +2179,26 @@ function zp_misc_form_alter(&$form, &$form_state, $form_id) {
   }
   
   if ($form['#id'] == 'views-exposed-form-catalog-db-index-block-1') {
-    $form['#submit'][] = 'zp_misc_viewsExposedUrlAlter';
+    
+    // fields which you want to rename
+    $form_state['my_custom_names'] = array(
+      'title ASC' => 'title-asc',
+    );
+
+    // rename option values
+    foreach ($form_state['my_custom_names'] as $name => $new_name) {
+
+      $form['sort_bef_combine']['#options'][$new_name] = $form['sort_bef_combine']['#options'][$name];
+      unset($form['sort_bef_combine']['#options'][$name]);  
+
+      if ($form_state['input']['sort_bef_combine'] == $name) {
+        $form_state['input']['sort_bef_combine'] = $new_name;
+      }
+    }
+    
+    
+    // the custom submit handler need to be fired before the original one
+    array_unshift($form['#submit'], 'zp_misc_viewsExposedUrlAlter'); 
   }
 }
 
@@ -2187,6 +2206,13 @@ function zp_misc_form_alter(&$form, &$form_state, $form_id) {
 function zp_misc_viewsExposedUrlAlter(&$form, &$form_state) {
   dpm($form);
   dpm($form_state);
+  
+  // set the form state values to their original names.
+  foreach ($form_state['my_custom_names'] as $name => $new_name) {
+    if ($form_state['values']['sort_bef_combine'] == $new_name) {
+      $form_state['values']['sort_bef_combine'] = $name;
+    }
+  }
 }
 
 
