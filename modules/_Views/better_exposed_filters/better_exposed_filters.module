@@ -75,6 +75,9 @@ function better_exposed_filters_views_api() {
 }
 
 function bef_sort_combine_submit($form, &$form_state) {
+  
+  dpm($form_state['values']);
+  
   // Unpack sort_by and sort_order from the sort_bef_combine element
   if (empty($form_state['values']['sort_bef_combine'])) {
     $form_state['values']['sort_by'] = $form_state['values']['sort_order'] = '';
