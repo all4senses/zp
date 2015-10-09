@@ -2181,12 +2181,15 @@ function zp_misc_form_alter(&$form, &$form_state, $form_id) {
   if ($form['#id'] == 'views-exposed-form-catalog-db-index-block-1') {
     
     // fields which you want to rename
-    $form_state['my_custom_names'] = array(
+    $form_state['zp_custom_exposed_fields_aliases'] = array(
       'title ASC' => 'title-asc',
+      'title DESC' => 'title-desc',
+      'search_api_aggregation_1 ASC' => 'price-asc',
+      'search_api_aggregation_1 DESC' => 'price-desc',  
     );
 
     // rename option values
-    foreach ($form_state['my_custom_names'] as $name => $new_name) {
+    foreach ($form_state['zp_custom_exposed_fields_aliases'] as $name => $new_name) {
 
       $form['sort_bef_combine']['#options'][$new_name] = $form['sort_bef_combine']['#options'][$name];
       unset($form['sort_bef_combine']['#options'][$name]);  
@@ -2195,7 +2198,7 @@ function zp_misc_form_alter(&$form, &$form_state, $form_id) {
         $form_state['input']['sort_bef_combine'] = $new_name;
       }
     }
-    $form['sort_bef_combine']['#default_value'] = !empty($form_state['my_custom_names'][$form['sort_bef_combine']['#default_value']]) ? $form_state['my_custom_names'][$form['sort_bef_combine']['#default_value']] : $form['sort_bef_combine']['#default_value'];
+    $form['sort_bef_combine']['#default_value'] = !empty($form_state['zp_custom_exposed_fields_aliases'][$form['sort_bef_combine']['#default_value']]) ? $form_state['zp_custom_exposed_fields_aliases'][$form['sort_bef_combine']['#default_value']] : $form['sort_bef_combine']['#default_value'];
     
     
     // the custom submit handler need to be fired before the original one
@@ -2212,7 +2215,7 @@ function zp_misc_viewsExposedUrlAlter(&$form, &$form_state) {
   dpm($form_state);
   
   // set the form state values to their original names.
-  foreach ($form_state['my_custom_names'] as $name => $new_name) {
+  foreach ($form_state['zp_custom_exposed_fields_aliases'] as $name => $new_name) {
     if ($form_state['values']['sort_bef_combine'] == $new_name) {
       $form_state['values']['sort_bef_combine'] = $name;
     }
