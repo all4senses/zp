@@ -1,7 +1,7 @@
 <?php 
-dpm($block);
-dpm($classes);
-dpm($content_attributes);
+//dpm($block);
+//dpm($classes);
+//dpm($content_attributes);
 ?>
 <?php if (!strpos($classes, 'first')): ?>
   <div class="top-line <?php print $block_html_id; ?>"></div>

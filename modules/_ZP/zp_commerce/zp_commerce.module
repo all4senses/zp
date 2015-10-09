@@ -3858,8 +3858,21 @@ function zp_commerce_theme_registry_alter(&$theme_registry) {
 }
 
 
-// 
-// From facetapi.theme.inc
+/**
+ *
+ * Works!
+ * 
+ * Overrides
+ * 
+ * function hook_facetapi_title($variables)
+ * 
+ * From facetapi.theme.inc
+ * 
+ * @param type $variables
+ * @return type
+ * 
+ * 
+ */
 function zp_commerce_facetapi_title($variables) {
   return t('---> Filter by @title:', array('@title' => drupal_strtolower($variables['title'])));
   

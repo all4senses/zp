@@ -2164,7 +2164,7 @@ function zp_misc_getAdmins() {
  */
 function zp_misc_form_alter(&$form, &$form_state, $form_id) {
   
-  //dpm($form_id);dpm($form);
+  dpm($form_id);dpm($form);
   
   // Unlink Ckeditor from the comment input form.
   /*
