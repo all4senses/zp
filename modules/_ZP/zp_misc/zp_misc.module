@@ -2180,6 +2180,8 @@ function zp_misc_form_alter(&$form, &$form_state, $form_id) {
   
   if ($form['#id'] == 'views-exposed-form-catalog-db-index-block-1') {
     
+    $sort_bef_combine_param = 'sort-by'; // 'sort_bef_combine';
+    
     // fields which you want to rename
     $form_state['zp_custom_exposed_fields_aliases'] = array(
       'title ASC' => 'title-asc',
@@ -2191,17 +2193,13 @@ function zp_misc_form_alter(&$form, &$form_state, $form_id) {
     // rename option values
     foreach ($form_state['zp_custom_exposed_fields_aliases'] as $name => $new_name) {
 
-      $form['sort_bef_combine']['#options'][$new_name] = $form['sort_bef_combine']['#options'][$name];
-      unset($form['sort_bef_combine']['#options'][$name]);  
-
-//      if (@$form_state['input']['sort_bef_combine'] == $name) {
-//        $form_state['input']['sort_bef_combine'] = $new_name;
-//      }
+      $form[$sort_bef_combine_param]['#options'][$new_name] = $form[$sort_bef_combine_param]['#options'][$name];
+      unset($form[$sort_bef_combine_param]['#options'][$name]);  
     }
-    if (!empty($form_state['input']['sort_bef_combine'])) {
-      $form_state['input']['sort_bef_combine'] = !empty($form_state['zp_custom_exposed_fields_aliases'][$form_state['input']['sort_bef_combine']]) ? $form_state['zp_custom_exposed_fields_aliases'][$form_state['input']['sort_bef_combine']] : $form_state['input']['sort_bef_combine'];
+    if (!empty($form_state['input'][$sort_bef_combine_param])) {
+      $form_state['input'][$sort_bef_combine_param] = !empty($form_state['zp_custom_exposed_fields_aliases'][$form_state['input'][$sort_bef_combine_param]]) ? $form_state['zp_custom_exposed_fields_aliases'][$form_state['input'][$sort_bef_combine_param]] : $form_state['input'][$sort_bef_combine_param];
     }
-    $form['sort_bef_combine']['#default_value'] = !empty($form_state['zp_custom_exposed_fields_aliases'][$form['sort_bef_combine']['#default_value']]) ? $form_state['zp_custom_exposed_fields_aliases'][$form['sort_bef_combine']['#default_value']] : $form['sort_bef_combine']['#default_value'];
+    $form[$sort_bef_combine_param]['#default_value'] = !empty($form_state['zp_custom_exposed_fields_aliases'][$form[$sort_bef_combine_param]['#default_value']]) ? $form_state['zp_custom_exposed_fields_aliases'][$form[$sort_bef_combine_param]['#default_value']] : $form[$sort_bef_combine_param]['#default_value'];
     
     
     // the custom submit handler need to be fired before the original one
@@ -2217,16 +2215,18 @@ function zp_misc_viewsExposedUrlAlter(&$form, &$form_state) {
   //dpm($form);
   //dpm($form_state);
   
-  if ($sort_by = @$form_state['input']['sort-by'] || $sort_by = @$form_state['values']['sort-by']) {
-    $form_state['values']['sort_bef_combine'] = $sort_by;
-    $form_state['input']['sort_bef_combine'] = $sort_by;
-  }
+  $sort_bef_combine_param = 'sort-by'; // 'sort_bef_combine';
+  //
+//  if ($sort_by = @$form_state['input']['sort-by'] || $sort_by = @$form_state['values']['sort-by']) {
+//    $form_state['values'][$sort_bef_combine_param] = $sort_by;
+//    $form_state['input'][$sort_bef_combine_param] = $sort_by;
+//  }
   
   
   // set the form state values to their original names.
   foreach ($form_state['zp_custom_exposed_fields_aliases'] as $name => $new_name) {
-    if ($form_state['values']['sort_bef_combine'] == $new_name) {
-      $form_state['values']['sort_bef_combine'] = $name;
+    if ($form_state['values'][$sort_bef_combine_param] == $new_name) {
+      $form_state['values'][$sort_bef_combine_param] = $name;
     }
   }
   
