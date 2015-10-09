@@ -2223,6 +2223,9 @@ function zp_misc_viewsExposedUrlAlter(&$form, &$form_state) {
       $form_state['values']['sort_bef_combine'] = $name;
     }
   }
+  if (!empty($form_state['values']['sort-by'])) {
+    $form_state['values']['sort_bef_combine'] = $form_state['values']['sort-by'];
+  }
 }
 
 
