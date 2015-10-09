@@ -84,7 +84,7 @@ class BEF_TestOptions extends BEF_TestBase {
 
     // Ensure View-based settings are preserved on save.
     $edit = array(
-      'exposed_form_options[input_required]' => 1,
+      'exposed_form_options[bef][general][input_required]' => 1,
       'exposed_form_options[bef][general][allow_secondary]' => 1,
     );
     $this->setBefSettings($edit);
@@ -540,12 +540,12 @@ class BEF_TestDatepicker extends BEF_TestBase {
       'path' => array('path' => 'bef_test_page'),
     ));
 
-    // Verify slider rendering using the Numbers field from the BEF test content
-    // type.
+    // Verify Datepicker rendering using the Numbers field from the BEF test
+    // content type.
     $this->addFilter('node.created');
     $this->saveView();
 
-    // Verify the slider option appears for integer fields
+    // Verify the datepicker option appears for core date fields.
     $this->drupalGet($this->getBefSettingsUrl());
     $this->assertFieldByXpath('//select[@name="exposed_form_options[bef][created][bef_format]"]/option', 'Default select list');
     $this->assertFieldByXpath('//select[@name="exposed_form_options[bef][created][bef_format]"]/option', 'jQuery UI Datepicker');
@@ -557,7 +557,7 @@ class BEF_TestDatepicker extends BEF_TestBase {
     $this->drupalGet('bef_test_page');
     $settings = $this->drupalGetSettings();
     $settings = $settings['better_exposed_filters'];
-    $this->assertTrue($settings['datepicker'], 'BEF slider setting is TRUE');
+    $this->assertTrue($settings['datepicker'], 'BEF datepicker setting is TRUE');
     $this->assertFieldByXpath('//div[@id="edit-created-wrapper"]//input[contains(@class,"bef-datepicker")]');
   }
 
@@ -574,14 +574,14 @@ class BEF_TestDatepicker extends BEF_TestBase {
     // pulling up the modules page, but it works...
     $this->drupalGet('admin/modules');
 
-    // Verify slider rendering using the Numbers field from the BEF test content
-    // type.
+    // Verify datepicker rendering using the Numbers field from the BEF test
+    // content type.
     $this->addFilter('field_data_field_bef_test_date.field_bef_test_date_value', array(), array(
       'options[form_type]' => 'date_text',
     ));
     $this->saveView();
 
-    // Verify the slider option appears for integer fields
+    // Verify the datepicker option appears for custom date fields.
     $this->drupalGet($this->getBefSettingsUrl());
     $this->assertFieldByXpath('//select[@name="exposed_form_options[bef][field_bef_test_date_value][bef_format]"]/option', 'Default select list');
     $this->assertFieldByXpath('//select[@name="exposed_form_options[bef][field_bef_test_date_value][bef_format]"]/option', 'jQuery UI Datepicker');
@@ -593,8 +593,8 @@ class BEF_TestDatepicker extends BEF_TestBase {
     $this->drupalGet('bef_test_page');
     $settings = $this->drupalGetSettings();
     $settings = $settings['better_exposed_filters'];
-    $this->assertTrue($settings['datepicker'], 'BEF slider setting is TRUE');
-    $this->assertTrue(!empty($settings['datepicker_options']['dateformat']), 'BEF slider setting is TRUE');
+    $this->assertTrue($settings['datepicker'], 'BEF datepicker setting is TRUE');
+    $this->assertTrue(!empty($settings['datepicker_options']['dateFormat']), 'BEF datepicker setting is TRUE');
     $this->assertFieldByXpath('//div[@id="edit-field-bef-test-date-value-value"]//input[contains(@class,"bef-datepicker")]');
   }
 }
@@ -715,9 +715,30 @@ class BEF_TestSecondaryFilters extends BEF_TestBase {
     $this->assertFieldByXpath('//div[@id="edit-secondary-wrapper"]//fieldset[contains(@class, "collapsible") and contains(@class, "collapsed")]', NULL, 'Collapsible fieldset for secondary options, starts collapsed.');
     $this->assertFieldByXpath('//div[@id="edit-secondary-wrapper"]//fieldset//select[@name="custom_id[]"]', NULL, 'The node.type filter is within the secondary fieldset');
 
-    // Select an option and make sure the fielset is expanded when rendered.
+    // Select an option and make sure the fieldset is expanded when rendered.
     $this->drupalGet('bef_test_page', array('query' => array('custom_id' => 'page')));
     $this->assertFieldByXpath('//div[@id="edit-secondary-wrapper"]//fieldset[contains(@class, "collapsible") and not(contains(@class, "collapsed"))]', NULL, 'Collapsible fieldset starts open');
+
+    // Add an in-between filter and verify it renders correctly.
+    $this->addFilter('field_data_field_bef_test_integer.field_bef_test_integer_value', array(
+      'options[operator]' => 'between',
+    ));
+    $this->setBefSettings(array(
+      'exposed_form_options[bef][general][allow_secondary]' => 1,
+      'exposed_form_options[bef][general][secondary_label]' => 'Custom Label',
+      'exposed_form_options[bef][field_bef_test_integer_value][more_options][is_secondary]' => 1,
+    ));
+    $this->saveView();
+    $this->drupalGet('bef_test_page');
+
+    // Verify labels for the min and max fields.
+    // Note: Both labels have a trailing space which is added by Views... I
+    // assume to provide some visual whitespace between the label and widget if
+    // they are arranged horizontally. I imagine that'll change at some point as
+    // it's a terrible way to add some padding to an element!
+    $this->assertFieldByXpath('//label[@for="edit-field-bef-test-integer-value-min"]', 'Integer (field_bef_test_integer) ', 'Label appears for in-between filters in secondary fieldsets.');
+    $this->assertFieldByXpath('//label[@for="edit-field-bef-test-integer-value-max"]', 'And ', 'In-between filter has correct label between min and max inputs');
+    $this->assertFieldByXpath('//label[@for="edit-custom-id"]', 'Type ', 'Single input filter has correct label');
   }
 }
 
@@ -828,7 +849,7 @@ class BEF_TestMisc extends BEF_TestBase {
       'options[expose][multiple]' => TRUE,
     ));
     $this->setBefSettings(array(
-      'exposed_form_options[input_required]' => 1,
+      'exposed_form_options[bef][general][input_required]' => 1,
       'exposed_form_options[bef][general][allow_secondary]' => 1,
     ));
     $this->saveView();
