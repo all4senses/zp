@@ -2217,16 +2217,18 @@ function zp_misc_viewsExposedUrlAlter(&$form, &$form_state) {
   dpm($form);
   dpm($form_state);
   
+  if ($sort_by = $form_state['input']['sort-by']) {
+    $form_state['values']['sort_bef_combine'] = $sort_by;
+    $form_state['input']['sort_bef_combine'] = $sort_by;
+    //form_set_value($form['sort_bef_combine'], array('und' => array(0 => array('value' => 0) )), $form_state);
+  }
+  
+  
   // set the form state values to their original names.
   foreach ($form_state['zp_custom_exposed_fields_aliases'] as $name => $new_name) {
     if ($form_state['values']['sort_bef_combine'] == $new_name) {
       $form_state['values']['sort_bef_combine'] = $name;
     }
-  }
-  if ($sort_by = $form_state['input']['sort-by']) {
-    $form_state['values']['sort_bef_combine'] = $sort_by;
-    $form_state['input']['sort_bef_combine'] = $sort_by;
-    //form_set_value($form['sort_bef_combine'], array('und' => array(0 => array('value' => 0) )), $form_state);
   }
   
   dpm($form_state);
