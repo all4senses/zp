@@ -2164,8 +2164,8 @@ function zp_misc_getAdmins() {
  */
 function zp_misc_form_alter(&$form, &$form_state, $form_id) {
   
-  dpm($form_id);dpm($form);
-  dpm($form_state);
+  //dpm($form_id);dpm($form);
+  //dpm($form_state);
   
   // Unlink Ckeditor from the comment input form.
   /*
@@ -2207,20 +2207,19 @@ function zp_misc_form_alter(&$form, &$form_state, $form_id) {
     // the custom submit handler need to be fired before the original one
     array_unshift($form['#submit'], 'zp_misc_viewsExposedUrlAlter'); 
     
-    dpm($form);
-    dpm($form_state);
+    //dpm($form);
+    //dpm($form_state);
   }
 }
 
 
 function zp_misc_viewsExposedUrlAlter(&$form, &$form_state) {
-  dpm($form);
-  dpm($form_state);
+  //dpm($form);
+  //dpm($form_state);
   
-  if ($sort_by = $form_state['input']['sort-by']) {
+  if ($sort_by = @$form_state['input']['sort-by'] || $sort_by = @$form_state['values']['sort-by']) {
     $form_state['values']['sort_bef_combine'] = $sort_by;
     $form_state['input']['sort_bef_combine'] = $sort_by;
-    //form_set_value($form['sort_bef_combine'], array('und' => array(0 => array('value' => 0) )), $form_state);
   }
   
   
@@ -2231,7 +2230,7 @@ function zp_misc_viewsExposedUrlAlter(&$form, &$form_state) {
     }
   }
   
-  dpm($form_state);
+  //dpm($form_state);
 }
 
 
