@@ -2223,7 +2223,7 @@ function zp_misc_viewsExposedUrlAlter(&$form, &$form_state) {
       $form_state['values']['sort_bef_combine'] = $name;
     }
   }
-  if ($sort_by = @$form_state['values']['sort-by'] || $sort_by = @$form_state['input']['sort-by']) {
+  if ($sort_by = $form_state['input']['sort-by']) {
     $form_state['values']['sort_bef_combine'] = $sort_by;
     $form_state['input']['sort_bef_combine'] = $sort_by;
     //form_set_value($form['sort_bef_combine'], array('und' => array(0 => array('value' => 0) )), $form_state);
