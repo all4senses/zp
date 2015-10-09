@@ -2199,6 +2199,9 @@ function zp_misc_form_alter(&$form, &$form_state, $form_id) {
     
     // the custom submit handler need to be fired before the original one
     array_unshift($form['#submit'], 'zp_misc_viewsExposedUrlAlter'); 
+    
+    dpm($form);
+    dpm($form_state);
   }
 }
 
