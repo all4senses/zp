@@ -2194,10 +2194,11 @@ function zp_misc_form_alter(&$form, &$form_state, $form_id) {
       $form['sort_bef_combine']['#options'][$new_name] = $form['sort_bef_combine']['#options'][$name];
       unset($form['sort_bef_combine']['#options'][$name]);  
 
-      if ($form_state['input']['sort_bef_combine'] == $name) {
-        $form_state['input']['sort_bef_combine'] = $new_name;
-      }
+//      if (@$form_state['input']['sort_bef_combine'] == $name) {
+//        $form_state['input']['sort_bef_combine'] = $new_name;
+//      }
     }
+    $form_state['input']['sort_bef_combine'] = !empty($form_state['zp_custom_exposed_fields_aliases'][$form_state['input']['sort_bef_combine']]) ? $form_state['zp_custom_exposed_fields_aliases'][$form_state['input']['sort_bef_combine']] : $form_state['input']['sort_bef_combine'];
     $form['sort_bef_combine']['#default_value'] = !empty($form_state['zp_custom_exposed_fields_aliases'][$form['sort_bef_combine']['#default_value']]) ? $form_state['zp_custom_exposed_fields_aliases'][$form['sort_bef_combine']['#default_value']] : $form['sort_bef_combine']['#default_value'];
     
     
