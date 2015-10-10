@@ -173,9 +173,6 @@ class SearchApiViewsFacetsBlockDisplay extends views_plugin_display_block {
         'limit' => $limit,
         'missing' => FALSE,
         'min_count' => 1,
-        // a4s
-        'operator' => 'or',  
-          
       );
     }
     $query_options['search_api_base_path'] = $base_path;
@@ -200,8 +197,6 @@ class SearchApiViewsFacetsBlockDisplay extends views_plugin_display_block {
 
     $results = $this->view->query->getSearchApiResults();
 
-    //dpm($results);
-    
     if (empty($results['search_api_facets']['search_api_views_facets_block'])) {
       return NULL;
     }
@@ -225,18 +220,12 @@ class SearchApiViewsFacetsBlockDisplay extends views_plugin_display_block {
     }
 
     $index = $this->view->query->getIndex();
-    
-    //dpm($this->view);
-    //dpm($index);
-    
     $options['field'] = $index->options['fields'][$facet_field];
     $options['field']['key'] = $facet_field;
     $options['index id'] = $index->machine_name;
     $options['value callback'] = '_search_api_facetapi_facet_create_label';
     $map = search_api_facetapi_facet_map_callback($filters, $options);
 
-    ////dpm($map);
-    
     $facets = array();
     $prefix = rawurlencode($facet_field) . ':';
     foreach ($terms as $term) {
@@ -252,25 +241,19 @@ class SearchApiViewsFacetsBlockDisplay extends views_plugin_display_block {
         'path' => $this->view->query->getOption('search_api_base_path'),
         'count' => $term['count'],
         'options' => array(
-          'attributes' => array('class' => 'facetapi-inactiveeeeeeee'),
+          'attributes' => array('class' => 'facetapi-inactive'),
           'html' => FALSE,
           'query' => $query,
         ),
       );
 
-      ////dpm($variables);
-      
       // Themes the link, adds row to facets.
       $facets[] = array(
-        'class' => array('leaffffff'),
+        'class' => array('leaf'),
         'data' => theme('facetapi_link_inactive', $variables),
       );
-      
-      
     }
 
-    //dpm($facets);
-    
     if (!$facets) {
       return NULL;
     }
