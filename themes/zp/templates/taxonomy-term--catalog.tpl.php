@@ -40,9 +40,14 @@
  *
  * @ingroup themeable
  */
-?>
 
 dpm($_GET);
+
+dpm($term);
+dpm('$view_mode = ' . $view_mode);
+?>
+
+
 <div class="xxx">yyyyyy----yyyyyyyyyyyyyyyyy--------------</div>
 <div id="taxonomy-term-<?php print $term->tid; ?>" class="<?php print $classes; ?>">
 
