@@ -41,6 +41,7 @@
  * @ingroup themeable
  */
 
+dpm(arg());
 dpm($_GET);
 
 dpm($term);
