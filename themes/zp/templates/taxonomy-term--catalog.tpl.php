@@ -42,6 +42,7 @@
  */
 
 //dpm($content);
+$current_url_dept_zp_tid = arg(1);
 dpm(arg());
 //dpm($_GET);
 
@@ -49,23 +50,42 @@ dpm($term);
 dpm('$view_mode = ' . $view_mode);
 
 global $user;
+
+
+if ($current_url_dept_zp_tid == $term->field_zp_id['und'][0]['safe_value']) {
+  $term_is_current_parent_dept = TRUE;
+}
+else {
+  $term_is_current_parent_dept = FALSE;
+}
+
 ?>
+
+<div id="taxonomy-term-<?php print $term->tid; ?>" class="<?php print $classes; ?>">
+  
 <?php
-if ($user->uid == 1) {
+
+if ($user->uid == 1 && $term_is_current_parent_dept) {
 ?>
 <ul class="tabs primary" type="float: right;"><li class="active"><?php echo l('Edit', 'taxonomy/term/' . $term->tid . '/edit', array('query' => array('destination' => $_GET['q'])));  ?></li>
 <li><?php echo l('Devel', 'taxonomy/term/' . $term->tid . '/devel', array('query' => array('destination' => $_GET['q'])));  ?></li>
 </ul>
 <?php
+
 }
+
+$current_subdept_children = @$term->field_has_prods_or_depts['und'][0]['value']; // 0 - not defined, 1 - has subdepts, 2 - has priducts
+
+if (!$term_is_current_parent_dept || !$current_subdept_children) {
+  echo '<h1 class="parent-dept current">', $term_name, '</h1>';
+}
+else {
+  echo '<h2>', l($term_name, ($current_subdept_children == 1 ? 'd/' : 'dp/') . $term->field_parent_zp_id['und'][0]['safe_value']), '</h2>';
+}
+
 ?>
 
-<div class="xxx">yyyyyy----yyyyyyyyyyyyyyyyy--------------</div>
-<div id="taxonomy-term-<?php print $term->tid; ?>" class="<?php print $classes; ?>">
 
-  <?php if (!$page): ?>
-    <h2><a href="<?php print $term_url; ?>"><?php print $term_name; ?></a></h2>
-  <?php endif; ?>
 
   <div class="content">
     <?php print render($content); ?>
