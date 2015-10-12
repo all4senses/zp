@@ -723,15 +723,24 @@ function facetapi_field_delete_instance($instance) {
  *   The key in the array being passed to drupal_map_assoc().
  */
 function facetapi_map_assoc(&$array, $name, $key) {
-  // a4s patch
-  dpm($key);
-  dpm($array);
-  $array[$key] = drupal_map_assoc($array[$key]);
-  if (array_key_exists($key,$array)) {
-    $array[$key] = drupal_map_assoc($array[$key]);
-  } else {
-    dpm('xxx');
+  // a4s patch, fix this error (arising after cache flush)
+  // Notice: Undefined index: field api bundles in facetapi_map_assoc() (line 726 of /home/zpshop/public_html/_zp/sites/all/modules/_Search/facetapi/facetapi.module).
+  // in this particular case because of using "Прочее" для фасетов, где 
+//   [map options] => Array
+//        (
+//            [missing label] => Прочее
+//        )
+  // dpm($key); dpm($array); 
+
+  if ($key == 'field api bundles' && !array_key_exists($key,$array)) {
+    $array[''] = array('field api bundles');
   }
+  $array[$key] = drupal_map_assoc($array[$key]);
+//  if (array_key_exists($key,$array)) {
+//    $array[$key] = drupal_map_assoc($array[$key]);
+//  } else {
+//    dpm('xxx');
+//  }
   
 }
 
