@@ -45,7 +45,7 @@
 //dpm(arg());
 //dpm($_GET);
 
-//dpm($term);
+dpm($term);
 dpm('$view_mode = ' . $view_mode);
 
 global $user;
