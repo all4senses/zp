@@ -41,14 +41,24 @@
  * @ingroup themeable
  */
 
-dpm($content);
-dpm(arg());
-dpm($_GET);
+//dpm($content);
+//dpm(arg());
+//dpm($_GET);
 
-dpm($term);
+//dpm($term);
 dpm('$view_mode = ' . $view_mode);
-?>
 
+global $user;
+?>
+<?php
+if ($user->uid == 1) {
+?>
+<ul class="tabs primary"><li class="active"><a href="/taxonomy/term/<?php echo $term->tid; ?>edit" class="active">Edit<span class="element-invisible">(active tab)</span></a></li>
+<li><a href="/taxonomy/term/<?php echo $term->tid; ?>/devel">Devel</a></li>
+</ul>
+<?php
+}
+?>
 
 <div class="xxx">yyyyyy----yyyyyyyyyyyyyyyyy--------------</div>
 <div id="taxonomy-term-<?php print $term->tid; ?>" class="<?php print $classes; ?>">
