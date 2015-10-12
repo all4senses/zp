@@ -724,14 +724,16 @@ function facetapi_field_delete_instance($instance) {
  */
 function facetapi_map_assoc(&$array, $name, $key) {
   // a4s patch
-  //$array[$key] = drupal_map_assoc($array[$key]);
-  if (array_key_exists($key,$array)) {
-    $array[$key] = drupal_map_assoc($array[$key]);
-  } else {
-    print "<pre>";
-    print_r ($array);
-    print "</pre>";
-  }
+  dpm($array);
+  $array[$key] = drupal_map_assoc($array[$key]);
+//  if (array_key_exists($key,$array)) {
+//    $array[$key] = drupal_map_assoc($array[$key]);
+//  } else {
+//    print "<pre>";
+//    print_r ($array);
+//    print "</pre>";
+//  }
+  
 }
 
 /**
