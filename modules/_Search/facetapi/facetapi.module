@@ -732,8 +732,8 @@ function facetapi_map_assoc(&$array, $name, $key) {
 //        )
   // dpm($key); dpm($array); 
 
-  if ($key == 'field api bundles' && !array_key_exists($key,$array)) {
-    $array[''] = array('field api bundles');
+  if (!array_key_exists($key,$array)) {
+    $array[$key] = array();
   }
   $array[$key] = drupal_map_assoc($array[$key]);
 //  if (array_key_exists($key,$array)) {
