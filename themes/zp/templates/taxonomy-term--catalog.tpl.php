@@ -42,7 +42,7 @@
  */
 
 //dpm($content);
-//dpm(arg());
+dpm(arg());
 //dpm($_GET);
 
 dpm($term);
