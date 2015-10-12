@@ -53,8 +53,8 @@ global $user;
 <?php
 if ($user->uid == 1) {
 ?>
-<ul class="tabs primary"><li class="active"><?php echo l('Edit', 'taxonomy/term/' . $term->tid . '/edit', array('query' => array('destination' => $_GET['q'])));  ?></li>
-<li><?php echo l('Edit', 'taxonomy/term/' . $term->tid . '/devel', array('query' => array('destination' => $_GET['q'])));  ?></li>
+<ul class="tabs primary" type="float: right;"><li class="active"><?php echo l('Edit', 'taxonomy/term/' . $term->tid . '/edit', array('query' => array('destination' => $_GET['q'])));  ?></li>
+<li><?php echo l('Devel', 'taxonomy/term/' . $term->tid . '/devel', array('query' => array('destination' => $_GET['q'])));  ?></li>
 </ul>
 <?php
 }
