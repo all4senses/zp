@@ -53,7 +53,7 @@ global $user;
 <?php
 if ($user->uid == 1) {
 ?>
-<ul class="tabs primary"><li class="active"><a href="/taxonomy/term/<?php echo $term->tid; ?>edit" class="active">Edit<span class="element-invisible">(active tab)</span></a></li>
+<ul class="tabs primary"><li class="active"><?php echo l('Edit', 'taxonomy/term/' . $term->tid . '/edit', array('query' => array('destination' => $_GET['q'])));  ?></li>
 <li><a href="/taxonomy/term/<?php echo $term->tid; ?>/devel">Devel</a></li>
 </ul>
 <?php
