@@ -67,7 +67,7 @@ else {
 
 if ($user->uid == 1/* && $term_is_current_parent_dept*/) {
 ?>
-<ul class="tabs primary" type="float: right;"><li class="active"><?php echo l('Edit', 'taxonomy/term/' . $term->tid . '/edit', array('query' => array('destination' => $_GET['q'])));  ?></li>
+<ul class="tabs primary"><li class="active"><?php echo l('Edit', 'taxonomy/term/' . $term->tid . '/edit', array('query' => array('destination' => $_GET['q'])));  ?></li>
 <li><?php echo l('Devel', 'taxonomy/term/' . $term->tid . '/devel', array('query' => array('destination' => $_GET['q'])));  ?></li>
 </ul>
 <?php
@@ -83,7 +83,7 @@ elseif (!$current_subdept_children) {
   echo '<h2>', $term_name, '</h2>';
 }
 else {
-  echo '<h2>', l($term_name, ($current_subdept_children == 1 ? 'd/' : 'dp/') . $term->field_parent_zp_id['und'][0]['safe_value']), '</h2>';
+  echo '<h2>', l($term_name, ($current_subdept_children == 1 ? 'd/' : 'dp/') . $term->field_zp_id['und'][0]['safe_value']), '</h2>';
 }
 
 ?>
