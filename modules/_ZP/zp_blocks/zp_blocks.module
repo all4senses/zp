@@ -158,6 +158,9 @@ function zp_blocks_getCurrentDept() {
   dpm('$tid = ' . $tid);
   dpm($term);
   
+  global $language;
+  dpm($language);
+  
   $term_view = taxonomy_term_view($term);
   dpm($term_view);
   
