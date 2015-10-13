@@ -159,13 +159,16 @@ function zp_blocks_getCurrentDept() {
   }
   
   $term = taxonomy_term_load($tid);
-  
-  $current_dept['title'] = $term->name;
+
+  $current_dept = array(
+    'title' => $term->name,
+    'tid' => $term->tid,
+  );
   
   drupal_set_title($term->name);
           
   //dpm('$tid = ' . $tid);
-  //dpm($term);
+  dpm($term);
   
   //global $language;
   //dpm($language);

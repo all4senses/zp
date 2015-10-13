@@ -590,7 +590,11 @@ function zp_breadcrumb($variables) {
 
   
   dpm(arg());
-  
+  $arg_0 = arg(0);
+  if ($arg_0 == 'd' || $arg_0 == 'dp') {
+    $breadcrumb = array();
+  }
+    
   if (!empty($breadcrumb)) {
     
     global $current_dept;
