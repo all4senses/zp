@@ -43,11 +43,11 @@
 
 //dpm($content);
 $current_url_dept_zp_tid = arg(1);
-dpm(arg());
+//dpm(arg());
 //dpm($_GET);
 
-dpm($term);
-dpm('$view_mode = ' . $view_mode);
+//dpm($term);
+//dpm('$view_mode = ' . $view_mode);
 
 global $user;
 
