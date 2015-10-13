@@ -156,7 +156,7 @@ function zp_blocks_getCurrentDept() {
   
   $term = taxonomy_term_load($tid);
   dpm('$tid = ' . $tid);
-  dpm('$term = ' . $term);
+  dpm($term);
   
 }
 
