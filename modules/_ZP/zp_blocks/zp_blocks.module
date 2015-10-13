@@ -150,8 +150,6 @@ function zp_blocks_getCurrentDept() {
   $current_dept_zp_id = arg(1);
   dpm('$current_dept_zp_id = ' . $current_dept_zp_id);
   
-  $tid = zp_misc_fieldTermReferenceRead_idByValue_single('zp_id', $current_dept_zp_id, $entity_type = 'node', $bundle);
-  
   if (!$tid = zp_misc_fieldRead_idByValue_single('zp_id', $current_dept_zp_id, 'taxonomy_term', 'catalog')) {
     return;
   }
