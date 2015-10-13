@@ -41,7 +41,7 @@
  * @ingroup themeable
  */
 
-//dpm($content);
+dpm($content);
 $current_url_dept_zp_tid = arg(1);
 //dpm(arg());
 //dpm($_GET);
