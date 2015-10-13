@@ -162,7 +162,7 @@ function zp_blocks_getCurrentDept() {
   
   $current_dept['title'] = $term->name;
   
-  drupal_set_title($term->name);
+  //drupal_set_title($term->name);
           
   //dpm('$tid = ' . $tid);
   //dpm($term);
