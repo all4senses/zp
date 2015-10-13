@@ -148,21 +148,21 @@ function zp_blocks_block_save($delta = '', $edit = array()) {
  */
 function zp_blocks_getCurrentDept() {
   $current_dept_zp_id = arg(1);
-  dpm('$current_dept_zp_id = ' . $current_dept_zp_id);
+  //dpm('$current_dept_zp_id = ' . $current_dept_zp_id);
   
   if (!$tid = zp_misc_fieldRead_idByValue_single('zp_id', $current_dept_zp_id, 'taxonomy_term', 'catalog')) {
     return;
   }
   
   $term = taxonomy_term_load($tid);
-  dpm('$tid = ' . $tid);
-  dpm($term);
+  //dpm('$tid = ' . $tid);
+  //dpm($term);
   
-  global $language;
-  dpm($language);
+  //global $language;
+  //dpm($language);
   
-  $term_view = taxonomy_term_view($term, 'full', 'ru');
-  dpm($term_view);
+  $term_view = taxonomy_term_view($term, 'full');
+  //dpm($term_view);
   
   return drupal_render($term_view);
 }
