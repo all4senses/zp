@@ -602,7 +602,7 @@ function zp_breadcrumb($variables) {
 //    }
 //    else 
       {
-      $breadcrumb[] = drupal_get_title();
+      //$breadcrumb[] = drupal_get_title();
     }
     
     // Provide a navigational heading to give context for breadcrumb links to
