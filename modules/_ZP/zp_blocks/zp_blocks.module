@@ -161,7 +161,7 @@ function zp_blocks_getCurrentDept() {
   global $language;
   dpm($language);
   
-  $term_view = taxonomy_term_view($term, 'full', 'und');
+  $term_view = taxonomy_term_view($term, 'full', 'ru');
   dpm($term_view);
   
   return drupal_render($term_view);
