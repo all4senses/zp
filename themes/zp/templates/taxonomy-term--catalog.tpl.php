@@ -51,7 +51,7 @@ dpm($term);
 
 global $user;
 
-$term_zp_id = !empty($term->field_zp_id['und'][0]['safe_value']) ? $term->field_zp_id['und'][0]['safe_value'] : @$term->field_zp_id[0]['safe_value'];
+$term_zp_id = $content['field_zp_id'][0]['#markup']; // !empty($term->field_zp_id['und'][0]['safe_value']) ? $term->field_zp_id['und'][0]['safe_value'] : @$term->field_zp_id[0]['safe_value'];
 
 if ($current_url_dept_zp_tid == $term_zp_id) {
   $term_is_current_parent_dept = TRUE;
@@ -75,7 +75,7 @@ if ($user->uid == 1/* && $term_is_current_parent_dept*/) {
 
 }
 
-$current_subdept_children = @$term->field_has_prods_or_depts['und'][0]['value']; // 0 - not defined, 1 - has subdepts, 2 - has priducts
+$current_subdept_children = !empty($term->field_has_prods_or_depts['und'][0]['safe_value']) ? $term->field_has_prods_or_depts['und'][0]['safe_value'] : @$term->field_has_prods_or_depts[0]['safe_value']; //@$content['field_has_prods_or_depts'][0]['#markup']; //@$term->field_has_prods_or_depts['und'][0]['value']; // 0 - not defined, 1 - has subdepts, 2 - has priducts
 
 if ($term_is_current_parent_dept) {
   echo '<h1 class="parent-dept current">', $term_name, '</h1>';
