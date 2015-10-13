@@ -2164,7 +2164,8 @@ function zp_misc_getAdmins() {
  */
 function zp_misc_form_alter(&$form, &$form_state, $form_id) {
   
-  //dpm($form_id);dpm($form);
+  //dpm($form_id);
+  //dpm($form);
   //dpm($form_state);
   
   // Unlink Ckeditor from the comment input form.
@@ -2178,7 +2179,7 @@ function zp_misc_form_alter(&$form, &$form_state, $form_id) {
     //$form['field_custom_php_code']['und']['0']['#format'] = "php_code";
   }
   
-  if ($form['#id'] == 'views-exposed-form-catalog-db-index-block-1') {
+  if ($form['#id'] == 'views-exposed-form-catalog-db-index-page-1' /*'views-exposed-form-catalog-db-index-block-1'*/) {
     
     $sort_bef_combine_param = 'sort-by'; // 'sort_bef_combine';
     
