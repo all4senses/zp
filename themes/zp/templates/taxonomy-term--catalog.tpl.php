@@ -75,7 +75,7 @@ if ($user->uid == 1/* && $term_is_current_parent_dept*/) {
 
 }
 
-$current_subdept_children = !empty($term->field_has_prods_or_depts['und'][0]['safe_value']) ? $term->field_has_prods_or_depts['und'][0]['safe_value'] : @$term->field_has_prods_or_depts[0]['safe_value']; //@$content['field_has_prods_or_depts'][0]['#markup']; //@$term->field_has_prods_or_depts['und'][0]['value']; // 0 - not defined, 1 - has subdepts, 2 - has priducts
+$current_subdept_children = !empty($term->field_has_prods_or_depts['und'][0]['value']) ? $term->field_has_prods_or_depts['und'][0]['value'] : @$term->field_has_prods_or_depts[0]['value']; //@$content['field_has_prods_or_depts'][0]['#markup']; //@$term->field_has_prods_or_depts['und'][0]['value']; // 0 - not defined, 1 - has subdepts, 2 - has priducts
 
 if ($term_is_current_parent_dept) {
   echo '<h1 class="parent-dept current">', $term_name, '</h1>';
@@ -84,7 +84,7 @@ elseif (!$current_subdept_children) {
   echo '<h2>', $term_name, '</h2>';
 }
 else {
-  echo '<h2>', l($term_name, ($current_subdept_children == 1 ? 'd/' : 'dp/') . $term->field_zp_id['und'][0]['safe_value']), '</h2>';
+  echo '<h2>', l($term_name, ($current_subdept_children == 1 ? 'd/' : 'dp/') . $term_zp_id), '</h2>';
 }
 
 ?>
