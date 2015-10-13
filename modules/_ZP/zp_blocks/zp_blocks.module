@@ -161,7 +161,7 @@ function zp_blocks_getCurrentDept() {
   $term_view = taxonomy_term_view($term);
   dpm($term_view);
   
-  return drupa_render($term_view);
+  return drupal_render($term_view);
 }
 
 
