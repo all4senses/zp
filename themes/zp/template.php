@@ -590,11 +590,20 @@ function zp_breadcrumb($variables) {
 
   if (!empty($breadcrumb)) {
     
+    global $current_dept;
+    
     //dpm($variables);
     dpm($breadcrumb);
     
+    
     // Adding the title of the current page to the breadcrumb.
-    $breadcrumb[] = drupal_get_title();
+//    if (!empty($current_dept['title'])) {
+//      
+//    }
+//    else 
+      {
+      $breadcrumb[] = drupal_get_title();
+    }
     
     // Provide a navigational heading to give context for breadcrumb links to
     // screen-reader users. Make the heading invisible with .element-invisible.

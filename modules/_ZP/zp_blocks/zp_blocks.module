@@ -147,6 +147,10 @@ function zp_blocks_block_save($delta = '', $edit = array()) {
  * 
  */
 function zp_blocks_getCurrentDept() {
+  
+  global $current_dept;
+  
+  
   $current_dept_zp_id = arg(1);
   //dpm('$current_dept_zp_id = ' . $current_dept_zp_id);
   
@@ -155,6 +159,11 @@ function zp_blocks_getCurrentDept() {
   }
   
   $term = taxonomy_term_load($tid);
+  
+  $current_dept['title'] = $term->name;
+  
+  drupal_set_title($term->name);
+          
   //dpm('$tid = ' . $tid);
   //dpm($term);
   
