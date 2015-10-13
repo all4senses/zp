@@ -590,6 +590,8 @@ function zp_breadcrumb($variables) {
 
   if (!empty($breadcrumb)) {
     
+    dpm($breadcrumb);
+    
     // Adding the title of the current page to the breadcrumb.
     $breadcrumb[] = drupal_get_title();
     
