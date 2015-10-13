@@ -14,24 +14,6 @@
  */
 function zp_blocks_block_info() {
   
-  /*
-  $blocks['main_menu_om_blog'] = array(
-    'info' => 'OM Blog',
-    'cache' => DRUPAL_NO_CACHE,
-  );
-  
-  
-  $blocks['footer_menu'] = array(
-    'info' => 'Footer menu',
-    'cache' => DRUPAL_NO_CACHE,
-  );
-  
-  $blocks['social_links'] = array(
-    'info' => 'Social links',
-    'cache' => DRUPAL_NO_CACHE,
-  );
-  */
-  
   $blocks['footer_links'] = array(
     'info' => 'Footer links',
     'cache' => DRUPAL_NO_CACHE,
@@ -46,6 +28,13 @@ function zp_blocks_block_info() {
     'info' => 'Current department subgroups',
     'cache' => DRUPAL_NO_CACHE,
   );
+  
+  
+  $blocks['zp_cur_dpt'] = array(
+    'info' => 'Current department',
+    'cache' => DRUPAL_NO_CACHE,
+  );
+  
   
   // Aquire blocks for all prefaces with defined bottoms.
   $query = db_select('node', 'n');
@@ -81,22 +70,7 @@ function zp_blocks_block_info() {
 function zp_blocks_block_view($delta = '') {
   $block = array();
   switch ($delta) {  
-    /*
-    case 'main_menu_om_blog':
-      $block['subject'] = 'OM Blog';
-      $block['content'] = zp_blocks_get_omMenuBlock_byTitle('Blog', 'zp_blocks_get_omMenuBlock_Blog');
-      break;
-    
-    case 'footer_menu':
-      $block['subject'] = 'Footer menu';
-      $block['content'] = zp_blocks_get_footerMenu();
-      break; 
-    
-    case 'social_links':
-      $block['subject'] = 'Social links';
-      $block['content'] = zp_blocks_get_socialLinks();
-      break; 
-    */
+   
     
     case 'footer_links':
       $block['subject'] = 'Footer links';
@@ -113,6 +87,10 @@ function zp_blocks_block_view($delta = '') {
       $block['content'] = zp_blocks_getCurrentDeptSubgroups();
       break;
     
+    case 'zp_cur_dpt':
+      $block['subject'] = 'Текущий отдел';
+      $block['content'] = zp_blocks_getCurrentDept();
+      break;
     
   
     
@@ -160,6 +138,27 @@ function zp_blocks_block_save($delta = '', $edit = array()) {
   switch ($delta) {
     
   }
+  
+}
+
+
+/**
+ * 
+ * 
+ */
+function zp_blocks_getCurrentDept() {
+  $current_dept_zp_id = arg(1);
+  dpm('$current_dept_zp_id = ' . $current_dept_zp_id);
+  
+  $tid = zp_misc_fieldTermReferenceRead_idByValue_single('zp_id', $current_dept_zp_id, $entity_type = 'node', $bundle);
+  
+  if (!$tid = zp_misc_fieldRead_idByValue_single('zp_id', $current_dept_zp_id, 'taxonomy_term', 'catalog')) {
+    return;
+  }
+  
+  $term = taxonomy_term_load($tid);
+  dpm('$tid = ' . $tid);
+  dpm('$term = ' . $term);
   
 }
 
