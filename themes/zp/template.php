@@ -588,6 +588,9 @@ function zp_preprocess_breadcrumb(&$variables) {
 function zp_breadcrumb($variables) {
   $breadcrumb = $variables['breadcrumb'];
 
+  
+  dpm(arg());
+  
   if (!empty($breadcrumb)) {
     
     global $current_dept;
