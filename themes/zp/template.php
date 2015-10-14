@@ -622,7 +622,7 @@ function zp_breadcrumb($variables) {
       
       
       
-      $query->leftJoin('taxonomy_term_hierarchy', 'parent_th', 'parent_th.tid = parent_zp_id.tid');
+      $query->leftJoin('taxonomy_term_hierarchy', 'parent_th', 'parent_th.tid = parent_zp_id.entity_id');
       // City tid
       $query->addField('parent_th', 'parent', 'city_tid');
       
