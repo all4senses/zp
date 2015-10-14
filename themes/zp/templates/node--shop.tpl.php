@@ -118,7 +118,7 @@
   
   
 <?php 
-
+/*
 if ($page) {
   
     dpm($content);
@@ -144,8 +144,9 @@ if ($page) {
     $view->add_item($display, 'filter', 'field_data_field_catalog', 'field_catalog_tid', $options);
 
     echo $view->preview($display);
+    
 }
-
+*/
 
 global $current_shop_zp_id;
 
