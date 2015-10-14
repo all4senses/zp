@@ -145,4 +145,11 @@ if ($page) {
 
     echo $view->preview($display);
 }
+
+
+global $current_shop_zp_id;
+
+$current_shop_zp_id = $node->field_zp_id['und'][0]['safe_value'];
+
+dpm($current_shop_zp_id);
 ?>
