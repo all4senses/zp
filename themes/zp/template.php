@@ -586,31 +586,106 @@ function zp_preprocess_breadcrumb(&$variables) {
  * @return a string containing the breadcrumb output.
  */
 function zp_breadcrumb($variables) {
-  $breadcrumb = $variables['breadcrumb'];
-
   
-  dpm(arg());
-  $arg_0 = arg(0);
-  if ($arg_0 == 'd' || $arg_0 == 'dp') {
+  $breadcrumb = $variables['breadcrumb'];
+  
+  $args = arg();
+  if (!empty($args[1]) && ($args[0] == 'd' || $args[0] == 'dp')) {
+    
+    global $current_dept;
     $breadcrumb = array();
+    
+    $current_title = $current_dept['name'];
+    //if(strpos($current_dept['parent_zp_id'], '/') !== FALSE) {
+    // Parent zp id is like ua/kh or ru/nsk
+    
+    
+    
+    if (strlen($current_dept['parent_zp_id']) == 3) {
+      // It's a root dept... next will be a shop
+      $shop_zp_id = $current_dept['parent_zp_id'];
+      
+      
+      $query = db_select('field_data_field_zp_id', 'parent_zp_id');
+      
+      $query->condition('parent_zp_id.bundle', 'catalog');      
+      $query->condition('parent_zp_id.field_zp_id_value', $shop_zp_id);
+      
+      // Shop tid
+      $query->addField('parent_zp_id', 'tid', 'shop_tid');
+      
+      $query->leftJoin('taxonomy_term_data', 'parent_td', 'parent_td.tid = parent_zp_id.entity_id AND parent_td.vid = ' . $current_dept['vid']);
+      // Shop name
+      $query->fields('parent_td', 'name', 'shop_name');
+      
+      $query->leftJoin('taxonomy_term_hierarchy', 'parent_th', 'parent_th.tid = parent_zp_id.tid');
+      // City tid
+      $query->fields('parent_th', 'parent', 'city_tid');
+      
+      $query->leftJoin('taxonomy_term_data', 'parent_parent_td', 'parent_parent_td.tid = parent_th.parent AND parent_parent_td.vid = ' . $current_dept['vid']);
+      // Shop name
+      $query->fields('parent_parent_td', 'name', 'city_name');
+      
+      
+//      $query->leftJoin('field_data_field_zp_id', 'shop', "shop.field_zp_id_value = '$shop_zp_id' AND shop.bundle = 'shop'");
+//      $query->leftJoin('node', 'n_shop', 'n_shop.nid = shop.entity_id');
+//      $query->fields('n_shop', array('nid', 'title'));
+//      if (!empty($node->field_catalog['und'][0]['tid'])) {
+//        $query->leftJoin('taxonomy_term_data', 'term', 'term.tid = ' . $node->field_catalog['und'][0]['tid']);
+//        $query->addField('term', 'name', 'subgroup_name');
+//      }
+      $parents = $query->execute()->fetchObject();
+      dpm($parents);
+
+    }
+    else {
+      $shop_zp_id = drupal_substr($args[1], 0, 2);
+      
+      //$parent_dept = 
+    }
+    
+    
+    
+
+    $query = db_select('field_data_field_zp_id', 'parent');
+    $query->condition('parent.field_zp_id_value', $node->field_parent_zp_id['und'][0]['value']);
+    $query->condition('dept.bundle', 'department');
+    $query->leftJoin('node', 'n_dept', "n_dept.nid = dept.entity_id");
+    $query->fields('n_dept', array('nid', 'title'));
+    $query->leftJoin('field_data_field_zp_id', 'shop', "shop.field_zp_id_value = '$shop_zp_id' AND shop.bundle = 'shop'");
+    $query->leftJoin('node', 'n_shop', 'n_shop.nid = shop.entity_id');
+    $query->fields('n_shop', array('nid', 'title'));
+    if (!empty($node->field_catalog['und'][0]['tid'])) {
+      $query->leftJoin('taxonomy_term_data', 'term', 'term.tid = ' . $node->field_catalog['und'][0]['tid']);
+      $query->addField('term', 'name', 'subgroup_name');
+    }
+    $parents = $query->execute()->fetchObject();
+
+    //dpm($parents);
+
+    $breadcrumb = array(
+      0 => '<a href="/">Home</a>',
+      1 => l($parents->n_shop_title, 'node/' . $parents->n_shop_nid), // Shop
+      2 => '<span id="bc-middle-parents">...</span>',
+      3 => l($parents->title, 'node/' . $parents->nid), // Dept
+    );
+    if (!empty($node->field_catalog['und'][0]['tid'])) {
+      $breadcrumb[] = l($parents->subgroup_name, 'node/' . $parents->nid, array('query' => array('tf' => $node->field_catalog['und'][0]['tid']))); // Subgroup
+    }
+
+    drupal_set_breadcrumb($breadcrumb);
+    
+  }
+  else {
+    $current_title = drupal_get_title();
   }
     
   if (!empty($breadcrumb)) {
     
-    global $current_dept;
-    
-    //dpm($variables);
     dpm($breadcrumb);
     
-    
     // Adding the title of the current page to the breadcrumb.
-//    if (!empty($current_dept['title'])) {
-//      
-//    }
-//    else 
-      {
-      //$breadcrumb[] = drupal_get_title();
-    }
+    $breadcrumb[] = $current_title;
     
     // Provide a navigational heading to give context for breadcrumb links to
     // screen-reader users. Make the heading invisible with .element-invisible.

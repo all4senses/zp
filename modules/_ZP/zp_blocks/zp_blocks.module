@@ -163,6 +163,8 @@ function zp_blocks_getCurrentDept() {
   $current_dept = array(
     'title' => $term->name,
     'tid' => $term->tid,
+    'vid' => $term->vid,
+    'parent_zp_id' => $term->field_parent_zp_id['und'][0]['safe_value'],
   );
   
   drupal_set_title($term->name);
