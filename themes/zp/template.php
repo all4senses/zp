@@ -665,15 +665,15 @@ function zp_breadcrumb($variables) {
 
     //dpm($parents);
 
-    $breadcrumb = array(
-      0 => '<a href="/">Home</a>',
-      1 => l($parents->n_shop_title, 'node/' . $parents->n_shop_nid), // Shop
-      2 => '<span id="bc-middle-parents">...</span>',
-      3 => l($parents->title, 'node/' . $parents->nid), // Dept
-    );
-    if (!empty($node->field_catalog['und'][0]['tid'])) {
-      $breadcrumb[] = l($parents->subgroup_name, 'node/' . $parents->nid, array('query' => array('tf' => $node->field_catalog['und'][0]['tid']))); // Subgroup
-    }
+//    $breadcrumb = array(
+//      0 => '<a href="/">Home</a>',
+//      1 => l($parents->n_shop_title, 'node/' . $parents->n_shop_nid), // Shop
+//      2 => '<span id="bc-middle-parents">...</span>',
+//      3 => l($parents->title, 'node/' . $parents->nid), // Dept
+//    );
+//    if (!empty($node->field_catalog['und'][0]['tid'])) {
+//      $breadcrumb[] = l($parents->subgroup_name, 'node/' . $parents->nid, array('query' => array('tf' => $node->field_catalog['und'][0]['tid']))); // Subgroup
+//    }
 
     drupal_set_breadcrumb($breadcrumb);
     
