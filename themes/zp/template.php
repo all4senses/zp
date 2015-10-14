@@ -631,7 +631,7 @@ function zp_breadcrumb($variables) {
       $query->addField('parent_parent_td', 'name', 'city_name');
       
       
-      $query->leftJoin('field_data_field_zp_id', 'city_zp_id', 'city_zp_id.entity_id = parent_parent_td.tid AND city_zp_id.bundle = "catalog"');
+      $query->leftJoin('field_data_field_zp_id', 'city_zp_id', "city_zp_id.entity_id = parent_parent_td.tid AND city_zp_id.bundle = 'catalog'");
       // City zp_id
       $query->addField('city_zp_id', 'field_zp_id_value', 'city_zp_id');
       
