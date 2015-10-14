@@ -148,9 +148,9 @@ if ($page) {
 }
 */
 
-global $current_shop_zp_id;
+//global $current_shop_zp_id;
+//
+//$current_shop_zp_id = $node->field_zp_id['und'][0]['safe_value'];
 
-$current_shop_zp_id = $node->field_zp_id['und'][0]['safe_value'];
-
-dpm($current_shop_zp_id);
+//dpm($current_shop_zp_id);
 ?>
