@@ -3,9 +3,9 @@
 $base = array(
   0x00 => 'Jo', 'Yo', 'Dj', 'Gj', 'Ie', 'Dz', 'I', 'Yi', 'J', 'Lj', 'Nj', 'Tsh', 'Kj', 'I', 'U', 'Dzh',
   0x10 => 'A', 'B', 'V', 'G', 'D', 'E', 'Zh', 'Z', 'I', 'Y', 'K', 'L', 'M', 'N', 'O', 'P',
-  0x20 => 'R', 'S', 'T', 'U', 'F', 'H', 'C', 'Ch', 'Sh', 'Shch', '', 'Y', '', 'E', 'Yu', 'Ya',
+  0x20 => 'R', 'S', 'T', 'U', 'F', /*'H'*/'Kh', 'C', 'Ch', 'Sh', 'Shch', '', 'Y', '', 'E', 'Yu', 'Ya',
   0x30 => 'a', 'b', 'v', 'g', 'd', 'e', 'zh', 'z', 'i', 'y', 'k', 'l', 'm', 'n', 'o', 'p',
-  0x40 => 'r', 's', 't', 'u', 'f', 'h', 'c', 'ch', 'sh', 'shch', '', 'y', '', 'e', 'yu', 'ya',
+  0x40 => 'r', 's', 't', 'u', 'f', /*'h'*/'kh', 'c', 'ch', 'sh', 'shch', '', 'y', '', 'e', 'yu', 'ya',
   0x50 => 'je', 'yo', 'dj', 'gj', 'ie', 'dz', 'i', 'yi', 'j', 'lj', 'nj', 'tsh', 'kj', 'i', 'u', 'dzh',
   0x60 => 'O', 'o', 'E', 'e', 'Ie', 'ie', 'E', 'e', 'Ie', 'ie', 'O', 'o', 'Io', 'io', 'Ks', 'ks',
   0x70 => 'Ps', 'ps', 'F', 'f', 'Y', 'y', 'Y', 'y', 'u', 'u', 'O', 'o', 'O', 'o', 'Ot', 'ot',
