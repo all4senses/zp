@@ -648,20 +648,20 @@ function zp_breadcrumb($variables) {
     
     
     
-
-    $query = db_select('field_data_field_zp_id', 'parent');
-    $query->condition('parent.field_zp_id_value', $node->field_parent_zp_id['und'][0]['value']);
-    $query->condition('dept.bundle', 'department');
-    $query->leftJoin('node', 'n_dept', "n_dept.nid = dept.entity_id");
-    $query->fields('n_dept', array('nid', 'title'));
-    $query->leftJoin('field_data_field_zp_id', 'shop', "shop.field_zp_id_value = '$shop_zp_id' AND shop.bundle = 'shop'");
-    $query->leftJoin('node', 'n_shop', 'n_shop.nid = shop.entity_id');
-    $query->fields('n_shop', array('nid', 'title'));
-    if (!empty($node->field_catalog['und'][0]['tid'])) {
-      $query->leftJoin('taxonomy_term_data', 'term', 'term.tid = ' . $node->field_catalog['und'][0]['tid']);
-      $query->addField('term', 'name', 'subgroup_name');
-    }
-    $parents = $query->execute()->fetchObject();
+//
+//    $query = db_select('field_data_field_zp_id', 'parent');
+//    $query->condition('parent.field_zp_id_value', $node->field_parent_zp_id['und'][0]['value']);
+//    $query->condition('dept.bundle', 'department');
+//    $query->leftJoin('node', 'n_dept', "n_dept.nid = dept.entity_id");
+//    $query->fields('n_dept', array('nid', 'title'));
+//    $query->leftJoin('field_data_field_zp_id', 'shop', "shop.field_zp_id_value = '$shop_zp_id' AND shop.bundle = 'shop'");
+//    $query->leftJoin('node', 'n_shop', 'n_shop.nid = shop.entity_id');
+//    $query->fields('n_shop', array('nid', 'title'));
+//    if (!empty($node->field_catalog['und'][0]['tid'])) {
+//      $query->leftJoin('taxonomy_term_data', 'term', 'term.tid = ' . $node->field_catalog['und'][0]['tid']);
+//      $query->addField('term', 'name', 'subgroup_name');
+//    }
+//    $parents = $query->execute()->fetchObject();
 
     //dpm($parents);
 
