@@ -626,9 +626,9 @@ function zp_breadcrumb($variables) {
       // City tid
       $query->addField('parent_th', 'parent', 'city_tid');
       
-      $query->leftJoin('taxonomy_term_data', 'parent_parent_td', 'parent_parent_td.tid = parent_th.parent AND parent_parent_td.vid = ' . $current_dept['vid']);
-      // Shop name
-      $query->addField('parent_parent_td', 'name', 'city_name');
+//      $query->leftJoin('taxonomy_term_data', 'parent_parent_td', 'parent_parent_td.tid = parent_th.parent AND parent_parent_td.vid = ' . $current_dept['vid']);
+//      // Shop name
+//      $query->addField('parent_parent_td', 'name', 'city_name');
       
       
 //      $query->leftJoin('field_data_field_zp_id', 'shop', "shop.field_zp_id_value = '$shop_zp_id' AND shop.bundle = 'shop'");
