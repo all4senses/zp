@@ -612,7 +612,7 @@ function zp_breadcrumb($variables) {
       $query->condition('parent_zp_id.field_zp_id_value', $shop_zp_id);
       
       // Shop tid
-      $query->addField('parent_zp_id', 'tid', 'shop_tid');
+      $query->addField('parent_zp_id', 'entity_id', 'shop_tid');
       
       
       
