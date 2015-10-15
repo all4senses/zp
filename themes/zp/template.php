@@ -701,19 +701,20 @@ function zp_breadcrumb($variables) {
       // City name
       $query->addField('parent_parent_td', 'name', 'city_name');
       
+      $query->leftJoin('taxonomy_index', 'i_city_nid', 'i_city_nid.tid = parent_th.parent');
+      // Shop nid
+      $query->addField('i_city_nid', 'nid', 'city_nid');
       
+      
+      /*
       $query->leftJoin('field_data_field_zp_id', 'city_zp_id', "city_zp_id.entity_id = parent_parent_td.tid AND city_zp_id.bundle = 'catalog'");
       // City zp_id
       $query->addField('city_zp_id', 'field_zp_id_value', 'city_zp_id');
       
-      
-      
-      
-      
       $query->leftJoin('field_data_field_zp_id', 'city_zp_id_2', "city_zp_id_2.field_zp_id_value = city_zp_id.field_zp_id_value AND city_zp_id_2.bundle = 'city'");
       // Shop nid
       $query->addField('city_zp_id_2', 'entity_id', 'city_nid');
-      
+      */
       
       
       
