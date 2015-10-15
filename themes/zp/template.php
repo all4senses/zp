@@ -681,7 +681,7 @@ function zp_breadcrumb($variables) {
       $query->addField('parent_td', 'name', 'shop_name');
       
       
-      /*
+      
       
       
       
@@ -699,7 +699,7 @@ function zp_breadcrumb($variables) {
       $query->addField('city_zp_id', 'field_zp_id_value', 'city_zp_id');
       
       
-      */
+      
       
       $parents = $query->execute()->fetchObject();
       dpm($parents);
