@@ -2772,8 +2772,8 @@ function zp_commerce_taxonomy_menu_save($term, $menu_link, $mlid) {
   // For example, we could process all the translated taxonomy terms of this
   // term here, in order to save their respective translated menu links.
   
-    //dpm($term);
-    dpm($menu_link);
+    dpm($term);
+    //dpm($menu_link);
     
     
     // a4s rewrite menu item path, attribute title.
