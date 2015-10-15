@@ -170,7 +170,7 @@ function zp_blocks_getCurrentDept() {
   drupal_set_title($term->name);
           
   //dpm('$tid = ' . $tid);
-  dpm($term);
+  //dpm($term);
   
   //global $language;
   //dpm($language);
