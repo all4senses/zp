@@ -656,7 +656,7 @@ function zp_breadcrumb($variables) {
       $query = db_select('field_data_field_parent_zp_id', 'parent_otdel_zp_id');
       
       $query->condition('parent_otdel_zp_id.bundle', 'catalog');      
-      $query->condition('parent_otdel_zp_id.field_parent_zp_id_value', "'" . $args[1] . "'");
+      $query->condition('parent_otdel_zp_id.field_parent_zp_id_value', $current_dept['parent_zp_id']);
       
       // Parent dept tid
       $query->addField('parent_otdel_zp_id', 'entity_id', 'parent_dept_tid');
@@ -665,7 +665,7 @@ function zp_breadcrumb($variables) {
       // Parent dept name
       $query->addField('parent_otdel_td', 'name', 'parent_dept_name');
       
-      
+      /*
       
       // Get shop
       $query->leftJoin('field_data_field_zp_id', 'parent_zp_id', "parent_zp_id.bundle = 'catalog' AND parent_zp_id.field_zp_id_value = " . $shop_zp_id);
@@ -698,6 +698,8 @@ function zp_breadcrumb($variables) {
       // City zp_id
       $query->addField('city_zp_id', 'field_zp_id_value', 'city_zp_id');
       
+      
+      */
       
       $parents = $query->execute()->fetchObject();
       dpm($parents);
