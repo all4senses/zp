@@ -2817,7 +2817,7 @@ function zp_commerce_taxonomy_menu_save($term, $menu_link, $mlid) {
     }
     else {
       // Hide menu item if it's not yet filled with depts or products
-      $menu_link['link_path'] = 'dp/' . $term->field_zp_id['und'][0]['value'];
+      $menu_link['link_path'] = 'd/' . $term->field_zp_id['und'][0]['value'];
       $term->field_visibility_status['und'][0]['value'] = 0;
     }
     
