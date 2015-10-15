@@ -656,7 +656,7 @@ function zp_breadcrumb($variables) {
       $query = db_select('field_data_field_parent_zp_id', 'parent_otdel_zp_id');
       
       $query->condition('parent_otdel_zp_id.bundle', 'catalog');      
-      $query->condition('parent_otdel_zp_id.field_parent_zp_id_value', $args[1]);
+      $query->condition('parent_otdel_zp_id.field_parent_zp_id_value', "'" . $args[1] . "'");
       
       // Parent dept tid
       $query->addField('parent_otdel_zp_id', 'entity_id', 'parent_dept_tid');
