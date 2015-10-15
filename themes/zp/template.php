@@ -710,9 +710,9 @@ function zp_breadcrumb($variables) {
       
       
       
-      $query->leftJoin('field_data_field_zp_id', 'city_zp_id_2', "city_zp_id_2.field_zp_id_value = city_zp_id.field_zp_id_value AND shop_zp_id_2.bundle = 'city'");
+      $query->leftJoin('field_data_field_zp_id', 'city_zp_id_2', "city_zp_id_2.field_zp_id_value = city_zp_id.field_zp_id_value AND city_zp_id_2.bundle = 'city'");
       // Shop nid
-      $query->addField('shop_zp_id_2', 'entity_id', 'city_nid');
+      $query->addField('city_zp_id_2', 'entity_id', 'city_nid');
       
       
       
