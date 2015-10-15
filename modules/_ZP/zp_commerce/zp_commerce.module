@@ -2816,7 +2816,7 @@ function zp_commerce_taxonomy_menu_save($term, $menu_link, $mlid) {
       $menu_link['link_path'] = 'dp/' . $term->field_zp_id['und'][0]['value'];
     }
     else {
-      $menu_link['link_path'] = 'xxx';
+      $menu_link['link_path'] = 'd';
     }
     
     
