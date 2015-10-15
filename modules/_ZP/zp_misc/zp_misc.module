@@ -299,7 +299,24 @@ function zp_misc_identifyNodeType($nid) {
   return $node_type;
 }
 
+
+/**
+ * 
+ * @param type $tid
+ * @return type
+ * 
+ */
+function zp_misc_termHasChildren($tid) {
     
+  $query = db_select('taxonomy_term_hierarchy', 'th')  
+        ->fields('th', array('tid'));
+  $query->condition('th.parent', $tid);
+  $child_tid = $query->execute()->fetchField();
+
+  return $child_tid;
+}
+
+
 /**
  * Custom page not found 404.
  * Fix for a standard drupal_not_found
@@ -950,7 +967,7 @@ function zp_misc_createTerm_ifNotExists($vid, $term_name, $parent, &$results) {
     //$term->field_new[LANGUAGE_NONE][0]['value'] = 'Value for this field'; 
     taxonomy_term_save($term);
     if ($tid = @$term->tid) {
-      $results[] = 'Создан новый терм для названия ' . ($parent == 0 ? 'категории (группы)' : 'конечного терма') . ' "' . $term_name . '"';
+      $results[] = 'РЎРѕР·РґР°РЅ РЅРѕРІС‹Р№ С‚РµСЂРј РґР»СЏ РЅР°Р·РІР°РЅРёСЏ ' . ($parent == 0 ? 'РєР°С‚РµРіРѕСЂРёРё (РіСЂСѓРїРїС‹)' : 'РєРѕРЅРµС‡РЅРѕРіРѕ С‚РµСЂРјР°') . ' "' . $term_name . '"';
     }
   } // End of if(!$category_tid = $query->execute()->fetchField()) {
   return $tid;
@@ -1972,12 +1989,12 @@ function zp_misc_testPage() {
     'status' => TRUE,
     'price' => 99.09,
     'currency' => 'UAH',
-    'title' => 'Бормотуха 4',
-    'description' => 'Описание продукта Бормотуха 1', 
-    'summary' => 'Краткое описание продукта Бормотуха 1',
+    'title' => 'Р‘РѕСЂРјРѕС‚СѓС…Р° 4',
+    'description' => 'РћРїРёСЃР°РЅРёРµ РїСЂРѕРґСѓРєС‚Р° Р‘РѕСЂРјРѕС‚СѓС…Р° 1', 
+    'summary' => 'РљСЂР°С‚РєРѕРµ РѕРїРёСЃР°РЅРёРµ РїСЂРѕРґСѓРєС‚Р° Р‘РѕСЂРјРѕС‚СѓС…Р° 1',
     'zp_id' => 'z012',
     'parent_zp_id' => 'z004',
-    'subgroup' => 'подгруппа Бормотуха',
+    'subgroup' => 'РїРѕРґРіСЂСѓРїРїР° Р‘РѕСЂРјРѕС‚СѓС…Р°',
     'weight' => 3,
   );
   
