@@ -723,7 +723,7 @@ function zp_breadcrumb($variables) {
       
       
       $breadcrumb = array(
-          l($parents->city_name, $parents->city_nid),
+          l($parents->city_name, 'node/' . $parents->city_nid),
           l($parents->shop_name, 'node/' . $parents->shop_nid),
           '<span id="bc-middle-parents">...</span>',
           l($parents->parent_dept_name, 'd/' . $current_dept['parent_zp_id']),
