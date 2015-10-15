@@ -671,7 +671,7 @@ function zp_breadcrumb($variables) {
       
       
       // Get shop
-      $query->leftJoin('field_data_field_zp_id', 'parent_zp_id', "parent_zp_id.bundle = 'catalog' AND parent_zp_id.field_zp_id_value = " . $shop_zp_id);
+      $query->leftJoin('field_data_field_zp_id', 'parent_zp_id', "parent_zp_id.bundle = 'catalog' AND parent_zp_id.field_zp_id_value = '" . $shop_zp_id . "'");
       
       // Shop tid
       $query->addField('parent_zp_id', 'entity_id', 'shop_tid');
