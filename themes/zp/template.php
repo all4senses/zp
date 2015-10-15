@@ -704,9 +704,20 @@ function zp_breadcrumb($variables) {
       $parents = $query->execute()->fetchObject();
       dpm($parents);
 
+      
+//      parent_dept_tid (String, 1 characters ) 7
+//parent_dept_name (String, 16 characters ) Продукты
+//shop_tid (String, 1 characters ) 6
+//shop_name (String, 26 characters ) SPAR / ТЦ Персона
+//city_tid (String, 1 characters ) 3
+//city_name (String, 14 characters ) Харьков
+//city_zp_id (Str
+//        
+      
       $breadcrumb = array(
-          //l($parents->city_name, $parents->city_zp_id),
-          //l($parents->shop_name, $parents->city_zp_id . '/' . $shop_zp_id),
+          l($parents->city_name, $parents->city_zp_id),
+          l($parents->shop_name, $parents->city_zp_id . '/' . $shop_zp_id),
+          l($parents->parent_dept_name, 'd/' . $current_dept['parent_zp_id']),
       );
       
     }
