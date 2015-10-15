@@ -344,6 +344,8 @@ function zp_pages_node_view($node, $view_mode) {
         return;
       }
       
+      drupal_set_title($node->title);
+      
       // Set parent zp id to show all children of the parent
       // i.e. all shops of a city, all top depts of a shop...
       global $current_parent_zp_id;
