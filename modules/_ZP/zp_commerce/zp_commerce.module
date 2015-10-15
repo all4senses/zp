@@ -2809,19 +2809,20 @@ function zp_commerce_taxonomy_menu_save($term, $menu_link, $mlid) {
     */
     
     // Connect views page like d/z011121 or dp/z0193983
-    if ($term->field_has_prods_or_depts['und'][0]['value'] == 1) {
+    if (@$term->field_has_prods_or_depts['und'][0]['value'] == 1) {
       $menu_link['link_path'] = 'd/' . $term->field_zp_id['und'][0]['value'];
     }
-    elseif ($term->field_has_prods_or_depts['und'][0]['value'] == 2) {
+    elseif (@$term->field_has_prods_or_depts['und'][0]['value'] == 2) {
       $menu_link['link_path'] = 'dp/' . $term->field_zp_id['und'][0]['value'];
     }
-//    else {
-//      $menu_link['link_path'] = '#';
-//    }
+    else {
+      $menu_link['link_path'] = '#';
+    }
     
     
     // Let's create a menu item only for existing dept/shop/etc node.
     // And completely remove already created menu item (originally connected to taxonomy/term/xxx) from the menu.
+    /*
     else {
       static $catalog_voc;
       if (!$catalog_voc) {
@@ -2832,6 +2833,7 @@ function zp_commerce_taxonomy_menu_save($term, $menu_link, $mlid) {
       //dpm('Completely remove already created menu item (originally connected to taxonomy/term/xxx) from the menu');
       return FALSE;
     }
+    */
     
     /*
     else {
