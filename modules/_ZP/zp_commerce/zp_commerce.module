@@ -2773,7 +2773,7 @@ function zp_commerce_taxonomy_menu_save($term, $menu_link, $mlid) {
   // term here, in order to save their respective translated menu links.
   
     dpm($term);
-    //dpm($menu_link);
+    dpm($menu_link);
     
     
     // a4s rewrite menu item path, attribute title.
