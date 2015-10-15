@@ -650,7 +650,7 @@ function zp_breadcrumb($variables) {
       
       // It's not a root dept... there is at least one parent dept above it.
       
-      $shop_zp_id = drupal_substr($args[1], 0, 2);
+      $shop_zp_id = drupal_substr($args[1], 0, 3);
       
       // Get a parent dept
       $query = db_select('field_data_field_parent_zp_id', 'parent_otdel_zp_id');
