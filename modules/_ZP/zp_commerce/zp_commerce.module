@@ -2797,12 +2797,27 @@ function zp_commerce_taxonomy_menu_save($term, $menu_link, $mlid) {
     // Allow manually change and delete the menu item by a user.
     unset($menu_link['module']);
       
+    
+    // Connect dept node to this menu item
+    /*
     // If there is a dept/shop/etc connected to this term, show link to this dept instead the link to the term.
     if ($object_nid = zp_commerce_findDeptOrShopOrCityByZpIDofTerm_andConnectItToTerm($term)) {
        //dpm($term);
       // And save the renewed item again, as in taxonomy_menu_menu_link_prepare($term, $menu_name).
       $menu_link['link_path'] = 'node/' . $object_nid;
     }
+    */
+    
+    // Connect views page like d/z011121 or dp/z0193983
+    if ($term->field_has_prods_or_depts['und'][0]['value'] == 1) {
+      $menu_link['link_path'] = 'd/' . $term->field_zp_id['und'][0]['value'];
+    }
+    elseif ($term->field_has_prods_or_depts['und'][0]['value'] == 2) {
+      $menu_link['link_path'] = 'dp/' . $term->field_zp_id['und'][0]['value'];
+    }
+//    else {
+//      $menu_link['link_path'] = '#';
+//    }
     
     
     // Let's create a menu item only for existing dept/shop/etc node.
