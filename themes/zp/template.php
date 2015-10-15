@@ -668,7 +668,7 @@ function zp_breadcrumb($variables) {
       // Parent dept name
       $query->addField('parent_otdel_td', 'name', 'parent_dept_name');
       
-      /*
+      
       
       // Get shop
       $query->leftJoin('field_data_field_zp_id', 'parent_zp_id', "parent_zp_id.bundle = 'catalog' AND parent_zp_id.field_zp_id_value = " . $shop_zp_id);
@@ -684,7 +684,7 @@ function zp_breadcrumb($variables) {
       $query->addField('parent_td', 'name', 'shop_name');
       
       
-      
+      /*
       
       
       
