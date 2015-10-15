@@ -334,16 +334,27 @@ function zp_pages_submitForm_saveDraft(&$form, &$form_state) {
 function zp_pages_node_view($node, $view_mode) {
 
   switch ($node->type) {
-    
-    case 'shop':
+   
       
-      global $current_shop_zp_id;
+      
+    case 'shop':  
+    case 'city':
+      
+      if ($view_mode != 'full') {
+        return;
+      }
+      
+      // Set parent zp id to show all children of the parent
+      // i.e. all shops of a city, all top depts of a shop...
+      global $current_parent_zp_id;
 
-      $current_shop_zp_id = $node->field_zp_id['und'][0]['safe_value'];
+      $current_parent_zp_id = $node->field_zp_id['und'][0]['safe_value'];
 
       break;
-    
-    
+      
+      
+      
+      
     
     case 'product_a':
       
