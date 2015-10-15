@@ -593,6 +593,9 @@ function zp_breadcrumb($variables) {
   if (!empty($args[1]) && ($args[0] == 'd' || $args[0] == 'dp')) {
     
     global $current_dept;
+    
+    dpm($current_dept);
+    
     $breadcrumb = array();
     
     $current_title = $current_dept['name'];
@@ -653,10 +656,10 @@ function zp_breadcrumb($variables) {
       $shop_zp_id = drupal_substr($args[1], 0, 3);
       
       // Get a parent dept
-      $query = db_select('field_data_field_parent_zp_id', 'parent_otdel_zp_id');
+      $query = db_select('field_data_field_zp_id', 'parent_otdel_zp_id');
       
       $query->condition('parent_otdel_zp_id.bundle', 'catalog');      
-      $query->condition('parent_otdel_zp_id.field_parent_zp_id_value', $current_dept['parent_zp_id']);
+      $query->condition('parent_otdel_zp_id.field_zp_id_value', $current_dept['parent_zp_id']);
       
       // Parent dept tid
       $query->addField('parent_otdel_zp_id', 'entity_id', 'parent_dept_tid');
@@ -705,8 +708,8 @@ function zp_breadcrumb($variables) {
       dpm($parents);
 
       $breadcrumb = array(
-          l($parents->city_name, $parents->city_zp_id),
-          l($parents->shop_name, $parents->city_zp_id . '/' . $shop_zp_id),
+          //l($parents->city_name, $parents->city_zp_id),
+          //l($parents->shop_name, $parents->city_zp_id . '/' . $shop_zp_id),
       );
       
     }
