@@ -166,6 +166,7 @@ function zp_blocks_getCurrentDept() {
     'title' => $term->name,
     'tid' => $term->tid,
     'vid' => $term->vid,
+    'current_zp_id' => $term->field_zp_id['und'][0]['safe_value'],  
     'parent_zp_id' => $term->field_parent_zp_id['und'][0]['safe_value'],
   );
   

@@ -434,7 +434,13 @@ function zp_misc_drupal_not_found() {
  * Return a breadcrumbs for a current page via main_menu.
  */
 function zp_misc_getMenuTrail() {
+  
   return;
+  
+  
+  
+  
+  
   
   if(!$url_aliased = @$_SERVER['REDIRECT_URL']) {
     return FALSE;
