@@ -148,7 +148,8 @@ function zp_blocks_block_save($delta = '', $edit = array()) {
  */
 function zp_blocks_getCurrentDept() {
   
-  global $current_dept;
+  
+  global $current_place_in_catalog;
   
   
   $current_dept_zp_id = arg(1);
@@ -160,7 +161,8 @@ function zp_blocks_getCurrentDept() {
   
   $term = taxonomy_term_load($tid);
 
-  $current_dept = array(
+  $current_place_in_catalog = array(
+    'type' => 'department',  
     'name' => $term->name,
     'tid' => $term->tid,
     'vid' => $term->vid,
