@@ -615,7 +615,7 @@ function zp_breadcrumb($variables) {
 
     $query->leftJoin('node', 'city_node', 'city_node.nid = city_zp_id.entity_id');
       // City name
-    $query->addField('city_zp_id', 'entity_id', 'city_nid');
+    $query->addField('city_node', 'title', 'city_name');
     
     $parents = $query->execute()->fetchObject();
     
