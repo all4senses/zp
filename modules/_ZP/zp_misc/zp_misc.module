@@ -3192,11 +3192,11 @@ function zp_misc_import_my_file_element_process($element, &$form_state, $form) {
  */
 function zp_misc_entity_info_alter(&$entity_info) {
   
-  dpm($entity_info);
+  //dpm($entity_info);
   
-//  $entity_info['node']['view modes']['home_teaser'] = array(
-//    'label' => t('Home teaser'),
-//    'custom settings' => TRUE,
-//  );
+  $entity_info['taxonomy_term']['view modes']['catalog_teaser'] = array(
+    'label' => t('Catalog Teaser'),
+    'custom settings' => TRUE,
+  );
   
 }
