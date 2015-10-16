@@ -570,12 +570,12 @@ function zp_menu_local_tasks(&$variables) {
 }
 
 
-
+/*
 function zp_preprocess_breadcrumb(&$variables) {
   dpm($variables);
   dpm(drupal_get_breadcrumb());
 }
-
+*/
 
 
 /**
@@ -587,7 +587,7 @@ function zp_preprocess_breadcrumb(&$variables) {
  */
 function zp_breadcrumb($variables) {
   
-  dpm($variables);
+  //dpm($variables);
   
   return zp_misc_setBreadcrumbs($variables);
   

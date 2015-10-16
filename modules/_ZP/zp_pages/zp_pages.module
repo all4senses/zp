@@ -336,7 +336,20 @@ function zp_pages_node_view($node, $view_mode) {
   switch ($node->type) {
    
       
+     case 'product_a':
+   
+      // Make (or not make) some product related actions... 
       
+      // Doesn't work to hide a price, because this is inside of processed add_to_cart form which doesn't have a price.
+      //$node->content['field_product']['line_item_fields']['commerce_unit_price']['#processes'] = TRUE;
+      // So on this stage there is no price field
+      // But we can hide the product (add_to_cart) field with the button. The price will remain in place as it, seems, will be rendered later.
+      // unset($node->content['field_product']);
+      // For hiding a price we'll be using hook_commerce_entity_view_alter  => zp_commerce_entity_view_alter(&$build, $type)
+   
+   
+       // And proceed with the breadcrumb building... for a product and other entities as well
+       
     case 'shop':  
     case 'city':
       
@@ -344,17 +357,13 @@ function zp_pages_node_view($node, $view_mode) {
         return;
       }
       
-      global $current_place_in_catalog;
-      
-      dpm($node);
-      
       drupal_set_title($node->title);
       
       // Set parent zp id to show all children of the parent
       // i.e. all shops of a city, all top depts of a shop...
-      //global $current_parent_zp_id;
+      // And for breadcrumbs
 
-      //$current_parent_zp_id = $node->field_zp_id['und'][0]['safe_value'];
+      global $current_place_in_catalog;
       
       $current_place_in_catalog = array(
         'title'  => $node->title, 
@@ -363,45 +372,19 @@ function zp_pages_node_view($node, $view_mode) {
         'current_zp_id' => $node->field_zp_id['und'][0]['safe_value'],
         'parent_zp_id' => @$node->field_parent_zp_id['und'][0]['safe_value'],  
       );
-
-      dpm($current_place_in_catalog);
       
       break;
       
       
       
       
-    
-    case 'product_a':
-      
-      if ($view_mode != 'full') {
-        return;
-      }
-
-      
-      // Doesn't work to hide a price, because this is inside of processed add_to_cart form which doesn't have a price.
-      //$node->content['field_product']['line_item_fields']['commerce_unit_price']['#processes'] = TRUE;
-      // So on this stage there is no price field
-      // But we can hide the dproduct (add_to_cart) field with the button. The price will remain in place as it, seems, will be rendered later.
-      // unset($node->content['field_product']);
-      // For hiding a price we'll be using hook_commerce_entity_view_alter  => zp_commerce_entity_view_alter(&$build, $type)
-      // 
-      //dpm($node);
-      zp_pages_setZpBreadcrumb($node);
-
-      
-      break;
-    
-      
-      
-      
-    case 'department':
-      
-      if ($view_mode == 'full') {
-        $node->zp_template_data = zp_pages_buildDeptPage($node);
-      }
-      
-      break;
+//    case 'department':
+//      
+//      if ($view_mode == 'full') {
+//        $node->zp_template_data = zp_pages_buildDeptPage($node);
+//      }
+//      
+//      break;
     
     
     case 'preface':
@@ -439,46 +422,13 @@ function zp_pages_node_view($node, $view_mode) {
 }
 
 
-
-function zp_pages_setZpBreadcrumb($node) {
-
-  if ($node->type == 'product_a') {
-    
-    $shop_zp_id = drupal_substr($node->field_parent_zp_id['und'][0]['value'], 0, 2);
-
-    $node->field_parent_zp_id['und'][0]['value'];
-
-    $query = db_select('field_data_field_zp_id', 'dept');
-    $query->condition('dept.field_zp_id_value', $node->field_parent_zp_id['und'][0]['value']);
-    $query->condition('dept.bundle', 'department');
-    $query->leftJoin('node', 'n_dept', "n_dept.nid = dept.entity_id");
-    $query->fields('n_dept', array('nid', 'title'));
-    $query->leftJoin('field_data_field_zp_id', 'shop', "shop.field_zp_id_value = '$shop_zp_id' AND shop.bundle = 'shop'");
-    $query->leftJoin('node', 'n_shop', 'n_shop.nid = shop.entity_id');
-    $query->fields('n_shop', array('nid', 'title'));
-    if (!empty($node->field_catalog['und'][0]['tid'])) {
-      $query->leftJoin('taxonomy_term_data', 'term', 'term.tid = ' . $node->field_catalog['und'][0]['tid']);
-      $query->addField('term', 'name', 'subgroup_name');
-    }
-    $parents = $query->execute()->fetchObject();
-
-    //dpm($parents);
-
-    $breadcrumb = array(
-      0 => '<a href="/">Home</a>',
-      1 => l($parents->n_shop_title, 'node/' . $parents->n_shop_nid), // Shop
-      2 => '<span id="bc-middle-parents">...</span>',
-      3 => l($parents->title, 'node/' . $parents->nid), // Dept
-    );
-    if (!empty($node->field_catalog['und'][0]['tid'])) {
-      $breadcrumb[] = l($parents->subgroup_name, 'node/' . $parents->nid, array('query' => array('tf' => $node->field_catalog['und'][0]['tid']))); // Subgroup
-    }
-
-    drupal_set_breadcrumb($breadcrumb);
-  }
-}
-
-
+/**
+ * 
+ * @global type $zp_global_data
+ * @param type $node
+ * @return type
+ * 
+ */
 function zp_pages_buildDeptPage($node) {
   
   global $zp_global_data;
