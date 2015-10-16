@@ -51,7 +51,8 @@ dpm('$view_mode = ' . $view_mode);
 
 global $user;
 
-$term_zp_id = $content['field_zp_id'][0]['#markup']; // !empty($term->field_zp_id['und'][0]['safe_value']) ? $term->field_zp_id['und'][0]['safe_value'] : @$term->field_zp_id[0]['safe_value'];
+//$term_zp_id = $content['field_zp_id'][0]['#markup']; // !empty($term->field_zp_id['und'][0]['safe_value']) ? $term->field_zp_id['und'][0]['safe_value'] : @$term->field_zp_id[0]['safe_value'];
+$term_zp_id = !empty($term->field_zp_id['und'][0]['safe_value']) ? $term->field_zp_id['und'][0]['safe_value'] : @$term->field_zp_id[0]['safe_value'];
 
 if ($current_url_dept_zp_tid == $term_zp_id) {
   $term_is_current_parent_dept = TRUE;
