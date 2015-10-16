@@ -593,8 +593,40 @@ function zp_breadcrumb($variables) {
   
   $args = arg();
   
-  //if (!empty($args[1]) && ($args[0] == 'd' || $args[0] == 'dp')) {
-  if ($current_place_in_catalog['type'] == 'department') {  
+  if ($current_place_in_catalog['type'] == 'city') {  
+    
+    $current_title = $current_place_in_catalog['title'];
+    
+    $breadcrumb = array(
+        l('Домой', '<front>'),
+    );
+  }
+  elseif ($current_place_in_catalog['type'] == 'shop') {  
+    
+    $current_title = $current_place_in_catalog['title'];
+    
+    $query = db_select('field_data_field_zp_id', 'city_zp_id');
+      
+    $query->condition('city_zp_id.bundle', 'city');      
+    $query->condition('city_zp_id.field_zp_id_value', $current_place_in_catalog['parent_zp_id']);
+
+    // City nid
+    $query->addField('city_zp_id', 'entity_id', 'city_nid');
+
+    $query->leftJoin('node', 'city_node', 'city_node.nid = city_zp_id.entity_id');
+      // City name
+    $query->addField('city_zp_id', 'entity_id', 'city_nid');
+    
+    $parents = $query->execute()->fetchObject();
+    
+    dpm($parents);
+
+    $breadcrumb = array(
+        l($parents->city_name, 'node/' . $parents->city_nid),
+    );
+      
+  }
+  elseif ($current_place_in_catalog['type'] == 'department') {  
     
     
     
@@ -602,16 +634,14 @@ function zp_breadcrumb($variables) {
     
     $breadcrumb = array();
     
-    $current_title = $current_place_in_catalog['name'];
+    $current_title = $current_place_in_catalog['title'];
     //if(strpos($current_place_in_catalog['parent_zp_id'], '/') !== FALSE) {
     // Parent zp id is like ua/kh or ru/nsk
-    
     
     
     if (strlen($current_place_in_catalog['parent_zp_id']) == 3) {
       
       // It's a root dept... next will be a shop
-      
       
       $shop_zp_id = $current_place_in_catalog['parent_zp_id']; // ua/kh, ru/nsk
       
@@ -640,11 +670,6 @@ function zp_breadcrumb($variables) {
       $query->leftJoin('taxonomy_term_data', 'parent_parent_td', 'parent_parent_td.tid = parent_th.parent AND parent_parent_td.vid = ' . $current_place_in_catalog['vid']);
       // City name
       $query->addField('parent_parent_td', 'name', 'city_name');
-      
-      
-//      $query->leftJoin('field_data_field_zp_id', 'city_zp_id', "city_zp_id.entity_id = parent_parent_td.tid AND city_zp_id.bundle = 'catalog'");
-//      // City zp_id
-//      $query->addField('city_zp_id', 'field_zp_id_value', 'city_zp_id');
       
       
       $query->leftJoin('taxonomy_index', 'i_city_nid', 'i_city_nid.tid = parent_th.parent');
@@ -682,8 +707,6 @@ function zp_breadcrumb($variables) {
       // Parent dept name
       $query->addField('parent_otdel_td', 'name', 'parent_dept_name');
       
-      
-      
       // Get shop
       $query->leftJoin('field_data_field_zp_id', 'parent_zp_id', "parent_zp_id.bundle = 'catalog' AND parent_zp_id.field_zp_id_value = '" . $shop_zp_id . "'");
       
@@ -701,9 +724,6 @@ function zp_breadcrumb($variables) {
       $query->addField('shop_zp_id', 'entity_id', 'shop_nid');
       
       
-      
-      
-      
       $query->leftJoin('taxonomy_term_hierarchy', 'parent_th', 'parent_th.tid = parent_zp_id.entity_id');
       // City tid
       $query->addField('parent_th', 'parent', 'city_tid');
@@ -717,22 +737,8 @@ function zp_breadcrumb($variables) {
       $query->addField('i_city_nid', 'nid', 'city_nid');
       
       
-      /*
-      $query->leftJoin('field_data_field_zp_id', 'city_zp_id', "city_zp_id.entity_id = parent_parent_td.tid AND city_zp_id.bundle = 'catalog'");
-      // City zp_id
-      $query->addField('city_zp_id', 'field_zp_id_value', 'city_zp_id');
-      
-      $query->leftJoin('field_data_field_zp_id', 'city_zp_id_2', "city_zp_id_2.field_zp_id_value = city_zp_id.field_zp_id_value AND city_zp_id_2.bundle = 'city'");
-      // Shop nid
-      $query->addField('city_zp_id_2', 'entity_id', 'city_nid');
-      */
-      
-      
-      
       $parents = $query->execute()->fetchObject();
       dpm($parents);
-
-      
       
       $breadcrumb = array(
           l($parents->city_name, 'node/' . $parents->city_nid),

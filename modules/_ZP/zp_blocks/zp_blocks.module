@@ -163,7 +163,7 @@ function zp_blocks_getCurrentDept() {
 
   $current_place_in_catalog = array(
     'type' => 'department',  
-    'name' => $term->name,
+    'title' => $term->name,
     'tid' => $term->tid,
     'vid' => $term->vid,
     'parent_zp_id' => $term->field_parent_zp_id['und'][0]['safe_value'],
