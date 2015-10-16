@@ -346,6 +346,8 @@ function zp_pages_node_view($node, $view_mode) {
       
       global $current_place_in_catalog;
       
+      dpm($node);
+      
       drupal_set_title($node->title);
       
       // Set parent zp id to show all children of the parent
