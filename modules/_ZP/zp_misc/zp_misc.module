@@ -3321,7 +3321,7 @@ function zp_misc_setBreadcrumbs(&$variables) {
         l($parents->city_name, 'node/' . $parents->city_nid),
         l($parents->shop_name, 'node/' . $parents->shop_nid),
         '<span id="bc-middle-parents">...</span>',
-        l($parents->parent_dept_name, 'd/' . $current_place_in_catalog['parent_zp_id']),
+        l($parents->parent_dept_name, 'dp/' . $current_place_in_catalog['parent_zp_id']),
     );
 
     
