@@ -570,12 +570,12 @@ function zp_menu_local_tasks(&$variables) {
 }
 
 
-/*
+
 function zp_preprocess_breadcrumb(&$variables) {
-  //dpm($variables);
-  //dpm(drupal_get_breadcrumb());
+  dpm($variables);
+  dpm(drupal_get_breadcrumb());
 }
-*/
+
 
 
 /**
@@ -587,191 +587,10 @@ function zp_preprocess_breadcrumb(&$variables) {
  */
 function zp_breadcrumb($variables) {
   
-  $breadcrumb = $variables['breadcrumb'];
+  dpm($variables);
   
-  global $current_place_in_catalog;
+  return zp_misc_setBreadcrumbs($variables);
   
-  dpm($current_place_in_catalog);
-  
-  $args = arg();
-  
-  if ($current_place_in_catalog['type'] == 'city') {  
-    
-    $current_title = $current_place_in_catalog['title'];
-    
-    $breadcrumb = array(
-        l('Домой', '<front>'),
-    );
-  }
-  elseif ($current_place_in_catalog['type'] == 'shop') {  
-    
-    $current_title = $current_place_in_catalog['title'];
-    
-    $query = db_select('field_data_field_zp_id', 'city_zp_id');
-      
-    $query->condition('city_zp_id.bundle', 'city');      
-    $query->condition('city_zp_id.field_zp_id_value', $current_place_in_catalog['parent_zp_id']);
-
-    // City nid
-    $query->addField('city_zp_id', 'entity_id', 'city_nid');
-
-    $query->leftJoin('node', 'city_node', 'city_node.nid = city_zp_id.entity_id');
-      // City name
-    $query->addField('city_node', 'title', 'city_name');
-    
-    $parents = $query->execute()->fetchObject();
-    
-    dpm($parents);
-
-    $breadcrumb = array(
-        l($parents->city_name, 'node/' . $parents->city_nid),
-    );
-      
-  }
-  elseif ($current_place_in_catalog['type'] == 'department') {  
-    
-    
-    
-    //dpm($current_place_in_catalog);
-    
-    $breadcrumb = array();
-    
-    $current_title = $current_place_in_catalog['title'];
-    //if(strpos($current_place_in_catalog['parent_zp_id'], '/') !== FALSE) {
-    // Parent zp id is like ua/kh or ru/nsk
-    
-    
-    if (strlen($current_place_in_catalog['parent_zp_id']) == 3) {
-      
-      // It's a root dept... next will be a shop
-      
-      $shop_zp_id = $current_place_in_catalog['parent_zp_id']; // ua/kh, ru/nsk
-      
-      $query = db_select('field_data_field_zp_id', 'parent_zp_id');
-      
-      $query->condition('parent_zp_id.bundle', 'catalog');      
-      $query->condition('parent_zp_id.field_zp_id_value', $shop_zp_id);
-      
-      // Shop tid
-      $query->addField('parent_zp_id', 'entity_id', 'shop_tid');
-      
-      $query->leftJoin('taxonomy_term_data', 'parent_td', 'parent_td.tid = parent_zp_id.entity_id AND parent_td.vid = ' . $current_place_in_catalog['vid']);
-      // Shop name
-      $query->addField('parent_td', 'name', 'shop_name');
-      
-      $query->leftJoin('field_data_field_zp_id', 'shop_zp_id', "shop_zp_id.field_zp_id_value = '" . $shop_zp_id . "' AND shop_zp_id.bundle = 'shop'");
-      // Shop nid
-      $query->addField('shop_zp_id', 'entity_id', 'shop_nid');
-      
-      
-      
-      $query->leftJoin('taxonomy_term_hierarchy', 'parent_th', 'parent_th.tid = parent_zp_id.entity_id');
-      // City tid
-      $query->addField('parent_th', 'parent', 'city_tid');
-      
-      $query->leftJoin('taxonomy_term_data', 'parent_parent_td', 'parent_parent_td.tid = parent_th.parent AND parent_parent_td.vid = ' . $current_place_in_catalog['vid']);
-      // City name
-      $query->addField('parent_parent_td', 'name', 'city_name');
-      
-      
-      $query->leftJoin('taxonomy_index', 'i_city_nid', 'i_city_nid.tid = parent_th.parent');
-      // Shop nid
-      $query->addField('i_city_nid', 'nid', 'city_nid');
-      
-      
-      
-      
-      
-      $parents = $query->execute()->fetchObject();
-      dpm($parents);
-
-      $breadcrumb = array(
-          l($parents->city_name, 'node/' . $parents->city_nid),
-          l($parents->shop_name, 'node/' . $parents->shop_nid),
-      );
-    }
-    else {
-      
-      // It's not a root dept... there is at least one parent dept above it.
-      
-      $shop_zp_id = drupal_substr($args[1], 0, 3);
-      
-      // Get a parent dept
-      $query = db_select('field_data_field_zp_id', 'parent_otdel_zp_id');
-      
-      $query->condition('parent_otdel_zp_id.bundle', 'catalog');      
-      $query->condition('parent_otdel_zp_id.field_zp_id_value', $current_place_in_catalog['parent_zp_id']);
-      
-      // Parent dept tid
-      $query->addField('parent_otdel_zp_id', 'entity_id', 'parent_dept_tid');
-      
-      $query->leftJoin('taxonomy_term_data', 'parent_otdel_td', 'parent_otdel_td.tid = parent_otdel_zp_id.entity_id AND parent_otdel_td.vid = ' . $current_place_in_catalog['vid']);
-      // Parent dept name
-      $query->addField('parent_otdel_td', 'name', 'parent_dept_name');
-      
-      // Get shop
-      $query->leftJoin('field_data_field_zp_id', 'parent_zp_id', "parent_zp_id.bundle = 'catalog' AND parent_zp_id.field_zp_id_value = '" . $shop_zp_id . "'");
-      
-      // Shop tid
-      $query->addField('parent_zp_id', 'entity_id', 'shop_tid');
-      
-      
-      $query->leftJoin('taxonomy_term_data', 'parent_td', 'parent_td.tid = parent_zp_id.entity_id AND parent_td.vid = ' . $current_place_in_catalog['vid']);
-      // Shop name
-      $query->addField('parent_td', 'name', 'shop_name');
-      
-      
-      $query->leftJoin('field_data_field_zp_id', 'shop_zp_id', "shop_zp_id.field_zp_id_value = '" . $shop_zp_id . "' AND shop_zp_id.bundle = 'shop'");
-      // Shop nid
-      $query->addField('shop_zp_id', 'entity_id', 'shop_nid');
-      
-      
-      $query->leftJoin('taxonomy_term_hierarchy', 'parent_th', 'parent_th.tid = parent_zp_id.entity_id');
-      // City tid
-      $query->addField('parent_th', 'parent', 'city_tid');
-      
-      $query->leftJoin('taxonomy_term_data', 'parent_parent_td', 'parent_parent_td.tid = parent_th.parent AND parent_parent_td.vid = ' . $current_place_in_catalog['vid']);
-      // City name
-      $query->addField('parent_parent_td', 'name', 'city_name');
-      
-      $query->leftJoin('taxonomy_index', 'i_city_nid', 'i_city_nid.tid = parent_th.parent');
-      // Shop nid
-      $query->addField('i_city_nid', 'nid', 'city_nid');
-      
-      
-      $parents = $query->execute()->fetchObject();
-      dpm($parents);
-      
-      $breadcrumb = array(
-          l($parents->city_name, 'node/' . $parents->city_nid),
-          l($parents->shop_name, 'node/' . $parents->shop_nid),
-          '<span id="bc-middle-parents">...</span>',
-          l($parents->parent_dept_name, 'd/' . $current_place_in_catalog['parent_zp_id']),
-      );
-      
-    }
-    
-    
-    
-  }
-  else {
-    $current_title = drupal_get_title();
-  }
-    
-  if (!empty($breadcrumb)) {
-    
-    dpm($breadcrumb);
-    
-    // Adding the title of the current page to the breadcrumb.
-    $breadcrumb[] = $current_title;
-    
-    // Provide a navigational heading to give context for breadcrumb links to
-    // screen-reader users. Make the heading invisible with .element-invisible.
-    $heading = '<h3 class="element-invisible">' . t('You are here') . '</h3>';
-    // Uncomment to add current page to breadcrumb
-	// $breadcrumb[] = drupal_get_title();
-    return '<nav itemprop="breadcrumb" class="breadcrumb">' . $heading . implode(' » ', $breadcrumb) . '</nav>';
-  }
 }
 
 
@@ -801,7 +620,7 @@ function zp_process_page(&$variables) {
   
   
   // Set breadcrumb
-  zp_misc_setBreadcrumbs($variables);
+  //zp_misc_setBreadcrumbs($variables);
   
   
   
