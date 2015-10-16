@@ -3185,3 +3185,18 @@ function zp_misc_import_my_file_element_process($element, &$form_state, $form) {
  
   return $element;
 }
+
+
+/**
+ * Implements a new view_mode.
+ */
+function zp_misc_entity_info_alter(&$entity_info) {
+  
+  dpm($entity_info);
+  
+//  $entity_info['node']['view modes']['home_teaser'] = array(
+//    'label' => t('Home teaser'),
+//    'custom settings' => TRUE,
+//  );
+  
+}
