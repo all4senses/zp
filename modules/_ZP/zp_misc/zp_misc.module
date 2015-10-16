@@ -434,6 +434,7 @@ function zp_misc_drupal_not_found() {
  * Return a breadcrumbs for a current page via main_menu.
  */
 function zp_misc_getMenuTrail() {
+  return;
   
   if(!$url_aliased = @$_SERVER['REDIRECT_URL']) {
     return FALSE;
@@ -3178,7 +3179,7 @@ function zp_misc_setBreadcrumbs(&$variables) {
       
       // It's NOT a root dept... there is at least one parent dept above it.
       
-      $shop_zp_id = drupal_substr(arg(1), 0, 3);
+      $shop_zp_id = drupal_substr($current_place_in_catalog['current_zp_id'], 0, 3);
       
       // Get a parent dept
       $query = db_select('field_data_field_zp_id', 'parent_otdel_zp_id');
