@@ -594,7 +594,7 @@ function zp_breadcrumb($variables) {
   $args = arg();
   
   //if (!empty($args[1]) && ($args[0] == 'd' || $args[0] == 'dp')) {
-  if ($current_place_in_catalog['type'] == 'departnemt') {  
+  if ($current_place_in_catalog['type'] == 'department') {  
     
     
     
