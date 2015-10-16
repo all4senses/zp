@@ -3282,7 +3282,7 @@ function zp_misc_setBreadcrumbs(&$variables) {
     // Parent dept tid
     $query->addField('parent_otdel_zp_id', 'entity_id', 'parent_dept_tid');
 
-    $query->leftJoin('taxonomy_term_data', 'parent_otdel_td', 'parent_otdel_td.tid = parent_otdel_zp_id.entity_id AND parent_otdel_td.vid = ' . $current_place_in_catalog['vid']);
+    $query->leftJoin('taxonomy_term_data', 'parent_otdel_td', 'parent_otdel_td.tid = parent_otdel_zp_id.entity_id');
     // Parent dept name
     $query->addField('parent_otdel_td', 'name', 'parent_dept_name');
 
@@ -3292,7 +3292,7 @@ function zp_misc_setBreadcrumbs(&$variables) {
     // Shop tid
     $query->addField('parent_zp_id', 'entity_id', 'shop_tid');
 
-    $query->leftJoin('taxonomy_term_data', 'parent_td', 'parent_td.tid = parent_zp_id.entity_id AND parent_td.vid = ' . $current_place_in_catalog['vid']);
+    $query->leftJoin('taxonomy_term_data', 'parent_td', 'parent_td.tid = parent_zp_id.entity_id');
     // Shop name
     $query->addField('parent_td', 'name', 'shop_name');
 
@@ -3305,7 +3305,7 @@ function zp_misc_setBreadcrumbs(&$variables) {
     // City tid
     $query->addField('parent_th', 'parent', 'city_tid');
 
-    $query->leftJoin('taxonomy_term_data', 'parent_parent_td', 'parent_parent_td.tid = parent_th.parent AND parent_parent_td.vid = ' . $current_place_in_catalog['vid']);
+    $query->leftJoin('taxonomy_term_data', 'parent_parent_td', 'parent_parent_td.tid = parent_th.parent');
     // City name
     $query->addField('parent_parent_td', 'name', 'city_name');
 
