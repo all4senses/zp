@@ -591,6 +591,8 @@ function zp_breadcrumb($variables) {
   
   global $current_place_in_catalog;
   
+  dpm($current_place_in_catalog);
+  
   $args = arg();
   
   if ($current_place_in_catalog['type'] == 'city') {  
