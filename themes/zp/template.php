@@ -589,7 +589,7 @@ function zp_breadcrumb($variables) {
   
   dpm($variables);
   
-  //return zp_misc_setBreadcrumbs($variables);
+  return zp_misc_setBreadcrumbs($variables);
   
 }
 

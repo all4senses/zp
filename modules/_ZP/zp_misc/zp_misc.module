@@ -3087,7 +3087,7 @@ function zp_misc_setBreadcrumbs(&$variables) {
   
   $breadcrumb = $variables['breadcrumb'];
   
-  dpm($breadcrumb);
+  //dpm($breadcrumb);
   
   global $current_place_in_catalog;
   
