@@ -711,3 +711,13 @@ text-shadow: 1px 1px 1px gray;
 .sidebar .block .content .contextual-links-wrapper ul a {border: none; width: inherit; padding: 5px; margin: 0;}
 .page-node #main .main-content:hover .contextual-links-trigger {display: block;}
 
+
+/*Menu*/
+ul.menu .menu {
+    text-indent: 10px;
+}
+
+
+ul.menu li.active {
+    font-weight: bold;
+}
