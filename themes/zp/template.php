@@ -590,7 +590,25 @@ function zp_breadcrumb($variables) {
   dpm($variables);
   
   //return zp_misc_setBreadcrumbs($variables);
-  return $variables['breadcrumb'];
+  
+  
+  $breadcrumb = $variables['breadcrumb'];
+  // And finally add a current place without a link.
+  if (!empty($breadcrumb)) {
+    
+    //dpm($breadcrumb);
+    
+    // Adding the title of the current page to the breadcrumb.
+    $breadcrumb[] = $current_title;
+    
+    // Provide a navigational heading to give context for breadcrumb links to
+    // screen-reader users. Make the heading invisible with .element-invisible.
+    $heading = '<h3 class="element-invisible">' . t('You are here') . '</h3>';
+    // Uncomment to add current page to breadcrumb
+	// $breadcrumb[] = drupal_get_title();
+    return '<nav itemprop="breadcrumb" class="breadcrumb">' . $heading . implode(' » ', $breadcrumb) . '</nav>';
+  }
+  
 }
 
 
