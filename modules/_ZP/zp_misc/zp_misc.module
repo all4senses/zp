@@ -3401,7 +3401,7 @@ function zp_misc_menu_position_rule_alter(&$rule, &$context, &$rule_matches, &$s
   
   dpm($set_breadcrumb);
   
-  $set_breadcrumb = FALSE;
+  $set_breadcrumb = TRUE;
   
   
 }
