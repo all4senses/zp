@@ -3359,57 +3359,19 @@ function zp_misc_setBreadcrumbs(&$variables) {
 }
 
 
-
 /**
- * Set breadcrumbs for the page, used in the template.php
+ * 
+ *  Altered system function menu_set_active_trail()
+ * 
+ * @param type $custom_path
+ * @return type
+ * 
+ * 
  */
-//function zp_misc_setBreadcrumbs(&$variables) {
-//  
-//  
-//  // If we are on the Page Not Found, hide breadcumbs.
-//  // node/2 - custom ZP Page Not Found.
-//  if ($_GET['q'] == 'node/2') {
-//    $variables['breadcrumb'] = NULL;
-//  }
-//  
-//  
-//} 
-
-/**
- * Allow a rule to be altered after it is evaluated but before action is taken.
- *
- * @param $rule
- *   The rule that was just evaulated.
- * @param $context
- *   A small context variable used by the menu_position module.
- * @param $rule_matches
- *   Whether we have a matching rule or not.
- * @param $set_breadcrumb
- *   Whether the breadcrumb still needs to be set or not.
- */
-function zp_misc_menu_position_rule_alter(&$rule, &$context, &$rule_matches, &$set_breadcrumb) {
-  // Disable the rule if we're looking at a node with a certain id.
-//  if ($context['node']->nid == 119) {
-//    $rule_matches = FALSE;
-//  }
-  
-  dpm($rule);
-  
-  dpm($context);
-  
-  dpm($rule_matches);
-  
-  dpm($set_breadcrumb);
-  
-  $set_breadcrumb = TRUE;
-  
-  
-}
-
-  
 function zp_misc_menu_get_active_trail_by_path($custom_path) {
     
     $trail = array();
+    /*
     $trail[] = array(
       'title' => t('Home'),
       'href' => '<front>',
@@ -3417,14 +3379,15 @@ function zp_misc_menu_get_active_trail_by_path($custom_path) {
       'localized_options' => array(),
       'type' => 0,
     );
-
+    */
+    
     // Try to retrieve a menu link corresponding to the current path. If more
     // than one exists, the link from the most preferred menu is returned.
     $preferred_link = menu_link_get_preferred($custom_path);
     $current_item = menu_get_item($custom_path);
 
-    dpm($preferred_link);
-    dpm($current_item);
+    //dpm($preferred_link);
+    //dpm($current_item);
     
     // There is a link for the current path.
     if ($preferred_link) {
