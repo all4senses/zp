@@ -1269,16 +1269,16 @@ function zp_pages_importPriceBatch($op, $priceRows, $file, $reverse_process = FA
 
 function zp_pages_init() {
 //  dpm($_GET);
-//  $path = 'dp/z01131'; // 'd/z01130';
-//  menu_tree_set_path('menu-catalog-menu', $path);
+  $path = 'dp/z01131'; // 'd/z01130';
+  menu_tree_set_path('menu-catalog-menu', $path);
   
-  $item = menu_get_item();
-  $item['href'] = 'd/z01130';
-  menu_set_item(NULL, $item);
+//  $item = menu_get_item();
+//  $item['href'] = 'd/z01130';
+//  menu_set_item(NULL, $item);
   
-  $new_trail = 'd/z01130'; //NULL;
-  $trail = menu_set_active_trail($new_trail);
-  dpm($trail);
+//  $new_trail = 'd/z01130'; //NULL;
+//  $trail = menu_set_active_trail($new_trail);
+//  dpm($trail);
 }
 
 function zp_pages_menu_breadcrumb_alter(&$active_trail, $item) {
