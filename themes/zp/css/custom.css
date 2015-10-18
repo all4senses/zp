@@ -718,6 +718,6 @@ ul.menu .menu {
 }
 
 
-ul.menu li.active {
+ul.menu a.active, ul.menu a.active-trail {
     font-weight: bold;
 }
