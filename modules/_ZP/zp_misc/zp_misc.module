@@ -3386,8 +3386,8 @@ function zp_misc_menu_get_active_trail_by_path($custom_path) {
     $preferred_link = menu_link_get_preferred($custom_path);
     $current_item = menu_get_item($custom_path);
 
-    //dpm($preferred_link);
-    //dpm($current_item);
+    dpm($preferred_link);
+    dpm($current_item);
     
     // There is a link for the current path.
     if ($preferred_link) {
@@ -3396,6 +3396,7 @@ function zp_misc_menu_get_active_trail_by_path($custom_path) {
       // the given menu has not been built in this request yet.
       $tree = menu_tree_page_data($preferred_link['menu_name'], NULL, TRUE);
       list($key, $curr) = each($tree);
+      dpm($tree);
     }
     // There is no link for the current path.
     else {
