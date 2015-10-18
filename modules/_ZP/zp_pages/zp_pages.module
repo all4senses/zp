@@ -1302,22 +1302,29 @@ function zp_pages_init() {
 
 function zp_pages_menu_breadcrumb_alter(&$active_trail, $item) {
   dpm($active_trail);
-//  dpm($item);
+  dpm($item);
   
   
-  $path = 'dp/z01131'; // 'd/z01130';
-  menu_tree_set_path('menu-catalog-menu', $path);
   
-  //global $custom_trail;
-  $custom_trail = zp_misc_menu_get_active_trail_by_path($path);
-  dpm($custom_trail);
-
+  
+  $args = arg(0);
   
   dpm(arg());
   dpm($_GET);
   
-  //global $custom_trail;
-  if ($custom_trail) {
-    $active_trail = $custom_trail;
-  }
+  
+  if ($arga[0] == 'p') {
+    $path = 'dp/z01131'; // 'd/z01130';
+    menu_tree_set_path('menu-catalog-menu', $path);
+
+    //global $custom_trail;
+    $custom_trail = zp_misc_menu_get_active_trail_by_path($path);
+    dpm($custom_trail);
+    
+    if ($custom_trail) {
+      $active_trail = $custom_trail;
+    }
+  } // End of if ($arga[0] == 'p') {
+  
+  
 }
