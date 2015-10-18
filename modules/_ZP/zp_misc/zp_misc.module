@@ -3504,7 +3504,7 @@ function zp_misc_menu_breadcrumb_by_path($breadcrumb = array(), $target_path = N
       if ($item && $item['access']) {
         $trail_reverse[$path] = $item;
       }
-      $parent_path = zp_misc_getParentPath($path, $item);; //$this->parentFinder->getParentPath($path, $item);
+      $parent_path = zp_misc_getParentPath($path, $item); //$this->parentFinder->getParentPath($path, $item);
       if ($parent_path === $path) {
         // This is again a loop, but with just one step.
         // Not as evil as the other kind of loop.

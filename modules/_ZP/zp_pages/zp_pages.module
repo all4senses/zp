@@ -1277,9 +1277,9 @@ function zp_pages_init() {
 //  dpm($breadcrumb);
   
   //$trail = crumbs_get_trail($path);
-  $trail = zp_misc_buildTrail($path);
+  //$trail = zp_misc_buildTrail($path);
   
-  dpm($trail);
+  //dpm($trail);
   
 //  $item = menu_get_item();
 //  $item['href'] = 'd/z01130';
