@@ -3405,3 +3405,64 @@ function zp_misc_menu_position_rule_alter(&$rule, &$context, &$rule_matches, &$s
   
   
 }
+
+
+function zp_misc_menu_breadcrumb_by_path($breadcrumb = array(), $target_patch = NULL) {
+  global $language;
+  $target_patch = $target_patch ? $target_patch : drupal_get_path_alias();
+  $parent_candidates = _menu_breadcrumb_get_parent_candidates($target_patch);
+  
+  if (empty($parent_candidates)) {
+    return $breadcrumb;
+  }
+
+  $matched_menus = array();
+  $matched_link_titles = array();
+  $query = db_select('menu_links', 'ml')
+    ->fields('ml', array('menu_name', 'mlid', 'link_path', 'link_title', 'depth', 'weight'))
+    ->condition('link_path', $parent_candidates, 'IN')
+    // Do not touch admin menu.
+    ->condition('menu_name', 'management', '!=')
+    // Only consider normal, visible menu links.
+    ->condition('hidden', 0);
+    
+  if (module_exists('i18n_menu')) {
+    $query->condition('language', $language->language);
+  }
+  
+  $results = $query->execute();
+
+  foreach ($results as $record) {
+    // If there is more than one matched link in a menu,
+    // use the deepest, heaviest.
+    if (!isset($matched_menus[$record->menu_name]) || $record->depth > $matched_menus[$record->menu_name]['depth'] || ($record->depth == $matched_menus[$record->menu_name]['depth'] && $record->weight > $matched_menus[$record->menu_name]['weight'])) {
+      $matched_menus[$record->menu_name]['link_path'] = $record->link_path;
+      $matched_menus[$record->menu_name]['depth'] = $record->depth;
+      $matched_menus[$record->menu_name]['weight'] = $record->weight;
+    }
+
+    // Get the Link Title if it can be found in a menu item.
+    if ($record->link_title && !isset($matched_link_titles[$record->link_path])) {
+      $matched_link_titles[$record->link_path] = $record->link_title;
+      if (module_exists('i18n_menu')) {
+        $matched_link_titles[$record->link_path] = _i18n_menu_link_title((array)$record, $language->language);
+      }
+    }
+  }
+
+  // Remove current page from breadcrumb.
+  array_pop($parent_candidates);
+
+  foreach ($parent_candidates as $link_path) {
+    // If the page title is found on a menu item, use it.
+    if (isset($matched_link_titles[$link_path])) {
+      $breadcrumb[] = l($matched_link_titles[$link_path], $link_path);
+    }
+    // Otherwise, use slow method to find out the title of a page.
+    elseif ($menu_item = menu_get_item($link_path)) {
+      $breadcrumb[] = l($menu_item['title'], $link_path);
+    }
+  }
+
+  return $breadcrumb;
+}

@@ -1272,6 +1272,10 @@ function zp_pages_init() {
   $path = 'dp/z01131'; // 'd/z01130';
   menu_tree_set_path('menu-catalog-menu', $path);
   
+  
+  $breadcrumb = zp_misc_menu_breadcrumb_by_path(array(), $path);
+  dpm($breadcrumb);
+  
 //  $item = menu_get_item();
 //  $item['href'] = 'd/z01130';
 //  menu_set_item(NULL, $item);
