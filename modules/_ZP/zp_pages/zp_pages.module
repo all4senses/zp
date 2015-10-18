@@ -1309,7 +1309,8 @@ function zp_pages_menu_breadcrumb_alter(&$active_trail, $item) {
   dpm($args);
   dpm($_GET);
   
-  if ($args[0] == 'p' && !empty($item['page_arguments'][0]->field_parent_zp_id['und'][0]['safe_value'])) {
+  
+  if (@$item['page_arguments'][0]->type == 'product_a' && !empty($item['page_arguments'][0]->field_parent_zp_id['und'][0]['safe_value'])) {
     
     $path = 'dp/' . $item['page_arguments'][0]->field_parent_zp_id['und'][0]['safe_value']; //'dp/z01131';
     
