@@ -1274,7 +1274,7 @@ function zp_pages_init() {
   
   global $custom_trail;
   $custom_trail = zp_misc_menu_get_active_trail_by_path($path);
-  dpm($trail);
+  dpm($custom_trail);
   
   //menu_set_active_trail($trail);
   
