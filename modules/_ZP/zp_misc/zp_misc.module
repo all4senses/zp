@@ -3374,3 +3374,32 @@ function zp_misc_setBreadcrumbs(&$variables) {
 //  
 //  
 //} 
+
+/**
+ * Allow a rule to be altered after it is evaluated but before action is taken.
+ *
+ * @param $rule
+ *   The rule that was just evaulated.
+ * @param $context
+ *   A small context variable used by the menu_position module.
+ * @param $rule_matches
+ *   Whether we have a matching rule or not.
+ * @param $set_breadcrumb
+ *   Whether the breadcrumb still needs to be set or not.
+ */
+function zp_misc_menu_position_rule_alter(&$rule, &$context, &$rule_matches, &$set_breadcrumb) {
+  // Disable the rule if we're looking at a node with a certain id.
+//  if ($context['node']->nid == 119) {
+//    $rule_matches = FALSE;
+//  }
+  
+  dpm($rule);
+  
+  dpm($context);
+  
+  dpm($rule_matches);
+  
+  dpm($set_breadcrumb);
+  
+  
+}
