@@ -593,6 +593,9 @@ function zp_breadcrumb($variables) {
   
   
   $breadcrumb = $variables['breadcrumb'];
+  
+  $current_title = drupal_get_title();
+  
   // And finally add a current place without a link.
   if (!empty($breadcrumb)) {
     
