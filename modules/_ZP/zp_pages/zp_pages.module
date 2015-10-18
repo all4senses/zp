@@ -1276,9 +1276,9 @@ function zp_pages_init() {
   $item['href'] = 'd/z01130';
   menu_set_item(NULL, $item);
   
-//  $new_trail = 'd/z01130'; //NULL;
-//  $trail = menu_set_active_trail($new_trail);
-//  dpm($trail);
+  $new_trail = 'd/z01130'; //NULL;
+  $trail = menu_set_active_trail($new_trail);
+  dpm($trail);
 }
 
 function zp_pages_menu_breadcrumb_alter(&$active_trail, $item) {
