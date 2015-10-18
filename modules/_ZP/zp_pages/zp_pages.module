@@ -1313,6 +1313,8 @@ function zp_pages_menu_breadcrumb_alter(&$active_trail, $item) {
   dpm($custom_trail);
 
   
+  dpm(arg());
+  dpm($_GET);
   
   //global $custom_trail;
   if ($custom_trail) {
