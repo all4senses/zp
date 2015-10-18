@@ -1276,6 +1276,10 @@ function zp_pages_init() {
   $breadcrumb = zp_misc_menu_breadcrumb_by_path(array(), $path);
   dpm($breadcrumb);
   
+  $trail = crumbs_get_trail($path);
+  
+  dpm($trail);
+  
 //  $item = menu_get_item();
 //  $item['href'] = 'd/z01130';
 //  menu_set_item(NULL, $item);

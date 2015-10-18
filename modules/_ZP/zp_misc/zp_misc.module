@@ -3407,10 +3407,12 @@ function zp_misc_menu_position_rule_alter(&$rule, &$context, &$rule_matches, &$s
 }
 
 
-function zp_misc_menu_breadcrumb_by_path($breadcrumb = array(), $target_patch = NULL) {
+function zp_misc_menu_breadcrumb_by_path($breadcrumb = array(), $target_path = NULL) {
   global $language;
-  $target_patch = $target_patch ? $target_patch : drupal_get_path_alias();
-  $parent_candidates = _menu_breadcrumb_get_parent_candidates($target_patch);
+  $target_path = $target_path ? $target_path : drupal_get_path_alias();
+  $parent_candidates = _menu_breadcrumb_get_parent_candidates($target_path);
+  
+  dpm($parent_candidates);
   
   if (empty($parent_candidates)) {
     return $breadcrumb;
