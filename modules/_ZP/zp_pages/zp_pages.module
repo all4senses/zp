@@ -1273,6 +1273,11 @@ function zp_pages_init() {
   menu_tree_set_path('menu-catalog-menu', $path);
   
   
+  
+  $trail = zp_misc_menu_set_active_trail(NULL, $path);
+  dpm($trail);
+  
+  
 //  $breadcrumb = zp_misc_menu_breadcrumb_by_path(array(), $path);
 //  dpm($breadcrumb);
   
