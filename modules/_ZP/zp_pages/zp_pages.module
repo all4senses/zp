@@ -1300,6 +1300,14 @@ function zp_pages_init() {
 //  dpm($trail);
 }
 
+
+/**
+ * 
+ * @global type $current_custom_trail
+ * @param type $active_trail
+ * @param type $item
+ * 
+ */
 function zp_pages_menu_breadcrumb_alter(&$active_trail, $item) {
   //dpm($active_trail);
   //dpm($item);
@@ -1319,15 +1327,12 @@ function zp_pages_menu_breadcrumb_alter(&$active_trail, $item) {
     
     if ($custom_trail) {
       $active_trail = $custom_trail;
-      
-      
-      global $current_custom_trail;
-      $current_custom_trail = $custom_trail;
-      
       //dpm($custom_trail);
     }
     
   } // End of if ($arga[0] == 'p') {
   
+  global $current_custom_trail;
+  $current_custom_trail = $custom_trail;
   dpm($active_trail);
 }

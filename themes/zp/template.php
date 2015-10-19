@@ -572,8 +572,8 @@ function zp_menu_local_tasks(&$variables) {
 
 
 function zp_preprocess_breadcrumb(&$variables) {
-  dpm($variables);
-  dpm(drupal_get_breadcrumb());
+//  dpm($variables);
+//  dpm(drupal_get_breadcrumb());
   
   // If we are on the Page Not Found, hide breadcumbs.
   // node/2 - custom ZP Page Not Found.
@@ -614,7 +614,8 @@ function zp_breadcrumb($variables) {
     
     $current_title = drupal_get_title();
     
-    foreach($breadcrumb as $key => $value) {
+    // Remove Home link
+    foreach ($breadcrumb as $key => $value) {
       if (strpos($value, 'Home') !== FALSE) {
         unset($breadcrumb[$key]);
       }
@@ -622,6 +623,8 @@ function zp_breadcrumb($variables) {
     
     // Adding the title of the current page to the breadcrumb.
     $breadcrumb[] = $current_title;
+    
+    dpm($breadcrumb);
     
     // Provide a navigational heading to give context for breadcrumb links to
     // screen-reader users. Make the heading invisible with .element-invisible.
