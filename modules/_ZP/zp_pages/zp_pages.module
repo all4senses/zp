@@ -1301,14 +1301,14 @@ function zp_pages_init() {
 }
 
 function zp_pages_menu_breadcrumb_alter(&$active_trail, $item) {
-  dpm($active_trail);
-  dpm($item);
+  //dpm($active_trail);
+  //dpm($item);
+  
   
   $args = arg();
   
   //dpm($args);
   //dpm($_GET);
-  
   
   if (@$item['page_arguments'][0]->type == 'product_a' && !empty($item['page_arguments'][0]->field_parent_zp_id['und'][0]['safe_value'])) {
     
@@ -1317,10 +1317,9 @@ function zp_pages_menu_breadcrumb_alter(&$active_trail, $item) {
     menu_tree_set_path('menu-catalog-menu', $path);
     $custom_trail = zp_misc_menu_get_active_trail_by_path($path);
     
-    
     if ($custom_trail) {
       $active_trail = $custom_trail;
-      dpm($custom_trail);
+      //dpm($custom_trail);
     }
     
   } // End of if ($arga[0] == 'p') {
