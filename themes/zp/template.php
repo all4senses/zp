@@ -664,6 +664,9 @@ function zp_breadcrumb($variables) {
         
 
       }
+      else {
+        $breadcrumb[] = drupal_get_title();
+      }
       
       // Remove Home link
       if (strpos($breadcrumb[0], 'Home') !== FALSE) {
