@@ -721,3 +721,12 @@ ul.menu .menu {
 ul.menu a.active, ul.menu a.active-trail {
     font-weight: bold;
 }
+
+ul.menu > ul {
+    display: none;
+}
+
+ul.menu li.active-trail > ul {
+    display: block;
+}
+

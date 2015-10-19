@@ -1324,5 +1324,5 @@ function zp_pages_menu_breadcrumb_alter(&$active_trail, $item) {
     
   } // End of if ($arga[0] == 'p') {
   
-  
+  dpm($active_trail);
 }
