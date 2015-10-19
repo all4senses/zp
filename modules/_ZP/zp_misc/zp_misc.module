@@ -3395,8 +3395,9 @@ function zp_misc_menu_get_active_trail_by_path($custom_path) {
       // a stripped down menu tree containing the active trail only, in case
       // the given menu has not been built in this request yet.
       $tree = menu_tree_page_data($preferred_link['menu_name'], NULL, TRUE);
-      list($key, $curr) = each($tree);
       dpm($tree);
+      list($key, $curr) = each($tree);
+      
     }
     // There is no link for the current path.
     else {
@@ -3405,6 +3406,7 @@ function zp_misc_menu_get_active_trail_by_path($custom_path) {
     }
 
     while ($curr) {
+      dpm($curr);
       $link = $curr['link'];
       if ($link['in_active_trail']) {
         // Add the link to the trail, unless it links to its parent.
