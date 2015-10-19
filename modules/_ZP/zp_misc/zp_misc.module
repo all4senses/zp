@@ -1934,11 +1934,12 @@ function zp_misc_url_outbound_alter(&$path, &$options, $original_path) {
     
     if (strpos($path, 'z01131?') !== FALSE) {
       dpm($path); 
+      dpm($options);
+      dpm($original_path);
     }
     
    
-//   dpm($options);
-//   dpm($original_path);
+
   }
 }
 
