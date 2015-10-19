@@ -595,19 +595,30 @@ function zp_preprocess_breadcrumb(&$variables) {
  */
 function zp_breadcrumb($variables) {
   
-  dpm($variables);
+  //dpm($variables);
   
   //return zp_misc_setBreadcrumbs($variables);
   
   
   $breadcrumb = $variables['breadcrumb'];
   
-  $current_title = drupal_get_title();
+  
   
   // And finally add a current place without a link.
   if (!empty($breadcrumb)) {
+  
+    global $current_custom_trail;
     
-    //dpm($breadcrumb);
+    dpm($breadcrumb);
+    dpm($current_custom_trail);
+    
+    $current_title = drupal_get_title();
+    
+    foreach($breadcrumb as $key => $value) {
+      if (strpos($value, 'Home') !== FALSE) {
+        unset($breadcrumb[$key]);
+      }
+    }
     
     // Adding the title of the current page to the breadcrumb.
     $breadcrumb[] = $current_title;

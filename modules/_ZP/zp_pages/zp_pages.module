@@ -1319,7 +1319,12 @@ function zp_pages_menu_breadcrumb_alter(&$active_trail, $item) {
     
     if ($custom_trail) {
       $active_trail = $custom_trail;
-      dpm($custom_trail);
+      
+      
+      global $current_custom_trail;
+      $current_custom_trail = $custom_trail;
+      
+      //dpm($custom_trail);
     }
     
   } // End of if ($arga[0] == 'p') {
