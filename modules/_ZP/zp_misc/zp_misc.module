@@ -3469,7 +3469,8 @@ function zp_misc_array_insert_after($key, array &$array, $new_key, $new_value) {
     dpm('x1.');
     $new = array();
     foreach ($array as $k => $value) {
-      dpm('x2.' . $k);
+      dpm('x2.' . $k . ' -> ' . $value);
+      
       $new[$k] = $value;
       if ($k === $key) {
         $new[$new_key] = $new_value;
