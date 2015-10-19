@@ -620,25 +620,33 @@ function zp_breadcrumb($variables) {
     // For depts or products...
     if (in_array($args[0], array('d', 'dp', 'p'))) {
       
-      
+      dpm('1.');
 
       // For depts with products
       // Put facets breadcrumbs AFTER a current dept title, 
       // and add a link to a current title, if there are any facets breadcrumbs
       
       if ($args[0] == 'dp') {
+        
+        dpm('2. dp.');
+        
         $zp_current_trail_count = count($zp_current_trail);
         // Get a parent of a current dept
         $parent_dept_breadcrumb_index = $zp_current_trail_count - 2;
         
         // Assure that the index of the parent dept is the same in trail and breadcrumb
         if (strpos($breadcrumb[$parent_dept_breadcrumb_index], '>' . $zp_current_trail[$parent_dept_breadcrumb_index]['link_title'] . '<') !== FALSE) {
+          
+          dpm('3.');
+          
           if (empty($breadcrumb[$zp_current_trail_count - 1])) {
+            dpm('4.');
             // Do nothing, because we dont have here not the current title, nor facets breadcrumb...
             // Just add a current dept title for the last (current) breadcrumb.
             $breadcrumb[] = $zp_current_trail[$zp_current_trail_count - 1]['link_title'];
           }
           elseif (strpos($breadcrumb[$zp_current_trail_count - 1], '>' . $zp_current_trail[$zp_current_trail_count - 1]['link_title'] . '<') === FALSE) {
+            dpm('5.');
             // the last crumb is defined but it's not the current title
             // We have facet breadcrumb(s) injected here.
             // So we insert our current dept title as breadcrumb after the parent dept and before facets breadcrumb.
@@ -647,6 +655,7 @@ function zp_breadcrumb($variables) {
           }
         }
         else {
+          dpm('6.');
           // Something wrong... trail and breadcrumb are not the same
           // So we do nothing here...
         }
@@ -658,11 +667,13 @@ function zp_breadcrumb($variables) {
       
       // Remove Home link
       if (strpos($breadcrumb[0], 'Home') !== FALSE) {
+        dpm('7.');
         unset($breadcrumb[0]);
       }
     }
     else {
       // Adding the title of the current page to the breadcrumb.
+      dpm('8.');
       $breadcrumb[] = drupal_get_title();
     }
     
