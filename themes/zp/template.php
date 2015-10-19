@@ -595,40 +595,28 @@ function zp_preprocess_breadcrumb(&$variables) {
  */
 function zp_breadcrumb($variables) {
   
-  //dpm($variables);
-  
   //return zp_misc_setBreadcrumbs($variables);
   
-  
   $breadcrumb = $variables['breadcrumb'];
-  
-  
   
   // And finally add a current place without a link.
   if (!empty($breadcrumb)) {
   
     global $zp_current_trail;
     
-    dpm($breadcrumb);
-    dpm($zp_current_trail);
-    
-    
-    
     $args = arg();
-    dpm($args);
+    //dpm($args);
+    //dpm($breadcrumb);
+    //dpm($zp_current_trail);
     
     // For depts or products...
     if (in_array($args[0], array('d', 'dp', 'p'))) {
-      
-      dpm('1.');
 
       // For depts with products
       // Put facets breadcrumbs AFTER a current dept title, 
       // and add a link to a current title, if there are any facets breadcrumbs
       
       if ($args[0] == 'dp') {
-        
-        dpm('2. dp.');
         
         $zp_current_trail_count = count($zp_current_trail);
         // Get a parent of a current dept
@@ -637,50 +625,42 @@ function zp_breadcrumb($variables) {
         // Assure that the index of the parent dept is the same in trail and breadcrumb
         if (strpos($breadcrumb[$parent_dept_breadcrumb_index], '>' . $zp_current_trail[$parent_dept_breadcrumb_index]['link_title'] . '<') !== FALSE) {
           
-          dpm('3.');
-          
           if (empty($breadcrumb[$zp_current_trail_count - 1])) {
-            dpm('4.');
             // Do nothing, because we dont have here not the current title, nor facets breadcrumb...
             // Just add a current dept title for the last (current) breadcrumb.
             $breadcrumb[] = $zp_current_trail[$zp_current_trail_count - 1]['link_title'];
           }
           elseif (strpos($breadcrumb[$zp_current_trail_count - 1], '>' . $zp_current_trail[$zp_current_trail_count - 1]['link_title'] . '<') === FALSE) {
-            dpm('5.');
             // the last crumb is defined but it's not the current title
             // We have facet breadcrumb(s) injected here.
             // So we insert our current dept title as breadcrumb after the parent dept and before facets breadcrumb.
             // And we add a link to the current dept title... because that way we set a link to reset (remove) facets user choice.
             $breadcrumb = zp_misc_array_insert_after($parent_dept_breadcrumb_index, $breadcrumb, $parent_dept_breadcrumb_index + 1, l($zp_current_trail[$zp_current_trail_count - 1]['link_title'], $zp_current_trail[$zp_current_trail_count - 1]['link_path']));
           }
-        }
+          
+        } // End of if (strpos($breadcrumb[$parent_dept_breadcrumb_index], '>' . $zp_current_trail[$parent_dept_breadcrumb_index]['link_title'] . '<') !== FALSE) {
         else {
-          dpm('6.');
           // Something wrong... trail and breadcrumb are not the same
           // So we do nothing here...
         }
-                
-        
-        
 
-      }
+      } // End of if ($args[0] == 'dp') {
       else {
         $breadcrumb[] = drupal_get_title();
       }
       
       // Remove Home link
       if (strpos($breadcrumb[0], 'Home') !== FALSE) {
-        dpm('7.');
         unset($breadcrumb[0]);
       }
-    }
+      
+    } // End of if (in_array($args[0], array('d', 'dp', 'p'))) {
     else {
       // Adding the title of the current page to the breadcrumb.
-      dpm('8.');
       $breadcrumb[] = drupal_get_title();
     }
     
-    dpm($breadcrumb);
+    //dpm($breadcrumb);
     
     // Provide a navigational heading to give context for breadcrumb links to
     // screen-reader users. Make the heading invisible with .element-invisible.

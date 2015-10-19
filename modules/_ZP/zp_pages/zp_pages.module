@@ -1312,12 +1312,6 @@ function zp_pages_menu_breadcrumb_alter(&$active_trail, $item) {
   //dpm($active_trail);
   //dpm($item);
   
-  
-  $args = arg();
-  
-  //dpm($args);
-  //dpm($_GET);
-  
   if (@$item['page_arguments'][0]->type == 'product_a' && !empty($item['page_arguments'][0]->field_parent_zp_id['und'][0]['safe_value'])) {
     
     $path = 'dp/' . $item['page_arguments'][0]->field_parent_zp_id['und'][0]['safe_value']; //'dp/z01131';
@@ -1327,13 +1321,12 @@ function zp_pages_menu_breadcrumb_alter(&$active_trail, $item) {
     
     if ($custom_trail) {
       $active_trail = $custom_trail;
-      //dpm($custom_trail);
     }
     
   } // End of if ($arga[0] == 'p') {
   
-  
+  //dpm($active_trail);
   global $zp_current_trail;
   $zp_current_trail = $active_trail;
-  dpm($active_trail);
+  
 }
