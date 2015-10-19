@@ -3460,22 +3460,14 @@ function zp_misc_menu_get_active_trail_by_path($custom_path) {
  * @see array_insert_before()
  */
 function zp_misc_array_insert_after($key, array &$array, $new_key, $new_value) {
-  dpm('$key = ' . $key);
-  dpm($array);
-  dpm('$new_key = ' . $new_key);
-  dpm('$new_value = ' . $new_value);
   
   if (array_key_exists($key, $array)) {
-    dpm('x1.');
     $new = array();
     $added = FALSE;
     foreach ($array as $k => $value) {
-      dpm('x2.' . $k . ' -> ' . $value);
-
       if (!$added) {
         $new[$k] = $value;
         if ($k === $key) {
-          dpm('x2----.');
           $new[$new_key] = $new_value;
           $added = TRUE;
         }
@@ -3483,13 +3475,8 @@ function zp_misc_array_insert_after($key, array &$array, $new_key, $new_value) {
       else {
         $new[] = $value;
       }
-      
-      
-    }
-    dpm('x3.');
-    dpm($new);
+    } // End of foreach ($array as $k => $value) {
     return $new;
-  }
-  dpm('x4.');
+  } // End of if (array_key_exists($key, $array)) {
   return FALSE;
 }
