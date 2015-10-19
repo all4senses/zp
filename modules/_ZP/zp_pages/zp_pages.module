@@ -1333,6 +1333,6 @@ function zp_pages_menu_breadcrumb_alter(&$active_trail, $item) {
   } // End of if ($arga[0] == 'p') {
   
   global $current_custom_trail;
-  $current_custom_trail = $custom_trail;
+  $current_custom_trail = $active_trail;
   dpm($active_trail);
 }
