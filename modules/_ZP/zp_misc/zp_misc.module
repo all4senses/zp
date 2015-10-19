@@ -3473,6 +3473,7 @@ function zp_misc_array_insert_after($key, array &$array, $new_key, $new_value) {
       
       $new[$k] = $value;
       if ($k === $key) {
+        dpm('x2----.');
         $new[$new_key] = $new_value;
       }
     }
