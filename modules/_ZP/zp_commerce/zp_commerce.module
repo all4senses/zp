@@ -3546,6 +3546,11 @@ field_product:commerce_price:amount_decimal (Array, 24 elements)
   
   // Title of items that dont fall up to the shown
   // Works
+  foreach ($facet_info as $key => $value) {
+    if (isset($value['map options'])) {
+      $value['map options']['missing label'] = 'Прочее';
+    }
+  }
 //  $facet_info['field_brand']['map options']['missing label'] = 'Прочее';
 //  $facet_info['field_category_main']['map options']['missing label'] = 'Прочее';
 //  $facet_info['field_categories_other']['map options']['missing label'] = 'Прочее';
