@@ -42,7 +42,7 @@ function zp_link($variables) {
     }
   }
   else {
-     if (strpos($variables['path'], 'f[0]') !== FALSE) {
+     if (strpos($variables['path'], 'z01131') !== FALSE) {
       dpm($variables['path']);
      }
   }
