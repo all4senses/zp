@@ -3776,18 +3776,26 @@ function zp_commerce_facet_items_alter(&$build, &$settings) {
     
     dpm($build);
     
-    if(!$tids = array_keys($build)) {
-      return;
+    if (isset($build['!'])) {
+      $other = $build['!'];
+      unset($build['!']);
+      $build['!'] = $other;
     }
     
-    dpm($tids);
+    dpm($build);
     
-    if ( ($tid_other = array_search( '!', $tids)) !== FALSE) {
-      unset($tids[$tid_other]);
-    }
-    
-    dpm($tid_other);
-    dpm($tids);
+//    if(!$tids = array_keys($build)) {
+//      return;
+//    }
+//    
+//    dpm($tids);
+//    
+//    if ( ($tid_other = array_search( '!', $tids)) !== FALSE) {
+//      unset($tids[$tid_other]);
+//    }
+//    
+//    dpm($tid_other);
+//    dpm($tids);
   }
   elseif ($settings->facet == 'field_category_main' || $settings->facet == 'field_categories_other') {
     
