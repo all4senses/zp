@@ -1901,6 +1901,8 @@ function zp_misc_url_inbound_alter(&$path, $original_path, $path_language) {
  * Implements hook_url_outbound_alter().
  */
 function zp_misc_url_outbound_alter(&$path, &$options, $original_path) {
+  
+/*  
   // Create the path /contact-us from /contact
 //  if (preg_match('|^contact$|', $path, $matches)) {
 //    $path = 'contact-us';
@@ -1921,6 +1923,8 @@ function zp_misc_url_outbound_alter(&$path, &$options, $original_path) {
 //    $options['fragment'] = 'zzz';
 //    //dpm($options);
 //  }
+  */
+  
   /*
   if ($path == 'node/add/review') {
     $path = 'provider-submit-user-review';
@@ -1932,10 +1936,10 @@ function zp_misc_url_outbound_alter(&$path, &$options, $original_path) {
   }
   else {
     
-    if (strpos($path, 'z01131?') !== FALSE) {
+    if (strpos($path, 'f[0]') !== FALSE) {
       dpm($path); 
-      dpm($options);
-      dpm($original_path);
+      //dpm($options);
+      //dpm($original_path);
       
       $path = 'contact-us';
     }
