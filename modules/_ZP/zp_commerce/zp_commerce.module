@@ -3485,7 +3485,7 @@ function zp_commerce_facetapi_facet_info_alter(array &$facet_info, array $search
 //  }
   
   
-  ////dpm($facet_info); 
+  dpm($facet_info); 
   
   /*
   type (Array, 24 elements)
@@ -3589,6 +3589,7 @@ field_product:commerce_price:amount_decimal (Array, 24 elements)
  * @return array
  *   An array mapping raw filter values to their labels.
  */
+/*
 function zp_commerce_search_api_facetapi_facet_map_callback(array $values, array $options = array()) {
   //dpm($values);
   $map = array();
@@ -3659,6 +3660,8 @@ function zp_commerce_search_api_facetapi_facet_map_callback(array $values, array
   return $map;
   
 }
+*/
+
 
 /**
  * Allows for alterations of the facets on the fly, without caching.
