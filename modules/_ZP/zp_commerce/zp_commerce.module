@@ -3546,9 +3546,9 @@ field_product:commerce_price:amount_decimal (Array, 24 elements)
   
   // Title of items that dont fall up to the shown
   // Works
-  $facet_info['field_brand']['map options']['missing label'] = 'Прочее';
-  $facet_info['field_category_main']['map options']['missing label'] = 'Прочее';
-  $facet_info['field_categories_other']['map options']['missing label'] = 'Прочее';
+//  $facet_info['field_brand']['map options']['missing label'] = 'Прочее';
+//  $facet_info['field_category_main']['map options']['missing label'] = 'Прочее';
+//  $facet_info['field_categories_other']['map options']['missing label'] = 'Прочее';
     
   // Work, but we don't use it here.
   //$facet_info['field_brand']['map callback'] = 'zp_commerce_search_api_facetapi_facet_map_callback';
