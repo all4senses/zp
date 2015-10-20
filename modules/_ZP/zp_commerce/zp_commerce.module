@@ -3782,10 +3782,11 @@ function zp_commerce_facet_items_alter(&$build, &$settings) {
     
     dpm($tids);
     
-    if ($tid_other = array_search ( '!', $tids)) {
+    if ($tid_other = array_search ( '!', $tids) !== FALSE) {
       unset($tids[$tid_other]);
     }
     
+    dpm($tid_other);
     dpm($tids);
   }
   elseif ($settings->facet == 'field_category_main' || $settings->facet == 'field_categories_other') {
