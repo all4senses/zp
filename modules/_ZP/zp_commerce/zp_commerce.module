@@ -3781,7 +3781,7 @@ function zp_commerce_facet_items_alter(&$build, &$settings) {
       $build['!'] = $other;
       
       $build['!']['#html'] = TRUE;
-      $build['!']['#markup'] = '<div class="cat-other" style="color: red;">' . $result_build['!']['#markup'] . '</div>';
+      $build['!']['#markup'] = '<div class="cat-other" style="color: red;">' . $build['!']['#markup'] . '</div>';
     }
     
     dpm($build);
