@@ -3725,6 +3725,9 @@ field_product:commerce_price:amount_decimal (Array, 24 elements)
 
 /**
  * 
+ * 1. Move 'Other' to the end of an options list.
+ * 2. Set titles for categories facets subgroups.
+ * 
  * Should be installed the module Facet API Bonus
  * 
  * 
@@ -3757,9 +3760,9 @@ function zp_commerce_facet_items_alter(&$build, &$settings) {
     $build['spar'] = $item;
     $build['spar']['#markup'] = '<div class="tag-title" style="display: none;">Tag title 1</div>' . $build['spar']['#markup'];
     $build['spar']['#html'] = TRUE;
-    */
-    //$build['spar--xxx'] = $item;
-    //$build['spar--xxx']['#markup'] = 'spar--xxx';
+
+//    $build['spar--xxx'] = $item;
+//    $build['spar--xxx']['#markup'] = 'spar--xxx';
     
 //    $build['tag_1'] = array(
 //        '#markup' => 'Tag 1',
@@ -3772,34 +3775,21 @@ function zp_commerce_facet_items_alter(&$build, &$settings) {
 //        '#item_children' => NULL,
 //        '#query' => NULL,
 //    );
+    */
     
-    
-    dpm($build);
-    
+    // Move 'Other' to the end of an options list.
     if ($other = $build['!']) {
       unset($build['!']);
       $build['!'] = $other;
-      
       $build['!']['#html'] = TRUE;
       $build['!']['#markup'] = '<div class="cat-other" style="color: red;">' . $build['!']['#markup'] . '</div>';
     }
-    
-    dpm($build);
-    
-//    if(!$tids = array_keys($build)) {
-//      return;
-//    }
-//    
-//    dpm($tids);
-//    
-//    if ( ($tid_other = array_search( '!', $tids)) !== FALSE) {
-//      unset($tids[$tid_other]);
-//    }
-//    
-//    dpm($tid_other);
-//    dpm($tids);
-  }
+
+  } // End of if ($settings->facet == 'field_brand') {
   elseif ($settings->facet == 'field_category_main' || $settings->facet == 'field_categories_other') {
+    
+    // 1. Move 'Other' to the end of an options list.
+    // 2. Set titles for categories facets subgroups.
     
     if(!$tids = array_keys($build)) {
       return;
@@ -3809,30 +3799,25 @@ function zp_commerce_facet_items_alter(&$build, &$settings) {
       unset($tids[$tid_other]);
     }
     
-    //dpm($tids);
     $query = db_select('taxonomy_term_hierarchy', 'th');
     $query->condition('th.tid', $tids, 'IN');
     $query->leftJoin('taxonomy_term_data', 'td', "td.tid = th.parent");
     $query->fields('th', array('tid'));
     $query->addField('td', 'name', 'category');
     
-    //$categories = $query->execute()->fetchAllAssoc('tid');
     $categories = $query->execute()->fetchAllKeyed();
     //dpm($categories);
     
     natcasesort($categories);
-    
             
     $new_build = array();
     foreach ($categories as $tid => $category) {
-      //$new_build[$category][$tid] = $build[$tid]['#markup'];
       $new_build[$category][$tid] = $build[$tid];
     }
     
     //dpm($new_build);
     
     foreach ($new_build as $category => $category_array) {
-      //natcasesort($new_build[$category]);
       uasort($new_build[$category], 'zp_commerce_sortArrayBuildByCatName');
       
       $count = 0;
@@ -3841,7 +3826,7 @@ function zp_commerce_facet_items_alter(&$build, &$settings) {
         $data['#html'] = TRUE;
         $result_build[$tid] = $data;
       }
-    }
+    } // End of foreach ($new_build as $category => $category_array) {
     
     if (@$result_build) {
       if ($tid_other) {
@@ -3859,14 +3844,11 @@ function zp_commerce_facet_items_alter(&$build, &$settings) {
         $cat_name_js_is_loaded = TRUE;
       }
 
-  
-    }
-  }
-  
-  
-  
-  
-}
+    } // End of if (@$result_build) {
+    
+  } // End of elseif ($settings->facet == 'field_category_main' || $settings->facet == 'field_categories_other') {
+    
+} // End of function zp_commerce_facet_items_alter(&$build, &$settings) {
 
 
 
