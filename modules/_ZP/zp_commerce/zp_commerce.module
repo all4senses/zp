@@ -3782,7 +3782,7 @@ function zp_commerce_facet_items_alter(&$build, &$settings) {
     
     dpm($tids);
     
-    if ($tid_other = array_search ( '!', $tids) !== FALSE) {
+    if ( ($tid_other = array_search( '!', $tids)) !== FALSE) {
       unset($tids[$tid_other]);
     }
     
