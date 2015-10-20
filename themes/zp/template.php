@@ -41,6 +41,11 @@ function zp_link($variables) {
 
     }
   }
+  else {
+     if (strpos($variables['path'], 'f[0]') !== FALSE) {
+      dpm($variables['path']);
+     }
+  }
   return '<a href="' . check_plain(url($variables['path'], $variables['options'])) . '"' . drupal_attributes($variables['options']['attributes']) . '>' . ($variables['options']['html'] ? $variables['text'] : check_plain($variables['text'])) . '</a>';
 }
 
