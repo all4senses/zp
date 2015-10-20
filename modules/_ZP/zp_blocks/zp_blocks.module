@@ -1,4 +1,5 @@
 <?php
+// Русский...
 
 /**
  * @file
@@ -421,7 +422,7 @@ function zp_blocks_getBlockThemed($block_data, $cache_on = FALSE, $cache_expire_
   
   // Caching system version.
   
-  $cid = 'ch-block-cache---' . $block_data['module'] . '-' . $block_data['delta'] . $suffix;
+  $cid = 'zp-block-cache---' . $block_data['module'] . '-' . $block_data['delta'] . $suffix;
   $cache = cache_get($cid, 'cache');
 
   if ($cache && !empty($cache->data) && $cache->expire > time()) {

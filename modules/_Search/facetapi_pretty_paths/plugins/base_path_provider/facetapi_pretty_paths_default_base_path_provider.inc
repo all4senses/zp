@@ -16,8 +16,6 @@ class FacetApiPrettyPathsDefaultBasePathProvider implements FacetApiPrettyPathsB
    */
   public function getBasePath(FacetapiUrlProcessorPrettyPaths $urlProcessor) {
     return $urlProcessor->getPathWithoutSegments();
-    
-    //return 'http://zp.zapokupkami.com';
   }
 
 }

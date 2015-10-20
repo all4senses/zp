@@ -1,5 +1,5 @@
 <?php
-
+// Русский...
 
 /**
  * Implements hook_preprocess_user_profile();
@@ -164,12 +164,12 @@ function zp_pager($variables) {
   $altered_pager_posts = array('/about-voip-services', '/blog', '/news');
   
   if (@in_array($_SERVER['REDIRECT_URL'], $altered_pager_reviews)) {
-    $newer_link_title = 'вЂ№ Newer Reviews';
-    $older_link_title = 'Older Reviews вЂє';
+    $newer_link_title = '‹ Newer Reviews';
+    $older_link_title = 'Older Reviews ›';
   }
   elseif (arg(0) == 'user' || in_array(@$_SERVER['REDIRECT_URL'], $altered_pager_posts)) {
-    $newer_link_title = 'вЂ№ Newer Posts';
-    $older_link_title = 'Older Posts вЂє';
+    $newer_link_title = '‹ Newer Posts';
+    $older_link_title = 'Older Posts ›';
   }
   else {
     return theme_pager($variables);
@@ -185,12 +185,12 @@ function zp_pager($variables) {
   $altered_pager_reviews = array(98, 429, 434, 581); // 581 - /canada-voip, 434 - /residential-voip-reviews, 429 - /business-voip-reviews, 98 - /providers/reviews
   
   if ((in_array($arg_0, $altered_pager_posts) && $arg_1 != 'tags-admin') || @$_SERVER['REDIRECT_URL'] == '/articles') {
-    $newer_link_title = 'вЂ№ Newer Posts';
-    $older_link_title = 'Older Posts вЂє';
+    $newer_link_title = '‹ Newer Posts';
+    $older_link_title = 'Older Posts ›';
   }
   elseif ( $arg_0 == 'node' && (in_array($arg_1, $altered_pager_reviews) || zp_misc_identifyNodeType($arg_1) == 'provider') ) {
-    $newer_link_title = 'вЂ№ Newer Reviews';
-    $older_link_title = 'Older Reviews вЂє';
+    $newer_link_title = '‹ Newer Reviews';
+    $older_link_title = 'Older Reviews ›';
   }
   else {
     return theme_pager($variables);
@@ -285,10 +285,10 @@ function zp_pager($variables) {
   }
   // End of generation loop preparation.
 
-  $li_first = theme('pager_first', array('text' => (isset($tags[0]) ? $tags[0] : t('В« first')), 'element' => $element, 'parameters' => $parameters));
-  $li_previous = theme('pager_previous', array('text' => (isset($tags[1]) ? $tags[1] : t('вЂ№ previous')), 'element' => $element, 'interval' => 1, 'parameters' => $parameters));
-  $li_next = theme('pager_next', array('text' => (isset($tags[3]) ? $tags[3] : t('next вЂє')), 'element' => $element, 'interval' => 1, 'parameters' => $parameters));
-  $li_last = theme('pager_last', array('text' => (isset($tags[4]) ? $tags[4] : t('last В»')), 'element' => $element, 'parameters' => $parameters));
+  $li_first = theme('pager_first', array('text' => (isset($tags[0]) ? $tags[0] : t('« first')), 'element' => $element, 'parameters' => $parameters));
+  $li_previous = theme('pager_previous', array('text' => (isset($tags[1]) ? $tags[1] : t('‹ previous')), 'element' => $element, 'interval' => 1, 'parameters' => $parameters));
+  $li_next = theme('pager_next', array('text' => (isset($tags[3]) ? $tags[3] : t('next ›')), 'element' => $element, 'interval' => 1, 'parameters' => $parameters));
+  $li_last = theme('pager_last', array('text' => (isset($tags[4]) ? $tags[4] : t('last »')), 'element' => $element, 'parameters' => $parameters));
 
   if ($pager_total[$element] > 1) {
     if ($li_first) {
@@ -309,7 +309,7 @@ function zp_pager($variables) {
       if ($i > 1) {
         $items[] = array(
           'class' => array('pager-ellipsis'),
-          'data' => 'вЂ¦',
+          'data' => '…',
         );
       }
       // Now generate the actual pager piece.
@@ -336,7 +336,7 @@ function zp_pager($variables) {
       if ($i < $pager_max) {
         $items[] = array(
           'class' => array('pager-ellipsis'),
-          'data' => 'вЂ¦',
+          'data' => '…',
         );
       }
     }
@@ -484,12 +484,12 @@ function zp_html_head_alter(&$head_elements) {
         $current_title = drupal_get_title();
       }
 
-      $current_title = str_replace(' - Р—Р° РџРѕРєСѓРїРєР°РјРё!', '', $current_title);
+      $current_title = str_replace(' - За Покупками!', '', $current_title);
 
       // Will be used in html.tpl.php
       global $altered_head_title;
       
-      $altered_head_title = $current_title . ' - Page ' . $current_page . ' - Р—Р° РџРѕРєСѓРїРєР°РјРё!';
+      $altered_head_title = $current_title . ' - Page ' . $current_page . ' - За Покупками!';
       
       if (isset($head_elements['metatag_description'])) {
         $head_elements['metatag_description']['#value'] = 'Page ' . $current_page . ' - ' . $head_elements['metatag_description']['#value'];
@@ -673,7 +673,7 @@ function zp_breadcrumb($variables) {
     $heading = '<h3 class="element-invisible">' . t('You are here') . '</h3>';
     // Uncomment to add current page to breadcrumb
 	// $breadcrumb[] = drupal_get_title();
-    return '<nav itemprop="breadcrumb" class="breadcrumb">' . $heading . implode(' В» ', $breadcrumb) . '</nav>';
+    return '<nav itemprop="breadcrumb" class="breadcrumb">' . $heading . implode(' » ', $breadcrumb) . '</nav>';
   }
   
 }
