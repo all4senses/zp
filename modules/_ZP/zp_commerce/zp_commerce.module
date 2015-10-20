@@ -3749,13 +3749,15 @@ function zp_commerce_facet_items_alter(&$build, &$settings) {
   //dpm($build);
   //dpm($settings);
   
-  if ($settings->facet == 'field_brand' && !empty($build['spar'])) {
+  if ($settings->facet == 'field_brand') {
+    
+    /*
     $item = $build['spar'];
     unset($build['spar']);
     $build['spar'] = $item;
     $build['spar']['#markup'] = '<div class="tag-title" style="display: none;">Tag title 1</div>' . $build['spar']['#markup'];
     $build['spar']['#html'] = TRUE;
-    
+    */
     //$build['spar--xxx'] = $item;
     //$build['spar--xxx']['#markup'] = 'spar--xxx';
     
@@ -3772,12 +3774,26 @@ function zp_commerce_facet_items_alter(&$build, &$settings) {
 //    );
     
     
-  }
-  
-  if ($settings->facet == 'field_category_main' || $settings->facet == 'field_categories_other' || $settings->facet == 'field_brand') {
+    dpm($build);
+    
     if(!$tids = array_keys($build)) {
       return;
     }
+    
+    dpm($tids);
+    
+    if ($tid_other = array_search ( '!', $tids)) {
+      unset($tids[$tid_other]);
+    }
+    
+    dpm($tids);
+  }
+  elseif ($settings->facet == 'field_category_main' || $settings->facet == 'field_categories_other') {
+    
+    if(!$tids = array_keys($build)) {
+      return;
+    }
+    
     if ($tid_other = array_search ( '!', $tids)) {
       unset($tids[$tid_other]);
     }
