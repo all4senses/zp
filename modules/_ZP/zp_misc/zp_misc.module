@@ -1941,7 +1941,7 @@ function zp_misc_url_outbound_alter(&$path, &$options, $original_path) {
       //dpm($options);
       //dpm($original_path);
       
-      $path = 'contact-us';
+      $path = $path . '&contact-us';
     }
     
    
