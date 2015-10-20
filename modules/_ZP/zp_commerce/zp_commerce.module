@@ -3786,7 +3786,7 @@ function zp_commerce_facet_items_alter(&$build, &$settings) {
     */
     
     // Move 'Other' to the end of an options list.
-    if ($other = $build['!']) {
+    if ($other = @$build['!']) {
       unset($build['!']);
       $build['!'] = $other;
       $build['!']['#html'] = TRUE;
