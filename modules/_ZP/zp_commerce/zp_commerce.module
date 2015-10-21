@@ -55,8 +55,8 @@ function zp_commerce_menu() {
 function zp_commerce_form_alter(&$form, &$form_state, $form_id) {
 
   
-  dpm($form_id); dpm($form);
-  dpm($form_state);
+//  dpm($form_id); dpm($form);
+//  dpm($form_state);
   // $conf['locale_custom_strings_en']['old string'] = 'new string'
   
   //Hack quantity form in each view to accept fractional quantities
@@ -78,9 +78,13 @@ function zp_commerce_form_alter(&$form, &$form_state, $form_id) {
     
     case 'search_api_ranges_block_slider_view_form_price':
       
+      dpm($form_id); dpm($form);
+      dpm($form_state);
+  
       $form['text-range']['#markup'] = '<p class="text-range">Показать только товары в диапазоне цен:</p>';
       $form['range-from']['#suffix'] = $form['range-to']['#suffix'] = '<div>' . $form_state['build_info']['args'][0]['suffix'] . '</div>';
       $form['range-from']['#title'] = 'От'; $form['range-to']['#title'] = 'До';
+      
       break;
     
     
