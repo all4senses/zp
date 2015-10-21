@@ -1898,8 +1898,10 @@ function zp_misc_url_inbound_alter(&$path, $original_path, $path_language) {
 //    //$path = '';
 //  }
   
+  // Search API range, Convert back to the original format
+  // [10 TO 25] from zp altered more friendly format --10-to-25--
   if (strpos($path, '/price/') !== FALSE) {
-      dpm($path); 
+      //dpm($path); 
       $path = str_replace('--', ']', $path);
       $path = str_replace(array('/]', '-to-'), array('/[', ' TO '), $path);
   }
@@ -1943,19 +1945,14 @@ function zp_misc_url_outbound_alter(&$path, &$options, $original_path) {
     //$path = 'sites/default/files/pdfs/voipe911-advisory.pdf';
     $path = 'pdfs/' . $matches[1];
   }
-  else {
-    
-    if (strpos($path, '/price/') !== FALSE) {
-      dpm($path); 
-      //dpm($options);
-      //dpm($original_path);
+  elseif (strpos($path, '/price/') !== FALSE) {
+      // Search API range, Convert to more url friendly format
+      // --10-to-25-- from original [10 TO 25]
+      //dpm($path); 
       
       $path = str_replace(array('[', ']', ' TO '), array('--', '--', '-to-'), $path);
     }
     
-   
-
-  }
 }
 
 
