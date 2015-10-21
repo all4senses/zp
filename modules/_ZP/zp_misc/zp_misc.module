@@ -1939,13 +1939,13 @@ function zp_misc_url_outbound_alter(&$path, &$options, $original_path) {
   }
   else {
     
-//    if (strpos($path, 'f[0]') !== FALSE) {
-//      dpm($path); 
-//      //dpm($options);
-//      //dpm($original_path);
-//      
-//      $path = $path . '&contact-us';
-//    }
+    if (strpos($path, '/price/') !== FALSE) {
+      dpm($path); 
+      //dpm($options);
+      //dpm($original_path);
+      
+      $path = $path . '?contact-us';
+    }
     
    
 
