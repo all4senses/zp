@@ -1901,7 +1901,7 @@ function zp_misc_url_inbound_alter(&$path, $original_path, $path_language) {
   if (strpos($path, '/price/') !== FALSE) {
       dpm($path); 
       $path = str_replace('--', ']', $path);
-      $path = str_replace('/]', '[', $path);
+      $path = str_replace('/]', '/[', $path);
   }
 }
 
