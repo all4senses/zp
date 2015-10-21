@@ -1897,6 +1897,12 @@ function zp_misc_url_inbound_alter(&$path, $original_path, $path_language) {
 //    $path = 'sites/default/files/pdfs/' . $matches[1];
 //    //$path = '';
 //  }
+  
+  if (strpos($path, '/price/') !== FALSE) {
+      dpm($path); 
+      $path = str_replace('--', ']', $path);
+      $path = str_replace('/]', '[', $path);
+  }
 }
 
 
@@ -1944,7 +1950,7 @@ function zp_misc_url_outbound_alter(&$path, &$options, $original_path) {
       //dpm($options);
       //dpm($original_path);
       
-      $path = $path . '?contact-us';
+      $path = str_replace(array('[', ']'), '--', $path);
     }
     
    
