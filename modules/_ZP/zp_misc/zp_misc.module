@@ -3513,12 +3513,6 @@ function zp_misc_array_insert_after($key, array &$array, $new_key, $new_value) {
  */
 function zp_misc_getCountryAndBrand_fromBar_form($form, &$form_state) {
   
-  dpm($_POST);
-  
-  
-
-  
-  
 //  $form['title'] = array(
 //    //'#markup' => '<div class="title">Sign up to receive weekly updates</div>',
 //    '#markup' => '<div class="title"><div>Stay informed - </div>Sign up for our newsletter.</div>',
@@ -3544,6 +3538,7 @@ function zp_misc_getCountryAndBrand_fromBar_form($form, &$form_state) {
   
   if(!empty($_POST['bar'])) {
     if ($code = zp_misc_getCountryAndBrand_fromBar($_POST['bar'])) {
+      dpm($_POST);
       dpm($code);
       $form['found_code'] = array(
         //'#title' => 'Определена страна производства:',
