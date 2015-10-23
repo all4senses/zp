@@ -3526,7 +3526,6 @@ function zp_misc_getCountryAndBrand_fromBar_form($form, &$form_state) {
     //'#description' => '',
     //'#element_validate' => array('gv_misc_validate_email'),
     '#required' => TRUE,
-    //'#access' => $user->uid ? FALSE : TRUE,
     '#attributes' => array('placeholder' => 'Введите штрих-код товара'),
   );
   
@@ -3538,16 +3537,22 @@ function zp_misc_getCountryAndBrand_fromBar_form($form, &$form_state) {
   
   if(!empty($_POST['bar'])) {
     if ($code = zp_misc_getCountryAndBrand_fromBar($_POST['bar'])) {
-      dpm($_POST);
-      dpm($code);
+      //dpm($_POST);
+      //dpm($code);
       $form['found_code'] = array(
         //'#title' => 'Определена страна производства:',
         '#markup' => '<div class="title">Определена страна производства:</div><div>' . print_r($code, TRUE) . '</div>',
       );
     }
+    else {
+      $form['not_found_code'] = array(
+        //'#title' => 'Определена страна производства:',
+        '#markup' => '<div class="title">НЕ Определена страна производства</div>',
+      );
+    }
   }
   
-  dpm($form);
+  //dpm($form);
   
   /*  
   $module_path = drupal_get_path('module', 'gv_misc');
