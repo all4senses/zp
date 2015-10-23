@@ -3546,11 +3546,13 @@ function zp_misc_getCountryAndBrand_fromBar_form($form, &$form_state) {
     if ($code = zp_misc_getCountryAndBrand_fromBar($_POST['bar'])) {
       dpm($code);
       $form['found_code'] = array(
-        '#title' => 'Определена страна производства:',
-        '#markup' => '<div>' . print_r($code, TRUE) . '</div>',
+        //'#title' => 'Определена страна производства:',
+        '#markup' => '<div class="title">Определена страна производства:</div><div>' . print_r($code, TRUE) . '</div>',
       );
     }
   }
+  
+  dpm($form);
   
   /*  
   $module_path = drupal_get_path('module', 'gv_misc');
