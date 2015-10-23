@@ -3515,16 +3515,20 @@ function zp_misc_getCountryAndBrand_fromBar_form($form, &$form_state) {
   
   dpm($_POST);
   
-  $form['title'] = array(
-    //'#markup' => '<div class="title">Sign up to receive weekly updates</div>',
-    '#markup' => '<div class="title"><div>Stay informed - </div>Sign up for our newsletter.</div>',
-      
-  );
+  
+
+  
+  
+//  $form['title'] = array(
+//    //'#markup' => '<div class="title">Sign up to receive weekly updates</div>',
+//    '#markup' => '<div class="title"><div>Stay informed - </div>Sign up for our newsletter.</div>',
+//      
+//  );
   
   $form['bar'] = array(
     '#type' => 'textfield',
     //'#title' => 'Sign up to receive weekly updates',
-    //'#default_value' => $user->uid ? $user->mail : NULL,
+    '#default_value' => @$_POST['bar'],
     //'#description' => '',
     //'#element_validate' => array('gv_misc_validate_email'),
     '#required' => TRUE,
@@ -3538,6 +3542,15 @@ function zp_misc_getCountryAndBrand_fromBar_form($form, &$form_state) {
     '#value' => t('Определить страну производства'),
   ); 
   
+  if(!empty($_POST['bar'])) {
+    if ($code = zp_misc_getCountryAndBrand_fromBar($_POST['bar'])) {
+      dpm($code);
+      $form['bar'] = array(
+        '#title' => 'Определена страна производства:',
+        '#markup' => '<div>' . print_r($code, TRUE) . '</div>',
+      );
+    }
+  }
   
   /*  
   $module_path = drupal_get_path('module', 'gv_misc');
@@ -3721,13 +3734,13 @@ function zp_misc_getCountryAndBrand_fromBar($bar) {
   foreach ($codes as $type =>$code) {
     if (isset($code[$first_three])) {
       // Found three digit match
-      dpm('Found three digit match in singles with ' . $type);
+      //dpm('Found three digit match in singles with ' . $type);
       //dpm($code[$first_three]);
       $found_code = array('country' => $code[$first_three], 'digits_number' => 3, 'digits' => $first_three);
     }
     elseif (isset($code[$first_two])) {
       // Found three digit match
-      dpm('Found two digit match in singles with ' . $type);
+      //dpm('Found two digit match in singles with ' . $type);
       //dpm($code[$first_two]);
       $found_code = array('country' => $code[$first_two], 'digits_number' => 2, 'digits' => $first_two);
     }
@@ -3755,13 +3768,13 @@ function zp_misc_getCountryAndBrand_fromBar($bar) {
         //dpm($code);
         if ($first_three_int >= $start_code_int && $first_three_int <= $end_code_int) {
           // Found three digit match
-          dpm('Found three digit match in ranges');
+          //dpm('Found three digit match in ranges');
           //dpm($code);
           $found_code = array('country' => $code, 'digits_number' => 3, 'digits' => $first_three);
         }
         elseif (count(str_split($start_code)) == 2 && $first_two_int >= $start_code_int && $first_two_int <= $end_code_int) {
           // Found three digit match
-          dpm('Found two digit match in ranges');
+          //dpm('Found two digit match in ranges');
           //dpm($code);
           $found_code = array('country' => $code, 'digits_number' => 2, 'digits' => $first_two);
         }
@@ -3769,12 +3782,12 @@ function zp_misc_getCountryAndBrand_fromBar($bar) {
   }
   
   if (!$found_code) {
-    dpm('Code not found...');
+    //dpm('Code not found...');
     return NULL;
   }
   
-  dpm('Found a match!');
-  dpm($found_code);
+  //dpm('Found a match!');
+  //dpm($found_code);
   
   $found_code['brand'] = substr($bar, 2, 5);
   
