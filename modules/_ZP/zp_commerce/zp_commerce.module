@@ -1,5 +1,9 @@
 <?php
+// Русский...
+
 use Drupal\krumong as k;
+
+
 
 /**
  * @file

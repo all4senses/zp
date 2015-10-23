@@ -37,6 +37,11 @@ function zp_blocks_block_info() {
   );
   
   
+  $blocks['getCountryFromBar'] = array(
+    'info' => 'Get Country From Bar Tool',
+    'cache' => DRUPAL_CACHE_GLOBAL,
+  );
+  
   // Aquire blocks for all prefaces with defined bottoms.
   $query = db_select('node', 'n');
   $query->leftJoin('field_data_field_preface_bottom', 'pb', 'pb.entity_id = n.nid');
@@ -94,6 +99,10 @@ function zp_blocks_block_view($delta = '') {
       break;
     
   
+    case 'getCountryFromBar':
+      $block['subject'] = '';
+      $block['content'] = drupal_get_form('zp_misc_getCountryAndBrand_fromBar_form');
+      break;
     
     default:
       

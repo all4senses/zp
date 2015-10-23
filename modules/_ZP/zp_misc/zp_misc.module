@@ -3503,3 +3503,280 @@ function zp_misc_array_insert_after($key, array &$array, $new_key, $new_value) {
   } // End of if (array_key_exists($key, $array)) {
   return FALSE;
 }
+
+
+/**
+ * Implements hook_form().
+ *
+ * @return $form
+ *   Return nothing.
+ */
+function zp_misc_getCountryAndBrand_fromBar_form($form, &$form_state) {
+  
+  dpm($_POST);
+  
+  $form['title'] = array(
+    //'#markup' => '<div class="title">Sign up to receive weekly updates</div>',
+    '#markup' => '<div class="title"><div>Stay informed - </div>Sign up for our newsletter.</div>',
+      
+  );
+  
+  $form['bar'] = array(
+    '#type' => 'textfield',
+    //'#title' => 'Sign up to receive weekly updates',
+    //'#default_value' => $user->uid ? $user->mail : NULL,
+    //'#description' => '',
+    //'#element_validate' => array('gv_misc_validate_email'),
+    '#required' => TRUE,
+    //'#access' => $user->uid ? FALSE : TRUE,
+    '#attributes' => array('placeholder' => 'Введите штрих-код товара'),
+  );
+  
+  $form['actions'] = array('#type' => 'actions');
+  $form['actions']['submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('Определить страну производства'),
+  ); 
+  
+  
+  /*  
+  $module_path = drupal_get_path('module', 'gv_misc');
+  $form['#attached']['js'] = array(
+    // Add hints inside some fields
+    $module_path . '/js/gv_newsletterSubscribe_fieldHints.js',
+  );
+  */
+  
+  return $form;
+}
+
+
+/**
+ * Implements hook_form_validate().
+ *
+ * @return $form
+ *   Return nothing.
+ */
+function zp_misc_getCountryAndBrand_fromBar_form_validate(&$form, &$form_state) {
+
+  //drupal_set_message('In Validate!', 'warning');
+  //dpm($form_state['values']);
+  //dpm($form);
+    
+  //global $user;
+  
+  
+//  if ($email) {
+//    form_set_error('email', 'Email ' . $form_state['values']['email'] . ' has been submitted already!');
+//    return;
+//  }
+  
+}
+
+
+/**
+ * Implements hook_form_submit().
+ *
+ * @return $form
+ *   Return nothing.
+ */
+function zp_misc_getCountryAndBrand_fromBar_form_submit(&$form, &$form_state) {
+  
+  
+//  drupal_set_message('Thank you for subscribing to our newsletter.');
+//  drupal_goto(ltrim(@$_SERVER['REDIRECT_URL'], '/'), array('query' => array('nocache' => 1)));
+}
+
+
+
+/**
+ * 
+ * @param string $bar
+ * @return code array or null
+ * 
+ */
+function zp_misc_getCountryAndBrand_fromBar($bar) {
+  
+  // code => array(Country, Национальная организация EAN/UCC)
+  $codes = array(
+      
+      'codes_single' => array(
+
+        '380'	=> array('Болгария', 'BCCI (Bulgaria)'),
+        '383'	=> array('Словения', 'EAN Slovenia'),
+        '385'	=> array('Хорватия', 'EAN Croatia'),
+        '387'	=> array('Босния и Герцеговина', 'EAN-BIH (Bosnia-Herzegovina)'),
+        
+        '45' => array('Япония', 'Distribution Code Center - DCC (Japan)'),
+        '49' => array('Япония', 'Distribution Code Center - DCC (Japan)'),  
+        '471'	=> array('Тайвань', 'EAN Taiwan'),
+        '474'	=> array('Эстония', 'EAN Eesti (Estonia)'),
+        '475'	=> array('Латвия', 'EAN Latvia'),
+        '476'	=> array('Азербайджан', 'EAN Azerbaijan'),
+        '477'	=> array('Литва', 'EAN Lithuania'),
+        '478'	=> array('Узбекистан', 'EAN Uzbekistan'),
+        '479'	=> array('Шри-Ланка', 'EAN Sri Lanka'),
+        '480'	=> array('Филиппины', 'PANC (Philippines)'),
+        '481'	=> array('Беларусь', 'EAN Belarus'),
+        '482'	=> array('Украина', 'EAN Ukraine'),
+        '484'	=> array('Молдова', 'EAN Moldova'),
+        '485'	=> array('Армения', 'EAN Armenia'),
+        '486'	=> array('Грузия', 'EAN Georgia'),
+        '487'	=> array('Казахстан', 'EAN Kazakhstan'),
+        '489'	=> array('Гонконг', 'HKANA (Hong Kong)'),
+        '50'	=> array('Великобритания', 'E Centre UK'),
+        '520'	=> array('Греция', 'HELLCAN - EAN HELLAS (Greece)'),
+        '528'	=> array('Ливан', 'EAN Lebanon'),
+        '529'	=> array('Кипр', 'EAN Cyprus'),
+        '531'	=> array('Македония', 'EAN-MAC (FYR Macedonia)'),
+        '535'	=> array('Мальта', 'EAN Malta'),
+        '539'	=> array('Ирландия', 'EAN Ireland'),
+        '54'	=> array('Бельгия, Люксембург', 'ICODIF/EAN Belgium.Luxembourg'),
+        '560'	=> array('Португалия', 'CODIPOR (Portugal)'),
+        '569'	=> array('Исландия', 'EAN Iceland'),
+        '57'	=> array('Дания', 'EAN Danmark'),
+        '590'	=> array('Польша', 'EAN Poland'),
+        '594'	=> array('Румыния', 'EAN Romania'),
+        '599'	=> array('Венгрия', 'EAN Hungary'),
+
+        '609'	=> array('Маврикий', 'EAN Mauritius'),
+        '611'	=> array('Марокко', 'EAN Maroc (Marocco)'),
+        '613'	=> array('Алжир', 'EAN Algeria'),
+        '616'	=> array('Кения', 'EAN Kenya'),
+        '619'	=> array('Тунис', 'TUNICODE (Tunisia)'),
+        '621'	=> array('Сирия', 'EAN Syria'),
+        '622'	=> array('Египет', 'EAN Egypt'),
+        '624'	=> array('Ливия', 'EAN Libya'),
+        '625'	=> array('Иордания', 'EAN Jordan'),
+        '626'	=> array('Иран', 'EAN Iran'),
+        '627'	=> array('Кувейт', 'EAN Kuwait'),
+        '628'	=> array('Саудовская Аравия', 'EAN Saudi Arabia'),
+        '629' => array('Объединенные Арабские Эмираты', 'EAN Emirates'),
+        '64' => array('Финляндия', 'EAN Finland'),
+
+        '70' => array('Норвегия', 'EAN Norge (Norway)'),
+        '729' => array('Израиль', 'Israeli Bar Code Association - EAN Israel'),
+        '73'	=> array('Швеция', 'EAN Sweden'),
+        '740'	=> array('Гватемала', 'EAN Guatemala'),
+        '741'	=> array('Сальвадор', 'EAN El Salvador'),
+        '742'	=> array('Гондурас', 'EAN Honduras'),
+        '743'	=> array('Никарагуа', 'EAN Nikaragua'),
+        '744'	=> array('Коста-Рика', 'EAN Costa Rica'),
+        '745'	=> array('Панама', 'EAN Panama'),
+        '746'	=> array('Доминиканская Республика', 'EAN Republica Dominicana'),
+        '750'	=> array('Мексика', 'AMECE (Mexico)'),
+        '759'	=> array('Венесуэла', 'EAN Venezuela'),
+        '76'	=> array('Швейцария', 'EAN (Schweiz, Suisse, Svizzera)'),
+        '770'	=> array('Колумбия', 'IAC (Colombia)'),
+        '773'	=> array('Уругвай', 'EAN Uruguay'),
+        '775'	=> array('Перу', 'EAN Peru'),
+        '777'	=> array('Боливия', 'EAN Bolivia'),
+        '779'	=> array('Аргентина', 'CODIGO - EAN Argentina'),
+        '780'	=> array('Чили', 'EAN Chile'),
+        '784'	=> array('Парагвай', 'EAN Paraguay'),
+        '786'	=> array('Эквадор', 'ECOP (Ecuador)'),
+        '789'	=> array('Бразилия', 'EAN Brazil'),
+
+        '84' => array('Испания', 'AECOC (Spain)'),
+        '850'	=> array('Куба', 'Camera de Comercio de la Republica de Cuba (Cuba)'),
+        '858'	=> array('Словакия', 'EAN Slovakia'),
+        '859'	=> array('Чехия', 'EAN Czech'),
+        '860'	=> array('Югославия', 'EAN YU (Yugoslavia)'),
+        '867'	=> array('Северная Корея', 'EAN DPR Korea (North Korea)'),
+        '869'	=> array('Турция', 'Union of Chambers of Commerce of Turkey (Turkey)'),
+        '87'	=> array('Нидерланды', 'EAN Nederland (Netherlands)'),
+        '880'	=> array('Южная Корея', 'EAN Korea (South Korea)'),
+        '885'	=> array('Таиланд', 'EAN Thailand'),
+        '888'	=> array('Сингапур', 'SANC (Singapore)'),
+        '890'	=> array('Индия', 'EAN India'),
+        '893'	=> array('Вьетнам', 'EAN Vietnam'),
+        '899'	=> array('Индонезия', 'EAN Indonesia'),
+
+        '93' => array('Австралия', 'EAN Australia'),
+        '94' => array('Новая Зеландия', 'EAN New Zealand'),
+        '955'	=> array('Малайзия', 'Malaysian Article Numbering Council (MANC)'),
+        '958'	=> array('Макао', 'EAN Macau'),
+      ),
+
+      // code range start => array(Country, Национальная организация EAN/UCC, code range end)
+      'codes_range' => array(
+        '00' => array('США/Канада', 'UCC (U.S.A. & Canada)', 13),
+        '30' => array('Франция', 'GENCOD-EAN France', 37),
+        '400' => array('Германия', 'CCG (Germany)', 440),
+        '460' => array('Россия', 'UNISCAN / EAN RUSSIA (Russian Federation)', 469),
+        '600' => array('Южная Африка', 'EAN South Africa', 601),
+        '690' => array('Китай', 'Article Numbering Centre of China - ANCC (China)', 693),
+        '80' => array('Италия', 'INDICOD (Italy)', 83),
+        '90' => array('Австрия', 'EAN Austria', 91),
+      ),
+  );
+  
+  //$bar = '33083748390';
+  $found_code = NULL;
+  $first_three = substr($bar, 0, 3);
+  $first_two = substr($bar, 0, 2);
+  
+  //dpm('$first_three = ' . $first_three);
+  //dpm('$first_two = ' . $first_two);
+  foreach ($codes as $type =>$code) {
+    if (isset($code[$first_three])) {
+      // Found three digit match
+      dpm('Found three digit match in singles with ' . $type);
+      //dpm($code[$first_three]);
+      $found_code = array('country' => $code[$first_three], 'digits_number' => 3, 'digits' => $first_three);
+    }
+    elseif (isset($code[$first_two])) {
+      // Found three digit match
+      dpm('Found two digit match in singles with ' . $type);
+      //dpm($code[$first_two]);
+      $found_code = array('country' => $code[$first_two], 'digits_number' => 2, 'digits' => $first_two);
+    }
+
+  } // End of foreach ($codes as $code) {
+  
+  if (!$found_code) {
+      // Scan code ranges
+     $first_three_int = (int) $first_three;
+     $first_two_int = (int) $first_two;
+     //dpm('$first_three_int = ' . $first_three_int);
+     //dpm('$first_two_int = ' . $first_two_int);
+     foreach ($codes['codes_range'] as $start_code => $code) {
+
+        $start_code_split_count = count(str_split($start_code));
+        //dpm('$start_code_split_count = ' . $start_code_split_count);
+
+        $start_code_int = (int) $start_code;
+        $end_code_int = (int) $code[2];
+        //dpm('----->');
+        //dpm('$start_code = ' . $start_code);
+        //dpm('$start_code_int = ' . $start_code_int);
+        //dpm('$end_code_int = ' . $end_code_int);
+
+        //dpm($code);
+        if ($first_three_int >= $start_code_int && $first_three_int <= $end_code_int) {
+          // Found three digit match
+          dpm('Found three digit match in ranges');
+          //dpm($code);
+          $found_code = array('country' => $code, 'digits_number' => 3, 'digits' => $first_three);
+        }
+        elseif (count(str_split($start_code)) == 2 && $first_two_int >= $start_code_int && $first_two_int <= $end_code_int) {
+          // Found three digit match
+          dpm('Found two digit match in ranges');
+          //dpm($code);
+          $found_code = array('country' => $code, 'digits_number' => 2, 'digits' => $first_two);
+        }
+      }
+  }
+  
+  if (!$found_code) {
+    dpm('Code not found...');
+    return NULL;
+  }
+  
+  dpm('Found a match!');
+  dpm($found_code);
+  
+  $found_code['brand'] = substr($bar, 2, 5);
+  
+  return $found_code;
+}
