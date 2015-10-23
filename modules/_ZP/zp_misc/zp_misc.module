@@ -3513,6 +3513,8 @@ function zp_misc_array_insert_after($key, array &$array, $new_key, $new_value) {
  */
 function zp_misc_getCountryAndBrand_fromBar_form($form, &$form_state) {
   
+  dpm($form_state);
+  
 //  $form['title'] = array(
 //    //'#markup' => '<div class="title">Sign up to receive weekly updates</div>',
 //    '#markup' => '<div class="title"><div>Stay informed - </div>Sign up for our newsletter.</div>',
@@ -3522,7 +3524,7 @@ function zp_misc_getCountryAndBrand_fromBar_form($form, &$form_state) {
   $form['bar'] = array(
     '#type' => 'textfield',
     //'#title' => 'Sign up to receive weekly updates',
-    '#default_value' => @$_POST['bar'],
+    //'#default_value' => @$_POST['bar'],
     //'#description' => '',
     //'#element_validate' => array('gv_misc_validate_email'),
     '#required' => TRUE,
@@ -3597,6 +3599,9 @@ function zp_misc_getCountryAndBrand_fromBar_form_validate(&$form, &$form_state) 
  */
 function zp_misc_getCountryAndBrand_fromBar_form_submit(&$form, &$form_state) {
   
+  // just trying to *pre-populate a form in D7* after submit/rebuild, and it took forever to figure out how!
+  // https://www.drupal.org/node/1395992
+  $form_state['rebuild'] = TRUE;
   
 //  drupal_set_message('Thank you for subscribing to our newsletter.');
 //  drupal_goto(ltrim(@$_SERVER['REDIRECT_URL'], '/'), array('query' => array('nocache' => 1)));
