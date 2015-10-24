@@ -3810,6 +3810,57 @@ function zp_misc_getCountryAndBrand_fromBar($bar) {
     $found_code['brand_code'] = NULL;
     $found_code['bar_type'] = 0;
   }
+  
+  if (!zp_misc_checkBarCRC($bar_splitted, $bar_length)) {
+    $found_code['bar_crc'] = 0;
+  }
+  else {
+    $found_code['bar_crc'] = 1;
+  }
 
   return $found_code;
+}
+
+
+/**
+ * 
+ * @param type $bar_splitted
+ * @param type $bar_length
+ *
+ */
+function zp_misc_checkBarCRC(array $bar, $bar_length) {
+  
+  if (!$bar_splitted) {
+    return NULL;
+  }
+  
+  switch ($bar_length) {
+    
+    case 13: 
+      
+      $summ = ($bar[1] + $bar[3] + $bar[5] + $bar[7] + $bar[9] + $bar[11]) * 3 + ($bar[0] + $bar[2] + $bar[4] + $bar[6] + $bar[8] + $bar[10]);
+      
+      $summ = str_split('' . $summ);
+      
+      $control_digit = 10 - $summ[count($summ) - 1];
+      
+      dpm('$control_digit = ' . $control_digit);
+      
+      if ($control_digit == $bar[12]) {
+        return 1;
+      }
+      else {
+        return 0;
+      }
+      
+    
+    
+    case 8:
+      
+      break;
+    
+    default:
+     
+      return NULL;
+  }
 }
