@@ -3766,6 +3766,11 @@ function zp_misc_getCountryAndBrand_fromBar($bar) {
   $found_code = NULL;
   $first_three = substr($bar, 0, 3);
   $first_two = substr($bar, 0, 2);
+  
+  if (!is_numeric($first_three) || !is_numeric($first_two)) {
+    return NULL;
+  }
+  
   $bar_splitted = str_split($bar);
   $bar_length = count($bar_splitted);
   
