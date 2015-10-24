@@ -3778,6 +3778,7 @@ function zp_misc_getCountryAndBrand_fromBar($bar) {
     return NULL;
   }
   
+  unset($found_code['country'][2]);
   
   $found_code['bar_length'] = $bar_length;
   if ($bar_length == 8) {
