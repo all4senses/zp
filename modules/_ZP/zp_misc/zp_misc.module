@@ -3538,12 +3538,12 @@ function zp_misc_getCountryAndBrand_fromBar_form($form, &$form_state) {
   ); 
   
   if(!empty($_POST['bar'])) {
-    if ($code = zp_misc_getCountryAndBrand_fromBar($_POST['bar'])) {
+    if ($found_code = zp_misc_getCountryAndBrand_fromBar($_POST['bar'])) {
       //dpm($_POST);
       //dpm($code);
       $form['found_code'] = array(
         //'#title' => 'Определена страна производства:',
-        '#markup' => '<div class="title">Определена страна производства:</div><div>' . print_r($code, TRUE) . '</div>',
+        '#markup' => '<div class="title">Определена страна производства:</div><div>' . print_r($found_code, TRUE) . '</div>',
       );
     }
     else {
@@ -3731,25 +3731,20 @@ function zp_misc_getCountryAndBrand_fromBar($bar) {
       ),
   );
   
-  //$bar = '33083748390';
   $found_code = NULL;
   $first_three = substr($bar, 0, 3);
   $first_two = substr($bar, 0, 2);
+  $bar_splitted = str_split($bar);
+  $bar_length = count($bar_splitted);
   
-  //dpm('$first_three = ' . $first_three);
-  //dpm('$first_two = ' . $first_two);
-  foreach ($codes as $type =>$code) {
+  foreach ($codes as $type => $code) {
     if (isset($code[$first_three])) {
       // Found three digit match
-      //dpm('Found three digit match in singles with ' . $type);
-      //dpm($code[$first_three]);
-      $found_code = array('country' => $code[$first_three], 'digits_number' => 3, 'digits' => $first_three);
+      $found_code = array('country' => $code[$first_three], 'digits_number' => 3, 'digits' => $first_three, 'found_in' => 'singles: ' . $first_three);
     }
     elseif (isset($code[$first_two])) {
       // Found three digit match
-      //dpm('Found two digit match in singles with ' . $type);
-      //dpm($code[$first_two]);
-      $found_code = array('country' => $code[$first_two], 'digits_number' => 2, 'digits' => $first_two);
+      $found_code = array('country' => $code[$first_two], 'digits_number' => 2, 'digits' => $first_two, 'found_in' => 'singles:' . $first_two);
     }
 
   } // End of foreach ($codes as $code) {
@@ -3758,32 +3753,19 @@ function zp_misc_getCountryAndBrand_fromBar($bar) {
       // Scan code ranges
      $first_three_int = (int) $first_three;
      $first_two_int = (int) $first_two;
-     //dpm('$first_three_int = ' . $first_three_int);
-     //dpm('$first_two_int = ' . $first_two_int);
      foreach ($codes['codes_range'] as $start_code => $code) {
 
         $start_code_split_count = count(str_split($start_code));
-        //dpm('$start_code_split_count = ' . $start_code_split_count);
-
         $start_code_int = (int) $start_code;
         $end_code_int = (int) $code[2];
-        //dpm('----->');
-        //dpm('$start_code = ' . $start_code);
-        //dpm('$start_code_int = ' . $start_code_int);
-        //dpm('$end_code_int = ' . $end_code_int);
-
-        //dpm($code);
+        
         if ($first_three_int >= $start_code_int && $first_three_int <= $end_code_int) {
           // Found three digit match
-          //dpm('Found three digit match in ranges');
-          //dpm($code);
-          $found_code = array('country' => $code, 'digits_number' => 3, 'digits' => $first_three);
+          $found_code = array('country' => $code, 'digits_number' => 3, 'digits' => $first_three, 'found_in' => 'ranges: ' . $start_code . '-' . $end_code);
         }
         elseif (count(str_split($start_code)) == 2 && $first_two_int >= $start_code_int && $first_two_int <= $end_code_int) {
-          // Found three digit match
-          //dpm('Found two digit match in ranges');
-          //dpm($code);
-          $found_code = array('country' => $code, 'digits_number' => 2, 'digits' => $first_two);
+          // Found two digit match
+          $found_code = array('country' => $code, 'digits_number' => 2, 'digits' => $first_two, 'found_in' => 'ranges: ' . $start_code . '-' . $end_code);
         }
       }
   }
@@ -3793,10 +3775,14 @@ function zp_misc_getCountryAndBrand_fromBar($bar) {
     return NULL;
   }
   
-  //dpm('Found a match!');
-  //dpm($found_code);
   
-  $found_code['brand'] = substr($bar, 0, 6); // after the first 6 digits may start differences within one brand... so the rest will be a product id within a brand
+  $found_code['bar_length'] = $bar_length;
+  if ($bar_length == 8) {
+    $found_code['brand_code'] = substr($bar, 0, 3); // after the first 3 digits in ean-8 may start differences within one brand... so the rest will be a product id within a brand
+  }
+  else {
+    $found_code['brand_code'] = substr($bar, 0, 3); // after the first 6 digits in ean-13 may start differences within one brand... so the rest will be a product id within a brand
+  }
   
   return $found_code;
 }
