@@ -3857,10 +3857,23 @@ function zp_misc_checkBarCRC(array $bar, $bar_length) {
     
     case 8:
       
-      break;
+      $summ = ($bar[0] + $bar[2] + $bar[4] + $bar[6]) * 3 + ($bar[1] + $bar[3] + $bar[5]);
+      
+      $summ = str_split('' . $summ);
+      
+      $control_digit = 10 - $summ[count($summ) - 1];
+      
+      dpm('$control_digit = ' . $control_digit);
+      
+      if ($control_digit == $bar[7]) {
+        return 1;
+      }
+      else {
+        return 0;
+      }
     
     default:
      
-      return NULL;
+      return 0;
   }
 }
