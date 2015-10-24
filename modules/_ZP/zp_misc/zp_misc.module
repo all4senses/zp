@@ -3529,9 +3529,10 @@ function zp_misc_getCountryAndBrand_fromBar_form($form, &$form_state) {
     //'#element_validate' => array('gv_misc_validate_email'),
     '#required' => TRUE,
     '#attributes' => array('placeholder' => 'Введите штрих-код товара'),
+    '#weight' => 1,  
   );
   
-  $form['actions'] = array('#type' => 'actions');
+  $form['actions'] = array('#type' => 'actions', '#weight' => 2);
   $form['actions']['submit'] = array(
     '#type' => 'submit',
     '#value' => t('Искать данные по штрих-коду'),
@@ -3544,14 +3545,14 @@ function zp_misc_getCountryAndBrand_fromBar_form($form, &$form_state) {
       $form['found_code'] = array(
         //'#title' => 'Определена страна производства:',
         '#markup' => '<div class="title">Есть данные по введённому Вами коду: </div><div>' . print_r($found_code, TRUE) . '</div>',
-        '#weight' => 10,  
+        '#weight' => 3,  
       );
     }
     else {
       $form['not_found_code'] = array(
         //'#title' => 'Определена страна производства:',
         '#markup' => '<div class="title">НЕТ данных по введённому Вами коду. Возможно, он неверный.</div>',
-        '#weight' => 10,  
+        '#weight' => 3,  
       );
     }
   }
