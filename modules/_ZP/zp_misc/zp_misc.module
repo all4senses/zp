@@ -3786,11 +3786,11 @@ function zp_misc_getCountryAndBrand_fromBar($bar) {
   }
   elseif ($bar_length >= 13) {
     $found_code['brand_code'] = substr($bar, 0, 6); // after the first 6 digits in ean-13 may start differences within one brand... so the rest will be a product id within a brand
-    $found_code['bar_type'] = $bar_length == 13 ? 'EAN-13' : NULL;
+    $found_code['bar_type'] = $bar_length == 13 ? 'EAN-13' : 0;
   }
   else {
     $found_code['brand_code'] = NULL;
-    $found_code['bar_type'] = NULL;
+    $found_code['bar_type'] = 0;
   }
 
   return $found_code;
