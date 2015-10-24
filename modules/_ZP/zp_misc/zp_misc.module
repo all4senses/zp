@@ -3620,6 +3620,23 @@ function zp_misc_getCountryAndBrand_fromBar_form_submit(&$form, &$form_state) {
  */
 function zp_misc_getCountryAndBrand_fromBar($bar) {
   
+  // http://nettips.ru/article/shtrixkod_upc_ean_13.html
+  // http://www.ru.all.biz/guide-barcodes
+  // https://ru.wikipedia.org/wiki/European_Article_Number
+  // http://www.gs1.org/company-prefix
+  // EAN-8
+  // http://magenta.su/articles/19.html
+  
+  // http://infotables.ru/strany-i-goroda/8-tablitsa-tovarnyj-shtrikh-kod-proizvoditelya-stran-mira
+  // http://www.hella.ru/code/strihcode.htm
+  // http://www.rion.ru/information/articles/general-barcode/
+  // http://www.grandars.ru/college/tovarovedenie/shtrih-kod.html
+  // http://nettips.ru/article/shtrixkod_upc_ean_13.html
+  
+  // http://shkolazhizni.ru/archive/0/n-27259/
+  // http://magelit.com.ua/proverka-shtrih-koda?kod=8411061447512
+  
+  
   // code => array(Country, Национальная организация EAN/UCC)
   $codes = array(
       
