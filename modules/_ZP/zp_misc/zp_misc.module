@@ -3782,10 +3782,16 @@ function zp_misc_getCountryAndBrand_fromBar($bar) {
   $found_code['bar_length'] = $bar_length;
   if ($bar_length == 8) {
     $found_code['brand_code'] = substr($bar, 0, 3); // after the first 3 digits in ean-8 may start differences within one brand... so the rest will be a product id within a brand
+    $found_code['bar_type'] = 'EAN-8';
+  }
+  elseif ($bar_length >= 13) {
+    $found_code['brand_code'] = substr($bar, 0, 6); // after the first 6 digits in ean-13 may start differences within one brand... so the rest will be a product id within a brand
+    $found_code['bar_type'] = $bar_length == 13 ? 'EAN-13' : NULL;
   }
   else {
-    $found_code['brand_code'] = substr($bar, 0, 6); // after the first 6 digits in ean-13 may start differences within one brand... so the rest will be a product id within a brand
+    $found_code['brand_code'] = NULL;
+    $found_code['bar_type'] = NULL;
   }
-  
+
   return $found_code;
 }
