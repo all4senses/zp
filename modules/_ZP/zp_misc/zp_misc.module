@@ -3551,7 +3551,7 @@ function zp_misc_getCountryAndBrand_fromBar_form($form, &$form_state) {
             . '<div>Страна: ' . $found_code['country'][0] . '</div>'
             //. '<div>Организация, выдавшая код: ' . $found_code['country'][1] . '</div>'
             //. '<div>Код страны в штрих-коде: ' . $found_code['digits'] . (@$found_code['range'] ? ' (диапазон кодов этой страны ' .  $found_code['range'] . ')' : '' ) . '</div>'
-            //. '<div>Тип штрих-кода: ' . ($found_code['bar_type'] ? $found_code['bar_type'] : 'не определён') . ' (' . $found_code['bar_length'] . ' символов)</div>'
+            . '<div>Тип штрих-кода: ' . ($found_code['bar_type'] ? $found_code['bar_type'] : 'не определён') . ' (' . $found_code['bar_length'] . ' символов)</div>'
             //. '<div>Предположительный код бренда: ' . ($found_code['bar_length'] >= 13 ? $found_code['brand_code'] : 'не определён') . '</div>'
             //. '</br>'
             . '<div class="' . ($found_code['bar_crc'] ? 'ok' : 'not-ok') . '">Проверка штрих-кода на подлинность (по контрольной сумме): ' . ($found_code['bar_crc'] ? 'Успешно, код выглядит подлинным.' : ' Не пройден!!!! Возможно, код не настоящий (подделка).') . '</div>'
