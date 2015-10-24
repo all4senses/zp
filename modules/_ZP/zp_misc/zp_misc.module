@@ -3860,7 +3860,7 @@ function zp_misc_checkBarCRC(array $bar, $bar_length) {
         $control_digit = 0;
       }
       
-      dpm('$control_digit = ' . $control_digit);
+      //dpm('$control_digit = ' . $control_digit);
       
       if ($control_digit == $bar[12]) {
         return 1;
@@ -3883,7 +3883,7 @@ function zp_misc_checkBarCRC(array $bar, $bar_length) {
         $control_digit = 0;
       }
       
-      dpm('$control_digit = ' . $control_digit);
+      //dpm('$control_digit = ' . $control_digit);
       
       if ($control_digit == $bar[7]) {
         return 1;
