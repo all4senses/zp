@@ -3744,7 +3744,7 @@ function zp_misc_getCountryAndBrand_fromBar($bar) {
     }
     elseif (isset($code[$first_two])) {
       // Found three digit match
-      $found_code = array('country' => $code[$first_two], 'digits_number' => 2, 'digits' => $first_two, 'found_in' => 'singles:' . $first_two);
+      $found_code = array('country' => $code[$first_two], 'digits_number' => 2, 'digits' => $first_two, 'found_in' => 'singles: ' . $first_two);
     }
 
   } // End of foreach ($codes as $code) {
@@ -3781,7 +3781,7 @@ function zp_misc_getCountryAndBrand_fromBar($bar) {
     $found_code['brand_code'] = substr($bar, 0, 3); // after the first 3 digits in ean-8 may start differences within one brand... so the rest will be a product id within a brand
   }
   else {
-    $found_code['brand_code'] = substr($bar, 0, 3); // after the first 6 digits in ean-13 may start differences within one brand... so the rest will be a product id within a brand
+    $found_code['brand_code'] = substr($bar, 0, 6); // after the first 6 digits in ean-13 may start differences within one brand... so the rest will be a product id within a brand
   }
   
   return $found_code;
