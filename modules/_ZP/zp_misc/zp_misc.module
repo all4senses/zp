@@ -3513,7 +3513,7 @@ function zp_misc_array_insert_after($key, array &$array, $new_key, $new_value) {
  */
 function zp_misc_getCountryAndBrand_fromBar_form($form, &$form_state) {
   
-  dpm($form_state);
+  //dpm($form_state);
   
 //  $form['title'] = array(
 //    //'#markup' => '<div class="title">Sign up to receive weekly updates</div>',
@@ -3761,11 +3761,11 @@ function zp_misc_getCountryAndBrand_fromBar($bar) {
         
         if ($first_three_int >= $start_code_int && $first_three_int <= $end_code_int) {
           // Found three digit match
-          $found_code = array('country' => $code, 'digits_number' => 3, 'digits' => $first_three, 'found_in' => 'ranges: ' . $start_code . '-' . $end_code);
+          $found_code = array('country' => $code, 'digits_number' => 3, 'digits' => $first_three, 'found_in' => 'ranges: ' . $start_code . '-' . $code[2]);
         }
         elseif (count(str_split($start_code)) == 2 && $first_two_int >= $start_code_int && $first_two_int <= $end_code_int) {
           // Found two digit match
-          $found_code = array('country' => $code, 'digits_number' => 2, 'digits' => $first_two, 'found_in' => 'ranges: ' . $start_code . '-' . $end_code);
+          $found_code = array('country' => $code, 'digits_number' => 2, 'digits' => $first_two, 'found_in' => 'ranges: ' . $start_code . '-' . $code[2]);
         }
       }
   }
