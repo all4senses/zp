@@ -3534,7 +3534,7 @@ function zp_misc_getCountryAndBrand_fromBar_form($form, &$form_state) {
   $form['actions'] = array('#type' => 'actions');
   $form['actions']['submit'] = array(
     '#type' => 'submit',
-    '#value' => t('Определить страну производства'),
+    '#value' => t('Искать данные по штрих-коду'),
   ); 
   
   if(!empty($_POST['bar'])) {
@@ -3543,13 +3543,15 @@ function zp_misc_getCountryAndBrand_fromBar_form($form, &$form_state) {
       //dpm($code);
       $form['found_code'] = array(
         //'#title' => 'Определена страна производства:',
-        '#markup' => '<div class="title">Определена страна производства:</div><div>' . print_r($found_code, TRUE) . '</div>',
+        '#markup' => '<div class="title">Есть данные по введённому Вами коду: </div><div>' . print_r($found_code, TRUE) . '</div>',
+        '#weight' => 10,  
       );
     }
     else {
       $form['not_found_code'] = array(
         //'#title' => 'Определена страна производства:',
-        '#markup' => '<div class="title">НЕ Определена страна производства</div>',
+        '#markup' => '<div class="title">НЕТ данных по введённому Вами коду. Возможно, он неверный.</div>',
+        '#weight' => 10,  
       );
     }
   }
