@@ -3544,7 +3544,19 @@ function zp_misc_getCountryAndBrand_fromBar_form($form, &$form_state) {
       //dpm($code);
       $form['found_code'] = array(
         //'#title' => 'Определена страна производства:',
-        '#markup' => '<div class="title">Есть данные по введённому Вами коду: </div><div>' . print_r($found_code, TRUE) . '</div>',
+        '#markup' => '<div class="title">Есть данные по введённому Вами коду: </div><div>' 
+          
+            //. print_r($found_code, TRUE) 
+          
+            . '<div>Страна: ' . $found_code['country'][0] . '</div>'
+            . '<div>Организация, выдавшая код: ' . $found_code['country'][1] . '</div>'
+            . '<div>Код страны в штрих-коде: ' . $found_code['digits'] . ($found_code['range'] ? ' (диапазон кодов этой страны ' .  $found_code['range'] . ')' : '' ) . '</div>'
+            . '<div>Тип штрих-кода: ' . ($found_code['bar_type'] ? $found_code['bar_type'] : 'не определён') . ' (' . $found_code['bar_length'] . 'символов)</div>'
+            . '<div>Предположительный код бренда: ' . ($found_code['bar_length'] >= 13 ? $found_code['brand_code'] : 'не определён') . '</div>'
+            . '</br>'
+            . '<div class="' . ($found_code['bar_crc'] ? 'ok' : 'error') . '">Проверка штрих-кода на подлинность (по контрольной сумме): ' . ($found_code['bar_crc'] ? 'Успешно, код выглядит подлинным.' : ' Не пройден!!!! Возможно, код не настоящий (подделка).') . '</div>'
+          
+          . '</div>',
         '#weight' => 3,  
       );
     }
@@ -3781,11 +3793,11 @@ function zp_misc_getCountryAndBrand_fromBar($bar) {
         
         if ($first_three_int >= $start_code_int && $first_three_int <= $end_code_int) {
           // Found three digit match
-          $found_code = array('country' => $code, 'digits_number' => 3, 'digits' => $first_three, 'found_in' => 'ranges: ' . $start_code . '-' . $code[2]);
+          $found_code = array('country' => $code, 'digits_number' => 3, 'digits' => $first_three, 'found_in' => 'ranges', 'range' => $start_code . '-' . $code[2]);
         }
         elseif (count(str_split($start_code)) == 2 && $first_two_int >= $start_code_int && $first_two_int <= $end_code_int) {
           // Found two digit match
-          $found_code = array('country' => $code, 'digits_number' => 2, 'digits' => $first_two, 'found_in' => 'ranges: ' . $start_code . '-' . $code[2]);
+          $found_code = array('country' => $code, 'digits_number' => 2, 'digits' => $first_two, 'found_in' => 'ranges', 'range' => $start_code . '-' . $code[2]);
         }
       }
   }
