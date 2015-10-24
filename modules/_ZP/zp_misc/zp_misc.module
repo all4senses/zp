@@ -3796,7 +3796,7 @@ function zp_misc_getCountryAndBrand_fromBar($bar) {
   //dpm('Found a match!');
   //dpm($found_code);
   
-  $found_code['brand'] = substr($bar, 2, 5);
+  $found_code['brand'] = substr($bar, 0, 6); // after the first 6 digits may start differences within one brand... so the rest will be a product id within a brand
   
   return $found_code;
 }
