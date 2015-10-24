@@ -3857,7 +3857,7 @@ function zp_misc_checkBarCRC(array $bar, $bar_length) {
       $control_digit = 10 - $summ[count($summ) - 1];
       
       if ($control_digit == 10) {
-        $control_digit == 0;
+        $control_digit = 0;
       }
       
       dpm('$control_digit = ' . $control_digit);
@@ -3880,7 +3880,7 @@ function zp_misc_checkBarCRC(array $bar, $bar_length) {
       $control_digit = 10 - $summ[count($summ) - 1];
       
       if ($control_digit == 10) {
-        $control_digit == 0;
+        $control_digit = 0;
       }
       
       dpm('$control_digit = ' . $control_digit);
