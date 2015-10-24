@@ -3544,7 +3544,7 @@ function zp_misc_getCountryAndBrand_fromBar_form($form, &$form_state) {
       //dpm($code);
       $form['found_code'] = array(
         //'#title' => 'Определена страна производства:',
-        '#markup' => '<div class="title">Есть данные по введённому Вами коду: </div><div>' 
+        '#markup' => '<div class="title">Есть данные по введённому Вами коду...</div></br><div>' 
           
             //. print_r($found_code, TRUE) 
           
