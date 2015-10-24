@@ -3830,7 +3830,7 @@ function zp_misc_getCountryAndBrand_fromBar($bar) {
  */
 function zp_misc_checkBarCRC(array $bar, $bar_length) {
   
-  if (!$bar_splitted) {
+  if (!$bar) {
     return NULL;
   }
   
