@@ -2541,8 +2541,8 @@ function zp_commerce_addNewCatalogTerm($op, $object, &$result_messages) {
     'field_visibility_status' => array('und' => array(0 => array('value' => $object['Статус элемента']))),
   );
   
-  //dpm($object);
-  //dpm($catalog_term);
+  dpm($object);
+  dpm($catalog_term);
   
   if (taxonomy_term_save($catalog_term)) {
     $result_message = 'Новый терм словаря меню Каталог "' . $object['Название'] . '" был создан Успешно!';
@@ -2560,6 +2560,121 @@ function zp_commerce_addNewCatalogTerm($op, $object, &$result_messages) {
   
   // Success.
   return NULL;
+}
+
+
+
+/**
+ * Allows modules to perform operations after a menu link resulting from the
+ * processing of a taxonomy term has been saved.
+ *
+ * @param $term
+ *   The taxonomy term
+ * @param $menu_link
+ *   The menu link that has been saved.
+ * @param $mlid
+ *   The identifier of the newly created menu item.
+ */
+function zp_commerce_taxonomy_menu_save($term, $menu_link, $mlid) {
+  // For example, we could process all the translated taxonomy terms of this
+  // term here, in order to save their respective translated menu links.
+  
+    //dpm($term);
+    //dpm($menu_link);
+    
+    
+    // a4s rewrite menu item path, attribute title.
+    
+    // Calculate it again... just testing, no need for this.
+    ////$menu_link = taxonomy_menu_menu_link_prepare($term, 'menu-catalog-menu');
+            
+    // Original from taxonomy_menu_menu_link_prepare($term, $menu_name).
+    
+    // HTML title attribute.
+     /*
+    if (taxonomy_menu_variable_get('display_title_attr', $term->vid, TRUE)) {
+      $term_description = taxonomy_menu_variable_get('term_item_description', $term->vid, 0);
+    }
+    $menu_link['options']['attributes']['title'] = (isset($term_description) && $term_description == 1) ? trim($term->description) : '';
+    // Path.
+    $link_path = taxonomy_menu_path_get($term->vid, $term->tid);
+    $menu_link['link_path'] = drupal_get_normal_path($link_path, $langcode);
+    */
+    
+    // Allow manually change and delete the menu item by a user.
+    unset($menu_link['module']);
+      
+    
+    // Connect dept node to this menu item
+    /*
+    // If there is a dept/shop/etc connected to this term, show link to this dept instead the link to the term.
+    if ($object_nid = zp_commerce_findDeptOrShopOrCityByZpIDofTerm_andConnectItToTerm($term)) {
+       //dpm($term);
+      // And save the renewed item again, as in taxonomy_menu_menu_link_prepare($term, $menu_name).
+      $menu_link['link_path'] = 'node/' . $object_nid;
+    }
+    */
+    
+    // Connect views page like d/z011121 or dp/z0193983
+    if (@$term->field_has_prods_or_depts['und'][0]['value'] == 1) {
+      $menu_link['link_path'] = 'd/' . $term->field_zp_id['und'][0]['value'];
+    }
+    elseif (@$term->field_has_prods_or_depts['und'][0]['value'] == 2) {
+      $menu_link['link_path'] = 'dp/' . $term->field_zp_id['und'][0]['value'];
+    }
+    else {
+      // Hide menu item if it's not yet filled with depts or products
+      // But connect to it some kind of temporary menu url.
+      
+      if (zp_misc_termHasChildren($term->tid)) {
+        $menu_link['link_path'] = 'd/' . $term->field_zp_id['und'][0]['value'];
+      }
+      else {
+        $menu_link['link_path'] = 'dp/' . $term->field_zp_id['und'][0]['value'];
+      }
+      $term->field_visibility_status['und'][0]['value'] = 0;
+    }
+    
+    
+    // Let's create a menu item only for existing dept/shop/etc node.
+    // And completely remove already created menu item (originally connected to taxonomy/term/xxx) from the menu.
+    /*
+    else {
+      static $catalog_voc;
+      if (!$catalog_voc) {
+        $catalog_voc = taxonomy_vocabulary_machine_name_load('catalog');
+      }
+      menu_link_delete($menu_link['mlid']);
+      _taxonomy_menu_delete_item($catalog_voc->vid, $term->tid);
+      //dpm('Completely remove already created menu item (originally connected to taxonomy/term/xxx) from the menu');
+      return FALSE;
+    }
+    */
+    
+    /*
+    else {
+      //dpm('not found dept');
+      // Show a menu item without a link.
+      // Depends on the module 'Special menu items'.
+      $menu_link['link_path'] = '<nolink>';
+    }
+    */
+    
+    
+    // Hide (aka disable) menu item, if a corresponding term is hidden by setting its $visibility_status to 0;
+    if (array_key_exists('und', $term->field_visibility_status) && array_key_exists('0', $term->field_visibility_status['und'])) {
+      $menu_link['hidden'] = empty($term->field_visibility_status['und'][0]['value']) ? 1 : 0;
+      //dpm('exists');
+    }
+    else {
+      $menu_link['hidden'] = 0;
+      //dpm('NOT exists');
+    }
+    
+    $mlid = menu_link_save($menu_link);
+    
+    //dpm($menu_link);
+
 }
 
 
@@ -2759,6 +2874,20 @@ function zp_commerce_addNewProduct($op, $object, &$result_messages) {
   //drupal_set_message($result_message);
   $result_messages[] = $result_message;
   
+  // Add categories to a product.
+  foreach (array('Категория 1', 'Категория 2', 'Род.Отдел/Категория 3') as $cat) {
+    if(!empty($object[$cat]) && $error_message = zp_commerce_addCategoriesToProduct($node->nid, $cat, $object[$cat], $result_messages)) {
+      return $error_message;
+    }
+  } 
+  
+  // Mark a parent term that it has products as children.
+  $term = taxonomy_term_load($parent_tid);
+  dpm($term);
+  if (0) {
+    taxonomy_term_save($term);
+  }
+  
   // Connect the subgroup term (found above) to this product node.
 //  zp_misc_fieldTermReferenceSave('catalog', $node->nid, $subgroup_term_tid, 'node', $product_display);
 //  drupal_set_message('The Product display "' . $object['Название'] . '" has been connected to a corresponding Product type and the subgroup term "' . $subgroup_term_tid . '".', 'warning');
@@ -2781,119 +2910,6 @@ function zp_commerce_addNewProduct($op, $object, &$result_messages) {
   return NULL;
 }
 
-
-/**
- * Allows modules to perform operations after a menu link resulting from the
- * processing of a taxonomy term has been saved.
- *
- * @param $term
- *   The taxonomy term
- * @param $menu_link
- *   The menu link that has been saved.
- * @param $mlid
- *   The identifier of the newly created menu item.
- */
-function zp_commerce_taxonomy_menu_save($term, $menu_link, $mlid) {
-  // For example, we could process all the translated taxonomy terms of this
-  // term here, in order to save their respective translated menu links.
-  
-    //dpm($term);
-    //dpm($menu_link);
-    
-    
-    // a4s rewrite menu item path, attribute title.
-    
-    // Calculate it again... just testing, no need for this.
-    ////$menu_link = taxonomy_menu_menu_link_prepare($term, 'menu-catalog-menu');
-            
-    // Original from taxonomy_menu_menu_link_prepare($term, $menu_name).
-    
-    // HTML title attribute.
-     /*
-    if (taxonomy_menu_variable_get('display_title_attr', $term->vid, TRUE)) {
-      $term_description = taxonomy_menu_variable_get('term_item_description', $term->vid, 0);
-    }
-    $menu_link['options']['attributes']['title'] = (isset($term_description) && $term_description == 1) ? trim($term->description) : '';
-    // Path.
-    $link_path = taxonomy_menu_path_get($term->vid, $term->tid);
-    $menu_link['link_path'] = drupal_get_normal_path($link_path, $langcode);
-    */
-    
-    // Allow manually change and delete the menu item by a user.
-    unset($menu_link['module']);
-      
-    
-    // Connect dept node to this menu item
-    /*
-    // If there is a dept/shop/etc connected to this term, show link to this dept instead the link to the term.
-    if ($object_nid = zp_commerce_findDeptOrShopOrCityByZpIDofTerm_andConnectItToTerm($term)) {
-       //dpm($term);
-      // And save the renewed item again, as in taxonomy_menu_menu_link_prepare($term, $menu_name).
-      $menu_link['link_path'] = 'node/' . $object_nid;
-    }
-    */
-    
-    // Connect views page like d/z011121 or dp/z0193983
-    if (@$term->field_has_prods_or_depts['und'][0]['value'] == 1) {
-      $menu_link['link_path'] = 'd/' . $term->field_zp_id['und'][0]['value'];
-    }
-    elseif (@$term->field_has_prods_or_depts['und'][0]['value'] == 2) {
-      $menu_link['link_path'] = 'dp/' . $term->field_zp_id['und'][0]['value'];
-    }
-    else {
-      // Hide menu item if it's not yet filled with depts or products
-      // But connect to it some kind of temporary menu url.
-      
-      if (zp_misc_termHasChildren($term->tid)) {
-        $menu_link['link_path'] = 'd/' . $term->field_zp_id['und'][0]['value'];
-      }
-      else {
-        $menu_link['link_path'] = 'dp/' . $term->field_zp_id['und'][0]['value'];
-      }
-      $term->field_visibility_status['und'][0]['value'] = 0;
-    }
-    
-    
-    // Let's create a menu item only for existing dept/shop/etc node.
-    // And completely remove already created menu item (originally connected to taxonomy/term/xxx) from the menu.
-    /*
-    else {
-      static $catalog_voc;
-      if (!$catalog_voc) {
-        $catalog_voc = taxonomy_vocabulary_machine_name_load('catalog');
-      }
-      menu_link_delete($menu_link['mlid']);
-      _taxonomy_menu_delete_item($catalog_voc->vid, $term->tid);
-      //dpm('Completely remove already created menu item (originally connected to taxonomy/term/xxx) from the menu');
-      return FALSE;
-    }
-    */
-    
-    /*
-    else {
-      //dpm('not found dept');
-      // Show a menu item without a link.
-      // Depends on the module 'Special menu items'.
-      $menu_link['link_path'] = '<nolink>';
-    }
-    */
-    
-    
-    // Hide (aka disable) menu item, if a corresponding term is hidden by setting its $visibility_status to 0;
-    if (array_key_exists('und', $term->field_visibility_status) && array_key_exists('0', $term->field_visibility_status['und'])) {
-      $menu_link['hidden'] = empty($term->field_visibility_status['und'][0]['value']) ? 1 : 0;
-      //dpm('exists');
-    }
-    else {
-      $menu_link['hidden'] = 0;
-      //dpm('NOT exists');
-    }
-    
-    $mlid = menu_link_save($menu_link);
-    
-    //dpm($menu_link);
-
-}
 
 
 /**
@@ -3031,7 +3047,10 @@ function zp_commerce_node_delete($node) {
   
   // Deprecated, as we don't use nodes for depts anymore (use terms themselves instead).
   if ($node->type == 'department') {
+    
     return;
+    
+    
     
     
     static $catalog_voc;
