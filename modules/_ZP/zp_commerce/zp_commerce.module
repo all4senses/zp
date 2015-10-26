@@ -1192,7 +1192,7 @@ function zp_commerce_importPriceList_batch_finished($success, $results, $operati
       drupal_set_message(t('------> OK! Прайс-лист успешно обработан. Последний обработанный объект "%final"', array('%final' => $results['objects_source'][$results['last_not_empty_object_id']]['Название'])));
     }
     else {
-      drupal_set_message(t('-> Завершено С ОШИБКАМИ! Последний обработанный объект "%final"', array('%final' => $results['objects_source'][$results['last_not_empty_object_id']]['Название'])));  
+      drupal_set_message(t('-> Завершено С ОШИБКАМИ! Последний обработанный объект "%final"', array('%final' => $results['objects_source'][$results['last_not_empty_object_id']]['Тип записи'] . ' ' . $results['objects_source'][$results['last_not_empty_object_id']]['Название'])));  
     }
     
   }
@@ -2684,7 +2684,7 @@ function zp_commerce_addNewProduct($op, $object, &$result_messages) {
     $result_messages[] = $result_message;
   }
   
-  dpm($new_product);
+  //dpm($new_product);
   
   // Create a Product Display node for the product,
   // And connect to it just created Product Type entity.
@@ -2743,7 +2743,7 @@ function zp_commerce_addNewProduct($op, $object, &$result_messages) {
     return $error_message;
   }
 
-  dpm($node);
+  //dpm($node);
   
   node_save($node);
   if (empty($node->nid)) {
@@ -2794,8 +2794,8 @@ function zp_commerce_taxonomy_menu_save($term, $menu_link, $mlid) {
   // For example, we could process all the translated taxonomy terms of this
   // term here, in order to save their respective translated menu links.
   
-    dpm($term);
-    dpm($menu_link);
+    //dpm($term);
+    //dpm($menu_link);
     
     
     // a4s rewrite menu item path, attribute title.
@@ -2879,16 +2879,16 @@ function zp_commerce_taxonomy_menu_save($term, $menu_link, $mlid) {
     // Hide (aka disable) menu item, if a corresponding term is hidden by setting its $visibility_status to 0;
     if (array_key_exists('und', $term->field_visibility_status) && array_key_exists('0', $term->field_visibility_status['und'])) {
       $menu_link['hidden'] = empty($term->field_visibility_status['und'][0]['value']) ? 1 : 0;
-      dpm('exists');
+      //dpm('exists');
     }
     else {
       $menu_link['hidden'] = 0;
-      dpm('NOT exists');
+      //dpm('NOT exists');
     }
     
     $mlid = menu_link_save($menu_link);
     
-    dpm($menu_link);
+    //dpm($menu_link);
 
 }
 
@@ -3025,9 +3025,10 @@ function zp_commerce_findDeptOrShopOrCityByZpIDofTerm_andConnectItToTerm($term) 
  */
 function zp_commerce_node_delete($node) {
   
-  static $catalog_voc;
   
+  // Deprecated, as we don't use nodes for depts anymore (use terms themselves instead).
   if ($node->type == 'department') {
+    static $catalog_voc;
     if (!$catalog_voc) {
       $catalog_voc = taxonomy_vocabulary_machine_name_load('catalog');
     }
@@ -3037,19 +3038,21 @@ function zp_commerce_node_delete($node) {
     // So we have to delete such an orphaned tid/mlid from the taxonomy menu table.
     
     // Find the catalog menu tid by the deleted node zp_id which is the same in corresponding term from the catalog menu.
-    $term_tid = zp_misc_fieldRead_idByValue_single('zp_id', $node->field_zp_id['und'][0]['value'], 'taxonomy_term', 'catalog');
-    // Delete the row with this tid from the taxonomy menu table.
-    _taxonomy_menu_delete_item($catalog_voc->vid, $term_tid);
-    
-    // And now, as we, in fact, have a new term without a corresponding menu item, we create it, by calling taxonomy menu function...
-    // It has to find any orphaned terms and create for them menu items.
-    // 
-    // But in our case, using our zp hook zp_commerce_taxonomy_menu_save we will set <nolink> for such menu items.
-    // 
-    //taxonomy_menu_rebuild($catalog_voc->vid);
-    // Rebuild menu for only inserted items.
-    taxonomy_menu_menu_links_insert($catalog_voc->vid);
-    drupal_set_message('ZP. Taxonomy menu item for "' .  $node->title . '" has been updated to set empty item after the node ' . $node->nid . ' deletion!', 'warning');
+    if($term_tid = zp_misc_fieldRead_idByValue_single('zp_id', $node->field_zp_id['und'][0]['value'], 'taxonomy_term', 'catalog')) {
+
+        // Delete the row with this tid from the taxonomy menu table.
+        _taxonomy_menu_delete_item($catalog_voc->vid, $term_tid);
+
+        // And now, as we, in fact, have a new term without a corresponding menu item, we create it, by calling taxonomy menu function...
+        // It has to find any orphaned terms and create for them menu items.
+        // 
+        // But in our case, using our zp hook zp_commerce_taxonomy_menu_save we will set <nolink> for such menu items.
+        // 
+        //taxonomy_menu_rebuild($catalog_voc->vid);
+        // Rebuild menu for only inserted items.
+        taxonomy_menu_menu_links_insert($catalog_voc->vid);
+        drupal_set_message('ZP. Taxonomy menu item for "' .  $node->title . '" has been updated to set empty item after the node ' . $node->nid . ' deletion!', 'warning');
+    }
   }
   
 }
