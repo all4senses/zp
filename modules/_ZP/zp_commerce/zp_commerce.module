@@ -3031,6 +3031,9 @@ function zp_commerce_node_delete($node) {
   
   // Deprecated, as we don't use nodes for depts anymore (use terms themselves instead).
   if ($node->type == 'department') {
+    return;
+    
+    
     static $catalog_voc;
     if (!$catalog_voc) {
       $catalog_voc = taxonomy_vocabulary_machine_name_load('catalog');
