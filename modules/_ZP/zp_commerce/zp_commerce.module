@@ -1942,6 +1942,9 @@ function zp_commerce_processPriceList_row_change($op, $object, &$result_messages
   } // End of foreach (fields_to_change as $field) {
   
   
+  
+  //http://timonweb.com/posts/how-to-force-search-api-to-reindex-a-node-an-entity/
+
   // Clear field cache for the node.
   cache_clear_all('field:node:' . $entity_id, 'cache_field');
 
@@ -2928,6 +2931,8 @@ function zp_commerce_addNewProduct($op, $object, &$result_messages) {
   }
   
   
+  
+  //http://timonweb.com/posts/how-to-force-search-api-to-reindex-a-node-an-entity/
   
   // Clear field cache for the node.
   //cache_clear_all('field:node:' . $nid, 'cache_field');
