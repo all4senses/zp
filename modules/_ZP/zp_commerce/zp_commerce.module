@@ -1702,6 +1702,21 @@ function zp_commerce_processPriceList_row_change($op, $object, &$result_messages
         return 'Ошибка при создании или изменении поля товара "' . $field_to_change . '" на "' . $object[$field_to_change] . '"';
       }
       $result_messages[] = 'Успешно изменено поле товара "' . $field_to_change . '" на "' . $object[$field_to_change] . '"';
+      
+      if ($field_to_change == 'Штрихкод') {
+        $found_code = zp_misc_getCountryAndBrand_fromBar($object['Штрихкод']);
+        if (!zp_misc_fieldSave(/*$field_name*/'brand_code', /*$entity_id*/$entity_id, /*$data*/$found_code['brand_code'], /*$entity_type*/'node', /*$bundle*/$bundle, /*$clear_cache*/ FALSE)) {
+          return 'Ошибка при создании или изменении поля дисплея товара "brand_code" на "' . $found_code['brand_code'] . '"';
+        }
+        $result_messages[] = 'Успешно изменено поле товара "brand_code" на "' . $found_code['brand_code'] . '"';
+        if (!zp_misc_fieldSave(/*$field_name*/'bar_length', /*$entity_id*/$entity_id, /*$data*/$found_code['bar_length'], /*$entity_type*/'node', /*$bundle*/$bundle, /*$clear_cache*/ FALSE)) {
+          return 'Ошибка при создании или изменении поля дисплея товара "bar_length" на "' . $found_code['bar_length'] . '"';
+        }
+        $result_messages[] = 'Успешно изменено поле товара "bar_length" на "' . $found_code['bar_length'] . '"';
+        //$node->field_brand_code[$node->language][0]['value'] = $found_code['brand_code'];
+        //$node->field_bar_length[$node->language][0]['value'] = $found_code['bar_length'];
+      }
+
       continue;
     }
     
@@ -2564,8 +2579,8 @@ function zp_commerce_addNewCatalogTerm($op, $object, &$result_messages) {
     'field_visibility_status' => array('und' => array(0 => array('value' => $object['Статус элемента']))),
   );
   
-  dpm($object);
-  dpm($catalog_term);
+  //dpm($object);
+  //dpm($catalog_term);
   
   if (taxonomy_term_save($catalog_term)) {
     $result_message = 'Новый терм словаря меню Каталог "' . $object['Название'] . '" был создан Успешно!';
@@ -2611,8 +2626,8 @@ function zp_commerce_taxonomy_menu_save($term, $menu_link, $mlid) {
   // For example, we could process all the translated taxonomy terms of this
   // term here, in order to save their respective translated menu links.
   
-    dpm($term);
-    dpm($menu_link);
+    //dpm($term);
+    //dpm($menu_link);
     
     if (!$menu_link['plid'] && !empty($term->parent[0])) {
       $query = db_select('taxonomy_menu', 'tm');
@@ -2620,7 +2635,7 @@ function zp_commerce_taxonomy_menu_save($term, $menu_link, $mlid) {
             ->condition('tm.tid', $term->parent[0]);
       if ($plid = $query->execute()->fetchField()) {
         $menu_link['plid'] = $plid;
-        dpm($menu_link);
+        //dpm($menu_link);
       }
     }
     
@@ -2879,6 +2894,10 @@ function zp_commerce_addNewProduct($op, $object, &$result_messages) {
   $node->field_c_weight[$node->language][0]['value'] = $object['Вес элемента в группе'];
   $node->field_brand[$node->language][0]['value'] = $object['Производитель/Поставщик/Бренд'];
 
+  $found_code = zp_misc_getCountryAndBrand_fromBar($object['Штрихкод']);
+  $node->field_brand_code[$node->language][0]['value'] = $found_code['brand_code'];
+  $node->field_bar_length[$node->language][0]['value'] = $found_code['bar_length'];
+  
   $node->{'field_' . $product_type}[$node->language][0]['product_id'] = $product_id;
   
   //dpm($node);
