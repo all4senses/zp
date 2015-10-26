@@ -616,7 +616,7 @@ function zp_breadcrumb($variables) {
     //dpm($zp_current_trail);
     
     // For depts or products...
-    if (in_array($args[0], array('d', 'dp', 'p'))) {
+    if (in_array($args[0], array('d', 'dp', 'p')) && !empty($zp_current_trail)) {
 
       // For depts with products
       // Put facets breadcrumbs AFTER a current dept title, 
