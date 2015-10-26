@@ -613,10 +613,10 @@ function zp_breadcrumb($variables) {
     $args = arg();
     //dpm($args);
     //dpm($breadcrumb);
-    //dpm($zp_current_trail);
+    dpm($zp_current_trail);
     
     // For depts or products...
-    if (in_array($args[0], array('d', 'dp', 'p')) && !empty($zp_current_trail)) {
+    if (in_array($args[0], array('d', 'dp', 'p'))) {
 
       // For depts with products
       // Put facets breadcrumbs AFTER a current dept title, 
@@ -629,7 +629,7 @@ function zp_breadcrumb($variables) {
         $parent_dept_breadcrumb_index = $zp_current_trail_count - 2;
         
         // Assure that the index of the parent dept is the same in trail and breadcrumb
-        if (strpos($breadcrumb[$parent_dept_breadcrumb_index], '>' . $zp_current_trail[$parent_dept_breadcrumb_index]['link_title'] . '<') !== FALSE) {
+        if (strpos($breadcrumb[$parent_dept_breadcrumb_index], '>' . @$zp_current_trail[$parent_dept_breadcrumb_index]['link_title'] . '<') !== FALSE) {
           
           if (empty($breadcrumb[$zp_current_trail_count - 1])) {
             // Do nothing, because we dont have here not the current title, nor facets breadcrumb...
