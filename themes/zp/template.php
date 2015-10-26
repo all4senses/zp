@@ -804,7 +804,9 @@ function zp_preprocess_block(&$variables, $hook) {
 function zp_process_block(&$variables, $hook) {
   //dpm($variables);
   // Drupal 7 should use a $title variable instead of $block->subject.
-  $variables['title'] = $variables['block']->subject;
+  if (!empty($variables['block']->subject)) {
+    $variables['title'] = $variables['block']->subject;
+  }
 }
 
 /**
