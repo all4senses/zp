@@ -2935,7 +2935,7 @@ function zp_commerce_addNewProduct($op, $object, &$result_messages) {
   //http://timonweb.com/posts/how-to-force-search-api-to-reindex-a-node-an-entity/
   
   // Clear field cache for the node.
-  //cache_clear_all('field:node:' . $nid, 'cache_field');
+  cache_clear_all('field:node:' . $node->nid, 'cache_field');
 
   // Search API Reindex the node.
   search_api_track_item_change('node', array($node->nid));
