@@ -167,6 +167,7 @@ function zp_blocks_getCurrentDept() {
   
   if (!$tid = zp_misc_fieldRead_idByValue_single('zp_id', $current_dept_zp_id, 'taxonomy_term', 'catalog')) {
     drupal_not_found();
+    drupal_exit();
     return;
   }
   
