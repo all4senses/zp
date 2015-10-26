@@ -1940,6 +1940,13 @@ function zp_commerce_processPriceList_row_change($op, $object, &$result_messages
       
     } // End of switch($object[$field]) {
   } // End of foreach (fields_to_change as $field) {
+  
+  
+  // Clear field cache for the node.
+  cache_clear_all('field:node:' . $entity_id, 'cache_field');
+
+  // Search API Reindex the node.
+  search_api_track_item_change('node', array($entity_id));
 }
 
 
@@ -2919,6 +2926,15 @@ function zp_commerce_addNewProduct($op, $object, &$result_messages) {
     $term->field_has_prods_or_depts['und'][0]['value'] = 2;
     taxonomy_term_save($term);
   }
+  
+  
+  
+  // Clear field cache for the node.
+  //cache_clear_all('field:node:' . $nid, 'cache_field');
+
+  // Search API Reindex the node.
+  search_api_track_item_change('node', array($node->nid));
+
   
   // Connect the subgroup term (found above) to this product node.
 //  zp_misc_fieldTermReferenceSave('catalog', $node->nid, $subgroup_term_tid, 'node', $product_display);
