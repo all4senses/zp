@@ -1,4 +1,7 @@
 <?php 
+if (!$content) {
+  return NULL;
+}
 //dpm($block);
 //dpm($classes);
 //dpm($content_attributes);
