@@ -2882,10 +2882,14 @@ function zp_commerce_addNewProduct($op, $object, &$result_messages) {
   } 
   
   // Mark a parent term that it has products as children.
+  dpm('$parent_tid = ' . $parent_tid);
   $term = taxonomy_term_load($parent_tid);
   dpm($term);
-  if (0) {
+  if ($term->field_has_prods_or_depts['und'][0]['value'] != 2) { // 2 - has products
+    // Update a term if it's not yet correctly marked.
+    $term->field_has_prods_or_depts['und'][0]['value'] = 2;
     taxonomy_term_save($term);
+    dpm($term);
   }
   
   // Connect the subgroup term (found above) to this product node.
