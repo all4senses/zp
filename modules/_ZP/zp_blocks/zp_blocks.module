@@ -166,6 +166,9 @@ function zp_blocks_getCurrentDept() {
   //dpm('$current_dept_zp_id = ' . $current_dept_zp_id);
   
   if (!$tid = zp_misc_fieldRead_idByValue_single('zp_id', $current_dept_zp_id, 'taxonomy_term', 'catalog')) {
+    
+    // Pity... too late for drupal_not_found here... Context doesn't catch it...
+    // So i have put this check in views page header
 //    drupal_not_found();
 //    drupal_exit();
     return;
