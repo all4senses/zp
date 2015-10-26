@@ -2535,6 +2535,8 @@ function zp_commerce_addNewCatalogTerm($op, $object, &$result_messages) {
     'parent' => array($parent_tid),
     'weight' => $object['Вес элемента в группе'],
     'field_zp_id' => !empty($object['zp_id']) ? array('und' => array(0 => array('value' => $object['zp_id']))) : NULL,
+    'field_parent_zp_id' => !empty($object['parent_zp_id']) ? array('und' => array(0 => array('value' => $object['parent_zp_id']))) : NULL,
+    'field_has_prods_or_depts' => array('und' => array(0 => array('value' => 0))), // We set here 0 because it's a brand new term without children yet.
     // Possibility to hide a menu item.
     'field_visibility_status' => array('und' => array(0 => array('value' => $object['Статус элемента']))),
   );
@@ -2552,7 +2554,8 @@ function zp_commerce_addNewCatalogTerm($op, $object, &$result_messages) {
   }
   //dpm($menu_item_term);
   
-  // If there is a dept/shop/etc connectd to this term by zp_id, this term will be assigned to that node automatically on taxonomy_menu item creation via hook zp_commerce_taxonomy_menu_save.
+  // If there is a dept/shop/etc connectd to this term by zp_id, this term will be assigned to that node automatically 
+  // on taxonomy_menu item creation via hook zp_commerce_taxonomy_menu_save().
   // If this term doesn't have zp_id - this is subgroup and will not be assigned to anything.
   
   // Success.
