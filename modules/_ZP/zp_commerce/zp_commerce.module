@@ -1189,7 +1189,7 @@ function zp_commerce_importPriceList_batch_finished($success, $results, $operati
     drupal_set_message(t('---> @count объектов обработано за @requests HTTP запросов.', array('@count' => $results['processed'], '@requests' => zp_misc_get_http_requests())));
 
     if (!$errors) {
-      drupal_set_message(t('------> OK! Прайс-лист успешно обработан. Последний обработанный объект "%final"', array('%final' => $results['objects_source'][$results['last_not_empty_object_id']]['Название'])));
+      drupal_set_message(t('------> OK! Прайс-лист успешно обработан. Последний обработанный объект "%final"', array('%final' => $results['objects_source'][$results['last_not_empty_object_id']]['Тип записи'] . ' ' . $results['objects_source'][$results['last_not_empty_object_id']]['Название'])));
     }
     else {
       drupal_set_message(t('-> Завершено С ОШИБКАМИ! Последний обработанный объект "%final"', array('%final' => $results['objects_source'][$results['last_not_empty_object_id']]['Тип записи'] . ' ' . $results['objects_source'][$results['last_not_empty_object_id']]['Название'])));  
