@@ -2418,9 +2418,22 @@ function zp_commerce_deleteDeptAndMenuItem($op, $object, &$result_messages) {
         ->condition('entity_type', 'taxonomy_term');
   if ($tid = $query->execute()->fetchField()) {
     $result_message = 'Найдён терм словаря меню Каталог, привязанный к данному отделу...';
-    //dpm('tid = '. $tid);
     if (taxonomy_term_delete($tid)) {
-      $result_message .= ' Успешно удалён (т.е. удалён пункт меню с таким же названием, как каталог).';
+      $result_message .= ' Успешно удалён (т.е. удалён отдел и пункт меню с таким же названием).';
+      
+      // Find parent term tid by parent_zp_id.
+      if ($parent_tid = zp_misc_fieldRead_idByValue_single('zp_id', $object['parent_zp_id'], 'taxonomy_term', 'catalog')) {
+        // Mark a parent term that it has products as children.
+        $parent_term = taxonomy_term_load($parent_tid);
+        if ($parent_term->field_has_prods_or_depts['und'][0]['value'] != 0 && !zp_misc_termHasChildren($parent_tid)) { // 0 - is empty
+          // Update a term if it's not yet correctly marked.
+          $parent_term->field_has_prods_or_depts['und'][0]['value'] = 0;
+          taxonomy_term_save($parent_term);
+        }
+      }
+
+        
+
     }
     $result_messages[] = $result_message;
   }
@@ -2552,6 +2565,15 @@ function zp_commerce_addNewCatalogTerm($op, $object, &$result_messages) {
     $error = 'Новый терм словаря меню Каталог "' . $object['Название'] . '" НЕ БЫЛ создан по какой-то причине!';
     return $error;
   }
+  
+    // Mark a parent term that it has depts as children.
+  $term = taxonomy_term_load($parent_tid);
+  if ($term->field_has_prods_or_depts['und'][0]['value'] != 1) { // 1 - has depts
+    // Update a term if it's not yet correctly marked.
+    $term->field_has_prods_or_depts['und'][0]['value'] = 1;
+    taxonomy_term_save($term);
+  }
+
   //dpm($menu_item_term);
   
   // If there is a dept/shop/etc connectd to this term by zp_id, this term will be assigned to that node automatically 
@@ -2579,8 +2601,8 @@ function zp_commerce_taxonomy_menu_save($term, $menu_link, $mlid) {
   // For example, we could process all the translated taxonomy terms of this
   // term here, in order to save their respective translated menu links.
   
-    //dpm($term);
-    //dpm($menu_link);
+    dpm($term);
+    dpm($menu_link);
     
     
     // a4s rewrite menu item path, attribute title.
@@ -2882,14 +2904,11 @@ function zp_commerce_addNewProduct($op, $object, &$result_messages) {
   } 
   
   // Mark a parent term that it has products as children.
-  dpm('$parent_tid = ' . $parent_tid);
   $term = taxonomy_term_load($parent_tid);
-  dpm($term);
   if ($term->field_has_prods_or_depts['und'][0]['value'] != 2) { // 2 - has products
     // Update a term if it's not yet correctly marked.
     $term->field_has_prods_or_depts['und'][0]['value'] = 2;
     taxonomy_term_save($term);
-    dpm($term);
   }
   
   // Connect the subgroup term (found above) to this product node.
@@ -3050,7 +3069,19 @@ function zp_commerce_node_delete($node) {
   
   
   // Deprecated, as we don't use nodes for depts anymore (use terms themselves instead).
-  if ($node->type == 'department') {
+  if ($node->type == 'product_a') {
+    // Find parent term tid by parent_zp_id.
+    if ($parent_tid = zp_misc_fieldRead_idByValue_single('zp_id', $node->field_parent_zp_id['und'][0]['value'], 'taxonomy_term', 'catalog')) {
+      // Mark a parent term that it has products as children.
+      $parent_term = taxonomy_term_load($parent_tid);
+      if ($parent_term->field_has_prods_or_depts['und'][0]['value'] != 0 && !zp_misc_termHasChildren($parent_tid)) { // 0 - is empty
+        // Update a term if it's not yet correctly marked.
+        $parent_term->field_has_prods_or_depts['und'][0]['value'] = 0;
+        taxonomy_term_save($parent_term);
+      }
+    }
+  }
+  elseif ($node->type == 'department') {
     
     return;
     
