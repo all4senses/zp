@@ -2393,6 +2393,8 @@ function zp_commerce_deleteDeptAndMenuItem($op, $object, &$result_messages) {
     return $error;
   }
 
+  // We don't need this because we don't use nodes for dept anymore.... just terms themselves...
+  /*
   $query = db_select('field_revision_field_zp_id', 'z')
     ->fields('z', array('entity_id'));
   $query->condition('z.field_zp_id_value', $object['zp_id']);
@@ -2408,13 +2410,14 @@ function zp_commerce_deleteDeptAndMenuItem($op, $object, &$result_messages) {
   $result_message = 'Успешно удалён Отдел с zp_id ' . $object['zp_id'];
   //dpm($result_message);
   $result_messages[] = $result_message;
-    
+  */
+  
   $query = db_select('field_data_field_zp_id', 'z');
   $query->fields('z', array('entity_id'))
         ->condition('field_zp_id_value', $object['zp_id'])
         ->condition('entity_type', 'taxonomy_term');
   if ($tid = $query->execute()->fetchField()) {
-    $result_message = 'Найдёт терм словаря меню Каталог, привязанный к данному отделу.';
+    $result_message = 'Найдён терм словаря меню Каталог, привязанный к данному отделу...';
     //dpm('tid = '. $tid);
     if (taxonomy_term_delete($tid)) {
       $result_message .= ' Успешно удалён (т.е. удалён пункт меню с таким же названием, как каталог).';
@@ -2433,7 +2436,7 @@ function zp_commerce_addNewDeptAndMenuItem($op, $object, &$result_messages) {
  
   // Creat a node for the department.
   // ---------------------------------------------------------------------------------------------------
-  
+ /* 
   global $user;
   global $language;
   
@@ -2467,21 +2470,12 @@ function zp_commerce_addNewDeptAndMenuItem($op, $object, &$result_messages) {
   $node->field_parent_zp_id[$node->language][0]['value'] = $object['parent_zp_id'];
   $node->field_c_weight[$node->language][0]['value'] = $object['Вес элемента в группе'];
 
-  /*
-  $node->field_zp_id[$node->language][0] = array(
-    'value' => $object['zp_id'],
-    'safe_value' => check_plain($object['zp_id']),
-    'format' => 'full_html',
-  );
-  */
+//  $node->path = array(
+//    'alias' => $object['url_alias'],
+//    'language' => $node->language,
+//    'pathauto' => 0,
+//  );
   
-  /*
-  $node->path = array(
-    'alias' => $object['url_alias'],
-    'language' => $node->language,
-    'pathauto' => 0,
-  );
-  */
   
   if (!$node = node_submit($node)) {
     $error_message = '1. Ошибка при сохранении отдела "' . $object['Название'] . '"';
@@ -2500,7 +2494,7 @@ function zp_commerce_addNewDeptAndMenuItem($op, $object, &$result_messages) {
   //drupal_set_message($result_message);
   $result_messages[] = $result_message;
   
-  
+  */
   
   // Create a term in the menu Catalog and connect it to the just created department node.
   // ---------------------------------------------------------------------------------------------------
