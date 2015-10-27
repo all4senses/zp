@@ -468,10 +468,10 @@ function zp_blocks_getBlockThemed($block_data, $cache_on = FALSE, $cache_expire_
  * @param $config
  *   An array containing the configuration of the tree.
  */
-function zp_misc_menu_block_tree_alter(&$tree, &$config) {
-  dpm($tree);
-  dpm($config);
-}
+//function zp_misc_menu_block_tree_alter(&$tree, &$config) {
+  //dpm($tree);
+  //dpm($config);
+//}
 
 
 /**
@@ -480,17 +480,17 @@ function zp_misc_menu_block_tree_alter(&$tree, &$config) {
  * @param type $block
  */
 function zp_blocks_block_view_alter(&$data, $block) {
-  
-
     
   //if (@$data['content']['#config']['admin_title'] == 'c_menu_1') {
   if (isset($block->bid) && $block->bid == 'menu_block-1') {  
-    dpm($data);
-    dpm($block);  
+    
     $data['content']['#content']['parent_menu'] = array(
       '#markup' => '<div>xxx</div>',
       '#weight' => -10,  
     );
+    
+    dpm($data);
+    dpm($block);  
 //    
   }
 }
