@@ -3958,13 +3958,13 @@ function zp_commerce_facet_items_alter(&$build, &$settings) {
       $new_build[$category][$tid] = $build[$tid];
     }
     
-    dpm($new_build);
+    //dpm($new_build);
+    
     // Put Прочие категории  to the end of the list.
     if (isset($new_build['Прочие категории'])) {
       $other_cats = $new_build['Прочие категории'];
       unset($new_build['Прочие категории']);
       $new_build['Прочие категории'] = $other_cats;
-      dpm($new_build);
     }
     
     foreach ($new_build as $category => $category_array) {
