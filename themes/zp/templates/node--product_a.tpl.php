@@ -110,7 +110,7 @@
                 $query->condition($db_or_title);
               }
               if (@$node->field_brand_code['und'][0]['safe_value']) {
-                $query->condition('ta.field_brand_codes_value', $node->field_brand_code['und'][0]['safe_value']);
+                $query->condition('bc.field_brand_codes_value', $node->field_brand_code['und'][0]['safe_value']);
               }
               
               $query->fields('n', array('nid', 'title'));
