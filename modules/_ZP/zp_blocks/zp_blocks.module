@@ -484,10 +484,10 @@ function zp_blocks_block_view_alter(&$data, $block) {
   //if (@$data['content']['#config']['admin_title'] == 'c_menu_1') {
   if (isset($block->bid) && $block->bid == 'menu_block-1') {  
     
-    $data['content']['#content'][0] = array(
-      '#markup' => '<div>xxx</div>',
-      '#weight' => -10,  
-    );
+    $data['content']['#content']['#prefix'] = '<div>xxx</div>'; //array(
+//      '#markup' => '<div>xxx</div>',
+//      '#weight' => -10,  
+//    );
     
     dpm($data);
     dpm($block);  
