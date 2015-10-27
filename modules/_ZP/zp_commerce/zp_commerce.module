@@ -1705,15 +1705,15 @@ function zp_commerce_processPriceList_row_change($op, $object, &$result_messages
       
       if ($field_to_change == 'Штрихкод') {
         $found_code = zp_misc_getCountryAndBrand_fromBar($object['Штрихкод']);
-        if (!zp_misc_fieldSave(/*$field_name*/'brand_bar', /*$entity_id*/$entity_id, /*$data*/$found_code['brand_code'], /*$entity_type*/'node', /*$bundle*/$bundle, /*$clear_cache*/ FALSE)) {
-          return 'Ошибка при создании или изменении поля дисплея товара "brand_bar" на "' . $found_code['brand_code'] . '"';
+        if (!zp_misc_fieldSave(/*$field_name*/'brand_code', /*$entity_id*/$entity_id, /*$data*/$found_code['brand_code'], /*$entity_type*/'node', /*$bundle*/$bundle, /*$clear_cache*/ FALSE)) {
+          return 'Ошибка при создании или изменении поля дисплея товара "brand_code" на "' . $found_code['brand_code'] . '"';
         }
-        $result_messages[] = 'Успешно изменено поле товара "brand_bar" на "' . $found_code['brand_code'] . '"';
+        $result_messages[] = 'Успешно изменено поле товара "brand_code" на "' . $found_code['brand_code'] . '"';
         if (!zp_misc_fieldSave(/*$field_name*/'bar_length', /*$entity_id*/$entity_id, /*$data*/$found_code['bar_length'], /*$entity_type*/'node', /*$bundle*/$bundle, /*$clear_cache*/ FALSE)) {
           return 'Ошибка при создании или изменении поля дисплея товара "bar_length" на "' . $found_code['bar_length'] . '"';
         }
         $result_messages[] = 'Успешно изменено поле товара "bar_length" на "' . $found_code['bar_length'] . '"';
-        //$node->field_brand_bar[$node->language][0]['value'] = $found_code['brand_code'];
+        //$node->field_brand_code[$node->language][0]['value'] = $found_code['brand_code'];
         //$node->field_bar_length[$node->language][0]['value'] = $found_code['bar_length'];
       }
 
@@ -2895,7 +2895,7 @@ function zp_commerce_addNewProduct($op, $object, &$result_messages) {
   $node->field_brand[$node->language][0]['value'] = $object['Производитель/Поставщик/Бренд'];
 
   $found_code = zp_misc_getCountryAndBrand_fromBar($object['Штрихкод']);
-  $node->field_brand_bar[$node->language][0]['value'] = $found_code['brand_code'];
+  $node->field_brand_code[$node->language][0]['value'] = $found_code['brand_code'];
   $node->field_bar_length[$node->language][0]['value'] = $found_code['bar_length'];
   
   $node->{'field_' . $product_type}[$node->language][0]['product_id'] = $product_id;
