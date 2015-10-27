@@ -484,7 +484,7 @@ function zp_blocks_block_view_alter(&$data, $block) {
   //if (@$data['content']['#config']['admin_title'] == 'c_menu_1') {
   if (isset($block->bid) && $block->bid == 'menu_block-1') {  
     
-    $data['content']['#content']['parent_menu'] = array(
+    $data['content']['#content'][0] = array(
       '#markup' => '<div>xxx</div>',
       '#weight' => -10,  
     );
