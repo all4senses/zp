@@ -466,6 +466,13 @@ function zp_blocks_getBlockThemed($block_data, $cache_on = FALSE, $cache_expire_
  * @param type $block
  */
 function zp_blocks_block_view_alter(&$data, $block) {
-  dpm($data);
-  dpm($block);
+  
+  
+  if ($data['content']['#config']['admin_title'] == 'c_menu_1') {
+    $data['content']['#content']['parent_menu'] = array(
+      '#markup' => '<div>xxx</div>',
+    );
+    dpm($data);
+    dpm($block);
+  }
 }
