@@ -97,8 +97,8 @@
             if (@$node->field_brand['und'][0]['safe_value'] || @$node->field_brand_code['und'][0]['safe_value']) {
               $query = db_select('node', 'n');
             
-              $query->join('field_data_field_titles_alternative', 'ta', "ta.entity_id = n.nid"); 
-              $query->join('field_data_field_brand_codes', 'bc', "bc.entity_id = n.nid"); 
+              $query->leftJoin('field_data_field_titles_alternative', 'ta', "ta.entity_id = n.nid"); 
+              $query->leftJoin('field_data_field_brand_codes', 'bc', "bc.entity_id = n.nid"); 
 
               $query->condition('n.type', 'brand');
               
@@ -108,9 +108,18 @@
                   $db_or_title->condition('n.title', $node->field_brand['und'][0]['safe_value']);
                   $db_or_title->condition('ta.field_titles_alternative_value', $node->field_brand['und'][0]['safe_value']);
                 $query->condition($db_or_title);
+                
+                if (!@$node->field_brand_code['und'][0]['safe_value']) {
+                  // Check if we can match the brand only by title.
+                  $query->join('field_data_field_brand_select_type', 'st', "st.entity_id = n.nid AND st.field_brand_select_type_value IN (2,3)");  // 2 - Title OR code, 3 - Title only
+                }
               }
               if (@$node->field_brand_code['und'][0]['safe_value']) {
                 $query->condition('bc.field_brand_codes_value', $node->field_brand_code['und'][0]['safe_value']);
+                if (!@$node->field_brand['und'][0]['safe_value']) {
+                  // Check if we can match the brand only by code.
+                  $query->join('field_data_field_brand_select_type', 'st', "st.entity_id = n.nid AND st.field_brand_select_type_value IN (2,3)");  // 2 - Title OR code, 4 - Code only
+                }
               }
               
               $query->fields('n', array('nid', 'title'));
