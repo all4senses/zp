@@ -491,6 +491,10 @@ function zp_blocks_block_view_alter(&$data, $block) {
     
     dpm($data);
     dpm($block);  
+    
+    global $zp_current_trail;
+    
+    dpm($zp_current_trail);
 //    
   }
 }
