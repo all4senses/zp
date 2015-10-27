@@ -92,6 +92,7 @@
           else {
             // Make a brand name as a link if there corresponding brand page is found.
             dpm($content);
+            dpm($node);
           }
           //dpm($content);
           echo render($content);
