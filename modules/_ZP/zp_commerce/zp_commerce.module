@@ -1959,7 +1959,8 @@ function zp_commerce_processPriceList_row_change($op, $object, &$result_messages
   
   
   //http://timonweb.com/posts/how-to-force-search-api-to-reindex-a-node-an-entity/
-
+  // http://kahthong.com/2013/06/reindex-drupals-search-api-module-indexes-programmatically
+  
   // Clear field cache for the node.
   cache_clear_all('field:node:' . $entity_id, 'cache_field');
 
@@ -3957,7 +3958,7 @@ function zp_commerce_facet_items_alter(&$build, &$settings) {
       $new_build[$category][$tid] = $build[$tid];
     }
     
-    //dpm($new_build);
+    dpm($new_build);
     
     foreach ($new_build as $category => $category_array) {
       uasort($new_build[$category], 'zp_commerce_sortArrayBuildByCatName');

@@ -3917,10 +3917,7 @@ function zp_misc_checkBarCRC(array $bar, $bar_length) {
  * 
  */
 function gv_misc_getBrandPageLink_forProduct($node, &$content) {
-  
-  dpm($content);
-  dpm($node);
-            
+          
   if (@$node->field_brand['und'][0]['safe_value'] || @$node->field_brand_code['und'][0]['safe_value']) {
     $query = db_select('node', 'n');
 
@@ -3952,7 +3949,6 @@ function gv_misc_getBrandPageLink_forProduct($node, &$content) {
     $query->fields('n', array('nid', 'title'));
 
     if ($brand_page = $query->execute()->fetchObject()) {
-      dpm($brand_page);
       $content['field_brand'][0]['#markup'] = l($brand_page->title, 'node/' . $brand_page->nid);
     }
   }

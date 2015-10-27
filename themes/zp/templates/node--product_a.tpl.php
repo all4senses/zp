@@ -103,7 +103,7 @@
           <footer>
             <div class="share">
               <?php 
-                echo zp_blocks_getSidebarShareStaticBlock($node, '<span>Share:</span>');
+                //echo zp_blocks_getSidebarShareStaticBlock($node, '<span>Share:</span>');
               ?>  
             </div>
           </footer>
