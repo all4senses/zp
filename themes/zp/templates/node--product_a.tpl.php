@@ -91,7 +91,7 @@
           }
           else {
             // Make a brand name as a link if there corresponding brand page is found.
-            gv_misc_getBrandPageLink_forProduct($content, $node);
+            gv_misc_getBrandPageLink_forProduct($node, $content);
           }
           //dpm($content);
           echo render($content);
