@@ -86,7 +86,12 @@
             echo render($content['body']);
             //echo 'summary...';
             
+            // Hide user comment field on a teaser
             hide($content['field_product'][0]['line_item_fields']['field_u_product_comment']);
+          }
+          else {
+            // Make a brand name as a link if there corresponding brand page is found.
+            dpm($content);
           }
           //dpm($content);
           echo render($content);
