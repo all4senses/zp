@@ -3953,3 +3953,17 @@ function gv_misc_getBrandPageLink_forProduct($node, &$content) {
     }
   }
 }
+
+
+/**
+ * Alter the menu tree and its configuration before the tree is rendered.
+ *
+ * @param $tree
+ *   An array containing the unrendered menu tree.
+ * @param $config
+ *   An array containing the configuration of the tree.
+ */
+function zp_misc_menu_block_tree_alter(&$tree, &$config) {
+  dpm($tree);
+  dpm($config);
+}
