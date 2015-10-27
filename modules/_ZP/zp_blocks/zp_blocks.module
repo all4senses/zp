@@ -489,6 +489,7 @@ function zp_blocks_block_view_alter(&$data, $block) {
     dpm($block);  
     $data['content']['#content']['parent_menu'] = array(
       '#markup' => '<div>xxx</div>',
+      '#weight' => -10,  
     );
 //    
   }
