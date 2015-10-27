@@ -459,3 +459,13 @@ function zp_blocks_getBlockThemed($block_data, $cache_on = FALSE, $cache_expire_
   return $out;
 }
 
+
+/**
+ * 
+ * @param type $data
+ * @param type $block
+ */
+function zp_blocks_block_view_alter(&$data, $block) {
+  dpm($data);
+  dpm($block);
+}

@@ -108,15 +108,3 @@ function hook_menu_block_delete(array $config) {
 /**
  * @} End of "addtogroup hooks".
  */
-
-
-
-/**
- * 
- * @param type $data
- * @param type $block
- */
-function zp_block_block_view_alter(&$data, $block) {
-  dpm($data);
-  dpm($block);
-}
