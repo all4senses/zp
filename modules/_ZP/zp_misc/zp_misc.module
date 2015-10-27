@@ -3101,6 +3101,8 @@ function zp_misc_entity_info_alter(&$entity_info) {
 
 /**
  * 
+ * Actually it may or even should be deprecated as we use default system breadcrumbs made by menu trail...
+ * 
  * @global type $current_place_in_catalog
  * @param type $variables
  * @return type
