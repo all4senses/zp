@@ -2677,6 +2677,7 @@ function zp_commerce_taxonomy_menu_save($term, $menu_link, $mlid) {
       dpm('$shop_or_city_nid = ' . $shop_or_city_nid);
       // If it's a zhop or a city, use that node/s url for the menu item url.
       $menu_link['link_path'] = url('node/' . $shop_or_city_nid);
+      dpm($menu_link);
     }
     else {
           // But if it's a dept (which doesn't use connected node, just a term itself), create a specific dept url...
