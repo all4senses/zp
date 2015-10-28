@@ -4058,7 +4058,7 @@ function zp_commerce_sortArrayBuildByCatName($a, $b) {
 function zp_commerce_sortArrayBuildByName($a, $b) {
   //dpm($a);
   //dpm($b);
-  return strcasecmp(a['#markup'], $b['#markup']);
+  return strcasecmp($a['#markup'], $b['#markup']);
   
 //  if ($a['#markup'] == $b['#markup']) {
 //      return 0;
