@@ -483,25 +483,23 @@ function zp_blocks_block_view_alter(&$data, $block) {
     
   if (isset($block->bid) && $block->bid == 'menu_block-1') {
     
-    $data['content']['#content']['#prefix'] = '<div>yyy</div>';
-    
     //dpm($data);
     //dpm($block);  
     
     global $zp_current_trail;
-    dpm($zp_current_trail);
+    //dpm($zp_current_trail);
     
     $current_menu_item_num = count($zp_current_trail) - 1;
     
     $upper_links = NULL;
-    if ($zp_current_trail[$current_menu_item_num - 1]['href'] != '<front>' && $zp_current_trail[$current_menu_item_num - 1]['plid'] != 0 && $zp_current_trail[$current_menu_item_num - 2]['plid'] != 0) {
+    if ($zp_current_trail && $zp_current_trail[$current_menu_item_num - 1]['href'] != '<front>' && $zp_current_trail[$current_menu_item_num - 1]['plid'] != 0 && $zp_current_trail[$current_menu_item_num - 2]['plid'] != 0) {
       // Parent is Front or a City
       // So we don't add upper links
       $upper_links .= '<div class="up-1">' . l($zp_current_trail[$current_menu_item_num - 1]['link_title'], $zp_current_trail[$current_menu_item_num - 1]['link_path']) . '</div><div class="up-delim">^<div>';
       if ($zp_current_trail[$current_menu_item_num - 2]['href'] != '<front>' && $zp_current_trail[$current_menu_item_num - 2]['plid'] != 0 && $zp_current_trail[$current_menu_item_num - 3]['plid'] != 0) {
-        $upper_links = '<div class="up-1">' . l($zp_current_trail[$current_menu_item_num - 1]['link_title'], $zp_current_trail[$current_menu_item_num - 1]['link_path']) . '</div><div class="up-delim">^<div>' . $upper_links;
+        $upper_links = '<div class="up-1">' . l($zp_current_trail[$current_menu_item_num - 2]['link_title'], $zp_current_trail[$current_menu_item_num - 2]['link_path']) . '</div><div class="up-delim">^<div>' . $upper_links;
       }
-      $data['content']['#content']['#prefix'] .= '<div>xxx</div>' . $upper_links;
+      $data['content']['#content']['#prefix'] .= $upper_links;
     }
   } // End of if (isset($block->bid) && $block->bid == 'menu_block-1') {  
   
