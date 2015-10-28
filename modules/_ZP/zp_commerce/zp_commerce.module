@@ -4058,10 +4058,12 @@ function zp_commerce_sortArrayBuildByCatName($a, $b) {
 function zp_commerce_sortArrayBuildByName($a, $b) {
   //dpm($a);
   //dpm($b);
-  if ($a['#markup'] == $b['#markup']) {
-      return 0;
-  }
-  return ($a['#markup'] > $b['#markup']) ? -1 : 1;
+  return strcasecmp(a['#markup'], $b['#markup']);
+  
+//  if ($a['#markup'] == $b['#markup']) {
+//      return 0;
+//  }
+//  return ($a['#markup'] > $b['#markup']) ? -1 : 1;
 }
 
 
