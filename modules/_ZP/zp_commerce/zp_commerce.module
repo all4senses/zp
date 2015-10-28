@@ -2630,15 +2630,15 @@ function zp_commerce_taxonomy_menu_save($term, $menu_link, $mlid) {
     //dpm($term);
     //dpm($menu_link);
     
-    if (!$menu_link['plid'] && !empty($term->parent[0])) {
-      $query = db_select('taxonomy_menu', 'tm');
-      $query->fields('tm', array('mlid'))
-            ->condition('tm.tid', $term->parent[0]);
-      if ($plid = $query->execute()->fetchField()) {
-        $menu_link['plid'] = $plid;
-        //dpm($menu_link);
-      }
-    }
+//    if (!$menu_link['plid'] && !empty($term->parent[0])) {
+//      $query = db_select('taxonomy_menu', 'tm');
+//      $query->fields('tm', array('mlid'))
+//            ->condition('tm.tid', $term->parent[0]);
+//      if ($plid = $query->execute()->fetchField()) {
+//        $menu_link['plid'] = $plid;
+//        //dpm($menu_link);
+//      }
+//    }
     
     // a4s rewrite menu item path, attribute title.
     
