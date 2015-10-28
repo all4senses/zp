@@ -3921,8 +3921,8 @@ function zp_commerce_facet_items_alter(&$build, &$settings) {
 //    $build['!']['#markup'] = 'Other';
 //  }
   //$settings->settings['widget'] = 'facetapi_links';
-  dpm($build);
-  dpm($settings);
+  //dpm($build);
+  //dpm($settings);
   
   if ($settings->facet == 'field_brand' || $settings->facet == 'field_country') {
     
@@ -3952,6 +3952,7 @@ function zp_commerce_facet_items_alter(&$build, &$settings) {
     // Move 'Other' to the end of an options list.
     if ($other = @$build['!']) {
       unset($build['!']);
+      ksort($build);
       $build['!'] = $other;
       $build['!']['#html'] = TRUE;
       $build['!']['#markup'] = '<div class="cat-other" style="color: red;">' . $build['!']['#markup'] . '</div>';
