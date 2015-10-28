@@ -3956,7 +3956,7 @@ function zp_commerce_facet_items_alter(&$build, &$settings) {
       $build['!'] = $other;
       $build['!']['#html'] = TRUE;
       $build['!']['#markup'] = '<div class="cat-other" style="color: red;">' . $build['!']['#markup'] . '</div>';
-      //dpm($build);
+      dpm($build);
     }
 
   } // End of if ($settings->facet == 'field_brand') {
@@ -4056,7 +4056,8 @@ function zp_commerce_sortArrayBuildByCatName($a, $b) {
  * uasort($categories, 'zp_commerce_sortArrayBuildByCatName');
  */
 function zp_commerce_sortArrayBuildByName($a, $b) {
-  
+  dpm($a);
+  dpm($b);
   if ($a['#markup'] == $b['#markup']) {
       return 0;
   }
