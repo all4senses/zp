@@ -3924,7 +3924,7 @@ function zp_commerce_facet_items_alter(&$build, &$settings) {
   //dpm($build);
   //dpm($settings);
   
-  if ($settings->facet == 'field_brand') {
+  if ($settings->facet == 'field_brand' || $settings->facet == 'field_country') {
     
     /*
     $item = $build['spar'];
