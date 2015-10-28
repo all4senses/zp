@@ -2676,7 +2676,7 @@ function zp_commerce_taxonomy_menu_save($term, $menu_link, $mlid) {
     if ($shop_or_city_nid = zp_commerce_getShopOrCityNid_byZpId($term->field_zp_id['und'][0]['value'])) {
       dpm('$shop_or_city_nid = ' . $shop_or_city_nid);
       // If it's a zhop or a city, use that node/s url for the menu item url.
-      $menu_link['link_path'] = ltrim(url('node/' . $shop_or_city_nid), '/');
+      $menu_link['link_path'] = 'node/' . $shop_or_city_nid;
       //dpm($menu_link);
     }
     else 
