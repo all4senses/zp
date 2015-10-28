@@ -2742,7 +2742,7 @@ function zp_commerce_taxonomy_menu_save($term, $menu_link, $mlid) {
     
     $mlid = menu_link_save($menu_link);
     
-    //dpm($menu_link);
+    dpm($menu_link);
 
 }
 

@@ -489,8 +489,8 @@ function zp_blocks_block_view_alter(&$data, $block) {
 //      '#weight' => -10,  
 //    );
     
-    dpm($data);
-    dpm($block);  
+    //dpm($data);
+    //dpm($block);  
     
     global $zp_current_trail;
     
