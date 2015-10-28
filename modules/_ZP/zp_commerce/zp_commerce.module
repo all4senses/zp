@@ -2672,24 +2672,33 @@ function zp_commerce_taxonomy_menu_save($term, $menu_link, $mlid) {
     }
     */
     
-    // Connect views page like d/z011121 or dp/z0193983
-    if (@$term->field_has_prods_or_depts['und'][0]['value'] == 1) {
-      $menu_link['link_path'] = 'd/' . $term->field_zp_id['und'][0]['value'];
-    }
-    elseif (@$term->field_has_prods_or_depts['und'][0]['value'] == 2) {
-      $menu_link['link_path'] = 'dp/' . $term->field_zp_id['und'][0]['value'];
+    
+    if ($shop_ir_city_nid = zp_commerce_getShopOrCityNid_byZpId($zp_id)) {
+      // If it's a zhop or a city, use that node/s url for the menu item url.
+      $menu_link['link_path'] = url('node/' . $shop_ir_city_nid);
     }
     else {
-      // Hide menu item if it's not yet filled with depts or products
-      // But connect to it some kind of temporary menu url.
-      
-      if (zp_misc_termHasChildren($term->tid)) {
-        $menu_link['link_path'] = 'd/' . $term->field_zp_id['und'][0]['value'];
-      }
-      else {
-        $menu_link['link_path'] = 'dp/' . $term->field_zp_id['und'][0]['value'];
-      }
-      $term->field_visibility_status['und'][0]['value'] = 0;
+          // But if it's a dept (which doesn't use connected node, just a term itself), create a specific dept url...
+          //
+          // Connect views page like d/z011121 or dp/z0193983
+          if (@$term->field_has_prods_or_depts['und'][0]['value'] == 1) {
+            $menu_link['link_path'] = 'd/' . $term->field_zp_id['und'][0]['value'];
+          }
+          elseif (@$term->field_has_prods_or_depts['und'][0]['value'] == 2) {
+            $menu_link['link_path'] = 'dp/' . $term->field_zp_id['und'][0]['value'];
+          }
+          else {
+            // Hide menu item if it's not yet filled with depts or products
+            // But connect to it some kind of temporary menu url.
+
+            if (zp_misc_termHasChildren($term->tid)) {
+              $menu_link['link_path'] = 'd/' . $term->field_zp_id['und'][0]['value'];
+            }
+            else {
+              $menu_link['link_path'] = 'dp/' . $term->field_zp_id['und'][0]['value'];
+            }
+            $term->field_visibility_status['und'][0]['value'] = 0;
+          }
     }
     
     
@@ -2736,6 +2745,22 @@ function zp_commerce_taxonomy_menu_save($term, $menu_link, $mlid) {
 
 
 /**
+ * 
+ * @param type $zp_id
+ * @return type
+ * 
+  */
+function zp_commerce_getShopOrCityNid_byZpId($zp_id) {
+  $query = db_select('field_data_field_zp_id', 'f');
+  $query->fields('f', array('entity_id'))
+        ->condition('field_zp_id_value', $zp_id)
+        ->condition('f.bundle', array('shop', 'city'), 'IN');
+  $result = $query->execute()->fetchField();
+  return $result;
+}
+
+  
+ /**
  * 
  * @param type $object
  * @param type $result_messages
