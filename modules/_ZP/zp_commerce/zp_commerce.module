@@ -2924,7 +2924,9 @@ function zp_commerce_addNewProduct($op, $object, &$result_messages) {
   $found_code = zp_misc_getCountryAndBrand_fromBar($object['Штрихкод']);
   $node->field_brand_code[$node->language][0]['value'] = $found_code['brand_code'];
   $node->field_bar_length[$node->language][0]['value'] = $found_code['bar_length'];
-  $node->field_country[$node->language][0]['tid'] = zp_misc_getTidByName(5, $found_code['country'][0]); // 5 - vid for countries
+  if($country_tid = zp_misc_getTidByName(5, $found_code['country'][0])) { // 5 - vid for countries
+    $node->field_country[$node->language][0]['tid'] = $country_tid;
+  }
   
   $node->{'field_' . $product_type}[$node->language][0]['product_id'] = $product_id;
   
