@@ -3952,11 +3952,11 @@ function zp_commerce_facet_items_alter(&$build, &$settings) {
     // Move 'Other' to the end of an options list.
     if ($other = @$build['!']) {
       unset($build['!']);
-      ksort($build);
+      uasort($build, 'zp_commerce_sortArrayBuildByName');
       $build['!'] = $other;
       $build['!']['#html'] = TRUE;
       $build['!']['#markup'] = '<div class="cat-other" style="color: red;">' . $build['!']['#markup'] . '</div>';
-      dpm($build);
+      //dpm($build);
     }
 
   } // End of if ($settings->facet == 'field_brand') {
@@ -4034,11 +4034,11 @@ function zp_commerce_facet_items_alter(&$build, &$settings) {
 
 
 /**
- * Helper function for sorting providers by erating with uasort function.
+ * Helper function for sorting facets Categories with uasort function.
  * 
  * Example of using:
  * 
- * uasort($array_with_elements_contained_key_name, 'gv_misc_sortArrayBlockedIPsByCountyAmount');
+ * uasort($categories, 'zp_commerce_sortArrayBuildByCatName');
  */
 function zp_commerce_sortArrayBuildByCatName($a, $b) {
   
@@ -4047,6 +4047,22 @@ function zp_commerce_sortArrayBuildByCatName($a, $b) {
   }
   return ($a['#count'] > $b['#count']) ? -1 : 1;
 }
+
+/**
+ * Helper function for sorting facets Brands and Countries with uasort function.
+ * 
+ * Example of using:
+ * 
+ * uasort($categories, 'zp_commerce_sortArrayBuildByCatName');
+ */
+function zp_commerce_sortArrayBuildByName($a, $b) {
+  
+  if ($a['#markup'] == $b['#markup']) {
+      return 0;
+  }
+  return ($a['#markup'] > $b['#markup']) ? -1 : 1;
+}
+
 
 
 function zp_commerce_block_view_alter(&$data, $block) {
