@@ -2974,6 +2974,7 @@ function zp_commerce_addNewProduct($op, $object, &$result_messages) {
     $node->field_bar_length[$node->language][0]['value'] = $found_code['bar_length'];
   
     if (empty($found_code['country']['not_country'])) {
+      $result_messages[] = 'Определена страна ' . $found_code['country'][0] . ' по штрих-коду';
       if ($found_code['bar_length'] > 8) {
         $node->field_brand_code[$node->language][0]['value'] = $found_code['brand_code'];
       }
@@ -2981,9 +2982,16 @@ function zp_commerce_addNewProduct($op, $object, &$result_messages) {
         $node->field_country[$node->language][0]['tid'] = $country_tid;
       }
       else {
+        $result_messages[] = 'Страна ' . $found_code['country'][0] . ' из прайс-листа не найдена в базе!';
         watchdog('ZP Country NOT found!', 'Country "' . $found_code['country'][0] . '" from imported price-list was not defined in system', NULL, WATCHDOG_WARNING);
       }
     }
+    else {
+      $result_messages[] = 'Штрих-код не является кодом страны';
+    }
+  }
+  else {
+    $result_messages[] = 'Страна не определена по штрих-коду';
   }
   
   $node->{'field_' . $product_type}[$node->language][0]['product_id'] = $product_id;

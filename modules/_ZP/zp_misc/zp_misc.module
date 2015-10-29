@@ -3634,6 +3634,10 @@ function zp_misc_getCountryAndBrand_fromBar_form_submit(&$form, &$form_state) {
  */
 function zp_misc_getCountryAndBrand_fromBar($bar) {
   
+  if (!$bar) {
+    return NULL;
+  }
+  
   // http://nettips.ru/article/shtrixkod_upc_ean_13.html
   // http://www.ru.all.biz/guide-barcodes
   // https://ru.wikipedia.org/wiki/European_Article_Number
