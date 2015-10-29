@@ -3550,7 +3550,7 @@ function zp_misc_getCountryAndBrand_fromBar_form($form, &$form_state) {
           
             //. print_r($found_code, TRUE) 
           
-            . (empty($found_code['country']['not_country']) ? '<div>Страна: ' : 'Тип товара/кода:') . $found_code['country'][0] . '</div>'
+            . (empty($found_code['country']['not_country']) ? '<div>Страна: ' : 'Тип товара/кода: ') . $found_code['country'][0] . '</div>'
             . '<div>Организация, выдавшая код: ' . $found_code['country'][1] . '</div>'
             . '<div>Код страны/товара в штрих-коде: ' . $found_code['digits'] . (@$found_code['range'] ? ' (диапазон кодов этой страны ' .  $found_code['range'] . ')' : '' ) . '</div>'
             . '<div>Тип штрих-кода: ' . ($found_code['bar_type'] ? $found_code['bar_type'] : 'не определён') . ' (' . $found_code['bar_length'] . ' символов)</div>'
