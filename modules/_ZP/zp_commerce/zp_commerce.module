@@ -1697,6 +1697,7 @@ function zp_commerce_processPriceList_row_change($op, $object, &$result_messages
       $result_messages[] = 'Успешно изменено поле отдела или дисплея товара "' . $field_to_change . '"';
       continue;
     }
+    
     if (isset($bulk_change_fields_map_product[$field_to_change])) {
       if (!zp_misc_fieldSave(/*$field_name*/$bulk_change_fields_map_product[$field_to_change], /*$entity_id*/$product_id, /*$data*/$object[$field_to_change], /*$entity_type*/'commerce_product', /*$bundle*/'product', /*$clear_cache*/ FALSE)) {
         return 'Ошибка при создании или изменении поля товара "' . $field_to_change . '" на "' . $object[$field_to_change] . '"';
@@ -1704,21 +1705,69 @@ function zp_commerce_processPriceList_row_change($op, $object, &$result_messages
       $result_messages[] = 'Успешно изменено поле товара "' . $field_to_change . '" на "' . $object[$field_to_change] . '"';
       
       if ($field_to_change == 'Штрихкод') {
-        $found_code = zp_misc_getCountryAndBrand_fromBar($object['Штрихкод']);
-        if (!zp_misc_fieldSave(/*$field_name*/'brand_code', /*$entity_id*/$entity_id, /*$data*/$found_code['brand_code'], /*$entity_type*/'node', /*$bundle*/$bundle, /*$clear_cache*/ FALSE)) {
-          return 'Ошибка при создании или изменении поля дисплея товара "brand_code" на "' . $found_code['brand_code'] . '"';
-        }
-        $result_messages[] = 'Успешно изменено поле товара "brand_code" на "' . $found_code['brand_code'] . '"';
-        if (!zp_misc_fieldSave(/*$field_name*/'bar_length', /*$entity_id*/$entity_id, /*$data*/$found_code['bar_length'], /*$entity_type*/'node', /*$bundle*/$bundle, /*$clear_cache*/ FALSE)) {
-          return 'Ошибка при создании или изменении поля дисплея товара "bar_length" на "' . $found_code['bar_length'] . '"';
-        }
-        $result_messages[] = 'Успешно изменено поле товара "bar_length" на "' . $found_code['bar_length'] . '"';
-        //$node->field_brand_code[$node->language][0]['value'] = $found_code['brand_code'];
-        //$node->field_bar_length[$node->language][0]['value'] = $found_code['bar_length'];
-      }
+        if ($found_code = zp_misc_getCountryAndBrand_fromBar($object['Штрихкод'])) {
+        
+            if (!zp_misc_fieldSave(/*$field_name*/'bar_length', /*$entity_id*/$entity_id, /*$data*/$found_code['bar_length'], /*$entity_type*/'node', /*$bundle*/$bundle, /*$clear_cache*/ FALSE)) {
+              return 'Ошибка при создании или изменении поля дисплея товара "bar_length" на "' . $found_code['bar_length'] . '"';
+            }
+            $result_messages[] = 'Успешно изменено поле товара "bar_length" на "' . $found_code['bar_length'] . '"';
+
+            if (empty($found_code['country']['not_country'])) {
+
+              if ($found_code['bar_length'] > 8) {
+                if (!zp_misc_fieldSave(/*$field_name*/'brand_code', /*$entity_id*/$entity_id, /*$data*/$found_code['brand_code'], /*$entity_type*/'node', /*$bundle*/$bundle, /*$clear_cache*/ FALSE)) {
+                  return 'Ошибка при создании или изменении поля дисплея товара "brand_code" на "' . $found_code['brand_code'] . '"';
+                }
+                $result_messages[] = 'Успешно изменено поле товара "brand_code" на "' . $found_code['brand_code'] . '"';
+              }
+              else {
+                if (!zp_misc_fieldSave(/*$field_name*/'brand_code', /*$entity_id*/$entity_id, /*$data*/NULL, /*$entity_type*/'node', /*$bundle*/$bundle, /*$clear_cache*/ FALSE)) {
+                  return 'Ошибка при попытке очистить поле дисплея товара "brand_code"';
+                }
+                $result_messages[] = 'Успешно очищено поле товара "brand_code"';
+              }
+              
+              if($country_tid = zp_misc_getTidByName(5, $found_code['country'][0])) { // 5 - vid for countries
+                $node->field_country[$node->language][0]['tid'] = $country_tid;
+                if (zp_misc_fieldTermReferenceSave('country', $entity_id, $country_tid, 'node', $bundle, FALSE)) {
+                  return 'Ошибка при попытке изменить поле дисплея товара "Country" (term)';
+                }
+                $result_messages[] = 'Успешно изменено поле товара "Country" (term)';
+              }
+              else {
+                watchdog('ZP Country NOT found!', 'Country "' . $found_code['country'][0] . '" from imported price-list was not defined in system', NULL, WATCHDOG_WARNING);
+                if(!zp_misc_fieldTermReferenceDelete('country', $entity_id, $bundle, 'node' )) {
+                  return 'Ошибка при попытке очистить (т.к. страна из прайса не найдена в базе) поле дисплея товара "Country" (term)';
+                }
+                $result_messages[] = 'Успешно очищено (т.к. страна из прайса не найдена в базе) поле товара "Country" (term)';
+              }
+                
+            } // End of if (empty($found_code['country']['not_country'])) {
+
+        } // End of if ($found_code = zp_misc_getCountryAndBrand_fromBar($object['Штрихкод'])) {
+        else {
+            // Clear Brand code fields
+            $result_messages[] = 'Данные по штрих-коду для этого товара будут очищены, так как код не распознан...';
+            if (!zp_misc_fieldSave(/*$field_name*/'bar_length', /*$entity_id*/$entity_id, /*$data*/NULL, /*$entity_type*/'node', /*$bundle*/$bundle, /*$clear_cache*/ FALSE)) {
+              return 'Ошибка при попытке очистить поле дисплея товара "bar_length"';
+            }
+            $result_messages[] = 'Успешно очищено поле товара "bar_length"';
+
+            if (!zp_misc_fieldSave(/*$field_name*/'brand_code', /*$entity_id*/$entity_id, /*$data*/NULL, /*$entity_type*/'node', /*$bundle*/$bundle, /*$clear_cache*/ FALSE)) {
+              return 'Ошибка при попытке очистить поле дисплея товара "brand_code"';
+            }
+            $result_messages[] = 'Успешно очищено поле товара "brand_code"';
+            
+            if(!zp_misc_fieldTermReferenceDelete('country', $entity_id, $bundle, 'node' )) {
+              return 'Ошибка при попытке очистить поле дисплея товара "Country" (term)';
+            }
+            $result_messages[] = 'Успешно очищено поле товара "Country" (term)';
+        } // End of else of if ($found_code = zp_misc_getCountryAndBrand_fromBar($object['Штрихкод'])) {
+        
+      } // End of if ($field_to_change == 'Штрихкод') {
 
       continue;
-    }
+    } // End of if (isset($bulk_change_fields_map_product[$field_to_change])) {
     
             
     switch($field_to_change) {
@@ -2921,11 +2970,20 @@ function zp_commerce_addNewProduct($op, $object, &$result_messages) {
   $node->field_c_weight[$node->language][0]['value'] = $object['Вес элемента в группе'];
   $node->field_brand[$node->language][0]['value'] = $object['Производитель/Поставщик/Бренд'];
 
-  $found_code = zp_misc_getCountryAndBrand_fromBar($object['Штрихкод']);
-  $node->field_brand_code[$node->language][0]['value'] = $found_code['brand_code'];
-  $node->field_bar_length[$node->language][0]['value'] = $found_code['bar_length'];
-  if($country_tid = zp_misc_getTidByName(5, $found_code['country'][0])) { // 5 - vid for countries
-    $node->field_country[$node->language][0]['tid'] = $country_tid;
+  if ($found_code = zp_misc_getCountryAndBrand_fromBar($object['Штрихкод'])) {
+    $node->field_bar_length[$node->language][0]['value'] = $found_code['bar_length'];
+  
+    if (empty($found_code['country']['not_country'])) {
+      if ($found_code['bar_length'] > 8) {
+        $node->field_brand_code[$node->language][0]['value'] = $found_code['brand_code'];
+      }
+      if($country_tid = zp_misc_getTidByName(5, $found_code['country'][0])) { // 5 - vid for countries
+        $node->field_country[$node->language][0]['tid'] = $country_tid;
+      }
+      else {
+        watchdog('ZP Country NOT found!', 'Country "' . $found_code['country'][0] . '" from imported price-list was not defined in system', NULL, WATCHDOG_WARNING);
+      }
+    }
   }
   
   $node->{'field_' . $product_type}[$node->language][0]['product_id'] = $product_id;

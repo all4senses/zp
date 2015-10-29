@@ -497,7 +497,7 @@ function zp_blocks_block_view_alter(&$data, $block) {
       // So we don't add upper links
       $upper_links .= '<div class="up-1">' . l($zp_current_trail[$current_menu_item_num - 1]['link_title'], $zp_current_trail[$current_menu_item_num - 1]['link_path']) . '</div><div class="up-delim">^<div>';
       if ($zp_current_trail[$current_menu_item_num - 2]['href'] != '<front>' && $zp_current_trail[$current_menu_item_num - 2]['plid'] != 0 && $zp_current_trail[$current_menu_item_num - 3]['plid'] != 0) {
-        $upper_links = '<div class="up-1">' . l($zp_current_trail[$current_menu_item_num - 2]['link_title'], $zp_current_trail[$current_menu_item_num - 2]['link_path']) . '</div><div class="up-delim">^<div>' . $upper_links;
+        $upper_links = '<div class="up-2">' . l($zp_current_trail[$current_menu_item_num - 2]['link_title'], $zp_current_trail[$current_menu_item_num - 2]['link_path']) . '</div><div class="up-delim">^<div>' . $upper_links;
       }
       $data['content']['#content']['#prefix'] = $upper_links;
     }

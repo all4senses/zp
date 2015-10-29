@@ -3550,12 +3550,12 @@ function zp_misc_getCountryAndBrand_fromBar_form($form, &$form_state) {
           
             //. print_r($found_code, TRUE) 
           
-            . '<div>Страна: ' . $found_code['country'][0] . '</div>'
-            //. '<div>Организация, выдавшая код: ' . $found_code['country'][1] . '</div>'
-            //. '<div>Код страны в штрих-коде: ' . $found_code['digits'] . (@$found_code['range'] ? ' (диапазон кодов этой страны ' .  $found_code['range'] . ')' : '' ) . '</div>'
+            . (empty($found_code['country']['not_country']) ? '<div>Страна: ' : 'Тип товара/кода:') . $found_code['country'][0] . '</div>'
+            . '<div>Организация, выдавшая код: ' . $found_code['country'][1] . '</div>'
+            . '<div>Код страны/товара в штрих-коде: ' . $found_code['digits'] . (@$found_code['range'] ? ' (диапазон кодов этой страны ' .  $found_code['range'] . ')' : '' ) . '</div>'
             . '<div>Тип штрих-кода: ' . ($found_code['bar_type'] ? $found_code['bar_type'] : 'не определён') . ' (' . $found_code['bar_length'] . ' символов)</div>'
-            //. '<div>Предположительный код бренда: ' . ($found_code['bar_length'] >= 13 ? $found_code['brand_code'] : 'не определён') . '</div>'
-            //. '</br>'
+            . '<div>Предположительный код бренда: ' . ($found_code['bar_length'] >= 13 ? $found_code['brand_code'] : 'не определён') . '</div>'
+            . '</br>'
             . '<div class="' . ($found_code['bar_crc'] ? 'ok' : 'not-ok') . '">Проверка штрих-кода на подлинность (по контрольной сумме): ' . ($found_code['bar_crc'] ? 'Успешно, код выглядит подлинным.' : ' Не пройден!!!! Возможно, код не настоящий (подделка).') . '</div>'
           
           . '</div>',
@@ -3679,7 +3679,7 @@ function zp_misc_getCountryAndBrand_fromBar($bar) {
         '487'	=> array('Казахстан', 'EAN Kazakhstan'),
         '489'	=> array('Гонконг', 'HKANA (Hong Kong)'),
         '50'	=> array('Великобритания', 'E Centre UK'),
-        '520'	=> array('Греция', 'HELLCAN - EAN HELLAS (Greece)'),
+          
         '528'	=> array('Ливан', 'EAN Lebanon'),
         '529'	=> array('Кипр', 'EAN Cyprus'),
         '531'	=> array('Македония', 'EAN-MAC (FYR Macedonia)'),
@@ -3693,10 +3693,15 @@ function zp_misc_getCountryAndBrand_fromBar($bar) {
         '594'	=> array('Румыния', 'EAN Romania'),
         '599'	=> array('Венгрия', 'EAN Hungary'),
 
+        '603'	=> array('Гана', 'Ghana'),
+        '604'	=> array('Сенегал', 'Senegal'),
+        '608'	=> array('Бахрейн', 'Bahrain'),  
+      
         '609'	=> array('Маврикий', 'EAN Mauritius'),
         '611'	=> array('Марокко', 'EAN Maroc (Marocco)'),
         '613'	=> array('Алжир', 'EAN Algeria'),
         '616'	=> array('Кения', 'EAN Kenya'),
+        '618'	=> array('Берег Слоновой Кости', 'Ivory Coast'),  
         '619'	=> array('Тунис', 'TUNICODE (Tunisia)'),
         '621'	=> array('Сирия', 'EAN Syria'),
         '622'	=> array('Египет', 'EAN Egypt'),
@@ -3721,7 +3726,7 @@ function zp_misc_getCountryAndBrand_fromBar($bar) {
         '750'	=> array('Мексика', 'AMECE (Mexico)'),
         '759'	=> array('Венесуэла', 'EAN Venezuela'),
         '76'	=> array('Швейцария', 'EAN (Schweiz, Suisse, Svizzera)'),
-        '770'	=> array('Колумбия', 'IAC (Colombia)'),
+        
         '773'	=> array('Уругвай', 'EAN Uruguay'),
         '775'	=> array('Перу', 'EAN Peru'),
         '777'	=> array('Боливия', 'EAN Bolivia'),
@@ -3729,7 +3734,7 @@ function zp_misc_getCountryAndBrand_fromBar($bar) {
         '780'	=> array('Чили', 'EAN Chile'),
         '784'	=> array('Парагвай', 'EAN Paraguay'),
         '786'	=> array('Эквадор', 'ECOP (Ecuador)'),
-        '789'	=> array('Бразилия', 'EAN Brazil'),
+        
 
         '84' => array('Испания', 'AECOC (Spain)'),
         '850'	=> array('Куба', 'Camera de Comercio de la Republica de Cuba (Cuba)'),
@@ -3737,7 +3742,8 @@ function zp_misc_getCountryAndBrand_fromBar($bar) {
         '859'	=> array('Чехия', 'EAN Czech'),
         '860'	=> array('Югославия', 'EAN YU (Yugoslavia)'),
         '867'	=> array('Северная Корея', 'EAN DPR Korea (North Korea)'),
-        '869'	=> array('Турция', 'Union of Chambers of Commerce of Turkey (Turkey)'),
+          
+        
         '87'	=> array('Нидерланды', 'EAN Nederland (Netherlands)'),
         '880'	=> array('Южная Корея', 'EAN Korea (South Korea)'),
         '885'	=> array('Таиланд', 'EAN Thailand'),
@@ -3750,22 +3756,44 @@ function zp_misc_getCountryAndBrand_fromBar($bar) {
         '94' => array('Новая Зеландия', 'EAN New Zealand'),
         '955'	=> array('Малайзия', 'Malaysian Article Numbering Council (MANC)'),
         '958'	=> array('Макао', 'EAN Macau'),
+          
+        '977'	=> array('Серийнные публикации (ISSN)', 'Serial publications (ISSN)', 'not_country' => 1), 
+        '980'	=> array('Возвратные квитанции', 'Refund receipts', 'not_country' => 1),
+        '99'	=> array('Купоны', 'Coupon identification', 'not_country' => 1),
+          
       ),
 
       // code range start => array(Country, Национальная организация EAN/UCC, code range end)
       'codes_range' => array(
-        '00' => array('США/Канада', 'UCC (U.S.A. & Canada)', 13),
+        '00' => array('США', 'UCC (U.S.A. & Canada)', 13), // ???
+          
+        '20' => array('Внутренняя нумерация магазина', 'Restricted circulation numbers within a geographic region (MO defined)', 29, 'not_country' => 1), // ???
+          
+          
         '30' => array('Франция', 'GENCOD-EAN France', 37),
         '400' => array('Германия', 'CCG (Germany)', 440),
         '460' => array('Россия', 'UNISCAN / EAN RUSSIA (Russian Federation)', 469),
+        '520'	=> array('Греция', 'HELLCAN - EAN HELLAS (Greece)', 521),  
         '600' => array('Южная Африка', 'EAN South Africa', 601),
-        '690' => array('Китай', 'Article Numbering Centre of China - ANCC (China)', 693),
+        '690' => array('Китай', 'Article Numbering Centre of China - ANCC (China)', 699),
+        '754' => array('Канада', 'Canada', 755),  // ???
+        '770'	=> array('Колумбия', 'IAC (Colombia)', 771), // ???
+        '789'	=> array('Бразилия', 'EAN Brazil', 790),  
         '80' => array('Италия', 'INDICOD (Italy)', 83),
+        '868'	=> array('Турция', 'Union of Chambers of Commerce of Turkey (Turkey)', 869),  
         '90' => array('Австрия', 'EAN Austria', 91),
+          
+        '978' => array('Книги (ISBN)', 'GS1 Bookland (ISBN)', 979, 'not_country' => 1),  
+        '981' => array('Валютные купоны', 'GS1 coupon identification for common currency areas', 984, 'not_country' => 1),    
+          
       ),
   );
   
   /**
+  Гана
+  Сенегал
+  Бахрейн
+  Берег Слоновой Кости
   Болгария
   Словения
   Хорватия
