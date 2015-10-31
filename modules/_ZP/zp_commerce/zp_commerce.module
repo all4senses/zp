@@ -3990,7 +3990,12 @@ function zp_commerce_facet_items_alter(&$build, &$settings) {
   //dpm($build);
   //dpm($settings);
   
-  if ($settings->facet == 'field_brand' || $settings->facet == 'field_country') {
+  if ($settings->facet == 'field_article_product_depts') {
+    dpm($build);
+    dpm($settings);
+  }
+  // Move 'Other' to the end of an options list.
+  elseif ($settings->facet == 'field_brand' || $settings->facet == 'field_country') {
     
     /*
     $item = $build['spar'];
@@ -4015,12 +4020,7 @@ function zp_commerce_facet_items_alter(&$build, &$settings) {
 //    );
     */
     
-    if ($settings->facet == 'field_article_product_depts') {
-      dpm($build);
-      dpm($settings);
-    }
-    // Move 'Other' to the end of an options list.
-    elseif ($other = @$build['!']) {
+    if ($other = @$build['!']) {
       unset($build['!']);
       uasort($build, 'zp_commerce_sortArrayBuildByName');
       $build['!'] = $other;
