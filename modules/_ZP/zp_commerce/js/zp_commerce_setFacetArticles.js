@@ -15,7 +15,7 @@
       });
       
       
-      $('a.facetapi-inactive + .block-facetapi .facetapi-facet-field-article-product-depts .item-list').hide();
+      //$('a.facetapi-inactive + .block-facetapi .facetapi-facet-field-article-product-depts .item-list').hide();
       
       $('.block-facetapi .facetapi-facet-field-article-product-depts .item-list:not(zp-processed) li a.facetapi-active').each(function(){
         $(this).parent().find('.item-list').show();
@@ -24,19 +24,13 @@
         
       });
       
-//      $('.block-facetapi .facetapi-facet-field-article-product-depts li').each(function(){
-//        found = null;
-//        found = $(this).find('a.facetapi-active');
-//        //console.log(found);
-//        if (found.length){
-//          //console.log('found = 1');
-//        }
-//        else {
-//          //console.log('found = 0');
-//          $(this).find('.item-list').hide();
-//        }
-//        
-//      });
+      $('.block-facetapi .facetapi-facet-field-article-product-depts li').each(function(){
+        found = $(this).find('a.facetapi-active');
+        if (!found.length){
+          $(this).find('.item-list').hide();
+        }
+        
+      });
 
         
       
