@@ -120,7 +120,7 @@ Drupal.facetapi.makeCheckbox = function() {
   var id = this.id + '--checkbox',
       description = $link.find('.element-invisible').html(),
       label = $('<label class="element-invisible" for="' + id + '">' + description + '</label>'),
-      checkbox = $('<input type="checkbox" style="float: left;" class="facetapi-checkbox" id="' + id + '" />'),
+      checkbox = $('<input type="checkbox" class="facetapi-checkbox" id="' + id + '" />'),
       // Get the href of the link that is this DOM object.
       href = $link.attr('href'),
       redirect = new Drupal.facetapi.Redirect(href);
