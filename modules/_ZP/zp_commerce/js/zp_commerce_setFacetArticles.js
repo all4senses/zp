@@ -14,6 +14,13 @@
         $(this).addClass('xxx');
       });
       
+      $('.block-facetapi .facetapi-facet-field-article-product-depts .item-list:not(zp-processed) li a.facetapi-active').each(function(){
+        $(this).parent().find('.item-list').show();
+        $(this).parent().next('.item-list').show().next('.item-list').hide();
+        $(this).parents('.item-list').show().addClass('zp-processed');
+        
+      });
+      
       $('.block-facetapi .facetapi-facet-field-article-product-depts li').each(function(){
         found = null;
         found = $(this).find('a.facetapi-active');
