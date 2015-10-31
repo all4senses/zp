@@ -732,7 +732,7 @@ ul.menu li.active-trail > ul {
 
 // Facet blocks
 .block-facetapi input {
-    float: left;
+    float: left !important;
 }
 
 .block-facetapi .expanded div {

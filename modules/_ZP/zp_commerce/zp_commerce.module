@@ -4015,8 +4015,12 @@ function zp_commerce_facet_items_alter(&$build, &$settings) {
 //    );
     */
     
+    if ($settings->facet == 'field_article_product_depts') {
+      dpm($build);
+      dpm($settings);
+    }
     // Move 'Other' to the end of an options list.
-    if ($other = @$build['!']) {
+    elseif ($other = @$build['!']) {
       unset($build['!']);
       uasort($build, 'zp_commerce_sortArrayBuildByName');
       $build['!'] = $other;
@@ -4093,10 +4097,7 @@ function zp_commerce_facet_items_alter(&$build, &$settings) {
     } // End of if (@$result_build) {
     
   } // End of elseif ($settings->facet == 'field_category_main' || $settings->facet == 'field_categories_other') {
-  else {
-    dpm($build);
-    dpm($settings);
-  }
+  
     
 } // End of function zp_commerce_facet_items_alter(&$build, &$settings) {
 
