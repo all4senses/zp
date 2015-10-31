@@ -17,14 +17,14 @@
       
       //$('a.facetapi-inactive + .block-facetapi .facetapi-facet-field-article-product-depts .item-list').hide();
       
-      //$('.block-facetapi .facetapi-facet-field-article-product-depts li .item-list').hide();
+      $('.block-facetapi .facetapi-facet-field-article-product-depts li .item-list').hide();
       
-      $('.block-facetapi .facetapi-facet-field-article-product-depts li').each(function(){
-        found = $(this).find('a.facetapi-active');
-        if (!found.length){
-          $(this).find('.item-list').hide();
-        }
-      });
+//      $('.block-facetapi .facetapi-facet-field-article-product-depts li').each(function(){
+//        found = $(this).find('a.facetapi-active');
+//        if (!found.length){
+//          $(this).find('.item-list').hide();
+//        }
+//      });
       
       $('.block-facetapi .facetapi-facet-field-article-product-depts .item-list:not(zp-processed) li a.facetapi-active').each(function(){
         $(this).parent().find('.item-list').show();
