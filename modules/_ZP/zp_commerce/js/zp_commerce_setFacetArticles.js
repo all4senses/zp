@@ -9,9 +9,9 @@
       // http://stackoverflow.com/questions/11962962/overriding-important-with-css-or-jquery
       
       jQuery('.block-facetapi input').each(function () {
-        console.log('checkbox...');
+        //console.log('checkbox...');
         this.style.setProperty("float", "left", "important");
-        $(this).addClass('xxx');
+        //$(this).addClass('xxx');
       });
       
       $('.block-facetapi .facetapi-facet-field-article-product-depts .item-list:not(zp-processed) li a.facetapi-active').each(function(){
@@ -21,19 +21,19 @@
         
       });
       
-      $('.block-facetapi .facetapi-facet-field-article-product-depts li').each(function(){
-        found = null;
-        found = $(this).find('a.facetapi-active');
-        //console.log(found);
-        if (found.length){
-          //console.log('found = 1');
-        }
-        else {
-          //console.log('found = 0');
-          $(this).find('.item-list').hide();
-        }
-        
-      });
+//      $('.block-facetapi .facetapi-facet-field-article-product-depts li').each(function(){
+//        found = null;
+//        found = $(this).find('a.facetapi-active');
+//        //console.log(found);
+//        if (found.length){
+//          //console.log('found = 1');
+//        }
+//        else {
+//          //console.log('found = 0');
+//          $(this).find('.item-list').hide();
+//        }
+//        
+//      });
 
         
       

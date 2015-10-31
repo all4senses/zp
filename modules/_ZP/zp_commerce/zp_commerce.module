@@ -3991,8 +3991,8 @@ function zp_commerce_facet_items_alter(&$build, &$settings) {
   //dpm($settings);
   
   if ($settings->facet == 'field_article_product_depts') {
-    dpm($build);
-    dpm($settings);
+    //dpm($build);
+    //dpm($settings);
     static $js_is_loaded;
     if (!$js_is_loaded) {
       $path_to_js = drupal_get_path('module', 'zp_commerce') . '/js/zp_commerce_setFacetArticles.js';
