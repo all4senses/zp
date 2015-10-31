@@ -127,14 +127,14 @@ function zp_misc_process_html(&$vars) {
 
 function zp_misc_js_alter(&$javascript) {
 
-//  dpm($javascript);
-//  
-//  if (!empty($javascript['sites/all/modules/_ZP/zp_commerce/js/zp_commerce_setFacetArticles.js'])) {
-//    $temp = $javascript['sites/all/modules/_ZP/zp_commerce/js/zp_commerce_setFacetArticles.js'];
-//    unset($javascript['sites/all/modules/_ZP/zp_commerce/js/zp_commerce_setFacetArticles.js']);
-//    $javascript['sites/all/modules/_ZP/zp_commerce/js/zp_commerce_setFacetArticles.js'] = $temp;
-//    dpm($javascript);
-//  }
+  //dpm($javascript);
+  
+  if (!empty($javascript['sites/all/modules/_ZP/zp_commerce/js/zp_commerce_setFacetArticles.js'])) {
+    $temp = $javascript['sites/all/modules/_ZP/zp_commerce/js/zp_commerce_setFacetArticles.js'];
+    unset($javascript['sites/all/modules/_ZP/zp_commerce/js/zp_commerce_setFacetArticles.js']);
+    $javascript['sites/all/modules/_ZP/zp_commerce/js/zp_commerce_setFacetArticles.js'] = $temp;
+    dpm($javascript);
+  }
   return;
   
   ////global $user;
