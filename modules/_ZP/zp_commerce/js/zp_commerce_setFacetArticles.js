@@ -18,6 +18,8 @@
         //$(this).addClass('xxx');
       });
       
+      jQuery('.block-facetapi li.expanded div').css('margin-left', '10px');
+      
       // Initially close all expanded categories
       $('.block-facetapi .facetapi-facet-field-article-product-depts .item-list .item-list').hide();
       

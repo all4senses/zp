@@ -743,6 +743,6 @@ ul.menu li.active-trail > ul {
 }
 */
 
-.block-facetapi li.expanded > div {
-    margin-left: 10px !important;
+.block-facetapi li.expanded div {
+    margin-left: 10px;
 }
