@@ -731,8 +731,14 @@ ul.menu li.active-trail > ul {
 }
 
 // Facet blocks
+/*
 .facetapi-checkbox {
     float: left !important;
+}
+*/
+
+.block-facetapi a[id*='facetapi-link'] {
+    float: left;
 }
 
 .block-facetapi .expanded div {
