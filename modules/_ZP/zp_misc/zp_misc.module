@@ -124,6 +124,7 @@ function zp_misc_process_html(&$vars) {
  * Implementing hook_js_alter
  * @param $javascript
  */
+/*
 function zp_misc_js_alter(&$javascript) {
 
   ////global $user;
@@ -228,11 +229,12 @@ function zp_misc_js_alter(&$javascript) {
   ////} // End of if ($user->uid != 1) {
 
 }
-
+*/
 
 /**
  * Implements hook_flush_caches().
  */
+/*
 function zp_misc_flush_caches() {
   
   // Remove all minified files from jsmin-zp folder.
@@ -248,7 +250,7 @@ function zp_misc_flush_caches() {
   variable_del('zp_minified_js');
     
 }
-
+*/
 
 /**
  * 
