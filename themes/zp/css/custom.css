@@ -730,3 +730,11 @@ ul.menu li.active-trail > ul {
     display: block;
 }
 
+// Facet blocks
+.block-facetapi input {
+    float: left;
+}
+
+.block-facetapi .expanded div {
+    margin-left: 10px;
+}
