@@ -6,6 +6,7 @@
       console.log('zp_commerce_setFacetArticles.....');
       
       //var cat_name = null;
+      jQuery('.block-facetapi input').css('float', 'left !important');
       
       jQuery('.block-facetapi .facetapi-facet-field-article-product-depts li').each(function(){
         found = null;
