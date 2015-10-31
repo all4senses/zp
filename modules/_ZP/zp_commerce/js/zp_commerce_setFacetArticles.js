@@ -8,11 +8,11 @@
       // http://stackoverflow.com/questions/2655925/how-to-apply-important-using-css
       // http://stackoverflow.com/questions/11962962/overriding-important-with-css-or-jquery
       
-      jQuery('.block-facetapi input').each(function () {
-        console.log('checkbox...');
-        this.style.setProperty("float", "left", "important");
-        $(this).addClass('xxx');
-      });
+//      jQuery('.block-facetapi input').each(function () {
+//        console.log('checkbox...');
+//        this.style.setProperty("float", "left", "important");
+//        $(this).addClass('xxx');
+//      });
       
       jQuery('.block-facetapi .facetapi-facet-field-article-product-depts li').each(function(){
         found = null;
@@ -51,6 +51,6 @@
         
       
     }
-  };
+  }
 
 }(jQuery));
