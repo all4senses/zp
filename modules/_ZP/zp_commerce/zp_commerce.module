@@ -3993,6 +3993,12 @@ function zp_commerce_facet_items_alter(&$build, &$settings) {
   if ($settings->facet == 'field_article_product_depts') {
     dpm($build);
     dpm($settings);
+    static $js_is_loaded;
+    if (!$js_is_loaded) {
+      $path_to_js = drupal_get_path('module', 'zp_commerce') . '/js/zp_commerce_setFacetArticles.js';
+      drupal_add_js($path_to_js);
+      $js_is_loaded = TRUE;
+    }
   }
   // Move 'Other' to the end of an options list.
   elseif ($settings->facet == 'field_brand' || $settings->facet == 'field_country') {
@@ -4087,11 +4093,11 @@ function zp_commerce_facet_items_alter(&$build, &$settings) {
       }
       $build = $result_build;
 
-      static $cat_name_js_is_loaded;
-      if (!$cat_name_js_is_loaded) {
+      static $js_is_loaded;
+      if (!$js_is_loaded) {
         $path_to_js = drupal_get_path('module', 'zp_commerce') . '/js/zp_commerce_setFacetCategories.js';
         drupal_add_js($path_to_js);
-        $cat_name_js_is_loaded = TRUE;
+        $js_is_loaded = TRUE;
       }
 
     } // End of if (@$result_build) {

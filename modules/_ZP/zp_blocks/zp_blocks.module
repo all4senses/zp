@@ -350,6 +350,7 @@ function zp_blocks_getSubmenuByTitle($menu_name, $submenu_title) {
 /**
  * Wrap a block content in proper block's divs.
  */
+/*
 function zp_blocks_wrapInBlockThemed($block_data, $block)
 {
   if(!isset($block['content']) || !$block['content']) {
@@ -394,11 +395,13 @@ function zp_blocks_wrapInBlockThemed($block_data, $block)
       </section>';
   }
 }
+*/
 
 
 /**
  * Returns a content of a block wrapped in proper divs.
  */
+/*
 function zp_blocks_getBlockThemed_noCache($block_data){
   
   // No caching version.
@@ -417,11 +420,13 @@ function zp_blocks_getBlockThemed_noCache($block_data){
   return NULL;
   
 }
+*/
 
 
 /**
  * Returns a content of a block wrapped in proper divs.
  */
+/*
 function zp_blocks_getBlockThemed($block_data, $cache_on = FALSE, $cache_expire_str = FALSE, $suffix = NULL) {
 
   
@@ -458,7 +463,7 @@ function zp_blocks_getBlockThemed($block_data, $cache_on = FALSE, $cache_expire_
 
   return $out;
 }
-
+*/
 
 /**
  * Alter the menu tree and its configuration before the tree is rendered.
