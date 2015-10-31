@@ -9,6 +9,7 @@
       // http://stackoverflow.com/questions/11962962/overriding-important-with-css-or-jquery
       
       jQuery('.block-facetapi input').each(function () {
+        console.log('checkbox...');
         this.style.setProperty("float", "left", "important");
         $(this).addClass('xxx');
       });
@@ -16,12 +17,12 @@
       jQuery('.block-facetapi .facetapi-facet-field-article-product-depts li').each(function(){
         found = null;
         found = $(this).find('a.facetapi-active');
-        console.log(found);
+        //console.log(found);
         if (found.length){
-          console.log('found = 1');
+          //console.log('found = 1');
         }
         else {
-          console.log('found = 0');
+          //console.log('found = 0');
           $(this).find('.item-list').hide();
         }
         
