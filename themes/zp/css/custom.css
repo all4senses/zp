@@ -737,9 +737,11 @@ ul.menu li.active-trail > ul {
 }
 */
 
+/*
 .block-facetapi a[id*='facetapi-link'] {
     float: left;
 }
+*/
 
 .block-facetapi .expanded div {
     margin-left: 10px;

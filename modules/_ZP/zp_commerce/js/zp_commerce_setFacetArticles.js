@@ -8,8 +8,8 @@
       // http://stackoverflow.com/questions/2655925/how-to-apply-important-using-css
       // http://stackoverflow.com/questions/11962962/overriding-important-with-css-or-jquery
       
-      // Make facets checkboxes float left to see it normally
-      jQuery('.block-facetapi input').each(function () {
+      // Make facets checkboxes (or links if set so) float left to see it normally
+      jQuery('.block-facetapi input, .block-facetapi a[id*="facetapi-link"]').each(function () {
         //Works
         //this.style.setProperty("float", "left", "important");
         //Works
