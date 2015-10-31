@@ -16,6 +16,7 @@
         }
         else {
           console.log('found = 0');
+          $(this).find('.item-list').hide();
         }
         
       });
