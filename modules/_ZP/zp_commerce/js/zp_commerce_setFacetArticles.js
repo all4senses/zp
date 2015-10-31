@@ -5,8 +5,9 @@
       
       console.log('zp_commerce_setFacetArticles.....');
       
-      //var cat_name = null;
-      //jQuery('.block-facetapi input').css("float", "left");
+      // http://stackoverflow.com/questions/2655925/how-to-apply-important-using-css
+      // http://stackoverflow.com/questions/11962962/overriding-important-with-css-or-jquery
+      
       jQuery('.block-facetapi input').each(function () {
         this.style.setProperty("float", "left", "important");
         $(this).addClass('xxx');

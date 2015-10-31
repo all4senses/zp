@@ -3996,7 +3996,11 @@ function zp_commerce_facet_items_alter(&$build, &$settings) {
     static $js_is_loaded;
     if (!$js_is_loaded) {
       $path_to_js = drupal_get_path('module', 'zp_commerce') . '/js/zp_commerce_setFacetArticles.js';
-      drupal_add_js($path_to_js, array('weight' => 100));
+      $js = drupal_add_js($path_to_js, array(
+                              'weight' => 1000, // High number to push this file to the bottom of the list
+                              'scope' => 'footer' // This will output the JS file in the footer scope, so at the end of the document
+                            ));
+      dpm($js);
       $js_is_loaded = TRUE;
     }
   }
