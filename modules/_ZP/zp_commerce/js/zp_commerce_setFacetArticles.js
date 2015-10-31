@@ -9,13 +9,13 @@
       // http://stackoverflow.com/questions/11962962/overriding-important-with-css-or-jquery
       
       jQuery('.block-facetapi input').each(function () {
-        //console.log('checkbox...');
-        this.style.setProperty("float", "left", "important");
+        //Works
+        //this.style.setProperty("float", "left", "important");
+        //Works
+        //$(this).css('cssText', 'float: left !important;');
+        $(this).css('float', 'left');
         //$(this).addClass('xxx');
       });
-      
-      
-      //$('a.facetapi-inactive + .block-facetapi .facetapi-facet-field-article-product-depts .item-list').hide();
       
       $('.block-facetapi .facetapi-facet-field-article-product-depts .item-list .item-list').hide();
       
