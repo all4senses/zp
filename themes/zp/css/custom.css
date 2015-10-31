@@ -731,7 +731,7 @@ ul.menu li.active-trail > ul {
 }
 
 // Facet blocks
-.block-facetapi .facetapi-checkbox {
+.facetapi-checkbox {
     float: left !important;
 }
 
