@@ -3,11 +3,11 @@
   Drupal.behaviors.zp_commerce_setFacetArticles = {
     attach: function (context, settings) {
       
-      //console.log('zp_commerce_setFacetCategories.....');
+      console.log('zp_commerce_setFacetArticles.....');
       
       //var cat_name = null;
       
-      jQuery('.block-facetapi .facetapi-facet-field-article-product-depts  .li a.facetapi-inactive').each(function(){
+      jQuery('.block-facetapi .facetapi-facet-field-article-product-depts li a.facetapi-inactive').each(function(){
         
         console.log(this);
         $(this).parent().find('.item-list').hide();
