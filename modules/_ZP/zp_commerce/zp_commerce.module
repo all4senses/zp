@@ -4093,6 +4093,10 @@ function zp_commerce_facet_items_alter(&$build, &$settings) {
     } // End of if (@$result_build) {
     
   } // End of elseif ($settings->facet == 'field_category_main' || $settings->facet == 'field_categories_other') {
+  else {
+    dpm($build);
+    dpm($settings);
+  }
     
 } // End of function zp_commerce_facet_items_alter(&$build, &$settings) {
 
