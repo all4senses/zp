@@ -40,6 +40,9 @@ class SearchAPITaxonomyFacetapiWidgetCheckboxLinksTopLevel extends FacetapiWidge
         // show this item as expanded so we see its children.
         if ($item['#active'] || !empty($settings['show_expanded'])) {
           $row['class'][] = 'expanded';
+          // a4s fix
+          $row['class'][] = 'active-expanded';
+          
           // We just don't bother rendering the children here.
           //$row['children'] = $this->buildListItems($item['#item_children']);
         }
