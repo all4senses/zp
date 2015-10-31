@@ -14,6 +14,9 @@
         //$(this).addClass('xxx');
       });
       
+      
+      $('a.facetapi-inactive + .block-facetapi .facetapi-facet-field-article-product-depts .item-list').hide();
+      
       $('.block-facetapi .facetapi-facet-field-article-product-depts .item-list:not(zp-processed) li a.facetapi-active').each(function(){
         $(this).parent().find('.item-list').show();
         $(this).parent().next('.item-list').show().next('.item-list').hide();
