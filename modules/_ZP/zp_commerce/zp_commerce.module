@@ -3010,7 +3010,7 @@ function zp_commerce_addNewProduct($op, $object, &$result_messages) {
       // Get Brands vocabulary vid.
       $query = db_select('taxonomy_vocabulary', 'v')  
             ->fields('v', array('vid'));
-      $query->condition('v.name', 'brand_names');
+      $query->condition('v.name', 'Brand names');
       $vid = $query->execute()->fetchField();
 
       // Check if there is a Brand term name in the voc.
