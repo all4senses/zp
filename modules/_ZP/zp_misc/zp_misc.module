@@ -996,7 +996,7 @@ function zp_misc_createTerm_ifNotExists($vid, $term_name, $parent, &$results) {
     //$term->field_new[LANGUAGE_NONE][0]['value'] = 'Value for this field'; 
     taxonomy_term_save($term);
     if ($tid = @$term->tid) {
-      $results[] = 'Создан новый терм для названия ' . ($parent == 0 ? 'категории (группы)' : 'конечного терма') . ' "' . $term_name . '"';
+      $results[] = 'Создан новый терм для названия ' . ($parent == 0 ? 'категории/группы (или корневого терма)' : 'конечного терма') . ' "' . $term_name . '"';
     }
   } // End of if(!$category_tid = $query->execute()->fetchField()) {
   return $tid;

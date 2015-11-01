@@ -3093,10 +3093,6 @@ function zp_commerce_addNewProduct($op, $object, &$result_messages) {
     }
   } 
   
-  // Add a brand via taxonomy
-  if(!empty($object['Производитель/Поставщик/Бренд']) && $error_message = zp_commerce_addCategoriesToProduct($node->nid, $cat, $object[$cat], $result_messages)) {
-    return $error_message;
-  }
   
   
   // Mark a parent term that it has products as children.
