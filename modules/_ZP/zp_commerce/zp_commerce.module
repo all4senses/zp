@@ -4066,7 +4066,7 @@ function zp_commerce_facet_items_alter(&$build, &$settings) {
     }
   }
   // Move 'Other' to the end of an options list.
-  elseif ($settings->facet == 'field_brand' || $settings->facet == 'field_country') {
+  elseif ($settings->facet == 'field_brand_name' || $settings->facet == 'field_country') {
     
     /*
     $item = $build['spar'];
@@ -4099,7 +4099,7 @@ function zp_commerce_facet_items_alter(&$build, &$settings) {
       $build['!']['#markup'] = '<div class="cat-other" style="color: red;">' . $build['!']['#markup'] . '</div>';
     }
 
-  } // End of if ($settings->facet == 'field_brand') {
+  } // End of if ($settings->facet == 'field_brand_name') {
   elseif ($settings->facet == 'field_category_main' || $settings->facet == 'field_categories_other') {
     
     // 1. Move 'Other' to the end of an options list.
