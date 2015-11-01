@@ -3015,8 +3015,8 @@ function zp_commerce_addNewProduct($op, $object, &$result_messages) {
 
       // Check if there is a Brand term name in the voc.
       // And create it if not exists.
-      if (!$brand_tid = zp_misc_createTerm_ifNotExists($vid, $brand_name, 0, $result_messages)) {
-        return 'Ошибка при создании нового терма для названия бренда "' . $brand_name . '".';
+      if (!$brand_tid = zp_misc_createTerm_ifNotExists($vid, $object['Производитель/Поставщик/Бренд'], 0, $result_messages)) {
+        return 'Ошибка при создании нового терма для названия бренда "' . $object['Производитель/Поставщик/Бренд'] . '".';
       }
       else {
         $node->field_brand_name[$node->language][0]['tid'] = $brand_tid;
