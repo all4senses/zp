@@ -2048,6 +2048,40 @@ function zp_commerce_removeCategoriesFromProduct($entity_id, $bundle, &$result_m
  * @return boolean
  * 
   */
+function zp_commerce_addBrandToProduct($entity_id, $field_to_change, $brand_name, &$result_messages) {
+
+  // Get Brands vocabulary vid.
+  $query = db_select('taxonomy_vocabulary', 'v')  
+        ->fields('v', array('vid'));
+  $query->condition('v.name', 'brand_names');
+  $vid = $query->execute()->fetchField();
+
+  // Check if there is a Brand term name in the voc.
+  // And create it if not exists.
+  if (!$brand_tid = zp_misc_createTerm_ifNotExists($vid, $brand_name, 0, $result_messages)) {
+    return 'Ошибка при создании нового терма для названия бренда "' . $brand_name . '".';
+  }
+
+  //Connect a term to the node.
+  zp_misc_fieldTermReferenceDelete($field_to_change, $entity_id, /*$bundle*/'product_a', /*$entity_type = */'node' );
+  zp_misc_fieldTermReferenceSave($field_to_change, $entity_id, /*$data*/ $brand_tid, /*$entity_type = */'node', /*$bundle =*/ NULL, /*$clear_cache =*/ FALSE);
+  $result_messages[] = 'К товару добавлен (или обновлён) терм бренда "' . $brand_name . '"';
+
+  // Success.
+  return FALSE;
+}
+
+
+/**
+ * 
+ * @global type $vocs
+ * @param type $entity_id
+ * @param type $field_to_change
+ * @param type $field_data
+ * @param type $result_messages
+ * @return boolean
+ * 
+  */
 function zp_commerce_addCategoriesToProduct($entity_id, $field_to_change, $field_data, &$result_messages) {
   
   //$field_data = 'Вид блюда: Мясо и птица***Жульен###Прочие категории: Диетическое питание***Холодные блюда';
@@ -2967,9 +3001,31 @@ function zp_commerce_addNewProduct($op, $object, &$result_messages) {
   $node->field_zp_id[$node->language][0]['value'] = $object['zp_id'];
   $node->field_parent_zp_id[$node->language][0]['value'] = $object['parent_zp_id'];
   
-  $node->field_c_weight[$node->language][0]['value'] = $object['Вес элемента в группе'];
-  $node->field_brand[$node->language][0]['value'] = $object['Производитель/Поставщик/Бренд'];
+  $node->field_c_weight[$node->language][0]['value'] = @$object['Вес элемента в группе'];
+  
+  
+  if (!empty($object['Производитель/Поставщик/Бренд'])) {
+      //$node->field_brand[$node->language][0]['value'] = @$object['Производитель/Поставщик/Бренд'];
 
+      // Get Brands vocabulary vid.
+      $query = db_select('taxonomy_vocabulary', 'v')  
+            ->fields('v', array('vid'));
+      $query->condition('v.name', 'brand_names');
+      $vid = $query->execute()->fetchField();
+
+      // Check if there is a Brand term name in the voc.
+      // And create it if not exists.
+      if (!$brand_tid = zp_misc_createTerm_ifNotExists($vid, $brand_name, 0, $result_messages)) {
+        return 'Ошибка при создании нового терма для названия бренда "' . $brand_name . '".';
+      }
+      else {
+        $node->field_brand_name[$node->language][0]['tid'] = $brand_tid;
+      }
+  }
+  
+  
+  
+  
   if ($found_code = zp_misc_getCountryAndBrand_fromBar($object['Штрихкод'])) {
     $node->field_bar_length[$node->language][0]['value'] = $found_code['bar_length'];
   
@@ -3036,6 +3092,12 @@ function zp_commerce_addNewProduct($op, $object, &$result_messages) {
       return $error_message;
     }
   } 
+  
+  // Add a brand via taxonomy
+  if(!empty($object['Производитель/Поставщик/Бренд']) && $error_message = zp_commerce_addCategoriesToProduct($node->nid, $cat, $object[$cat], $result_messages)) {
+    return $error_message;
+  }
+  
   
   // Mark a parent term that it has products as children.
   $term = taxonomy_term_load($parent_tid);

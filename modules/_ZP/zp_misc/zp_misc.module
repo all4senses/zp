@@ -940,6 +940,13 @@ function zp_misc_fieldTermReferenceSave($field_name, $entity_id, $data, $entity_
     // Connect this tid to node in taxonomy_index as well.
     if ($entity_type == 'node') {
       
+          // Clear taxonomy node index.
+//          db_delete('taxonomy_index')
+//            ->condition('nid', $entity_id)
+//            ->condition('tid', $data)
+//            ->execute();
+          
+          // Insert a new value
           $success = db_insert('taxonomy_index')
             ->fields(array(
               'nid' => $entity_id,
