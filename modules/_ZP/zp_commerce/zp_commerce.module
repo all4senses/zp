@@ -4091,6 +4091,11 @@ function zp_commerce_facet_items_alter(&$build, &$settings) {
 //    );
     */
     
+    if ($settings->facet == 'field_brand_name') {
+      dpm($build);
+      dpm($settings);
+    }
+    
     if ($other = @$build['!']) {
       unset($build['!']);
       uasort($build, 'zp_commerce_sortArrayBuildByName');
