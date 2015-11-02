@@ -56,11 +56,12 @@
       $('.zp-expand').click(function(){
         console.log('click');
         if ($(this).hasClass('opened')) {
-          $(this).removeClass('opened').addClass('cloded').text('+');
+          $(this).removeClass('opened').addClass('closed').text('+');
+          $(this).siblings('.item-list').hide();
         }
         else {
           $(this).removeClass('closed').addClass('opened').text('-');
-          //$(this).replaceWith('<span class="zp-expand opened" style="float: left">-</span>');
+          $(this).siblings('.item-list').show();
         }
       });
       
