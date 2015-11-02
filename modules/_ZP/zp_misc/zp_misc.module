@@ -4099,10 +4099,12 @@ function gv_misc_getBrandPageLink_forProduct($node, &$content) {
     $query->fields('n', array('nid', 'title'));
 
     if ($brand_page = $query->execute()->fetchObject()) {
+      dpm($content);
       $content['field_brand_name'][0]['#markup'] = l($brand_page->title, 'node/' . $brand_page->nid);
       $node->field_brand_page = array('und' => array(0 => array('value' => $content['field_brand_name'][0]['#markup'])));
-      node_save($node);
+      //node_save($node);
       dpm('name just created');
+      dpm($content);
     }
   }
 }
