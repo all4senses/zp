@@ -57,11 +57,11 @@
         console.log('click');
         if ($(this).hasClass('opened')) {
           $(this).removeClass('opened').addClass('closed').text('+');
-          $(this).siblings('.item-list').hide();
+          $(this).siblings('.item-list').slideUp();
         }
         else {
           $(this).removeClass('closed').addClass('opened').text('-');
-          $(this).siblings('.item-list').show();
+          $(this).siblings('.item-list').slideDown();
         }
       });
       
