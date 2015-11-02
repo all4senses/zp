@@ -55,12 +55,12 @@
       
       $('.zp-expand').click(function(){
         //console.log('click');
+        thisObject = $(this);
         if ($(this).hasClass('opened')) {
-          $(this).siblings('.item-list').slideUp('slow', function(){$(this).removeClass('opened').addClass('closed').text('+');});
-          
+          $(this).siblings('.item-list').slideUp('slow', function(){$(thisObject).removeClass('opened').addClass('closed').text('+');});
         }
         else {
-          $(this).siblings('.item-list').slideDown('slow', function(){$(this).removeClass('closed').addClass('opened').text('-');});
+          $(this).siblings('.item-list').slideDown('slow', function(){$(thisObject).removeClass('closed').addClass('opened').text('-');});
           
         }
       });
