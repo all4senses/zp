@@ -33,7 +33,7 @@
       $('.block-facetapi .facetapi-facet-field-article-product-depts .item-list:not(zp-processed) li a.facetapi-active').each(function(){
         console.log($(this).html());
         $(this).html('<span class="zp-expand opened">-</span>' + $(this).html());
-        $(this).append('<span class="zp-expand opened">-</span>');
+        $(this).after('<span class="zp-expand opened">-</span>');
         $(this).parent().find('.item-list').show();
         $(this).parent().children('.item-list').show().children('.item-list').hide();
         $(this).parents('.item-list').show().addClass('zp-processed');
