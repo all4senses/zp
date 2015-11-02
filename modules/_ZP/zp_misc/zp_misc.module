@@ -37,6 +37,14 @@ function zp_misc_menu() {
     'type' => MENU_CALLBACK,
   );
   
+  $items['jump-to'] = array(
+    'title' => 'Redirect a user to another page',
+    'page callback' => 'zp_misc_jumpTo_fromUrl',
+    'access arguments' => array('access content'),
+    'type' => MENU_CALLBACK,
+  );
+  
+  
   return $items;
 }
 
@@ -4117,7 +4125,17 @@ function zp_misc_getTidByName($vid, $name) {
 }
 
 
-
+function zp_misc_jumpTo_fromUrl() {
+  $args = arg();
+  dpm($args);
+  switch($args[2]) {
+    case 'articles':
+      drupal_goto('articles/');
+    
+    default:
+      drupal_goto();
+  }
+}
 
 
 
