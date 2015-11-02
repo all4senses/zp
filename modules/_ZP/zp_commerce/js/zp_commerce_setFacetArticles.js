@@ -33,7 +33,7 @@
       $('.block-facetapi .facetapi-facet-field-article-product-depts .item-list:not(zp-processed) li a.facetapi-active').each(function(){
         console.log($(this).html());
         //$(this).html('<span class="zp-expand opened">-</span>' + $(this).html());
-        $(this).after('<span class="zp-expand opened" style="float: left; cursor: hand;">-</span>');
+        $(this).after('<span class="zp-expand opened" style="float: left; cursor: alias;">-</span>');
         $(this).parent().find('.item-list').show();
         $(this).parent().children('.item-list').show().children('.item-list').hide();
         $(this).parents('.item-list').show().addClass('zp-processed');
@@ -44,10 +44,10 @@
         itemList = $(this).siblings('.item-list');
         if (itemList.length){
           if($(itemList).css('display') == 'none') {
-            $(this).before('<span class="zp-expand closed" style="float: left; cursor: hand;">+</span>');
+            $(this).before('<span class="zp-expand closed" style="float: left; cursor: alias;">+</span>');
           }
           else {
-            $(this).before('<span class="zp-expand opened" style="float: left; cursor: hand;">-</span>');
+            $(this).before('<span class="zp-expand opened" style="float: left; cursor: alias;">-</span>');
           }
         }
         
