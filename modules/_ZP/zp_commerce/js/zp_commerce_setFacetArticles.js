@@ -40,12 +40,7 @@
         
       });
       
-      $('.block-facetapi .facetapi-facet-field-article-product-depts .item-list:not(zp-processed) li a.facetapi-inactive').each(function(){
-        $(this).parent().find('.item-list').show();
-        $(this).parent().children('.item-list').show().children('.item-list').hide();
-        $(this).parents('.item-list').show().addClass('zp-processed');
-        
-      });
+      $('.block-facetapi .facetapi-facet-field-article-product-depts .item-list:not(zp-processed) li a.facetapi-inactive').before('<span class="zp-expand c">+</span>');
         
       
     }
