@@ -498,6 +498,11 @@ function zp_blocks_getCurrentDept() {
 
   dpm($term);
   
+  $articles_tids = NULL;
+  foreach ($term->field_product_dept_for_articles['und'] as $articles_tid) {
+    $articles_tids = (!$articles_tids ? $articles_tids . ',' : '') . $articles_tid;
+  }
+  
   $current_place_in_catalog = array(
     'type' => 'department',  
     'title' => $term->name,
@@ -505,6 +510,7 @@ function zp_blocks_getCurrentDept() {
     'vid' => $term->vid,
     'current_zp_id' => $term->field_zp_id['und'][0]['safe_value'],  
     'parent_zp_id' => $term->field_parent_zp_id['und'][0]['safe_value'],
+    'product_types_and_articles_tids' => $articles_tids,
   );
   
   drupal_set_title($term->name);
