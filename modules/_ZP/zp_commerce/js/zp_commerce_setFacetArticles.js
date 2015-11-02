@@ -51,9 +51,11 @@
           }
         }
         
-        
       });
-        
+      
+      $('.zp-expand').click(function(){
+        console.log('click');
+      });
       
     }
   };
