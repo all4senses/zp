@@ -152,57 +152,13 @@ function zp_blocks_block_save($delta = '', $edit = array()) {
 }
 
 
-/**
- * Shows a term as a dept on the views dept with subdepts or products
- * 
- */
-function zp_blocks_getCurrentDept() {
-  
-  
-  global $current_place_in_catalog;
-  
-  
-  $current_dept_zp_id = arg(1);
-  //dpm('$current_dept_zp_id = ' . $current_dept_zp_id);
-  
-  if (!$tid = zp_misc_fieldRead_idByValue_single('zp_id', $current_dept_zp_id, 'taxonomy_term', 'catalog')) {
-    
-    // Pity... too late for drupal_not_found here... Context doesn't catch it...
-    // So i have put this check in views page header
-//    drupal_not_found();
-//    drupal_exit();
-    return;
-  }
-  
-  $term = taxonomy_term_load($tid);
-
-  $current_place_in_catalog = array(
-    'type' => 'department',  
-    'title' => $term->name,
-    'tid' => $term->tid,
-    'vid' => $term->vid,
-    'current_zp_id' => $term->field_zp_id['und'][0]['safe_value'],  
-    'parent_zp_id' => $term->field_parent_zp_id['und'][0]['safe_value'],
-  );
-  
-  drupal_set_title($term->name);
-          
-  //dpm('$tid = ' . $tid);
-  //dpm($term);
-  
-  //global $language;
-  //dpm($language);
-  
-  $term_view = taxonomy_term_view($term, 'full');
-  //dpm($term_view);
-  
-  return drupal_render($term_view);
-}
 
 
 /**
+ * Deprecated... was used with nodes as depts
  * Current dept subgroups (if any)
  */
+/*
 function zp_blocks_getCurrentDeptSubgroups() {
   
   global $zp_global_data;
@@ -215,6 +171,7 @@ function zp_blocks_getCurrentDeptSubgroups() {
   
   return $out;
 }
+*/
 
 
 /**
@@ -510,3 +467,54 @@ function zp_blocks_block_view_alter(&$data, $block) {
   
 }
 
+
+
+/**
+ * Shows in a block a rendered term 
+ * as a dept on the views dept with subdepts or products
+ * 
+ */
+function zp_blocks_getCurrentDept() {
+  
+  
+  global $current_place_in_catalog;
+  
+  
+  $current_dept_zp_id = arg(1);
+  //dpm('$current_dept_zp_id = ' . $current_dept_zp_id);
+  
+  if (!$tid = zp_misc_fieldRead_idByValue_single('zp_id', $current_dept_zp_id, 'taxonomy_term', 'catalog')) {
+    
+    // Pity... too late for drupal_not_found here... Context doesn't catch it...
+    // So i have put this check in views page header
+//    drupal_not_found();
+//    drupal_exit();
+    return;
+  }
+  
+  dpm($term);
+  
+  $term = taxonomy_term_load($tid);
+
+  $current_place_in_catalog = array(
+    'type' => 'department',  
+    'title' => $term->name,
+    'tid' => $term->tid,
+    'vid' => $term->vid,
+    'current_zp_id' => $term->field_zp_id['und'][0]['safe_value'],  
+    'parent_zp_id' => $term->field_parent_zp_id['und'][0]['safe_value'],
+  );
+  
+  drupal_set_title($term->name);
+          
+  //dpm('$tid = ' . $tid);
+  //dpm($term);
+  
+  //global $language;
+  //dpm($language);
+  
+  $term_view = taxonomy_term_view($term, 'full');
+  //dpm($term_view);
+  
+  return drupal_render($term_view);
+}
