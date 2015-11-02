@@ -31,7 +31,7 @@
 //      });
       // And then open those branches that has active links (from the upper parent down to a first child)
       $('.block-facetapi .facetapi-facet-field-article-product-depts .item-list:not(zp-processed) li a.facetapi-active').each(function(){
-        //console.log($(this).innerHtml());
+        console.log($(this).html());
         console.log($(this).text());
         $(this).parent().find('.item-list').show();
         $(this).parent().children('.item-list').show().children('.item-list').hide();
