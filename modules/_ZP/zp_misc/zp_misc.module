@@ -4093,7 +4093,7 @@ function gv_misc_getBrandPageLink_forProduct($node, &$content) {
     $query->fields('n', array('nid', 'title'));
 
     if ($brand_page = $query->execute()->fetchObject()) {
-      dpm('$brand_page = ' . $brand_page);
+      dpm($brand_page);
       dpm($content);
       $content['field_brand_name'][0]['#markup'] = l($brand_page->title, 'node/' . $brand_page->nid);
     }
