@@ -4068,7 +4068,7 @@ function zp_misc_checkBarCRC(array $bar, $bar_length) {
 function gv_misc_getBrandPageLink_forProduct($node, &$content) {
           
   if (!empty($node->field_brand_page['und'][0]['value'])) {
-    dpm($content);
+    //dpm($content);
     dpm('name loaded from saved field');
     //$content['field_brand_name'][0]['#markup'] = $node->field_brand_page['und'][0]['value'];
     $content['field_brand_name'] = array('#markup' => $node->field_brand_page['und'][0]['value']);
