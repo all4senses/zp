@@ -4128,7 +4128,7 @@ function zp_misc_getTidByName($vid, $name) {
 function zp_misc_jumpTo_fromUrl() {
   $args = arg();
   dpm($args);
-  switch($args[2]) {
+  switch($args[1]) {
     case 'articles':
       drupal_goto('articles/');
     
