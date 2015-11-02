@@ -492,10 +492,12 @@ function zp_blocks_getCurrentDept() {
     return;
   }
   
-  dpm($term);
+  
   
   $term = taxonomy_term_load($tid);
 
+  dpm($term);
+  
   $current_place_in_catalog = array(
     'type' => 'department',  
     'title' => $term->name,
