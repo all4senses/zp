@@ -56,10 +56,10 @@
       $('.zp-expand').click(function(){
         console.log('click');
         if ($(this).hasClass('opened')) {
-          $(this).html('<span class="zp-expand closed" style="float: left">+</span>');
+          $(this).replaceWith('<span class="zp-expand closed" style="float: left">+</span>');
         }
         else {
-          $(this).html('<span class="zp-expand opened" style="float: left">-</span>');
+          $(this).replaceWith('<span class="zp-expand opened" style="float: left">-</span>');
         }
       });
       
