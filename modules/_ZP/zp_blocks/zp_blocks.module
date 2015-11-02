@@ -500,7 +500,7 @@ function zp_blocks_getCurrentDept() {
   
   $articles_tids = NULL;
   foreach ($term->field_product_dept_for_articles['und'] as $articles_tid) {
-    $articles_tids = (!$articles_tids ? $articles_tids . ',' : '') . $articles_tid;
+    $articles_tids = (!$articles_tids ? $articles_tids . ',' : '') . $articles_tid->tid;
   }
   
   $current_place_in_catalog = array(
