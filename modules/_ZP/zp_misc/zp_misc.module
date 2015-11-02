@@ -4073,7 +4073,7 @@ function gv_misc_getBrandPageLink_forProduct($node, &$content) {
     $query->condition('n.type', 'brand');
 
     if (@$node->field_brand_name['und'][0]['tid']) {
-      $query->leftJoin('field_data_field_brand_name', 'bn', "bn.entity_id = n.nid AND bn.field_brand_name_value = '" . $node->field_brand_name['und'][0]['tid'] . "'"); 
+      $query->leftJoin('field_data_field_brand_name', 'bn', "bn.entity_id = n.nid AND bn.field_brand_name_tid = '" . $node->field_brand_name['und'][0]['tid'] . "'"); 
       //$query->condition('bn.field_brand_name_value', $node->field_brand_name['und'][0]['tid']);
 
       if (!@$node->field_brand_code['und'][0]['safe_value']) {
