@@ -55,7 +55,7 @@
       
       $('.zp-expand').click(function(){
         console.log('click');
-        if ($(this).hasClass(opened)) {
+        if ($(this).hasClass('opened')) {
           $(this).html('<span class="zp-expand closed" style="float: left">+</span>');
         }
         else {
