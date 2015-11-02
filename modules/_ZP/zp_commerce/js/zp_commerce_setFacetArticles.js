@@ -59,7 +59,7 @@
           $(this).removeClass('opened').addClass('cloded').text('+');
         }
         else {
-          $(this).removeClass('closed').addClass('opened').text('+');
+          $(this).removeClass('closed').addClass('opened').text('-');
           //$(this).replaceWith('<span class="zp-expand opened" style="float: left">-</span>');
         }
       });
