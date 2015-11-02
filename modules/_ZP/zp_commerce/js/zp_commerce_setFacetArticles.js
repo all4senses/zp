@@ -40,7 +40,7 @@
         
       });
       
-      $('.block-facetapi .facetapi-facet-field-article-product-depts .item-list:not(zp-processed) li a.facetapi-inactive').each(function(){
+      $('.block-facetapi .facetapi-facet-field-article-product-depts li a.facetapi-inactive').each(function(){
         itemList = $(this).siblings('.item-list');
         if (itemList.length){
           if($(itemList).css('display') == 'none') {
