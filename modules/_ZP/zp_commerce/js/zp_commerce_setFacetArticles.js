@@ -3,7 +3,7 @@
   Drupal.behaviors.zp_commerce_setFacetArticles = {
     attach: function (context, settings) {
       
-      console.log('zp_commerce_setFacetArticles.....');
+      //console.log('zp_commerce_setFacetArticles.....');
       
       // http://stackoverflow.com/questions/2655925/how-to-apply-important-using-css
       // http://stackoverflow.com/questions/11962962/overriding-important-with-css-or-jquery
