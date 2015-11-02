@@ -54,14 +54,14 @@
       });
       
       $('.zp-expand').click(function(){
-        console.log('click');
+        //console.log('click');
         if ($(this).hasClass('opened')) {
-          $(this).removeClass('opened').addClass('closed').text('+');
           $(this).siblings('.item-list').slideUp();
+          $(this).removeClass('opened').addClass('closed').text('+');
         }
         else {
-          $(this).removeClass('closed').addClass('opened').text('-');
           $(this).siblings('.item-list').slideDown();
+          $(this).removeClass('closed').addClass('opened').text('-');
         }
       });
       
