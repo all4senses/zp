@@ -358,8 +358,8 @@ function zp_pages_node_view($node, $view_mode) {
       $query->fields('a', array('field_article_product_depts_tid'));
       
       if($articles_tids = $query->execute()->fetchCol()) {
-        $articles_tids = implode(',', $articles_tids);
-        //dpm($articles_tids);
+        $articles_tids = implode('+', $articles_tids);
+        dpm($articles_tids);
       }
       
       
