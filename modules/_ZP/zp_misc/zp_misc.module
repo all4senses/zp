@@ -4186,7 +4186,7 @@ function zp_misc_taxonomy_get_children_all($tid, $vid = 0, $key = 'tid'){
   $result = array();
   foreach ($c as $t => $d){
     $result[$t] = $d;
-    $below = taxonomy_get_children_all($t, $vid, $key);
+    $below = zp_misc_taxonomy_get_children_all($t, $vid, $key);
     if (!empty($below)) {
       $result[$t]->children = array();
       foreach ($below as $nt => $nd){
