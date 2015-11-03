@@ -4274,4 +4274,23 @@ function zp_commerce_facetapi_title($variables) {
 function zp_commerce_taxonomy_term_presave($term) {
   //$term->foo = 'bar';
   dpm($term);
+  $parents = taxonomy_get_parents_all($term->tid);
+  dpm($parents);
+  $children = taxonomy_get_children_all($term->tid);
+  dpm($children);
+}
+
+function taxonomy_get_children_all($tid, $vid = 0, $key = 'tid'){
+	$c = taxonomy_get_children($tid, $vid, $key);
+	$result = array();
+	foreach ($c as $t => $d){
+		$result[$t] = $d;
+		$below = taxonomy_get_children_all($t, $vid, $key);
+		if (!empty($below)) {
+			foreach ($below as $nt => $nd){
+				$result[$nt] = $nd;
+			}
+		}
+	}
+	return $result;
 }
