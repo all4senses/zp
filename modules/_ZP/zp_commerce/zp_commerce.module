@@ -4262,3 +4262,16 @@ function zp_commerce_facetapi_title($variables) {
 //function theme_facetapi_count($variables) {
 //  return '(' . (int) $variables['count'] . ')';
 //}
+
+
+/**
+ * Update images full path url for Product types 
+ * for articles vocabulary, 
+ * based on the own and parents parts urls
+ * 
+ * @param type $term
+ */       
+function zp_commerce_taxonomy_term_presave($term) {
+  //$term->foo = 'bar';
+  dpm($term);
+}

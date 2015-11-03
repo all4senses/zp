@@ -1374,7 +1374,6 @@ function zp_pages_menu_breadcrumb_alter(&$active_trail, $item) {
  */
 function zp_pages_submitForm_saveProduct(&$form, &$form_state) {
   
-  dpm($form_state);
   /*
   if ($form_state['values']['op'] == 'Save' && @$form_state['build_info']['args'][0]->status == 0) {
     // NOT publish ---> Publish
