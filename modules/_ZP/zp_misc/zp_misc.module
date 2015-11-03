@@ -4127,14 +4127,28 @@ function zp_misc_getTidByName($vid, $name) {
 
 function zp_misc_jumpTo_fromUrl() {
   $args = arg();
-  dpm($args);
+  //dpm($args);
   switch($args[1]) {
     case 'articles':
+      if (!empty($args[2])) {
+        $facets = NULL;
+        $tids = explode('+', $args[2]); 
+        foreach ($tids as $tid) {
+           if (is_numeric($tid) && $term = taxonomy_term_load($tid)) {
+              if (!@$patahauto_loaded && module_exists('pathauto')) {
+                // Needed, as of http://drupal.org/node/907578#comment-5564008
+                require_once drupal_get_path('module', 'pathauto') . '/pathauto.inc';
+                $patahauto_loaded = TRUE;
+              }
+              $facets = '/product-type/' . pathauto_cleanstring($term->name) . '-' . $tid;
+           }
+        }
+
+        drupal_goto('articles' . $facets);
+      }
       drupal_goto('articles/');
-    
-    default:
-      drupal_goto();
   }
+  drupal_goto();
 }
 
 
