@@ -499,7 +499,8 @@ function zp_blocks_getCurrentDept() {
   //dpm($term);
   
   $articles_tids = NULL;
-  foreach ($term->field_product_dept_for_articles['und'] as $articles_tid) {
+  //foreach ($term->field_product_dept_for_articles['und'] as $articles_tid) {
+  foreach ($term->field_article_product_depts['und'] as $articles_tid) {  
     $articles_tids = ($articles_tids ? $articles_tids . ',' : '') . $articles_tid['tid'];
   }
   
