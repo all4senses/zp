@@ -496,7 +496,7 @@ function zp_blocks_getCurrentDept() {
   
   $term = taxonomy_term_load($tid);
 
-  dpm($term);
+  //dpm($term);
   
   $articles_tids = NULL;
   foreach ($term->field_product_dept_for_articles['und'] as $articles_tid) {

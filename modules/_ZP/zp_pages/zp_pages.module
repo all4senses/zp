@@ -338,11 +338,23 @@ function zp_pages_node_view($node, $view_mode) {
   switch ($node->type) {
    
       
-     case 'product_a':
-       //$path = 'dp/z01131'; // 'd/z01130';
-       //menu_tree_set_path('menu-catalog-menu', $path);
+    case 'product_a':
+      
+      if ($view_mode != 'full') {
+        return;
+      }
    
       // Make (or not make) some product related actions... 
+      
+      // Prepare related Articles block data for the product page.
+      $articles_tids = NULL;
+      dpm($node);
+      
+      
+//      foreach ($term->field_product_dept_for_articles['und'] as $articles_tid) {
+//        $articles_tids = ($articles_tids ? $articles_tids . ',' : '') . $articles_tid['tid'];
+//      }
+      
       
       // Doesn't work to hide a price, because this is inside of processed add_to_cart form which doesn't have a price.
       //$node->content['field_product']['line_item_fields']['commerce_unit_price']['#processes'] = TRUE;
@@ -351,8 +363,8 @@ function zp_pages_node_view($node, $view_mode) {
       // unset($node->content['field_product']);
       // For hiding a price we'll be using hook_commerce_entity_view_alter  => zp_commerce_entity_view_alter(&$build, $type)
    
-   
-       // And proceed with the breadcrumb building... for a product and other entities as well
+      // And proceed with the breadcrumb building... for a product and other entities as well
+      
        
     case 'shop':  
     case 'city':
@@ -374,7 +386,8 @@ function zp_pages_node_view($node, $view_mode) {
         'nid' => $node->nid,
         'type' => $node->type,
         'current_zp_id' => $node->field_zp_id['und'][0]['safe_value'],
-        'parent_zp_id' => @$node->field_parent_zp_id['und'][0]['safe_value'],  
+        'parent_zp_id' => @$node->field_parent_zp_id['und'][0]['safe_value'], 
+        'product_types_and_articles_tids' => @$articles_tids,  // Set for product pages, above in case 'product_a':
       );
       
       break;
