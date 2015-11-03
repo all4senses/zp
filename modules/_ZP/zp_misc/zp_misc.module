@@ -4149,7 +4149,7 @@ function zp_misc_jumpTo_fromUrl() {
                require_once drupal_get_path('module', 'pathauto') . '/pathauto.inc';
                $patahauto_loaded = TRUE;
              }
-             $facets = '/product-type/' . pathauto_cleanstring($term->name) . '-' . $tid;
+             $facets .= '/product-type/' . pathauto_cleanstring($term->name) . '-' . $tid;
           } // End of if (is_numeric($tid) && $term = taxonomy_term_load($tid)) {
         } // End of foreach ($tids as $tid) {
       } // End of if (!empty($args[2])) {
