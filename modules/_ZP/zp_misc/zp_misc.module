@@ -4139,7 +4139,9 @@ function zp_misc_jumpTo_fromUrl() {
       // Where 913 and 898 is tid of a Product type for articles vocabulary
       $facets = NULL;
       if (!empty($args[2])) {
+        dpm($args[2]);
         $tids = explode('+', $args[2]); 
+        dpm($tids);
         foreach ($tids as $tid) {
           if (is_numeric($tid) && $term = taxonomy_term_load($tid)) {
              if (!@$patahauto_loaded && module_exists('pathauto')) {
