@@ -476,12 +476,7 @@ function zp_blocks_block_view_alter(&$data, $block) {
  */
 function zp_blocks_getCurrentDept() {
   
-  
-  global $current_place_in_catalog;
-  
-  
   $current_dept_zp_id = arg(1);
-  //dpm('$current_dept_zp_id = ' . $current_dept_zp_id);
   
   if (!$tid = zp_misc_fieldRead_idByValue_single('zp_id', $current_dept_zp_id, 'taxonomy_term', 'catalog')) {
     
@@ -492,16 +487,15 @@ function zp_blocks_getCurrentDept() {
     return;
   }
   
-  
+  $articles_tids = NULL;
+  global $current_place_in_catalog;
   
   $term = taxonomy_term_load($tid);
 
-  //dpm($term);
-  
-  $articles_tids = NULL;
-  //foreach ($term->field_product_dept_for_articles['und'] as $articles_tid) {
-  foreach ($term->field_article_product_depts['und'] as $articles_tid) {  
-    $articles_tids = ($articles_tids ? $articles_tids . ',' : '') . $articles_tid['tid'];
+  if (!empty($term->field_article_product_depts['und'])) {
+    foreach ($term->field_article_product_depts['und'] as $articles_tid) {  
+      $articles_tids = ($articles_tids ? $articles_tids . ',' : '') . $articles_tid['tid'];
+    }
   }
   
   $current_place_in_catalog = array(
@@ -513,17 +507,10 @@ function zp_blocks_getCurrentDept() {
     'parent_zp_id' => $term->field_parent_zp_id['und'][0]['safe_value'],
     'product_types_and_articles_tids' => $articles_tids,
   );
-  
+
   drupal_set_title($term->name);
-          
-  //dpm('$tid = ' . $tid);
-  //dpm($term);
-  
-  //global $language;
-  //dpm($language);
-  
+
   $term_view = taxonomy_term_view($term, 'full');
-  //dpm($term_view);
-  
+
   return drupal_render($term_view);
 }
