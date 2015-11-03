@@ -4160,6 +4160,8 @@ function zp_misc_jumpTo_fromUrl() {
 /**
  * Get all children of children...
  * 
+ * https://www.drupal.org/node/381952
+ * 
  * @param type $tid
  * @param type $vid
  * @param type $key
@@ -4181,6 +4183,10 @@ function zp_misc_taxonomy_get_children_all($tid, $vid = 0, $key = 'tid'){
 	return $result;
 }
 */
+/**
+ * Hierarchical version.
+ * https://www.drupal.org/node/381952
+ */
 function zp_misc_taxonomy_get_children_all($tid, $vid = 0, $key = 'tid'){
   $c = taxonomy_get_children($tid, $vid, $key);
   $result = array();

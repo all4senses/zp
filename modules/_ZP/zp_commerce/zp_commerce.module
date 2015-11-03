@@ -4278,6 +4278,10 @@ function zp_commerce_taxonomy_term_presave($term) {
   dpm($parents);
   $children = zp_misc_taxonomy_get_children_all($term->tid);
   dpm($children);
+  
+  $vid = 6;
+  $children = taxonomy_get_tree($vid, $term->tid);
+  dpm($children);
 }
 
 
