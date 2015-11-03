@@ -4157,6 +4157,46 @@ function zp_misc_jumpTo_fromUrl() {
 }
 
 
+/**
+ * Get all children of children...
+ * 
+ * @param type $tid
+ * @param type $vid
+ * @param type $key
+ * @return type
+ */
+/*
+function zp_misc_taxonomy_get_children_all($tid, $vid = 0, $key = 'tid'){
+	$c = taxonomy_get_children($tid, $vid, $key);
+	$result = array();
+	foreach ($c as $t => $d){
+		$result[$t] = $d;
+		$below = zp_misc_taxonomy_get_children_all($t, $vid, $key);
+		if (!empty($below)) {
+			foreach ($below as $nt => $nd){
+				$result[$nt] = $nd;
+			}
+		}
+	}
+	return $result;
+}
+*/
+function zp_misc_taxonomy_get_children_all($tid, $vid = 0, $key = 'tid'){
+  $c = taxonomy_get_children($tid, $vid, $key);
+  $result = array();
+  foreach ($c as $t => $d){
+    $result[$t] = $d;
+    $below = taxonomy_get_children_all($t, $vid, $key);
+    if (!empty($below)) {
+      $result[$t]->children = array();
+      foreach ($below as $nt => $nd){
+        $result[$t]->children[$nt] = $nd;
+      }
+    }
+  }
+  return $result;
+}
+
 
 
 
