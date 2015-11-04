@@ -368,7 +368,7 @@ function zp_pages_node_view($node, $view_mode) {
           //$articles_tids = implode('+', $articles_tids);
           $articles_tids = ($articles_tids ? '+' : '') . $tid;
           if (!$node->images_folder) {
-            $node->images_folder = $articles->field_images_url_full_value;
+            $node->images_folder = $articles['field_images_url_full_value'];
           }
         }
       }
