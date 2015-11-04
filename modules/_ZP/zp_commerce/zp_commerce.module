@@ -4289,10 +4289,10 @@ function zp_commerce_taxonomy_term_presave($term) {
 
   $url_full = NULL;
   foreach($parents as $key => $parent) {
-    $url_full .= ($url_full ? '/' : '') . $parent->field_images_url_part['und'][0]['value'];
+    $url_full = $parent->field_images_url_part['und'][0]['value'] . ($url_full ? '/' : '') . $url_full;
   }
   $term->field_images_url_full['und'][0]['value'] = $url_full;
-  
+  dpm('$url_full = ' . $url_full);
   
   // Change/construct full images folder url for all current term's children.
   $children = zp_misc_taxonomy_get_children_all($term->tid);
