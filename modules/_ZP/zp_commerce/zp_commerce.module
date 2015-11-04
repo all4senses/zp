@@ -4348,7 +4348,7 @@ function zp_misc_regenerateDeptChildrenFullUrl($children, $parent_full_url) {
       }
     }
     else {
-      drupal_set_message('The part url for the term ' . $child->name . ' is not set, so we dont process it and its children.');
+      drupal_set_message('-->Need Action!-->The part url for the term ' . $child->name . ' is not set, so we dont process it and its children.');
     }
   }
 }
