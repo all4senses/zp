@@ -357,10 +357,19 @@ function zp_pages_node_view($node, $view_mode) {
       $query->join('field_revision_field_article_product_depts', 'a', "a.entity_type = 'taxonomy_term' AND a.entity_id = zp_id.entity_id");
       $query->fields('a', array('field_article_product_depts_tid'));
       
-      if($articles_tids = $query->execute()->fetchCol()) {
-        $articles_tids = implode('+', $articles_tids);
+      $query->leftJoin('field_data_field_images_url_full', 'i', "i.entity_type = 'taxonomy_term' AND i.entity_id = a.field_article_product_depts_tid");
+      $query->fields('a', array('field_images_url_full_value'));
+      
+      //if($articles_tids = $query->execute()->fetchCol()) {
+      if($articles = $query->execute()->fetchAllAssoc('field_article_product_depts_tid')) {
+        dpm($articles);
+        foreach ($articles as $tid => $article) {
+          //$articles_tids = implode('+', $articles_tids);
+          $articles_tids = ($articles_tids ? '+' : '') . $tid;
+        }
       }
       
+      dpm('$articles_tids = ' . $articles_tids);
       
 //      foreach ($term->field_product_dept_for_articles['und'] as $articles_tid) {
 //        $articles_tids = ($articles_tids ? $articles_tids . ',' : '') . $articles_tid['tid'];
