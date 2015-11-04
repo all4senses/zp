@@ -4300,7 +4300,7 @@ function zp_commerce_taxonomy_term_presave($term) {
     }
     $url_full = $parent->field_images_url_part['und'][0]['value'] . ($url_full ? '/' : '') . $url_full;
   }
-  $term->field_images_url_full['und'][0]['value'] = 'f/p/' . $url_full;
+  $term->field_images_url_full['und'][0]['value'] = 'f/p/' . $url_full . '/';
   
   
   drupal_set_message('The Part images url has been changed to ' . $term->field_images_url_part['und'][0]['value'] . ', so we have regenerated the full url for this term and for its children.');
@@ -4338,7 +4338,7 @@ function zp_misc_regenerateDeptChildrenFullUrl($children, $parent_full_url) {
     //dpm($term);
     //$term = taxonomy_term_load($child->tid);
     if (!empty($child->field_images_url_part['und'][0]['value'])) {
-      $child->field_images_url_full['und'][0]['value'] = $parent_full_url . '/' . $child->field_images_url_part['und'][0]['value'];
+      $child->field_images_url_full['und'][0]['value'] = $parent_full_url . $child->field_images_url_part['und'][0]['value'] . '/';
       $child->zp_stop_recursion = TRUE;
       taxonomy_term_save($child);
       //field_cache_clear();
