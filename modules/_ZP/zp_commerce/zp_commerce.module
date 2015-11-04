@@ -4284,7 +4284,7 @@ function zp_commerce_taxonomy_term_presave($term) {
     
   // Change/construct the current full images folder url.
   $parents = taxonomy_get_parents_all($term->tid);
-  dpm($parents);
+  //dpm($parents);
 
   $url_full = NULL;
   foreach($parents as $key => $parent) {
@@ -4302,7 +4302,7 @@ function zp_commerce_taxonomy_term_presave($term) {
   
   // Change/construct full images folder url for all current term's children.
   if ($children = zp_misc_taxonomy_get_children_all($term->tid)) {
-    dpm($children);
+    //dpm($children);
     zp_misc_regenerateDeptChildrenFullUrl($children, $term->field_images_url_full['und'][0]['value']);
   }
   
