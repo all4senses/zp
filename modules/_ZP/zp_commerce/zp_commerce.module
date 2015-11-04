@@ -4274,9 +4274,7 @@ function zp_commerce_facetapi_title($variables) {
 function zp_commerce_taxonomy_term_presave($term) {
   
   //$term->foo = 'bar';
-  dpm($term);
-  
-  
+  //dpm($term);
   
   // Don's change anything if the part url hasn't been changed.
   if (@$term->original->field_images_url_part['und'][0]['value'] == @$term->field_images_url_part['und'][0]['value']) {
@@ -4333,9 +4331,9 @@ function zp_misc_regenerateDeptChildrenFullUrl($children, $parent_full_url) {
       $child->field_images_url_full['und'][0]['value'] = $parent_full_url . '/' . $child->field_images_url_part['und'][0]['value'];
       taxonomy_term_save($child);
       drupal_set_message('A new full url for a child term  ' . $child->name . ' = ' . $child->field_images_url_full['und'][0]['value']);
-  //    if (!empty($child->children)) {
-  //      zp_misc_regenerateDeptChildrenFullUrl($child->children, $child->field_images_url_full['und'][0]['value']);
-  //    }
+      if (!empty($child->children)) {
+        zp_misc_regenerateDeptChildrenFullUrl($child->children, $child->field_images_url_full['und'][0]['value']);
+      }
     }
     else {
       drupal_set_message('The part url for the term ' . $child->name . ' is not set, so we dont process it and its children.');
