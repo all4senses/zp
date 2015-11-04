@@ -4273,11 +4273,12 @@ function zp_commerce_facetapi_title($variables) {
  */       
 function zp_commerce_taxonomy_term_presave($term) {
   
+  dpm($term);
   if (!empty($term->zp_stop_recursion)) {
     return;
   }
   //$term->foo = 'bar';
-  //dpm($term);
+  
   
   // Don's change anything if the part url hasn't been changed.
   if (@$term->original->field_images_url_part['und'][0]['value'] == @$term->field_images_url_part['und'][0]['value']) {
