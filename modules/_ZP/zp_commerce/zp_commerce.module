@@ -4337,7 +4337,7 @@ function zp_misc_regenerateDeptChildrenFullUrl($children, $parent_full_url) {
     //dpm($child);
     //dpm($term);
     //$term = taxonomy_term_load($child->tid);
-    if (!empty($child->field_images_url_full['und'][0]['value'])) {
+    if (!empty($child->field_images_url_part['und'][0]['value'])) {
       $child->field_images_url_full['und'][0]['value'] = $parent_full_url . '/' . $child->field_images_url_part['und'][0]['value'];
       $child->zp_stop_recursion = TRUE;
       taxonomy_term_save($child);
