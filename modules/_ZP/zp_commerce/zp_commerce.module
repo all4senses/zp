@@ -4273,7 +4273,7 @@ function zp_commerce_facetapi_title($variables) {
  */       
 function zp_commerce_taxonomy_term_presave($term) {
   
-  dpm($term);
+  //dpm($term);
   if (!empty($term->zp_stop_recursion)) {
     return;
   }
@@ -4282,7 +4282,7 @@ function zp_commerce_taxonomy_term_presave($term) {
   
   // Don's change anything if the part url hasn't been changed.
   if (@$term->original->field_images_url_part['und'][0]['value'] == @$term->field_images_url_part['und'][0]['value']) {
-    drupal_set_message('The Part images url hasnt been changed, so no need to regenerate the full part for this term and for its children.');
+    //drupal_set_message('The Part images url hasnt been changed, so no need to regenerate the full part for this term and for its children.');
     return;
   }
     
@@ -4295,7 +4295,7 @@ function zp_commerce_taxonomy_term_presave($term) {
   foreach($parents as $key => $parent) {
     if (empty($parent->field_images_url_part['und'][0]['value'])) {
       $term->field_images_url_full['und'][0]['value'] = NULL;
-      drupal_set_message('The Part images url hasnt been changed, but one of the parent (' . $parent->name . ') doesnt have set part url, so we just stop processing and set the current url to NULL, but dont process children full urls... You need to set the parent part url.');
+      //drupal_set_message('The Part images url hasnt been changed, but one of the parent (' . $parent->name . ') doesnt have set part url, so we just stop processing and set the current url to NULL, but dont process children full urls... You need to set the parent part url.');
       return;
     }
     $url_full = $parent->field_images_url_part['und'][0]['value'] . ($url_full ? '/' : '') . $url_full;
@@ -4304,7 +4304,7 @@ function zp_commerce_taxonomy_term_presave($term) {
   
   
   drupal_set_message('The Part images url has been changed to ' . $term->field_images_url_part['und'][0]['value'] . ', so we have regenerated the full url for this term and for its children.');
-  drupal_set_message('A new full url for this term  = ' . $term->field_images_url_full['und'][0]['value']);
+  //drupal_set_message('A new full url for this term  = ' . $term->field_images_url_full['und'][0]['value']);
   
   //$term->zp_stop_recursion = TRUE;
   //taxonomy_term_save($term);
@@ -4342,7 +4342,7 @@ function zp_misc_regenerateDeptChildrenFullUrl($children, $parent_full_url) {
       $child->zp_stop_recursion = TRUE;
       taxonomy_term_save($child);
       //field_cache_clear();
-      drupal_set_message('A new full url for a child term  ' . $child->name . ' = ' . $child->field_images_url_full['und'][0]['value']);
+      //drupal_set_message('A new full url for a child term  ' . $child->name . ' = ' . $child->field_images_url_full['und'][0]['value']);
       if (!empty($child->children)) {
         zp_misc_regenerateDeptChildrenFullUrl($child->children, $child->field_images_url_full['und'][0]['value']);
       }
