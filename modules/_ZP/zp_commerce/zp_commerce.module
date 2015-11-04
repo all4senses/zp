@@ -4280,6 +4280,7 @@ function zp_commerce_taxonomy_term_presave($term) {
   
   // Don's change anything if the part url hasn't been changed.
   if ($term->original->field_images_url_part['und'][0]['value'] == $term->field_images_url_part['und'][0]['value']) {
+    drupal_set_message('The Part images url hasnt been changed, so no need to regenerate the full part for this term and for its children.');
     return;
   }
     
@@ -4292,7 +4293,9 @@ function zp_commerce_taxonomy_term_presave($term) {
     $url_full = $parent->field_images_url_part['und'][0]['value'] . ($url_full ? '/' : '') . $url_full;
   }
   $term->field_images_url_full['und'][0]['value'] = $url_full;
-  dpm('$url_full = ' . $url_full);
+  drupal_set_message('The Part images url has been changed, so we have regenerated the full part url for this term and for its children.');
+  drupal_set_message('The full part url for this term  = ' . $url_full);
+
   
   // Change/construct full images folder url for all current term's children.
   $children = zp_misc_taxonomy_get_children_all($term->tid);
