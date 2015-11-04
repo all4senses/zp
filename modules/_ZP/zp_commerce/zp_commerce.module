@@ -4326,6 +4326,7 @@ function zp_commerce_taxonomy_term_presave($term) {
  */
 function zp_misc_regenerateDeptChildrenFullUrl($children, $parent_full_url) {
   foreach ($children as $child) {
+    dpm($child);
     $term = taxonomy_term_load($child->tid);
     dpm($term);
     if (!empty($child->field_images_url_full['und'][0]['value'])) {
