@@ -4290,16 +4290,23 @@ function zp_commerce_taxonomy_term_presave($term) {
 
   $url_full = NULL;
   foreach($parents as $key => $parent) {
+    if (empty($parent->field_images_url_part['und'][0]['value'])) {
+      $term->field_images_url_full['und'][0]['value'] = NULL;
+      drupal_set_message('The Part images url hasnt been changed, but one of the parent (' . $parent->name . ') doesnt have set part url, so we just stop processing and set the current url to NULL, but dont process children full urls... You need to set the parent part url.');
+      return;
+    }
     $url_full = $parent->field_images_url_part['und'][0]['value'] . ($url_full ? '/' : '') . $url_full;
   }
-  $term->field_images_url_full['und'][0]['value'] = $url_full;
+  $term->field_images_url_full['und'][0]['value'] = 'f/p/' . $url_full;
   drupal_set_message('The Part images url has been changed, so we have regenerated the full part url for this term and for its children.');
-  drupal_set_message('The full part url for this term  = ' . $url_full);
+  drupal_set_message('The full part url for this term  = ' . $term->field_images_url_full['und'][0]['value']);
 
   
   // Change/construct full images folder url for all current term's children.
   $children = zp_misc_taxonomy_get_children_all($term->tid);
   dpm($children);
+  
+  zp_misc_regenerateDeptChildrenFullUrl($children, $term->field_images_url_full['und'][0]['value']);
   
 //  foreach ($children as $grand_children) {
 //    
@@ -4312,3 +4319,24 @@ function zp_commerce_taxonomy_term_presave($term) {
 }
 
 
+/**
+ * 
+ * @param type $children
+ * @param type $parent_full_url
+ */
+function zp_misc_regenerateDeptChildrenFullUrl($children, $parent_full_url) {
+  foreach ($children as $child) {
+    $term = taxonomy_term_load($child->tid);
+    dpm($term);
+    if (!empty($child->field_images_url_full['und'][0]['value'])) {
+      $child->field_images_url_full['und'][0]['value'] = $parent_full_url . '/' . $child->field_images_url_part['und'][0]['value'];
+      dpm('$child->field_images_url_full = ' . $child->field_images_url_full['und'][0]['value']);
+  //    if (!empty($child->children)) {
+  //      zp_misc_regenerateDeptChildrenFullUrl($child->children, $child->field_images_url_full['und'][0]['value']);
+  //    }
+    }
+    else {
+      drupal_set_message('The part url for the term ' . $child->name . ' is not set, so we dont process it and its children.');
+    }
+  }
+}
