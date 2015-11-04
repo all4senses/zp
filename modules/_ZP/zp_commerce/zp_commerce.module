@@ -4272,12 +4272,35 @@ function zp_commerce_facetapi_title($variables) {
  * @param type $term
  */       
 function zp_commerce_taxonomy_term_presave($term) {
+  
   //$term->foo = 'bar';
   dpm($term);
+  
+  
+  
+  // Don's change anything if the part url hasn't been changed.
+  if ($term->original->field_images_url_part['und'][0]['value'] == $term->field_images_url_part['und'][0]['value']) {
+    return;
+  }
+    
+  // Change/construct the current full images folder url.
   $parents = taxonomy_get_parents_all($term->tid);
   dpm($parents);
+
+  $url_full = NULL;
+  foreach($parents as $key => $parent) {
+    $url_full .= ($url_full ? '/' : '') . $parent->field_images_url_part['und'][0]['value'];
+  }
+  $term->field_images_url_full['und'][0]['value'] = $url_full;
+  
+  
+  // Change/construct full images folder url for all current term's children.
   $children = zp_misc_taxonomy_get_children_all($term->tid);
   dpm($children);
+  
+//  foreach ($children as $grand_children) {
+//    
+//  }
   
   // Works but shows flat list
 //  $vid = 6;
