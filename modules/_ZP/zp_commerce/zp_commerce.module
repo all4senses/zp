@@ -4291,6 +4291,7 @@ function zp_commerce_taxonomy_term_presave($term) {
   //dpm($parents);
 
   $url_full = NULL;
+  $parents[0] = $term; // The current term (but older version.
   foreach($parents as $key => $parent) {
     if (empty($parent->field_images_url_part['und'][0]['value'])) {
       $term->field_images_url_full['und'][0]['value'] = NULL;
