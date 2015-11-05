@@ -3,8 +3,8 @@
 <?php else: ?>
   
     <?php 
-    dpm($node);
-    dpm($content);
+      //dpm($node);
+      //dpm($content);
       $url = 'http://www.zapokupkami.com'. url('node/' . $node->nid);
       
       /*

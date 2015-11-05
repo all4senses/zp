@@ -1647,27 +1647,35 @@ function zp_commerce_processPriceList_row_change($op, $object, &$result_messages
   if (@$object['product_display']) {
     $bundle = $object['product_display'];
     $type = 'product';
+    $entity_type = 'node';
   }
   else {
-    $bundle = $object['type'];
     $type = $object['type'];
+    if ($type == 'department') {
+       $bundle = 'catalog';
+       $entity_type = 'taxonomy_term';
+    }
+   
   }
   
-  if (!$entity_id = zp_misc_fieldRead_idByValue_single('zp_id', $object['zp_id'], /*$entity_type*/'node', $bundle)) {
+  //if (!$entity_id = zp_misc_fieldRead_idByValue_single('zp_id', $object['zp_id'], /*$entity_type*/'node', $bundle)) {
+  if (!$entity_id = zp_misc_fieldRead_idByValue_single('zp_id', $object['zp_id'], /*$entity_type*/$entity_type, $bundle)) {  
     return 'Не найден объект с zp_id = ' . $object['zp_id'];
   }
   
   if (@$object['product_display']) {
-    if (!$product_id = zp_misc_fieldRead_valueById_single(/*$field_name*/'product', $entity_id, /*$entity_type = */'node', /*$bundle = */$bundle/*'product_a'*/, 'field_product_product_id')) {
+    if (!$product_id = zp_misc_fieldRead_valueById_single(/*$field_name*/'product', $entity_id, /*$entity_type = */$entity_type, /*$bundle = */$bundle/*'product_a'*/, 'field_product_product_id')) {
       return 'Не найден товар (product) с zp_id = ' . $object['zp_id'];
     }        
   }
   
-  $bulk_change_fields_map = array(
+  // Displays only
+  $bulk_change_fields_map_display = array(
       'Производитель/Поставщик/Бренд' => 'brand',
       'Вес элемента в группе' => 'c_weight',
   );
   
+  // Products only
   $bulk_change_fields_map_product = array(
       'Продажная единица (шт, кг и т.д.)' => 'qmeasure',
       'Штрихкод' => 'bar',
@@ -1675,7 +1683,13 @@ function zp_commerce_processPriceList_row_change($op, $object, &$result_messages
       'Артикул производителя' => 'artikul_producer',
   );
   
-  
+  // Departments only
+  $bulk_change_fields_map_department = array(
+      'Название' => 'name',
+      'Описание' => 'description',
+      'Вес элемента в группе' => 'weight',
+  );   
+        
   if (in_array('Артикул производителя', $fields_to_change) && in_array('Артикул поставщика', $fields_to_change)) {
     zp_commerce_clarifyArtikulProducer($object, $result_messages);
     unset($fields_to_change[array_search('Артикул поставщика', $fields_to_change)]);
@@ -1690,15 +1704,35 @@ function zp_commerce_processPriceList_row_change($op, $object, &$result_messages
   
   foreach ($fields_to_change as $field_to_change) {
     
-    if (isset($bulk_change_fields_map[$field_to_change])) {
-      if (!zp_misc_fieldSave(/*$field_name*/$bulk_change_fields_map[$field_to_change], /*$entity_id*/$entity_id, /*$data*/$object[$field_to_change], /*$entity_type*/'node', /*$bundle*/$bundle, /*$clear_cache*/ FALSE)) {
-        return 'Ошибка при создании или изменении поля отдела или дисплея товара "' . $field_to_change . '" на "' . $object[$field_to_change] . '"';
+    // Departments only
+    if ($type == 'department' && isset($bulk_change_fields_map_department[$field_to_change])) {
+      
+      $success = db_update('taxonomy_term_data')
+      ->fields(array(
+        $bulk_change_fields_map_department[$field_to_change] => $object[$field_to_change],
+      ))
+      ->condition('vid', 2) // 2 - catalog
+      ->condition('tid', $entity_id)
+      ->execute();
+      
+      if (!$success) {
+        return 'Ошибка при создании или изменении поля отдела "' . $field_to_change . '" на "' . $object[$field_to_change] . '"';
       }
-      $result_messages[] = 'Успешно изменено поле отдела или дисплея товара "' . $field_to_change . '"';
+      $result_messages[] = 'Успешно изменено поле отдела "' . $field_to_change . '"';
       continue;
     }
     
-    if (isset($bulk_change_fields_map_product[$field_to_change])) {
+    // Displays only
+    elseif (@$object['product_display'] && isset($bulk_change_fields_map_display[$field_to_change])) {
+      if (!zp_misc_fieldSave(/*$field_name*/$bulk_change_fields_map_display[$field_to_change], /*$entity_id*/$entity_id, /*$data*/$object[$field_to_change], /*$entity_type*/$entity_type, /*$bundle*/$bundle, /*$clear_cache*/ FALSE)) {
+        return 'Ошибка при создании или изменении поля дисплея товара "' . $field_to_change . '" на "' . $object[$field_to_change] . '"';
+      }
+      $result_messages[] = 'Успешно изменено поле дисплея товара "' . $field_to_change . '"';
+      continue;
+    }
+    
+    // Products only
+    elseif (isset($bulk_change_fields_map_product[$field_to_change])) {
       if (!zp_misc_fieldSave(/*$field_name*/$bulk_change_fields_map_product[$field_to_change], /*$entity_id*/$product_id, /*$data*/$object[$field_to_change], /*$entity_type*/'commerce_product', /*$bundle*/'product', /*$clear_cache*/ FALSE)) {
         return 'Ошибка при создании или изменении поля товара "' . $field_to_change . '" на "' . $object[$field_to_change] . '"';
       }
@@ -1728,7 +1762,7 @@ function zp_commerce_processPriceList_row_change($op, $object, &$result_messages
               }
               
               if($country_tid = zp_misc_getTidByName(5, $found_code['country'][0])) { // 5 - vid for countries
-                $node->field_country[$node->language][0]['tid'] = $country_tid;
+                //$node->field_country[$node->language][0]['tid'] = $country_tid;
                 if (zp_misc_fieldTermReferenceSave('country', $entity_id, $country_tid, 'node', $bundle, FALSE)) {
                   return 'Ошибка при попытке изменить поле дисплея товара "Country" (term)';
                 }
@@ -1850,6 +1884,11 @@ function zp_commerce_processPriceList_row_change($op, $object, &$result_messages
       
       
       
+      
+      
+      
+        
+        
             
       // Products and departments fields -----------------------------------------------------------------------------------------------
       	
@@ -1898,7 +1937,7 @@ function zp_commerce_processPriceList_row_change($op, $object, &$result_messages
           // Status 0 for department means that connected products, subdepartments and Catalog menu item for it will be hidden, and 
           if ($object[$field_to_change]) {
 
-            if (!zp_misc_fieldSave(/*$field_name*/'visibility_status', /*$entity_id*/$entity_id, /*$data*/$object[$field_to_change], /*$entity_type*/'node', /*$bundle*/$bundle, /*$clear_cache*/ FALSE)) {
+            if (!zp_misc_fieldSave(/*$field_name*/'visibility_status', /*$entity_id*/$entity_id, /*$data*/$object[$field_to_change], /*$entity_type*/$entity_type, /*$bundle*/$bundle, /*$clear_cache*/ FALSE)) {
               return 'Ошибка при изменении статуса видимости отдела';
             }
 
@@ -1958,20 +1997,53 @@ function zp_commerce_processPriceList_row_change($op, $object, &$result_messages
         
         
       
-      case 'Ключевые слова':
+      
+      //case 'Ключевые слова':
+      //  break; 
+      //case 'Каталог с картинками':
+      //  break;
+      case 'Тип товара (для картинок и статей)':
+      
+        // Define a tid for this product type in the product_depts_n_articles vocabulary
+        // And connect it to the current term (dept).
+        // Get product_depts_n_articles vid.
         
+        if (empty($object['Тип товара (для картинок и статей)'])) {
+          if(!zp_misc_fieldTermReferenceDelete('field_article_product_depts', $entity_id, $bundle, $entity_type)) {
+            return 'Ошибка при попытке очистить поле отдела "Тип товара (для картинок и статей)" (term)';
+          }
+          $result_messages[] = 'Успешно очищено поле отдела "Тип товара (для картинок и статей)" (term)';
+          break;
+        }
+        
+        $query = db_select('taxonomy_vocabulary', 'v')  
+              ->fields('v', array('vid'));
+        $query->condition('v.machine_name', 'product_depts_n_articles');
+        $product_depts_n_articles_vid = $query->execute()->fetchField();
+        //if($country_tid = zp_misc_getTidByName(5, $found_code['country'][0])) { // 5 - vid for countries
+        if ($article_tid = zp_misc_getTidByName($product_depts_n_articles_vid, $object['Тип товара (для картинок и статей)'])) {
+          if (zp_misc_fieldTermReferenceSave('field_article_product_depts', $entity_id, $article_tid, $entity_type, $bundle, FALSE)) {
+            return 'Ошибка при попытке изменить поле дисплея товара "Тип товара (для картинок и статей)" (term)';
+          }
+          $result_messages[] = 'Успешно изменено поле товара "Тип товара (для картинок и статей)" (term)';
+        }
+        else {
+          watchdog('ZP Product Type for Articles NOT found!', 'Product Type for Articles "' . $object['Тип товара (для картинок и статей)'] . '" from imported price-list was not defined in system', NULL, WATCHDOG_WARNING);
+          if(!zp_misc_fieldTermReferenceDelete('field_article_product_depts', $entity_id, $bundle, $entity_type)) {
+            return 'Ошибка при попытке очистить поле отдела "Тип товара (для картинок и статей)" (term)';
+          }
+          $result_messages[] = 'Успешно очищено поле отдела "Тип товара (для картинок и статей)" (term)';
+        }
         break; 
       
       
-      
+        
+        
       
       case 'Логотип':
         
         break;      
 
-      case 'Каталог с картинками':
-        
-        break;      
       
       case 'Ссылка на первый файл':
         
@@ -2011,10 +2083,10 @@ function zp_commerce_processPriceList_row_change($op, $object, &$result_messages
   // http://kahthong.com/2013/06/reindex-drupals-search-api-module-indexes-programmatically
   
   // Clear field cache for the node.
-  cache_clear_all('field:node:' . $entity_id, 'cache_field');
+  cache_clear_all("field:$entity_type:" . $entity_id, 'cache_field');
 
   // Search API Reindex the node.
-  search_api_track_item_change('node', array($entity_id));
+  search_api_track_item_change($entity_type, array($entity_id));
 }
 
 
@@ -2662,6 +2734,18 @@ function zp_commerce_addNewCatalogTerm($op, $object, &$result_messages) {
     // Possibility to hide a menu item.
     'field_visibility_status' => array('und' => array(0 => array('value' => $object['Статус элемента']))),
   );
+  
+  
+  // Define a tid for this product type in the product_depts_n_articles vocabulary
+  // And connect it to the current term (dept).
+  // Get product_depts_n_articles vid.
+  $query = db_select('taxonomy_vocabulary', 'v')  
+        ->fields('v', array('vid'));
+  $query->condition('v.machine_name', 'product_depts_n_articles');
+  $product_depts_n_articles_vid = $query->execute()->fetchField();
+  if (!empty($object['Тип товара (для картинок и статей)']) && $article_tid = zp_misc_getTidByName($product_depts_n_articles_vid, $object['Тип товара (для картинок и статей)'])) {
+    $catalog_term['field_article_product_depts'] = array('und' => array(0 => array('tid' => $article_tid)));
+  }
   
   //dpm($object);
   //dpm($catalog_term);
