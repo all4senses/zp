@@ -613,7 +613,7 @@ function bootstrap_1_breadcrumb($variables) {
     $args = arg();
     //dpm($args);
     //dpm($breadcrumb);
-    //dpm($zp_current_trail);
+    dpm($zp_current_trail);
     
     // For depts or products...
     if (in_array($args[0], array('d', 'dp', 'p'))) {
