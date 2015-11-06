@@ -12,7 +12,7 @@
         //console.log(this);
         
         cat_name = jQuery(this).find('.cat-name');
-        
+        console.log(jQuery(cat_name));
         if (cat_name.length) {
           //console.log(jQuery(cat_name).text());
           jQuery(cat_name).insertBefore(jQuery(this)).wrap('<li></li>').css('display','block');
