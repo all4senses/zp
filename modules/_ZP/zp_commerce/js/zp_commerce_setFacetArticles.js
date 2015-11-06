@@ -9,13 +9,13 @@
       // http://stackoverflow.com/questions/11962962/overriding-important-with-css-or-jquery
       
       // Make facets checkboxes (or links if set so) float left to see it normally
-      jQuery('.block-facetapi input, .block-facetapi a[id*="facetapi-link"].facetapi-active').each(function () {
+      jQuery('.block-facetapi input:not(.zp-checkbox-processed), .block-facetapi a[id*="facetapi-link"].facetapi-active').each(function () {
         //Works
         //this.style.setProperty("float", "left", "important");
         //Works
         //$(this).css('cssText', 'float: left !important;');
         $(this).css('float', 'left');
-        //$(this).addClass('xxx');
+        $(this).addClass('zp-checkbox-processed'); 
       });
       
       jQuery('.block-facetapi li.expanded div').css('margin-left', '10px');
@@ -30,7 +30,7 @@
 //        }
 //      });
       // And then open those branches that has active links (from the upper parent down to a first child)
-      $('.block-facetapi .facetapi-facet-field-article-product-depts .item-list:not(zp-processed) li a.facetapi-active').each(function(){
+      $('.block-facetapi .facetapi-facet-field-article-product-depts .item-list:not(.zp-processed) li a.facetapi-active').each(function(){
         //console.log($(this).html());
         $(this).after('<span class="zp-expand opened" style="float: left; cursor: alias;">-</span>');
         $(this).parent().find('.item-list').show();

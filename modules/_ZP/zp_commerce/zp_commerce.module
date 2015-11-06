@@ -4137,6 +4137,8 @@ function zp_commerce_facet_items_alter(&$build, &$settings) {
     //dpm($settings);
     static $js_is_loaded;
     if (!$js_is_loaded) {
+      // To make it work right way we need to launch it AFTER facetApi js, so we set here the BIGGER weight for or js.
+        // Simple adding to the end of the js (in js alter) list won't work.
       $path_to_js = drupal_get_path('module', 'zp_commerce') . '/js/zp_commerce_setFacetArticles.js';
       drupal_add_js($path_to_js
               
@@ -4244,6 +4246,8 @@ function zp_commerce_facet_items_alter(&$build, &$settings) {
 
       static $js_is_loaded;
       if (!$js_is_loaded) {
+        // To make it work right way we need to launch it AFTER facetApi js, so we set here the BIGGER weight for or js.
+        // Simple adding to the end of the js (in js alter) list won't work.
         $path_to_js = drupal_get_path('module', 'zp_commerce') . '/js/zp_commerce_setFacetCategories.js';
         drupal_add_js($path_to_js
               

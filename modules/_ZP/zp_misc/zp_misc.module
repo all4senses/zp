@@ -136,7 +136,11 @@ function zp_misc_process_html(&$vars) {
 function zp_misc_js_alter(&$javascript) {
 
   //dpm($javascript);
-  
+  // To make it work right way we need to launch it AFTER facetApi js, so we set here the BIGGER weight for or js.
+  // Simple adding to the end of the js (in js alter) list won't work.
+  // So we need to set weight on the js adding or here...
+  // So just the folowing won't work...
+  /*
   if (!empty($javascript['sites/all/modules/_ZP/zp_commerce/js/zp_commerce_setFacetArticles.js'])) {
     $temp = $javascript['sites/all/modules/_ZP/zp_commerce/js/zp_commerce_setFacetArticles.js'];
     unset($javascript['sites/all/modules/_ZP/zp_commerce/js/zp_commerce_setFacetArticles.js']);
@@ -149,7 +153,7 @@ function zp_misc_js_alter(&$javascript) {
     $javascript['sites/all/modules/_ZP/zp_commerce/js/zp_commerce_setFacetCategories.js'] = $temp;
     //dpm($javascript);
   }
-  dpm($javascript);
+  */
   return;
   
   ////global $user;
