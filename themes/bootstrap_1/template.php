@@ -16,7 +16,7 @@ function zp_preprocess_user_profile(&$profile) {
  * 
  * Add rel=nofollow to external links.
  */
-function zp_link($variables) {
+function bootstrap_1_link($variables) {
   //global $user;
   //if ($user->uid == 1 && $variables['path'] == 'http://click.websitegear.com/track/1883449' && strpos($variables['path'], 'ttp://') && !strpos($variables['path'], 'ttp://www.zapokupkami.com')) {
   if (strpos($variables['path'], '://') && !strpos($variables['path'], 'ttp://www.zapokupkami.com')) {
@@ -54,7 +54,7 @@ function zp_link($variables) {
 /**
  * Implements hook_preprocess_user_picture();
  */
-function zp_preprocess_user_picture(&$picture) {
+function bootstrap_1_preprocess_user_picture(&$picture) {
   // Remove a link from a picture.
   if (!isset($picture['account']->picture->uri)) {
     return;
@@ -84,7 +84,7 @@ function zp_preprocess_user_picture(&$picture) {
  *
  * @ingroup themeable
  */
-function zp_pager_next($variables) {
+function bootstrap_1_pager_next($variables) {
   // Add a next rel metatag.
   $out = theme_pager_next($variables);
   if ($out) {
@@ -117,7 +117,7 @@ function zp_pager_next($variables) {
  *
  * @ingroup themeable
  */
-function zp_pager_previous($variables) {
+function bootstrap_1_pager_previous($variables) {
   // Add a prev rel metatag.
   $out = theme_pager_previous($variables);
   if ($out) {
@@ -155,7 +155,7 @@ function zp_pager_previous($variables) {
  *
  * @ingroup themeable
  */
-function zp_pager($variables) {
+function bootstrap_1_pager($variables) {
 
   
   
@@ -365,7 +365,7 @@ function zp_pager($variables) {
 /**
  * Implements hook_preprocess_search_results().
  */
-function zp_preprocess_search_results(&$variables) {
+function bootstrap_1_preprocess_search_results(&$variables) {
   
 //  // a4s - fix - show lost pager from the results page on some pages.
 //  // need prior actions (hack) in function node_search_execute() at node.module
@@ -396,7 +396,7 @@ function zp_preprocess_search_results(&$variables) {
  * Implements hook_html_head_alter().
  * We are overwriting the default meta character type tag with HTML5 version.
  */
-function zp_html_head_alter(&$head_elements) {
+function bootstrap_1_html_head_alter(&$head_elements) {
   $head_elements['system_meta_content_type']['#attributes'] = array(
     'charset' => 'utf-8'
   );
@@ -557,7 +557,7 @@ function zp_html_head_alter(&$head_elements) {
 /**
  * Duplicate of theme_menu_local_tasks() but adds clearfix to tabs.
  */
-function zp_menu_local_tasks(&$variables) {
+function bootstrap_1_menu_local_tasks(&$variables) {
   $output = '';
 
   if (!empty($variables['primary'])) {
@@ -577,7 +577,7 @@ function zp_menu_local_tasks(&$variables) {
 
 
 
-function zp_preprocess_breadcrumb(&$variables) {
+function bootstrap_1_preprocess_breadcrumb(&$variables) {
 //  dpm($variables);
 //  dpm(drupal_get_breadcrumb());
   
@@ -599,7 +599,7 @@ function zp_preprocess_breadcrumb(&$variables) {
  *   An array containing the breadcrumb links.
  * @return a string containing the breadcrumb output.
  */
-function zp_breadcrumb($variables) {
+function bootstrap_1_breadcrumb($variables) {
   
   //return zp_misc_setBreadcrumbs($variables);
   
@@ -682,7 +682,7 @@ function zp_breadcrumb($variables) {
 /**
  * Override or insert variables into the page template.
  */
-function zp_process_page(&$variables) {
+function bootstrap_1_process_page(&$variables) {
   
   //$variables['breadcrumb'] = theme('breadcrumb', array('breadcrumb' => drupal_get_breadcrumb()));
   //array(l(t('Home'), NULL), l(t('Blogs'), 'blog'), l(t("!name's blog", array('!name' => format_username($node))), 'blog/' . $node->uid))
@@ -729,7 +729,7 @@ function zp_process_page(&$variables) {
 /**
  * Override or insert variables into the node template.
  */
-function zp_preprocess_node(&$variables) {
+function bootstrap_1_preprocess_node(&$variables) {
   $variables['submitted'] = t('Published by !username on !datetime', array('!username' => $variables['name'], '!datetime' => $variables['date']));
   if ($variables['view_mode'] == 'full' && node_is_page($variables['node'])) {
     $variables['classes_array'][] = 'node-full';
@@ -760,7 +760,7 @@ function zp_preprocess_node(&$variables) {
  * @param $hook
  *   The name of the template being rendered ("region" in this case.)
  */
-function zp_preprocess_region(&$variables, $hook) {
+function bootstrap_1_preprocess_region(&$variables, $hook) {
   // Use a bare template for the content region.
   if ($variables['region'] == 'content') {
     $variables['theme_hook_suggestions'][] = 'region__bare';
@@ -776,7 +776,7 @@ function zp_preprocess_region(&$variables, $hook) {
  * @param $hook
  *   The name of the template being rendered ("block" in this case.)
  */
-function zp_preprocess_block(&$variables, $hook) {
+function bootstrap_1_preprocess_block(&$variables, $hook) {
   //dpm($variables);
   // Use a bare template for the page's main content.
   if ($variables['block_html_id'] == 'block-system-main') {
@@ -801,7 +801,7 @@ function zp_preprocess_block(&$variables, $hook) {
  * @param $hook
  *   The name of the template being rendered ("block" in this case.)
  */
-function zp_process_block(&$variables, $hook) {
+function bootstrap_1_process_block(&$variables, $hook) {
   //dpm($variables);
   // Drupal 7 should use a $title variable instead of $block->subject.
   if (!empty($variables['block']->subject)) {
@@ -812,14 +812,14 @@ function zp_process_block(&$variables, $hook) {
 /**
  * Changes the search form to use the "search" input element of HTML5.
  */
-function zp_preprocess_search_block_form(&$vars) {
+function bootstrap_1_preprocess_search_block_form(&$vars) {
   $vars['search_form'] = str_replace('type="text"', 'type="search"', $vars['search_form']);
 }
 
 /**
  * Changes the search button label. Here... because it doesn't work via module hook.
  */
-function zp_form_alter(&$form, &$form_state, $form_id) {
+function bootstrap_1_form_alter(&$form, &$form_state, $form_id) {
   if ($form_id == 'search_block_form') {
     
     $form['actions']['submit']['#value'] = '';
@@ -843,7 +843,7 @@ function zp_form_alter(&$form, &$form_state, $form_id) {
 }
 
 
-function zp_username($object) {
+function bootstrap_1_username($object) {
   return str_replace(' ('. t('not verified') .')', '', theme_username($object));
 }
 
@@ -851,7 +851,7 @@ function zp_username($object) {
 /**
 * Default theme function for all RSS rows.
 */
-function zp_preprocess_views_view_rss(&$vars) {
+function bootstrap_1_preprocess_views_view_rss(&$vars) {
   $namespaces = $vars['view']->style_plugin->namespaces;
   
   // Clear doubled xmlns
@@ -880,7 +880,7 @@ function zp_preprocess_views_view_rss(&$vars) {
 /**
 * Default theme function for all RSS rows.
 */
-function zp_preprocess_views_view_row_rss(&$vars) {
+function bootstrap_1_preprocess_views_view_row_rss(&$vars) {
   
   $node = $vars['view']->style_plugin->row_plugin->nodes[$vars['row']->nid];
   //$vars['description'] = check_plain(htmlspecialchars_decode($node->field_a_teaser['und'][0]['value']));
@@ -905,7 +905,7 @@ function zp_preprocess_views_view_row_rss(&$vars) {
  * Display the simple view of rows one after another
  */
 /*
-function zp_preprocess_views_view_unformatted(&$vars) {
+function bootstrap_1_preprocess_views_view_unformatted(&$vars) {
   
   if( ($vars['view']->name == 'blog' || $vars['view']->name == 'news') && $vars['view']->current_display == 'page') {
     $vars['theme_hook_suggestions'][] = 'views-view-unformatted__blog__page';
@@ -927,7 +927,7 @@ function zp_preprocess_views_view_unformatted(&$vars) {
  * is available. Render it as is otherwise.
  */
 /*
-function zp_captcha($variables) {
+function bootstrap_1_captcha($variables) {
   $element = $variables['element'];
   if (!empty($element['#description']) && isset($element['captcha_widgets'])) {
     $fieldset = array(
@@ -950,7 +950,7 @@ function zp_captcha($variables) {
  * Preprocess the primary theme implementation for a view.
  */
 /*
-function zp_preprocess_views_view(&$vars) {
+function bootstrap_1_preprocess_views_view(&$vars) {
   
   // I set title for preface (at zp_misc_views_pre_render(&$view)) instead of a view itself.
 //  if ($vars['view']->current_display == 'page_by_tag') {
@@ -979,7 +979,7 @@ function zp_preprocess_views_view(&$vars) {
  *    are extra goodies you might want to leverage such as a very simple way of adding
  *    stylesheets for Internet Explorer and a browser detection script to add body classes.
  */
-function zp_preprocess_html(&$vars) {
+function bootstrap_1_preprocess_html(&$vars) {
   // Load the media queries styles
   // Remember to rename these files to match the names used here - they are
   // in the CSS directory of your subtheme.
