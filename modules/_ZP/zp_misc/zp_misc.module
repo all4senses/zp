@@ -143,6 +143,12 @@ function zp_misc_js_alter(&$javascript) {
     $javascript['sites/all/modules/_ZP/zp_commerce/js/zp_commerce_setFacetArticles.js'] = $temp;
     //dpm($javascript);
   }
+  if (!empty($javascript['sites/all/modules/_ZP/zp_commerce/js/zp_commerce_setFacetCategories.js'])) {
+    $temp = $javascript['sites/all/modules/_ZP/zp_commerce/js/zp_commerce_setFacetCategories.js'];
+    unset($javascript['sites/all/modules/_ZP/zp_commerce/js/zp_commerce_setFacetCategories.js']);
+    $javascript['sites/all/modules/_ZP/zp_commerce/js/zp_commerce_setFacetCategories.js'] = $temp;
+    //dpm($javascript);
+  }
   return;
   
   ////global $user;
