@@ -149,6 +149,7 @@ function zp_misc_js_alter(&$javascript) {
     $javascript['sites/all/modules/_ZP/zp_commerce/js/zp_commerce_setFacetCategories.js'] = $temp;
     //dpm($javascript);
   }
+  dpm($javascript);
   return;
   
   ////global $user;
