@@ -19,7 +19,7 @@
         //Works
         $(this).css('cssText', 'float: left !important;');
         //$(this).css('float', 'left');
-        //$(this).addClass('xxx');
+        $(this).addClass('xxx');
       });
       
       
