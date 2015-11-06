@@ -7,7 +7,9 @@
       
       //var cat_name = null;
       
-      jQuery('.block-facetapi .content .item-list li').each(function(){
+      
+      //jQuery('.block-facetapi .content .item-list li').each(function(){
+      jQuery('.block-facetapi .facetapi-facetapi-checkbox-links li').each(function(){
         
         //console.log(this);
         
