@@ -19,7 +19,7 @@
       });
       
       //jQuery('.block-facetapi li.expanded div').css('margin-left', '10px');
-      jQuery('.block-facetapi li.expanded ul').css('margin-left', '10px');
+      jQuery('.block-facetapi li.expanded ul').css('cssText', 'margin-left: 0; padding-left: 20px;');
       
       // Initially close all expanded categories
       ////$('.block-facetapi .facetapi-facet-field-article-product-depts .item-list .item-list').hide();
