@@ -615,6 +615,12 @@ function bootstrap_1_breadcrumb($variables) {
     //dpm($breadcrumb);
     dpm($zp_current_trail);
     
+    foreach ($breadcrumb as $key => $value) {
+      if (is_array($value)) {
+        unset($breadcrumb[$key]);
+      }
+    }
+    
     // For depts or products...
     if (in_array($args[0], array('d', 'dp', 'p'))) {
 
