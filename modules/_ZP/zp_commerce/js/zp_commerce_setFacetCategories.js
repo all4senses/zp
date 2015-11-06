@@ -3,7 +3,7 @@
   Drupal.behaviors.zp_commerce_setFacetCategories = {
     attach: function (context, settings) {
       
-      //console.log('zp_commerce_setFacetCategories.....');
+      console.log('zp_commerce_setFacetCategories.....');
       
       //var cat_name = null;
       
