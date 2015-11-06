@@ -616,8 +616,9 @@ function bootstrap_1_breadcrumb($variables) {
     dpm($zp_current_trail);
     
     foreach ($breadcrumb as $key => $value) {
-      if (is_array($value)) {
-        unset($breadcrumb[$key]);
+      if (is_array($value) && !empty($value['data'])) {
+        $breadcrumb[$key] = $value['data'];
+        drupal_set_title($breadcrumb[$key]);
       }
     }
     
