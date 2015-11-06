@@ -4227,7 +4227,7 @@ function zp_commerce_facet_items_alter(&$build, &$settings) {
       
       $count = 0;
       foreach ($new_build[$category] as $tid => $data) {
-        $data['#markup'] = ($count++ == 0 ? '<div class="cat-name" style="display: none">' . $category . '</div>' : '') . $data['#markup'];
+        $data['#markup'] = ($count++ == 0 ? '<span class="cat-name" style="display: none">' . $category . '</span>' : '') . $data['#markup'];
         $data['#html'] = TRUE;
         $result_build[$tid] = $data;
       }
