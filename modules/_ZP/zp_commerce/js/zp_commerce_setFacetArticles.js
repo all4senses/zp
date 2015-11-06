@@ -49,9 +49,9 @@
         $('.block-facetapi .facetapi-facet-field-article-product-depts ul:not(.zp-processed) li a.facetapi-active').each(function(){
         //console.log($(this).html());
         $(this).after('<span class="zp-expand opened" style="float: left; cursor: alias;">-</span>');
-        $(this).parent().find('ul').show();
-        $(this).parent().children('ul').show().children('ul').hide();
-        $(this).parents('ul').show().addClass('zp-processed');
+        $(this).parent().find(list_element).show();
+        $(this).parent().children(list_element).show().children(list_element).hide();
+        $(this).parents(list_element).show().addClass('zp-processed');
         
       });
       
@@ -68,7 +68,7 @@
 //        
 //      });
       $('.block-facetapi .facetapi-facet-field-article-product-depts li a.facetapi-inactive').each(function(){
-        itemList = $(this).siblings('ul');
+        itemList = $(this).siblings(list_element);
         if (itemList.length){
           if($(itemList).css('display') == 'none') {
             $(this).before('<span class="zp-expand closed" style="float: left; cursor: alias;">+</span>');
@@ -95,10 +95,10 @@
         //console.log('click');
         thisObject = $(this);
         if ($(this).hasClass('opened')) {
-          $(this).siblings('ul').slideUp('slow', function(){$(thisObject).removeClass('opened').addClass('closed').text('+');});
+          $(this).siblings(list_element).slideUp('slow', function(){$(thisObject).removeClass('opened').addClass('closed').text('+');});
         }
         else {
-          $(this).siblings('ul').slideDown('slow', function(){$(thisObject).removeClass('closed').addClass('opened').text('-');});
+          $(this).siblings(list_element).slideDown('slow', function(){$(thisObject).removeClass('closed').addClass('opened').text('-');});
           
         }
       });
