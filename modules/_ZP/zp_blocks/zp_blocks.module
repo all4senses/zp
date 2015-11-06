@@ -437,6 +437,7 @@ function zp_blocks_getBlockThemed($block_data, $cache_on = FALSE, $cache_expire_
 
 
 /**
+ * Add two upper links for catalog menu
  * 
  * @param type $data
  * @param type $block
