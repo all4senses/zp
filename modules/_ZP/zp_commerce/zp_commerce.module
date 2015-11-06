@@ -84,7 +84,7 @@ function zp_commerce_form_alter(&$form, &$form_state, $form_id) {
       
       http://www.webwash.net/tutorials/using-search-api-ranges-module-drupal-7
 
-      dpm($form_id); dpm($form);
+      //dpm($form_id); dpm($form);
       dpm($form_state);
       
       $form['submit']['#type'] = 'hidden';
@@ -4140,13 +4140,13 @@ function zp_commerce_facet_items_alter(&$build, &$settings) {
       // To make it work right way we need to launch it AFTER facetApi js, so we set here the BIGGER weight for or js.
         // Simple adding to the end of the js (in js alter) list won't work.
       $path_to_js = drupal_get_path('module', 'zp_commerce') . '/js/zp_commerce_setFacetArticles.js';
-//      drupal_add_js($path_to_js
-//              
-//              ,array(
-//                              'weight' => 1000,) // High number to push this file to the bottom of the list
-////                              'scope' => 'footer' // This will output the JS file in the footer scope, so at the end of the document
-////                            )
-//              );
+      drupal_add_js($path_to_js
+              
+              ,array(
+                              'weight' => 1000,) // High number to push this file to the bottom of the list
+//                              'scope' => 'footer' // This will output the JS file in the footer scope, so at the end of the document
+//                            )
+              );
       //dpm($js);
       $js_is_loaded = TRUE;
     }
@@ -4249,13 +4249,13 @@ function zp_commerce_facet_items_alter(&$build, &$settings) {
         // To make it work right way we need to launch it AFTER facetApi js, so we set here the BIGGER weight for or js.
         // Simple adding to the end of the js (in js alter) list won't work.
         $path_to_js = drupal_get_path('module', 'zp_commerce') . '/js/zp_commerce_setFacetCategories.js';
-//        drupal_add_js($path_to_js
-//              
-//              ,array(
-//                              'weight' => 1000,) // High number to push this file to the bottom of the list
-////                              'scope' => 'footer' // This will output the JS file in the footer scope, so at the end of the document
-////                            )
-//              );
+        drupal_add_js($path_to_js
+              
+              ,array(
+                              'weight' => 1000,) // High number to push this file to the bottom of the list
+//                              'scope' => 'footer' // This will output the JS file in the footer scope, so at the end of the document
+//                            )
+              );
         $js_is_loaded = TRUE;
       }
 
