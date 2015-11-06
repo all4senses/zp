@@ -4180,7 +4180,7 @@ function zp_commerce_facet_items_alter(&$build, &$settings) {
       uasort($build, 'zp_commerce_sortArrayBuildByName');
       $build['!'] = $other;
       $build['!']['#html'] = TRUE;
-      $build['!']['#markup'] = '<div class="cat-other" style="color: red;">' . $build['!']['#markup'] . '</div>';
+      $build['!']['#markup'] = '<span class="cat-other" style="color: red;">' . $build['!']['#markup'] . '</span>';
     }
 
   } // End of if ($settings->facet == 'field_brand_name') {
