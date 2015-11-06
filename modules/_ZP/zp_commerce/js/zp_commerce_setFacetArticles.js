@@ -9,7 +9,7 @@
       // http://stackoverflow.com/questions/11962962/overriding-important-with-css-or-jquery
       
       // Make facets checkboxes (or links if set so) float left to see it normally
-      jQuery('.block-facetapi input:not(.zp-checkbox-processed), .block-facetapi a[id*="facetapi-link"].facetapi-active').each(function () {
+      jQuery('.block-facetapi input:not(.zp-checkbox-processed), .block-facetapi a[id*="facetapi-link"].facetapi-active:not(.zp-checkbox-processed)').each(function () {
         //Works
         //this.style.setProperty("float", "left", "important");
         //Works
@@ -22,8 +22,14 @@
       jQuery('.block-facetapi li.expanded ul').css('cssText', 'margin-left: 0; padding-left: 20px;');
       
       // Initially close all expanded categories
+      if($('.block-facetapi .facetapi-facet-field-article-product-depts .item-list').length) {
+        list_element = '.item-list';
+      }
+      else {
+        list_element = 'ul';
+      }
       ////$('.block-facetapi .facetapi-facet-field-article-product-depts .item-list .item-list').hide();
-      $('.block-facetapi .facetapi-facet-field-article-product-depts ul ul').hide();
+      $('.block-facetapi .facetapi-facet-field-article-product-depts ' + list_element + ' ' + list_element).hide();
       
 //      $('.block-facetapi .facetapi-facet-field-article-product-depts li').each(function(){
 //        found = $(this).find('a.facetapi-active');
