@@ -3,7 +3,7 @@
   Drupal.behaviors.zp_commerce_setFacetCategories = {
     attach: function (context, settings) {
       
-      //console.log('zp_commerce_setFacetCategories.....');
+      console.log('zp_commerce_setFacetCategories.....');
       
       
       
@@ -12,11 +12,13 @@
       
       // Make facets checkboxes (or links if set so) float left to see it normally
       jQuery('.block-facetapi input, .block-facetapi a[id*="facetapi-link"].facetapi-active').each(function () {
+        console.log('xxxxx');
+        console.log($(this));
         //Works
         //this.style.setProperty("float", "left", "important");
         //Works
-        //$(this).css('cssText', 'float: left !important;');
-        $(this).css('float', 'left');
+        $(this).css('cssText', 'float: left !important;');
+        //$(this).css('float', 'left');
         //$(this).addClass('xxx');
       });
       
