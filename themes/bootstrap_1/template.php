@@ -666,7 +666,7 @@ function bootstrap_1_breadcrumb($variables) {
       $breadcrumb[] = drupal_get_title();
     }
     
-    //dpm($breadcrumb);
+    dpm($breadcrumb);
     
     // Provide a navigational heading to give context for breadcrumb links to
     // screen-reader users. Make the heading invisible with .element-invisible.
