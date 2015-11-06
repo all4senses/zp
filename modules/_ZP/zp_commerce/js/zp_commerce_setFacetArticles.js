@@ -18,10 +18,12 @@
         $(this).addClass('zp-checkbox-processed'); 
       });
       
-      jQuery('.block-facetapi li.expanded div').css('margin-left', '10px');
+      //jQuery('.block-facetapi li.expanded div').css('margin-left', '10px');
+      jQuery('.block-facetapi li.expanded ul').css('margin-left', '10px');
       
       // Initially close all expanded categories
-      $('.block-facetapi .facetapi-facet-field-article-product-depts .item-list .item-list').hide();
+      ////$('.block-facetapi .facetapi-facet-field-article-product-depts .item-list .item-list').hide();
+      $('.block-facetapi .facetapi-facet-field-article-product-depts ul ul').hide();
       
 //      $('.block-facetapi .facetapi-facet-field-article-product-depts li').each(function(){
 //        found = $(this).find('a.facetapi-active');
@@ -30,17 +32,37 @@
 //        }
 //      });
       // And then open those branches that has active links (from the upper parent down to a first child)
-      $('.block-facetapi .facetapi-facet-field-article-product-depts .item-list:not(.zp-processed) li a.facetapi-active').each(function(){
+//      $('.block-facetapi .facetapi-facet-field-article-product-depts .item-list:not(.zp-processed) li a.facetapi-active').each(function(){
+//        //console.log($(this).html());
+//        $(this).after('<span class="zp-expand opened" style="float: left; cursor: alias;">-</span>');
+//        $(this).parent().find('.item-list').show();
+//        $(this).parent().children('.item-list').show().children('.item-list').hide();
+//        $(this).parents('.item-list').show().addClass('zp-processed');
+//        
+//      });
+        $('.block-facetapi .facetapi-facet-field-article-product-depts ul:not(.zp-processed) li a.facetapi-active').each(function(){
         //console.log($(this).html());
         $(this).after('<span class="zp-expand opened" style="float: left; cursor: alias;">-</span>');
-        $(this).parent().find('.item-list').show();
-        $(this).parent().children('.item-list').show().children('.item-list').hide();
-        $(this).parents('.item-list').show().addClass('zp-processed');
+        $(this).parent().find('ul').show();
+        $(this).parent().children('ul').show().children('ul').hide();
+        $(this).parents('ul').show().addClass('zp-processed');
         
       });
       
+//      $('.block-facetapi .facetapi-facet-field-article-product-depts li a.facetapi-inactive').each(function(){
+//        itemList = $(this).siblings('.item-list');
+//        if (itemList.length){
+//          if($(itemList).css('display') == 'none') {
+//            $(this).before('<span class="zp-expand closed" style="float: left; cursor: alias;">+</span>');
+//          }
+//          else {
+//            $(this).before('<span class="zp-expand opened" style="float: left; cursor: alias;">-</span>');
+//          }
+//        }
+//        
+//      });
       $('.block-facetapi .facetapi-facet-field-article-product-depts li a.facetapi-inactive').each(function(){
-        itemList = $(this).siblings('.item-list');
+        itemList = $(this).siblings('ul');
         if (itemList.length){
           if($(itemList).css('display') == 'none') {
             $(this).before('<span class="zp-expand closed" style="float: left; cursor: alias;">+</span>');
@@ -52,14 +74,25 @@
         
       });
       
+//      $('.zp-expand').click(function(){
+//        //console.log('click');
+//        thisObject = $(this);
+//        if ($(this).hasClass('opened')) {
+//          $(this).siblings('.item-list').slideUp('slow', function(){$(thisObject).removeClass('opened').addClass('closed').text('+');});
+//        }
+//        else {
+//          $(this).siblings('.item-list').slideDown('slow', function(){$(thisObject).removeClass('closed').addClass('opened').text('-');});
+//          
+//        }
+//      });
       $('.zp-expand').click(function(){
         //console.log('click');
         thisObject = $(this);
         if ($(this).hasClass('opened')) {
-          $(this).siblings('.item-list').slideUp('slow', function(){$(thisObject).removeClass('opened').addClass('closed').text('+');});
+          $(this).siblings('ul').slideUp('slow', function(){$(thisObject).removeClass('opened').addClass('closed').text('+');});
         }
         else {
-          $(this).siblings('.item-list').slideDown('slow', function(){$(thisObject).removeClass('closed').addClass('opened').text('-');});
+          $(this).siblings('ul').slideDown('slow', function(){$(thisObject).removeClass('closed').addClass('opened').text('-');});
           
         }
       });
