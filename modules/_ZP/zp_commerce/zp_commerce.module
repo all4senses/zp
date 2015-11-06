@@ -4238,7 +4238,7 @@ function zp_commerce_facet_items_alter(&$build, &$settings) {
         // Put back the "Other" item.
         $result_build['!'] = $build['!'];
         $result_build['!']['#html'] = TRUE;
-        $result_build['!']['#markup'] = '<div class="cat-other" style="color: red;">' . $result_build['!']['#markup'] . '</div>';
+        $result_build['!']['#markup'] = '<span class="cat-other" style="color: red;">' . $result_build['!']['#markup'] . '</span>';
       }
       $build = $result_build;
 
