@@ -612,7 +612,7 @@ function bootstrap_1_breadcrumb($variables) {
     
     $args = arg();
     //dpm($args);
-    //dpm($breadcrumb);
+    dpm($breadcrumb);
     dpm($zp_current_trail);
     
     foreach ($breadcrumb as $key => $value) {
