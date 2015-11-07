@@ -625,7 +625,7 @@ function bootstrap_1_breadcrumb($variables) {
     }
     
     // For depts or products...
-    if (in_array($args[0], array('d', 'dp', 'p'))) {
+    if (in_array($args[0], array('d', 'dp')) || strpos($_SERVER['REQUEST_URI'], '/p/')) {
 
       // For depts with products
       // Put facets breadcrumbs AFTER a current dept title, 
