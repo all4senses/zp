@@ -222,3 +222,10 @@ function bootstrap_1_preprocess_html(&$vars) {
   //$vars['classes_array'][] = css_browser_selector();
 
 }
+
+/**
+ * Overrides theme_menu_link().
+ */
+function bootstrap_1_menu_link__menu_block($variables) {
+  return theme_menu_link($variables);
+}
