@@ -8,7 +8,7 @@
  * Overrides theme_menu_tree().
  */
 function bootstrap_menu_tree(&$variables) {
-  dpm($variables['tree']);
+  //dpm($variables['tree']);
   return '<ul class="menu nav">' . $variables['tree'] . '</ul>';
 }
 
