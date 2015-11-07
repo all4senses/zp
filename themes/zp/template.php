@@ -611,8 +611,9 @@ function zp_breadcrumb($variables) {
     global $zp_current_trail;
     
     $args = arg();
-    //dpm($args);
-    //dpm($breadcrumb);
+    dpm($_SERVER);
+    dpm($args);
+    dpm($breadcrumb);
     //dpm($zp_current_trail);
     
     // For depts or products...
