@@ -621,6 +621,7 @@ function bootstrap_1_breadcrumb($variables) {
         //$breadcrumb[$key] = $value['data'];
         //drupal_set_title($breadcrumb[$key]);
         unset($breadcrumb[$key]);
+        
       }
     }
     
@@ -671,7 +672,7 @@ function bootstrap_1_breadcrumb($variables) {
 
       } // End of if ($args[0] == 'dp') {
       else {
-        //$breadcrumb[] = drupal_get_title();
+        $breadcrumb[] = drupal_get_title();
       }
       
       // Remove Home link
