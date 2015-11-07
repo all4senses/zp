@@ -613,8 +613,8 @@ function zp_breadcrumb($variables) {
     $args = arg();
     //dpm($_SERVER);
     //dpm($args);
-    dpm($breadcrumb);
-    dpm($zp_current_trail);
+    //dpm($breadcrumb);
+    //dpm($zp_current_trail);
     
     // For depts or products...
     if (in_array($args[0], array('d', 'dp')) || strpos($_SERVER['REQUEST_URI'], '/p/') !== FALSE) {

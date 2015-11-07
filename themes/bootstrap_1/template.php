@@ -224,6 +224,9 @@ function bootstrap_1_preprocess_html(&$vars) {
 }
 
 /**
+ * a4s
+ * Workaround for Block menu module within Bootstrap
+ * https://www.drupal.org/node/1850194#comment-8551799
  * Overrides theme_menu_link().
  */
 function bootstrap_1_menu_link__menu_block($variables) {
