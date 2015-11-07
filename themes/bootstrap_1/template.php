@@ -632,18 +632,22 @@ function bootstrap_1_breadcrumb($variables) {
       if ($args[0] == 'dp') {
         
         $zp_current_trail_count = count($zp_current_trail);
+        dpm('$zp_current_trail_count = ' . $zp_current_trail_count);
         // Get a parent of a current dept
         $parent_dept_breadcrumb_index = $zp_current_trail_count - 2;
+        dpm('$parent_dept_breadcrumb_index = ' .  $parent_dept_breadcrumb_index);
         
         // Assure that the index of the parent dept is the same in trail and breadcrumb
         if (strpos($breadcrumb[$parent_dept_breadcrumb_index], '>' . @$zp_current_trail[$parent_dept_breadcrumb_index]['link_title'] . '<') !== FALSE) {
-          
+          dpm('1111');
           if (empty($breadcrumb[$zp_current_trail_count - 1])) {
+            dpm('22222');
             // Do nothing, because we dont have here not the current title, nor facets breadcrumb...
             // Just add a current dept title for the last (current) breadcrumb.
             $breadcrumb[] = $zp_current_trail[$zp_current_trail_count - 1]['link_title'];
           }
           elseif (strpos($breadcrumb[$zp_current_trail_count - 1], '>' . $zp_current_trail[$zp_current_trail_count - 1]['link_title'] . '<') === FALSE) {
+            dpm('33333');
             // the last crumb is defined but it's not the current title
             // We have facet breadcrumb(s) injected here.
             // So we insert our current dept title as breadcrumb after the parent dept and before facets breadcrumb.
