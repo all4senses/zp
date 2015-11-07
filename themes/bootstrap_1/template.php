@@ -611,7 +611,7 @@ function bootstrap_1_breadcrumb($variables) {
     global $zp_current_trail;
     
     $args = arg();
-    //dpm($args);
+    dpm($args);
     dpm($breadcrumb);
     dpm($zp_current_trail);
     
