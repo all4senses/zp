@@ -618,8 +618,8 @@ function bootstrap_1_breadcrumb($variables) {
     foreach ($breadcrumb as $key => $value) {
       if (is_array($value) && !empty($value['data'])) {
         $breadcrumb[$key] = $value['data'];
-        drupal_set_title($breadcrumb[$key]);
-        unset($breadcrumb[$key]);
+        //drupal_set_title($breadcrumb[$key]);
+        //unset($breadcrumb[$key]);
       }
     }
     
@@ -629,8 +629,10 @@ function bootstrap_1_breadcrumb($variables) {
       // For depts with products
       // Put facets breadcrumbs AFTER a current dept title, 
       // and add a link to a current title, if there are any facets breadcrumbs
-      
-      if ($args[0] == 'dp') {
+      if ($args[0] == 'd') {
+        
+      }
+      elseif ($args[0] == 'dp') {
         
         $zp_current_trail_count = count($zp_current_trail);
         // Get a parent of a current dept
