@@ -8,6 +8,7 @@
  * Implements theme_bootstrap_links().
  */
 function theme_bootstrap_links($variables) {
+  dpm($variables['links']);
   $links = $variables['links'];
   $attributes = $variables['attributes'];
   $heading = $variables['heading'];
