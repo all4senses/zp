@@ -633,7 +633,7 @@ function bootstrap_1_breadcrumb($variables) {
 //        array_shift($breadcrumb);
 //      }
       array_unshift($breadcrumb, 'Home');
-      
+      dpm($breadcrumb);
       // For depts with products
       // Put facets breadcrumbs AFTER a current dept title, 
       // and add a link to a current title, if there are any facets breadcrumbs
