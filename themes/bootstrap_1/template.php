@@ -618,7 +618,8 @@ function bootstrap_1_breadcrumb($variables) {
     foreach ($breadcrumb as $key => $value) {
       if (is_array($value) && !empty($value['data'])) {
         $breadcrumb[$key] = $value['data'];
-        //drupal_set_title($breadcrumb[$key]);
+        drupal_set_title($breadcrumb[$key]);
+        unset($breadcrumb[$key]);
       }
     }
     
