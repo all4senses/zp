@@ -611,19 +611,19 @@ function bootstrap_1_breadcrumb($variables) {
     global $zp_current_trail;
     
     $args = arg();
-    dpm($_SERVER);
-    dpm($args);
-    dpm($breadcrumb);
-    dpm($zp_current_trail);
+    //dpm($args);
+    //dpm($breadcrumb);
+    //dpm($zp_current_trail);
     
-    foreach ($breadcrumb as $key => $value) {
-      if (is_array($value) && !empty($value['data'])) {
-        //$breadcrumb[$key] = $value['data'];
-        //drupal_set_title($breadcrumb[$key]);
-        unset($breadcrumb[$key]);
-        
-      }
-    }
+    // Clear the last breadcramb item if it's array.
+//    foreach ($breadcrumb as $key => $value) {
+//      if (is_array($value) && !empty($value['data'])) {
+//        //$breadcrumb[$key] = $value['data'];
+//        //drupal_set_title($breadcrumb[$key]);
+//        unset($breadcrumb[$key]);
+//        
+//      }
+//    }
     
     // For depts or products...
     if (in_array($args[0], array('d', 'dp')) || strpos($_SERVER['REQUEST_URI'], '/p/') !== FALSE) {
@@ -633,30 +633,30 @@ function bootstrap_1_breadcrumb($variables) {
 //        //unset($breadcrumb[0]);
 //        array_shift($breadcrumb);
 //      }
-      array_unshift($breadcrumb, 'Home');
-      dpm($breadcrumb);
+      ////array_unshift($breadcrumb, 'Home');
+      //dpm($breadcrumb);
       // For depts with products
       // Put facets breadcrumbs AFTER a current dept title, 
       // and add a link to a current title, if there are any facets breadcrumbs
       if ($args[0] == 'dp') {
         
         $zp_current_trail_count = count($zp_current_trail);
-        dpm('$zp_current_trail_count = ' . $zp_current_trail_count);
+        //dpm('$zp_current_trail_count = ' . $zp_current_trail_count);
         // Get a parent of a current dept
         $parent_dept_breadcrumb_index = $zp_current_trail_count - 2;
-        dpm('$parent_dept_breadcrumb_index = ' .  $parent_dept_breadcrumb_index);
+        //dpm('$parent_dept_breadcrumb_index = ' .  $parent_dept_breadcrumb_index);
         
         // Assure that the index of the parent dept is the same in trail and breadcrumb
         if (strpos($breadcrumb[$parent_dept_breadcrumb_index], '>' . @$zp_current_trail[$parent_dept_breadcrumb_index]['link_title'] . '<') !== FALSE) {
-          dpm('1111');
+          //dpm('1111');
           if (empty($breadcrumb[$zp_current_trail_count - 1])) {
-            dpm('22222');
+            //dpm('22222');
             // Do nothing, because we dont have here not the current title, nor facets breadcrumb...
             // Just add a current dept title for the last (current) breadcrumb.
             $breadcrumb[] = $zp_current_trail[$zp_current_trail_count - 1]['link_title'];
           }
           elseif (strpos($breadcrumb[$zp_current_trail_count - 1], '>' . $zp_current_trail[$zp_current_trail_count - 1]['link_title'] . '<') === FALSE) {
-            dpm('33333');
+            //dpm('33333');
             // the last crumb is defined but it's not the current title
             // We have facet breadcrumb(s) injected here.
             // So we insert our current dept title as breadcrumb after the parent dept and before facets breadcrumb.
@@ -687,7 +687,7 @@ function bootstrap_1_breadcrumb($variables) {
       $breadcrumb[] = drupal_get_title();
     }
     
-    dpm($breadcrumb);
+    //dpm($breadcrumb);
     
     // Provide a navigational heading to give context for breadcrumb links to
     // screen-reader users. Make the heading invisible with .element-invisible.
