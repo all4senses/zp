@@ -59,7 +59,7 @@ function zp_commerce_menu() {
 function zp_commerce_form_alter(&$form, &$form_state, $form_id) {
 
   
-//  dpm($form_id); dpm($form);
+  dpm($form_id); dpm($form);
 //  dpm($form_state);
   // $conf['locale_custom_strings_en']['old string'] = 'new string'
   
@@ -84,8 +84,8 @@ function zp_commerce_form_alter(&$form, &$form_state, $form_id) {
       
       http://www.webwash.net/tutorials/using-search-api-ranges-module-drupal-7
 
-      dpm($form_id); dpm($form);
-      dpm($form_state);
+      //dpm($form_id); dpm($form);
+      //dpm($form_state);
       
       $form['submit']['#name'] = 'submit_button';
       $form['submit']['#attributes'] = array('style' => 'display: none;');
