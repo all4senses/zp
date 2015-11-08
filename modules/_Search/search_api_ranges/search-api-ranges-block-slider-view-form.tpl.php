@@ -15,11 +15,8 @@
     <?php print drupal_render($form['range-to']); ?>
   </div>
 </div>
-<?php //print drupal_render($form['submit']); ?>
-<?php print drupal_render($form['submit_button']); ?>
+<?php print drupal_render($form['submit']); ?>
 <?php
   // Render required hidden fields.
-  //dpm($form);
-  //unset($form['submit']);
   print drupal_render_children($form);
 ?>
