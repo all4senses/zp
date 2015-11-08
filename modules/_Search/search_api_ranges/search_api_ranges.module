@@ -346,7 +346,7 @@ function search_api_ranges_block_slider_view_form($form, &$form_state, $variable
       '#value' => $variables['auto_submit_delay'],
     );
   }
-  $form['submit'] = array(
+  $form['submit_button'] = array(
     '#type' => 'submit',
     '#value' => t('Go'),
   );
