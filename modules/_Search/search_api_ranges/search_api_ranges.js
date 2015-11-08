@@ -72,7 +72,10 @@
         var autoSubmitDelay = widget.find('input[name=delay]').val();
         if (autoSubmitDelay != undefined && autoSubmitDelay != 0) {
           submitTimeout = setTimeout(function() {
+            console.log('yyyyyy');
             widget.find('form').submit();
+            console.log('zzzzzz');
+            
           }, autoSubmitDelay);
         }
       };
