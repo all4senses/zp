@@ -84,11 +84,11 @@ function zp_commerce_form_alter(&$form, &$form_state, $form_id) {
       
       http://www.webwash.net/tutorials/using-search-api-ranges-module-drupal-7
 
-      //dpm($form_id); dpm($form);
-      //dpm($form_state);
+      dpm($form_id); dpm($form);
+      dpm($form_state);
       
-      //$form['submit']['#type'] = 'hidden';
       $form['submit']['#name'] = 'submit_button';
+      $form['submit']['#attributes'] = array('style' => 'display: none;');
       $form['text-range']['#markup'] = '<p class="text-range">Среди уже выбранных, показать только товары в диапазоне цен:</p>';
       $form['range-from']['#suffix'] = '<div>' . $form_state['build_info']['args'][0]['suffix'] . '</div>';
       $form['range-to']['#suffix'] = '<div>' . $form_state['build_info']['args'][0]['suffix'] . '</div><div class="descr">Сбросить этот фильтр можно ниже, в блоке "Сбросить фильтры"</div>';
