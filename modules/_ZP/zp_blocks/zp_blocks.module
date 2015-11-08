@@ -444,10 +444,15 @@ function zp_blocks_getBlockThemed($block_data, $cache_on = FALSE, $cache_expire_
  */
 function zp_blocks_block_view_alter(&$data, $block) {
     
-  dpm($data);
-  dpm($block);  
+//  dpm($data);
+//  dpm($block);  
   
-  if (isset($block->bid) && $block->bid == 'menu_block-1') {
+  //if ($data['subject'] == 'Current search') {
+  if ($block->module == 'current_search') {  
+    dpm($data);
+    dpm($block);  
+  }
+  elseif (isset($block->bid) && $block->bid == 'menu_block-1') {
     
     //dpm($data);
     //dpm($block);  

@@ -59,7 +59,7 @@ function zp_commerce_menu() {
 function zp_commerce_form_alter(&$form, &$form_state, $form_id) {
 
   
-  dpm($form_id); dpm($form);
+//  dpm($form_id); dpm($form);
 //  dpm($form_state);
   // $conf['locale_custom_strings_en']['old string'] = 'new string'
   
