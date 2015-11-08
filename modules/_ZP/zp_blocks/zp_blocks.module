@@ -446,11 +446,13 @@ function zp_blocks_block_view_alter(&$data, $block) {
     
 //  dpm($data);
 //  dpm($block);  
-  
+//  
   //if ($data['subject'] == 'Current search') {
-  if ($block->module == 'current_search') {  
-    dpm($data);
-    dpm($block);  
+  //if ($block->module == 'current_search') {  
+  if (isset($block->bid) && $block->bid == 'current_search-standard') {
+    
+    //dpm($data);
+    //dpm($block);  
   }
   elseif (isset($block->bid) && $block->bid == 'menu_block-1') {
     

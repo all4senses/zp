@@ -78,8 +78,6 @@ function zp_commerce_form_alter(&$form, &$form_state, $form_id) {
   switch ($form_id) {
     
     
-    
-    
     case 'search_api_ranges_block_slider_view_form_price':
       
       http://www.webwash.net/tutorials/using-search-api-ranges-module-drupal-7
