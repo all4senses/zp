@@ -18,5 +18,6 @@
 <?php print drupal_render($form['submit']); ?>
 <?php
   // Render required hidden fields.
+  dpm($form);
   print drupal_render_children($form);
 ?>
