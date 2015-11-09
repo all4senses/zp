@@ -1,0 +1,11 @@
+.test {
+  color: blue;
+ .test_sub {
+		color: red;
+	}
+
+   &.test_sub2 {
+	float: left;
+}
+}
+
