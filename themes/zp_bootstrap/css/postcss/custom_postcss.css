@@ -1,1 +1,21 @@
-.test{color:blue}.test .test_sub{color:red}.test.test_sub2{float:left;color:green;display:-webkit-flex;display:-ms-flexbox;display:flex;-webkit-flex:1;-ms-flex:1;flex:1}
+/* line 1, ../assets/sass/custom.scss */
+.test {
+  color: blue;
+}
+/* line 3, ../assets/sass/custom.scss */
+.test .test_sub {
+  color: red;
+}
+/* line 7, ../assets/sass/custom.scss */
+.test.test_sub2 {
+  float: left;
+  color: green;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex: 1;
+      -ms-flex: 1;
+          flex: 1;
+}
+
+/*# sourceMappingURL=custom_postcss.css.map */

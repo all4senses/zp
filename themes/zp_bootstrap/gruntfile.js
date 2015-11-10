@@ -95,49 +95,9 @@ module.exports = function (grunt) {
           },
           */
          
-         
           postcss: {
-              prod: {
                   options: {
-                      //map: true, // inline sourcemaps
-
-                      // or
-                      /*
-                      map: {
-                          inline: false, // save all sourcemaps as separate files...
-                          annotation: 'dist/css/maps/' // ...to the specified directory
-                      },
-                      */
-                      processors: [
-                          require('pixrem')(), // add fallbacks for rem units
-                          require('autoprefixer')({browsers: 'last 2 versions'}), // add vendor prefixes
-                          require('cssnano')() // minify the result
-                      ] // processors
-                  }, // options
-                  
-                  dist: {
-                    // src: 'css/custom.css',
-                    // dest: 'css/custom_postcss.css'
-                    // Works.
-                    files: {
-                        'css/postcss/custom_postcss.css': 'css/custom.css', // This will not be actually used, cause it's added to style.css (below)
-                        'css/postcss/style_postcss.css': 'css/style.css'
-                    }
-                  },
-
-                  // seems doesn't work
-                  /*
-                  multiple_files: [{
-                    //expand: true,
-                    //flatten: true,
-                    src: 'css/*.css', // -> src/css/file1.css, src/css/file2.css
-                    dest: 'css/postcss/' // -> dest/css/file1.css, dest/css/file2.css
-                  }]
-                  */
-              }, // prod
-              dev: {
-                  options: {
-                      //map: true, // inline sourcemaps
+                      map: true, // inline sourcemaps
 
                       // or
                       /*
@@ -153,7 +113,6 @@ module.exports = function (grunt) {
                       ] // processors
                   }, // options
                   
-                  
                   dist: {
                     // src: 'css/custom.css',
                     // dest: 'css/custom_postcss.css'
@@ -173,9 +132,8 @@ module.exports = function (grunt) {
                     dest: 'css/postcss/' // -> dest/css/file1.css, dest/css/file2.css
                   }]
                   */
-              } // dev
-          }, // compass
-         
+          },
+
           // Doesn't work... :( Warning: Cannot read property 'length' of undefined Use --force to continue.
           /*
           w3c_markup_validation : {
@@ -201,7 +159,7 @@ module.exports = function (grunt) {
               */
               postcss: {
                   files: ['css/*.css'], 
-                  tasks: ['postcss:dev']
+                  tasks: ['postcss']
               },
               
               // Doesn't work... :( Warning: Cannot read property 'length' of undefined Use --force to continue.
@@ -218,5 +176,5 @@ module.exports = function (grunt) {
           } // watch
       }); // initConfig
       grunt.registerTask('default', 'watch');
-      grunt.registerTask('prod', ['uglify:js_prod', 'compass:prod', 'postcss:prod']);
+      grunt.registerTask('prod', ['uglify:js_prod', 'compass:prod', 'postcss']);
 } // exports
