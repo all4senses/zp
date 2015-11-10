@@ -9,7 +9,7 @@
       // http://stackoverflow.com/questions/11962962/overriding-important-with-css-or-jquery
       
       // Make facets checkboxes (or links if set so) float left to see it normally
-      jQuery('.block-facetapi input:not(.zp-checkbox-processed):not(:checkbox), .block-facetapi a[id*="facetapi-link"].facetapi-active:not(.zp-checkbox-processed)').each(function () {
+      jQuery('.block-facetapi input:checkbox:not(.zp-checkbox-processed), .block-facetapi a[id*="facetapi-link"].facetapi-active:not(.zp-checkbox-processed)').each(function () {
         //console.log('xxxxx');
         //console.log($(this));
         //Works
