@@ -101,10 +101,10 @@ module.exports = function (grunt) {
 
                       // or
                       
-//                      map: {
-//                          inline: false, // save all sourcemaps as separate files...
-//                          annotation: 'css/postcss/' // ...to the specified directory
-//                      },
+                      map: {
+                          inline: false, // save all sourcemaps as separate files...
+                          annotation: 'css/postcss/' // ...to the specified directory
+                      },
                       
                       processors: [
                           require('pixrem')(), // add fallbacks for rem units
