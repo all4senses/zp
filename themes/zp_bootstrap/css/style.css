@@ -8782,5 +8782,7 @@ button.close {
   float: left;
   color: green;
   display: flex;
-  flex: 0;
+  flex: 1;
 }
+
+/*# sourceMappingURL=style.css.map */
