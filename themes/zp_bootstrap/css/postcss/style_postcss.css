@@ -8718,9 +8718,7 @@ button.close {
   display: -webkit-flex;
   display: -ms-flexbox;
   display: flex;
-  -webkit-flex: 1;
-      -ms-flex: 1;
-          flex: 1;
+  -webkit-flex: 0;
+      -ms-flex: 0;
+          flex: 0;
 }
-
-/*# sourceMappingURL=style_postcss.css.map */
