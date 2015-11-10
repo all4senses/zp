@@ -1,0 +1,4 @@
+# Ignore grunt files
+sites/*/settings*.php
+themes/zp_bootstrap/.sass-cache
+themes/zp_bootstrap/node_modules

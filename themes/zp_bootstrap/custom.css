@@ -13,3 +13,6 @@
   display: flex;
   flex: 1;
 }
+:fullscreen a {
+    display: flex
+}
