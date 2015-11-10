@@ -11,7 +11,5 @@
   float: left;
   color: green;
   display: flex;
-  flex: 0;
+  flex: 1;
 }
-
-/*# sourceMappingURL=custom.css.map */

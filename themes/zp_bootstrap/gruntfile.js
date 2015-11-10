@@ -97,7 +97,7 @@ module.exports = function (grunt) {
          
           postcss: {
                   options: {
-                      //map: true, // inline sourcemaps
+                      map: true, // inline sourcemaps
 
                       // or
                       /*
