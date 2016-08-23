@@ -1218,7 +1218,7 @@ function zp_pages_getPriceFromFile($file = NULL, $fid = NULL, $reverse_process =
             continue;
           }
           else {
-            $object = zp_commerce_processPriceList_mapPriceRowToCatalogObject($row, &$error);
+            $object = zp_commerce_processPriceList_mapPriceRowToCatalogObject($row, $error);
             $file_data_final[] = $object;
             if ($error) {
               end($file_data_final);
