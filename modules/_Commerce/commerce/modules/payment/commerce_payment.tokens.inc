@@ -38,6 +38,10 @@ function commerce_payment_token_info() {
     'name' => t('Payment method short title'),
     'description' => t('The customer oriented short title of the payment method for the payment transaction.'),
   );
+  $transaction['payment-method-display-title'] = array(
+    'name' => t('Payment method display title'),
+    'description' => t('The checkout form oriented display title of the payment method for the payment transaction.'),
+  );
   $transaction['remote-id'] = array(
     'name' => t('Remote ID'),
     'description' => t('The remote identifier for the payment transaction.'),
@@ -115,7 +119,10 @@ function commerce_payment_token_info_alter(&$data) {
       'name' => t('Payment method short title'),
       'description' => t('The customer oriented short title of the payment method selected by the customer during checkout.'),
     );
-
+    $data['tokens']['commerce-order']['payment-method-display-title'] = array(
+      'name' => t('Payment method display title'),
+      'description' => t('The checkout form oriented display title of the payment method for the payment transaction.'),
+    );
   }
 }
 
@@ -162,6 +169,11 @@ function commerce_payment_tokens($type, $tokens, array $data = array(), array $o
         case 'payment-method-short-title':
           $title = commerce_payment_method_get_title('short_title', $transaction->payment_method);
           $replacements[$original] = $sanitize ? check_plain($title) : $title;
+          break;
+
+        case 'payment-method-display-title':
+          $title = commerce_payment_method_get_title('display_title', $transaction->payment_method);
+          $replacements[$original] = $sanitize ? filter_xss_admin($title) : $title;
           break;
 
         case 'remote-id':
@@ -248,23 +260,42 @@ function commerce_payment_tokens($type, $tokens, array $data = array(), array $o
 
     if (!empty($order->data['payment_method'])) {
       $payment_method = commerce_payment_method_instance_load($order->data['payment_method']);
-      $method_id = $payment_method['method_id'];
 
-      foreach ($tokens as $name => $original) {
-        switch ($name) {
-          case 'payment-method':
-            $replacements[$original] = $sanitize ? check_plain($method_id) : $method_id;
-            break;
+      if (!empty($payment_method) && !empty($payment_method['method_id'])) {
+        $method_id = $payment_method['method_id'];
 
-          case 'payment-method-title':
-            $title = commerce_payment_method_get_title('title', $method_id);
-            $replacements[$original] = $sanitize ? check_plain($title) : $title;
-            break;
+        foreach ($tokens as $name => $original) {
+          switch ($name) {
+            case 'payment-method':
+              $replacements[$original] = $sanitize ? check_plain($method_id) : $method_id;
+              break;
 
-          case 'payment-method-short-title':
-            $title = commerce_payment_method_get_title('short_title', $method_id);
-            $replacements[$original] = $sanitize ? check_plain($title) : $title;
-            break;
+            case 'payment-method-title':
+              $title = commerce_payment_method_get_title('title', $method_id);
+              $replacements[$original] = $sanitize ? check_plain($title) : $title;
+              break;
+
+            case 'payment-method-short-title':
+              $title = commerce_payment_method_get_title('short_title', $method_id);
+              $replacements[$original] = $sanitize ? check_plain($title) : $title;
+              break;
+
+            case 'payment-method-display-title':
+              $title = commerce_payment_method_get_title('display_title', $method_id);
+              $replacements[$original] = $sanitize ? filter_xss_admin($title) : $title;
+              break;
+          }
+        }
+      }
+      else {
+        foreach ($tokens as $name => $original) {
+          switch ($name) {
+            case 'payment-method':
+            case 'payment-method-title':
+            case 'payment-method-short-title':
+              $replacements[$original] = t('Unknown');
+              break;
+          }
         }
       }
     }

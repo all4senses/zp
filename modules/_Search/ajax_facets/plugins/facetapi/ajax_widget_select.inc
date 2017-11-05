@@ -18,8 +18,7 @@ class FacetapiAjaxWidgetSelect extends FacetapiAjaxWidget {
    */
   function getDefaultSettings() {
     return array(
-      'selectbox_update_results' => 1,
-      'selectbox_show_reset_link' => 0,
+      "show_reset_link" => 0,
     );
   }
 
@@ -28,10 +27,10 @@ class FacetapiAjaxWidgetSelect extends FacetapiAjaxWidget {
    */
   public function settingsForm(&$form, &$form_state) {
     parent::settingsForm($form, $form_state);
-    $form['widget']['widget_settings']['links'][$this->id]['default_option_label'] = array(
+    $form['widget']['widget_settings']['links'][$this->id]['ajax_select_default_option_label'] = array(
       '#title' => t('Default Option Label'),
       '#type' => 'textfield',
-      '#default_value' => !empty($this->settings->settings['default_option_label']) ? $this->settings->settings['default_option_label'] : t('Select'),
+      '#default_value' => !empty($this->settings->settings['ajax_select_default_option_label']) ? $this->settings->settings['ajax_select_default_option_label'] : t('Select'),
       '#states' => array(
         'visible' => array(
           'select[name="widget"]' => array('value' => $this->id),
@@ -56,11 +55,18 @@ class FacetapiAjaxWidgetSelect extends FacetapiAjaxWidget {
     $settings = $this->settings->settings;
 
     // Builds rows.
-    $items = array();
+    $items = array(
+      '#disabled_items' => array(),
+    );
 
     // Add default item only once.
     if ($level == 0) {
-      $items['values']['_none'] = t('@label', array('@label' => $settings['default_option_label']));
+      $label = $settings['ajax_select_default_option_label'];
+      // Translate through i18n if it's possible.
+      if (function_exists('i18n_string_translate')) {
+        $label = i18n_string_translate(array('ajax_facets', 'facet_label', str_replace(':', '_', $this->key), 'label'), $label);
+      }
+      $items['values']['_none'] = $label;
     }
 
     $prefix = str_repeat('-', $level);
@@ -76,7 +82,17 @@ class FacetapiAjaxWidgetSelect extends FacetapiAjaxWidget {
         $active_items[] = $this->key . ':' . $item['#markup'];
       }
 
-      $items['values'][$item['#indexed_value']] = $prefix . $item['#markup'] . theme('facetapi_count',(array('count' => $item['#count'])));
+      $items['values'][$item['#indexed_value']] = $prefix . $item['#markup'];
+
+      // Mark as disabled if count is 0.
+      if ($item['#count'] == 0) {
+        $items['#disabled_items'][$item['#indexed_value']] = TRUE;
+      }
+
+      // Show/hide counts according to the settings.
+      if (!empty($this->settings->settings['display_count'])) {
+        $items['values'][$item['#indexed_value']] .= ' ' . theme('facetapi_count',(array('count' => $item['#count'])));
+      }
 
       if (!empty($item['#item_children'])) {
         $childrens = $this->buildListItems($item['#item_children'], $level);
@@ -108,7 +124,6 @@ class FacetapiAjaxWidgetSelect extends FacetapiAjaxWidget {
    */
   public function execute() {
     $element = &$this->build[$this->facet['field alias']];
-
     $items = $this->buildListItems($element);
 
     // If name is empty - use label.
@@ -121,20 +136,17 @@ class FacetapiAjaxWidgetSelect extends FacetapiAjaxWidget {
       '#type' => 'select',
       '#title' => $this->build['#title'],
       '#options' => $items['values'],
-      '#id' => 'ajax-facets-selectbox-' . str_replace(array('_', ' ', ':'), '-', $this->settings->facet),
       '#name' => rawurlencode($this->settings->facet),
       '#attributes' => array(
-        'data-facet' => $this->settings->facet,
+        'data-facet-name' => rawurlencode($this->settings->facet),
+        'data-raw-facet-name' => $this->settings->facet,
       ),
+      '#theme' => 'ajax_facets_select',
+      '#disabled_items' => $items['#disabled_items'],
     );
 
     if (!empty($items['active_value'])) {
       $select['#value'] = $items['active_value'];
-    }
-
-    $reset_link = '';
-    if (!empty($this->settings->settings['show_reset_link']) && $this->settings->settings['show_reset_link']) {
-      $reset_link = '<a class="reset-link" href="#">' . t('Reset filter') . '</a>';
     }
 
     // We cannot use drupal_html_id to save the same id for each facet.
@@ -142,7 +154,7 @@ class FacetapiAjaxWidgetSelect extends FacetapiAjaxWidget {
 
     $element = array(
       '#markup' => '<div id="' . $wrapper_id . '">'
-        . $reset_link
+        . $this->getResetLink()
         . render($select)
         . '</div>'
     );

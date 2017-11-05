@@ -81,7 +81,34 @@ function commerce_checkout_menu() {
     'file' => 'includes/commerce_checkout.admin.inc',
   );
 
+  // If the Order UI module is installed, add a local action to it that lets an
+  // administrator invoke the checkout completion event on the order. Modules
+  // that define their own order edit menu item are also responsible for
+  // defining their own local action menu items if needed.
+  if (module_exists('commerce_order_ui')) {
+    $items['admin/commerce/orders/%commerce_order/edit/checkout'] = array(
+      'title' => 'Simulate checkout completion',
+      'description' => 'Directly invokes the checkout completion rules on the order.',
+      'page callback' => 'drupal_get_form',
+      'page arguments' => array('commerce_checkout_complete_form', 3),
+      'access callback' => 'commerce_checkout_complete_form_access',
+      'access arguments' => array(3),
+      'type' => MENU_LOCAL_ACTION,
+      'file' => 'includes/commerce_checkout.admin.inc',
+    );
+  }
+
   return $items;
+}
+
+/**
+ * Access callback: determines access to the "Simulate checkout completion"
+ * local action.
+ */
+function commerce_checkout_complete_form_access($order) {
+  // Returns TRUE if the link is enabled via the order settings form and the
+  // user has access to update the order.
+  return variable_get('commerce_order_simulate_checkout_link', TRUE) && commerce_order_access('update', $order);
 }
 
 /**
@@ -99,6 +126,9 @@ function commerce_checkout_hook_info() {
       'group' => 'commerce',
     ),
     'commerce_checkout_pane_info_alter' => array(
+      'group' => 'commerce',
+    ),
+    'commerce_checkout_first_checkout_page' => array(
       'group' => 'commerce',
     ),
     'commerce_checkout_router' => array(
@@ -252,9 +282,24 @@ function commerce_checkout_line_item_views_form_submit($form, &$form_state) {
   commerce_order_save($form_state['order']);
 
   // Redirect to the checkout page if specified.
-  if ($form_state['triggering_element']['#value'] == $form['actions']['checkout']['#value']) {
+  if ($form_state['triggering_element']['#value'] === $form['actions']['checkout']['#value']) {
     $form_state['redirect'] = 'checkout/' . $order->order_id;
   }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ *
+ * Adds a checkbox to the order settings form to enable the local action on
+ * order edit forms to simulate checkout completion.
+ */
+function commerce_checkout_form_commerce_order_settings_form_alter(&$form, &$form_state) {
+  $form['commerce_order_simulate_checkout_link'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Enable the local action link on order edit forms to simulate checkout completion.'),
+    '#default_value' => variable_get('commerce_order_simulate_checkout_link', TRUE),
+    '#weight' => 20,
+  );
 }
 
 /**
@@ -433,10 +478,22 @@ function commerce_checkout_pages() {
 }
 
 /**
- * Returns the page ID of the first checkout page sorted by weight.
+ * Returns the page ID of the first checkout page to be used.
  */
 function commerce_checkout_first_checkout_page() {
-  return key(commerce_checkout_pages());
+  // See if any modules return a page ID first.
+  $page_id = module_invoke_all('commerce_checkout_first_checkout_page');
+
+  // If we received a return value from the hook, use the first item in the
+  // return array as the page ID.
+  if (!empty($page_id)) {
+    return reset($page_id);
+  }
+
+  // Otherwise fallback to the first page defined in checkout form.
+  $keys = commerce_checkout_pages();
+  reset($keys);
+  return key($keys);
 }
 
 /**
@@ -551,7 +608,7 @@ function commerce_checkout_panes($conditions = array(), $skip_saved_data = FALSE
       foreach ($conditions as $property => $value) {
         // If the current value for the specified property on the pane does not
         // match the filter value...
-        if ($checkout_pane[$property] != $value) {
+        if (!isset($checkout_pane[$property]) || $checkout_pane[$property] != $value) {
           // Do not add it to the temporary array.
           $valid = FALSE;
         }
@@ -566,6 +623,14 @@ function commerce_checkout_panes($conditions = array(), $skip_saved_data = FALSE
   }
 
   return $checkout_panes;
+}
+
+/**
+ * Resets the cached list of checkout panes.
+ */
+function commerce_checkout_panes_reset() {
+  $checkout_panes = &drupal_static('commerce_checkout_panes');
+  $checkout_panes = NULL;
 }
 
 /**
@@ -849,6 +914,40 @@ function commerce_checkout_order_uri($order) {
 }
 
 /**
+ * Determines whether or not the given order can proceed to checkout.
+ *
+ * This function operates as a confirmation rather than a falsification, meaning
+ * that any module implementing hook_commerce_checkout_order_can_checkout() can
+ * confirm the order may proceed to checkout.
+ *
+ * The default core implementation is in commerce_product_reference.module and
+ * allows any order containing a product line item to proceed to checkout.
+ *
+ * More complex logic can be implemented via hook_commerce_checkout_router().
+ *
+ * @param $order
+ *   The order being confirmed for checkout.
+ *
+ * @return
+ *   Boolean value indicating whether or not the order can proceed to checkout.
+ *
+ * @see commerce_product_reference_commerce_checkout_order_can_checkout()
+ */
+function commerce_checkout_order_can_checkout($order) {
+  $proceed = FALSE;
+
+  // Manually invoke hook functions to use the bitwise operator that will update
+  // the return value to TRUE if any implementation returns TRUE and ignore any
+  // FALSE return values if it is already set to TRUE.
+  foreach (module_implements('commerce_checkout_order_can_checkout') as $module) {
+    $function = $module . '_commerce_checkout_order_can_checkout';
+    $proceed |= $function($order);
+  }
+
+  return $proceed;
+}
+
+/**
  * Completes the checkout process for the given order.
  */
 function commerce_checkout_complete($order) {
@@ -909,7 +1008,7 @@ function commerce_checkout_completion_message_default() {
     $format = 'filtered_html';
   }
   else {
-    // Otherwise select a fallback format and use a plaint text default value.
+    // Otherwise select a fallback format and use a plain text default value.
     $value = 'Your order number is [commerce-order:order-number]. You can view your order on your account page when logged in.';
     $format = filter_fallback_format();
   }

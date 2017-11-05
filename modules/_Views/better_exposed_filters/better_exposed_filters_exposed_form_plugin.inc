@@ -98,6 +98,27 @@ class better_exposed_filters_exposed_form_plugin extends views_plugin_exposed_fo
         ),
       ),
     );
+    $bef_options['general']['secondary_collapse_override'] = array(
+      '#type' => 'select',
+      '#title' => t('Override secondary options fieldset'),
+      '#default_value' => $existing['general']['secondary_collapse_override'],
+      '#description' => t(
+        'This setting overrides the secondary options fieldset collapsed value. By default the fieldset renders opened if a value within is selected and closed otherwise.'
+        ),
+      '#options' => array(
+        0 => t('Default'),
+        1 => t('Always open'),
+        2 => t('Always closed'),
+      ),
+      // Indent dependent options.
+      '#prefix' => '<div class="dependent-options">',
+      '#suffix' => '</div>',
+      '#states' => array(
+        'visible' => array(
+          ':input[name="exposed_form_options[bef][general][allow_secondary]"]' => array('checked' => TRUE),
+        ),
+      ),
+    );
 
     /*
      * Add options for exposed sorts.
@@ -181,11 +202,11 @@ class better_exposed_filters_exposed_form_plugin extends views_plugin_exposed_fo
         '#type' => 'textarea',
         '#title' => t('Rewrite the text displayed'),
         '#default_value' => $existing['sort']['advanced']['combine_rewrite'],
-        '#description' => t('Use this field to rewrite the text displayed for combined sort options and sort order. Use the format of current_value|replacement_value, one replacement per line. For example: <pre>
+        '#description' => t('Use this field to rewrite the text displayed for combined sort options and sort order. Use the format of current_text|replacement_text, one replacement per line. For example: <pre>
 Post date Asc|Oldest first
 Post date Desc|Newest first
 Title Asc|A -> Z
-Title Desc|Z -> A</pre> Leave the replacement value blank to remove an option altogether.'),
+Title Desc|Z -> A</pre> Leave the replacement text blank to remove an option altogether.'),
         '#suffix' => '</div>',
         '#states' => array(
           'visible' => array(
@@ -229,6 +250,18 @@ Title Desc|Z -> A</pre> Leave the replacement value blank to remove an option al
           ),
         ),
         '#description' => t('Places this element in the secondary options portion of the exposed form.'),
+      );
+
+      $bef_options['sort']['advanced']['autosubmit'] = array(
+        '#type' => 'checkbox',
+        '#title' => t('Autosubmit'),
+        '#default_value' => $existing['sort']['advanced']['autosubmit'],
+        '#states' => array(
+          'disabled' => array(
+            ':input[name="exposed_form_options[autosubmit]"]' => array('checked' => TRUE),
+          ),
+        ),
+        '#description' => t('Automatically submit the form once a sort element is changed. This option is not available if you enabled autosubmit option for the whole form.'),
       );
     }
 
@@ -439,6 +472,9 @@ Title Desc|Z -> A</pre> Leave the replacement value blank to remove an option al
         $display_options['bef_hidden'] = t('Hidden');
       }
 
+      // Alter the list of available display options for this filter.
+      drupal_alter('better_exposed_filters_display_options', $display_options, $filter);
+
       $filter_key = $filter->options['is_grouped'] ? 'group_info' : 'expose';
       $identifier = '"' . $filter->options[$filter_key]['identifier'] . '"';
       if (!empty($filter->options[$filter_key]['label'])) {
@@ -597,6 +633,19 @@ Title Desc|Z -> A</pre> Leave the replacement value blank to remove an option al
         );
       }
 
+      // Individual element autosubmit option.
+      $bef_options[$label]['more_options']['autosubmit'] = array(
+        '#type' => 'checkbox',
+        '#title' => t('Autosubmit'),
+        '#default_value' => $existing[$label]['more_options']['autosubmit'],
+        '#states' => array(
+          'disabled' => array(
+            ':input[name="exposed_form_options[autosubmit]"]' => array('checked' => TRUE),
+          ),
+        ),
+        '#description' => t('Automatically submit the form once a filter element is changed. This option is not available if you enabled autosubmit option for the whole form.'),
+      );
+
       // Allow any filter to be moved into the secondary options fieldset.
       $bef_options[$label]['more_options']['is_secondary'] = array(
         '#type' => 'checkbox',
@@ -685,12 +734,12 @@ Title Desc|Z -> A</pre> Leave the replacement value blank to remove an option al
         '#default_value' => $existing[$label]['more_options']['rewrite']['filter_rewrite_values'],
         '#description' => t('
           Use this field to rewrite the filter options displayed. Use the format
-          of current_value|replacement_value, one replacement per line. For
+          of current_text|replacement_text, one replacement per line. For
           example: <pre>
-0|Zero
-1|One
-2|Two
-</pre> Leave the replacement value blank to remove an option altogether. If using hierarchical taxonomy filters, do not including leading hyphens in the current value.
+Current|Replacement
+On|Yes
+Off|No
+</pre> Leave the replacement text blank to remove an option altogether. If using hierarchical taxonomy filters, do not including leading hyphens in the current value.
         '),
       );
 
@@ -756,6 +805,7 @@ dateFormat: "dd-mm-yy"
       'datepicker' => FALSE,
       'slider' => FALSE,
       'settings' => array(),
+      'autosubmit' => FALSE,
     );
 
     // Some widgets will require additional CSS.
@@ -770,26 +820,36 @@ dateFormat: "dd-mm-yy"
     $context['display'] = $this->display;
     drupal_alter('better_exposed_filters_settings', $settings, $context);
 
+    // Adds view's arguments (if any) to the path to be used use for #bef_path.
+    $view_path = $this->view->args ? implode('/', array_merge(array($this->view->get_path()), $this->view->args)) : $this->view->get_path();
+
     // Some elements may be placed in a secondary fieldset (eg: "Advanced
     // search options"). Place this after the exposed filters and before the
     // rest of the items in the exposed form.
     if ($allow_secondary = $settings['general']['allow_secondary']) {
-      // If one of the secondary widgets has exposed input, do not collapse
-      // the secondary fieldset.
+      // If one of the secondary widgets has exposed input, do not collapse the
+      // secondary fieldset. Or is the "always open" or "always closed" option
+      // is selected, use that instead.
       $secondary_collapse = TRUE;
-      $exposed_input = $this->view->get_exposed_input();
-      foreach ($this->display->handler->get_handlers('filter') as $label => $filter) {
-        if (!$filter->options['exposed']) {
-          continue;
-        }
-        if (!empty($exposed_input[$filter->options['expose']['identifier']]) && $settings[$label]['more_options']['is_secondary']) {
-          $secondary_collapse = FALSE;
-          break;
+      if ($settings['general']['secondary_collapse_override']) {
+        $secondary_collapse = $settings['general']['secondary_collapse_override'] == 2;
+      }
+      else {
+        $exposed_input = $this->view->get_exposed_input();
+        foreach ($this->display->handler->get_handlers('filter') as $label => $filter) {
+          if (!$filter->options['exposed']) {
+            continue;
+          }
+          if (!empty($exposed_input[$filter->options['expose']['identifier']]) && $settings[$label]['more_options']['is_secondary']) {
+            $secondary_collapse = FALSE;
+            break;
+          }
         }
       }
+
       $secondary = array(
         '#type' => 'fieldset',
-        '#title' => $settings['general']['secondary_label'],
+        '#title' => filter_xss_admin($settings['general']['secondary_label']),
         '#collapsible' => TRUE,
         '#collapsed' => $secondary_collapse,
         '#theme' => 'secondary_exposed_elements',
@@ -913,7 +973,7 @@ dateFormat: "dd-mm-yy"
             // select_as_links options as they will use the wrong path. We
             // provide a hint for theme functions to correct this.
             if (!empty($this->display->display_options['exposed_block'])) {
-              $form[$settings['sort']['advanced']['combine_param']]['#bef_path'] = $this->view->get_path();
+              $form[$settings['sort']['advanced']['combine_param']]['#bef_path'] = $view_path;
             }
             break;
 
@@ -967,7 +1027,7 @@ dateFormat: "dd-mm-yy"
           // select_as_links options as they will use the wrong path. We provide
           // a hint for theme functions to correct this.
           if (!empty($this->display->display_options['exposed_block'])) {
-            $form['sort_by']['#bef_path'] = $form['sort_order']['#bef_path'] = $this->view->get_path();
+            $form['sort_by']['#bef_path'] = $form['sort_order']['#bef_path'] = $view_path;
           }
         }
 
@@ -988,7 +1048,7 @@ dateFormat: "dd-mm-yy"
           '#type' => 'fieldset',
           '#collapsible' => TRUE,
           '#collapsed' => TRUE,
-          '#title' => $settings['sort']['advanced']['collapsible_label'],
+          '#title' => filter_xss_admin($settings['sort']['advanced']['collapsible_label']),
         );
         foreach ($sort_elems as $elem) {
           $form['bef_sort_options'][$elem] = $form[$elem];
@@ -1016,7 +1076,17 @@ dateFormat: "dd-mm-yy"
         // select_as_links options as they will use the wrong path. We
         // provide a hint for theme functions to correct this.
         if (!empty($this->display->display_options['exposed_block'])) {
-          $form['sort_by']['#bef_path'] = $this->display->display_options['path'];
+          $form['sort_by']['#bef_path'] = $view_path;
+        }
+      }
+    }
+
+    // Apply autosubmit sort values.
+    if (empty($this->options['autosubmit']) && !empty($settings['sort']['advanced']['autosubmit'])) {
+      $bef_js['autosubmit'] = TRUE;
+      foreach (array($settings['sort']['advanced']['combine_param'], 'sort_by', 'sort_order') as $elem) {
+        if (!empty($form[$elem])) {
+          $form[$elem] = array_merge_recursive($form[$elem], array('#attributes' => array('class' => array('ctools-auto-submit'))));
         }
       }
     }
@@ -1049,7 +1119,7 @@ dateFormat: "dd-mm-yy"
             // select_as_links options as they will use the wrong path. We
             // provide a hint for theme functions to correct this.
             if (!empty($this->display->display_options['exposed_block'])) {
-              $form['items_per_page']['#bef_path'] = $this->view->get_path();
+              $form['items_per_page']['#bef_path'] = $view_path;
             }
           }
           break;
@@ -1078,7 +1148,7 @@ dateFormat: "dd-mm-yy"
 
       // Form element is designated by the element ID which is user-
       // configurable.
-      $filter_key = 'filter-' . ($filters[$label]->options['is_grouped'] ? $filters[$label]->options['group_info']['identifier'] : $label);
+      $filter_key = 'filter-' . (!empty($filters[$label]->options['is_grouped']) ? $filters[$label]->options['group_info']['identifier'] : $label);
       $filter_id = $form['#info'][$filter_key]['value'];
 
       // Token replacement on BEF Description fields.
@@ -1086,9 +1156,8 @@ dateFormat: "dd-mm-yy"
         // Collect replacement data.
         $data = array();
         $available = $options['more_options']['tokens']['available'];
-        if (in_array('vocabulary', $available)) {
-          $vocabs = taxonomy_get_vocabularies();
-          $data['vocabulary'] = $vocabs[$filters[$label]->options['vid']];
+        if (in_array('vocabulary', $available) && isset($filters[$label]->definition['vocabulary'])) {
+          $data['vocabulary'] = taxonomy_vocabulary_machine_name_load($filters[$label]->definition['vocabulary']);
         }
         /* Others? */
 
@@ -1389,7 +1458,6 @@ dateFormat: "dd-mm-yy"
           break;
 
         case 'bef_links':
-          $show_apply = TRUE;
           $bef_add_js = TRUE;
           $form[$filter_id]['#theme'] = 'select_as_links';
 
@@ -1398,7 +1466,7 @@ dateFormat: "dd-mm-yy"
           // select_as_links options as they will use the wrong path. We provide
           // a hint for theme functions to correct this.
           if (!empty($this->display->display_options['exposed_block'])) {
-            $form[$filter_id]['#bef_path'] = $this->view->get_path();
+            $form[$filter_id]['#bef_path'] = $view_path;
           }
           break;
 
@@ -1410,7 +1478,27 @@ dateFormat: "dd-mm-yy"
           $form[$filter_id]['#description'] = $options['more_options']['bef_filter_description'];
           $form[$filter_id]['#return_value'] = 1;
           $form[$filter_id]['#type'] = 'checkbox';
+          // Views populates missing values in $form_state['input'] with the
+          // defaults and a checkbox does not appear in $_GET (or $_POST) so it
+          // will appear to be missing when a user submits a form. Because of
+          // this, instead of unchecking the checkbox value will revert to the
+          // default. More, the default value for select values is reused which
+          // results in the checkbox always checked. So we need to add a form
+          // element to see whether the form is submitted or not and then we
+          // need to look at $_GET directly to see whether the checkbox is
+          // there. For security reasons, we must not copy the $_GET value.
 
+          // First, let's figure out a short name for the signal element and
+          // then add it.
+          if (empty($signal)) {
+            for ($signal = 'a'; isset($form[$signal]); $signal++);
+            // This is all the signal element needs.
+            $form[$signal]['#type'] = 'hidden';
+          }
+          $checked = isset($form_state['input'][$signal]) ? isset($_GET[$filter_id]) : $form[$filter_id]['#default_value'];
+          // Now we know whether the checkbox is checked or not, set #value
+          // accordingly.
+          $form[$filter_id]['#value'] = $checked ? $form[$filter_id]['#return_value'] : 0;
           // Handoff to the theme layer.
           $form[$filter_id]['#theme'] = 'checkbox';
           break;
@@ -1585,7 +1673,7 @@ dateFormat: "dd-mm-yy"
             }
             $terms = taxonomy_term_load_multiple($tids);
             foreach ($terms as $tid => $term) {
-              $form[$filter_id]['#bef_term_descriptions'][$tid] = $term->description;
+              $form[$filter_id]['#bef_term_descriptions'][$tid] = check_markup($term->description, $term->format, '', TRUE);
             }
           }
           break;
@@ -1622,6 +1710,19 @@ dateFormat: "dd-mm-yy"
       }
       /* Ends switch ($options['bef_format']) */
 
+      // Apply autosubmit filter values.
+      if (empty($this->options['autosubmit']) && !empty($options['more_options']['autosubmit'])) {
+        $bef_js['autosubmit'] = TRUE;
+
+        // Check type form element.
+        if (isset($form[$filter_id]['value'])) {
+          $form[$filter_id]['value'] = array_merge_recursive($form[$filter_id]['value'], array('#attributes' => array('class' => array('ctools-auto-submit'))));
+        }
+        else {
+          $form[$filter_id] = array_merge_recursive($form[$filter_id], array('#attributes' => array('class' => array('ctools-auto-submit'))));
+        }
+      }
+
       // Override "Any" label, if applicable.
       if (!empty($options['more_options']['any_label']) && !empty($form[$filter_id]['#options']['All'])) {
         $form[$filter_id]['#options']['All'] = $options['more_options']['any_label'];
@@ -1640,11 +1741,11 @@ dateFormat: "dd-mm-yy"
             // Some elements can have multiple children, for example min/max
             // fields on an in-between filter. In those cases Add the label
             // to the first element.
-            $secondary[$identifier][$children[0]]['#title'] = $form['#info'][$filter_key]['label'];
+            $secondary[$identifier][$children[0]]['#title'] = isset($form['#info'][$filter_key]['label']) ? $form['#info'][$filter_key]['label'] : '';
             unset($form['#info'][$filter_key]);
           }
           else {
-            $secondary[$identifier]['#title'] = $form['#info'][$filter_key]['label'];
+            $secondary[$identifier]['#title'] = isset($form['#info'][$filter_key]['label']) ? $form['#info'][$filter_key]['label'] : '';
             unset($form['#info'][$filter_key]);
           }
 
@@ -1690,6 +1791,11 @@ dateFormat: "dd-mm-yy"
       }
       if ($bef_js['slider']) {
         drupal_add_library('system', 'ui.slider');
+      }
+      if ($bef_js['autosubmit']) {
+        $form['submit']['#attributes']['class'][] = 'ctools-use-ajax';
+        $form['submit']['#attributes']['class'][] = 'ctools-auto-submit-click';
+        $form['#attached']['js'][] = drupal_get_path('module', 'ctools') . '/js/auto-submit.js';
       }
 
       drupal_add_js(array('better_exposed_filters' => $bef_js), 'setting');
@@ -1831,6 +1937,7 @@ dateFormat: "dd-mm-yy"
         ),
         'allow_secondary' => FALSE,
         'secondary_label' => t('Advanced options'),
+        'secondary_collapse_override' => 0,
       ),
       'sort' => array(
         'bef_format' => 'default',
@@ -1843,6 +1950,7 @@ dateFormat: "dd-mm-yy"
           'reset' => FALSE,
           'reset_label' => '',
           'is_secondary' => FALSE,
+          'autosubmit' => FALSE,
         ),
       ),
       'pager' => array(
@@ -1870,6 +1978,7 @@ dateFormat: "dd-mm-yy"
         'bef_filter_description' => '',
         'any_label' => '',
         'bef_term_description' => FALSE,
+        'autosubmit' => FALSE,
         'tokens' => array(
           'list' => array(),
           'available' => array(),

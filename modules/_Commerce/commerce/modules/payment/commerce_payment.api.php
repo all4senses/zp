@@ -142,6 +142,8 @@ function hook_commerce_payment_totals_row_info_alter(&$rows, $totals, $order) {
  *        of the payment method.
  *      - redirect_form: the name of the CALLBACK_commerce_payment_method_redirect_form()
  *        of the payment method.
+ *      - redirect_form_back: the name of the CALLBACK_commerce_payment_method_redirect_form_back()
+ *        of the payment method.
  *      - redirect_form_validate: the name of the CALLBACK_commerce_payment_method_redirect_form_validate()
  *        of the payment method.
  *      - redirect_form_submit: the name of the CALLBACK_commerce_payment_method_redirect_form_submit()
@@ -270,7 +272,7 @@ function CALLBACK_commerce_payment_method_redirect_form($form, &$form_state, $or
  * redirect are handled by the Payment module, so these two operations should
  * not be duplicated by the payment method module.
  */
-function CALLBACK_commerce_payment_method_redirect_form_back($form, &$form_state, $order, $payment_method) {
+function CALLBACK_commerce_payment_method_redirect_form_back($order, $payment_method) {
   // No example.
 }
 
@@ -385,7 +387,7 @@ function hook_commerce_payment_transaction_presave($transaction) {
  * total. If the balance is less than or equal to zero, it is considered paid in
  * full. The first time an order's balance falls to or below zero, this hook is
  * invoked to allow modules to perform special maintenance as necessary. This
- * hook is invoked after the "When an order is first paid in full" Rules event.
+ * hook is invoked before the "When an order is first paid in full" Rules event.
  *
  * Through the administration of payment transactions, it is possible for an
  * order's balance to go above zero. It is then possible for the balance to go
@@ -457,4 +459,51 @@ function hook_commerce_payment_transaction_status_info() {
   );
 
   return $statuses;
+}
+
+/**
+ * Allows you to act when a transaction is updated.
+ *
+ * If you want to perform an action when a transaction changes states, you can
+ * use this hook to do so. You can load the original transaction here and
+ * compare.
+ *
+ * @param $transaction
+ *   The transaction being updated.
+ */
+function hook_commerce_payment_transaction_update($transaction) {
+  // No example.
+}
+
+/**
+ * Allows you to act when a transaction is created.
+ *
+ * @param $transaction
+ *   The transaction being created.
+ */
+function hook_commerce_payment_transaction_insert($transaction) {
+  // No example.
+}
+
+/**
+ * Allows you to act when a transaction is being deleted.
+ *
+ * @param $transaction
+ *   The transaction being deleted.
+ */
+function hook_commerce_payment_transaction_delete($transaction) {
+  // No example.
+}
+
+/**
+ * Allows you to act when transactions are being loaded.
+ *
+ * @param $transactions
+ *   An array of transactions indexed by transaction_id.
+ */
+function hook_commerce_payment_transaction_load($transactions) {
+  $result = db_query('SELECT transaction_id, foo FROM {mytable} WHERE transaction_ids IN (:transaction_ids)', array(':transaction_ids' => array_keys($transactions)));
+  foreach ($result as $record) {
+    $transactions[$record->transaction_id]->foo = $record->foo;
+  }
 }
