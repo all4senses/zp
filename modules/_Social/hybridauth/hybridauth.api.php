@@ -12,6 +12,15 @@ function hybridauth_get_instance() {
 }
 
 /**
+ * Alter HybridAuth provider configuration.
+ * @param $config
+ * @param $provider_id
+ */
+function hook_hybridauth_provider_config_alter(&$config, $provider_id) {
+
+}
+
+/**
  * Alter the generated username for the user being created by HybridAuth.
  * @param string $name
  * @param array $data
@@ -87,6 +96,17 @@ function hook_hybridauth_identity_deleted($account, $data) {
 }
 
 /**
+ * Invoked when a new user account is about to be created through HybridAuth.
+ * @param object $account
+ *   User account object.
+ * @param array $data
+ *   HybridAuth identity data.
+ */
+function hook_hybridauth_user_preinsert($account, $data) {
+
+}
+
+/**
  * Invoked when a new user account is created through HybridAuth.
  * @param object $account
  *   User account object.
@@ -105,5 +125,16 @@ function hook_hybridauth_user_insert($account, $data) {
  *   HybridAuth identity data.
  */
 function hook_hybridauth_user_login($account, $data) {
+
+}
+
+/**
+ * Allow modules to alter forms list to optionally add HybridAuth login widget
+ * to. This list is used on the module settings page to enable HybridAuth widget
+ * on selected forms.
+ * @param array $forms
+ *   Array of form_id => form_name.
+ */
+function hook_hybridauth_forms_list_alter(&$forms) {
 
 }

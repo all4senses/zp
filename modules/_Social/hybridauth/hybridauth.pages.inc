@@ -6,10 +6,15 @@
 
 function hybridauth_endpoint() {
   // Make sure the session is started, HybridAuth library needs it.
-  drupal_session_start();
+  hybridauth_session_start();
 
   if ($lib_path = _hybridauth_library_path()) {
     try {
+      // If Composer install was executed in the Hybridauth library use that
+      // autoloader.
+      if (file_exists($lib_path . '/../vendor/autoload.php')) {
+        require_once $lib_path . '/../vendor/autoload.php';
+      }
       require_once $lib_path . '/index.php';
     }
     catch(Exception $e) {
@@ -18,6 +23,29 @@ function hybridauth_endpoint() {
   }
 
   return MENU_ACCESS_DENIED;
+}
+
+/**
+ * Initialize the user session before using the HybridAuth library.
+ */
+function hybridauth_session_start() {
+  // Make sure that a user session exists.
+  drupal_session_start();
+  // Special handling for HTTPS with normal session IDs and secure session IDs.
+  // Duplicated sessions are created, so we need to pull out the correct session
+  // data.
+  global $is_https;
+  if ($is_https && variable_get('https', FALSE)) {
+    // If there is an existing session with the same secure session ID we need
+    // to replace the $_SESSION contents with that.
+    $session = db_query('SELECT session FROM {sessions} WHERE sid = :sid AND ssid = :sid', array('sid' => session_id()))->fetchField();
+    if ($session) {
+      // Overwrite $_SESSION with the data.
+      session_decode($session);
+      // Remove the duplicate session from the database.
+      db_delete('sessions')->condition('sid', session_id())->execute();
+    }
+  }
 }
 
 /**
@@ -45,15 +73,15 @@ function hybridauth_window_start($provider_id) {
   // If provider is OpenID, but we don't have the openid_identifier.
   if ($provider_id == 'OpenID' && !isset($_GET['openid_identifier'])) {
     $form = drupal_get_form('hybridauth_openid_form');
-    _hybridauth_window_render_form($form);
+    return _hybridauth_window_render_form($form, $provider_id);
   }
 
   // Make sure the session is started, HybridAuth library needs it.
-  drupal_session_start();
+  hybridauth_session_start();
 
   // Try to get HybridAuth instance.
   if ($hybridauth = hybridauth_get_instance()) {
-    _hybridauth_window_auth($hybridauth, $provider_id);
+    return _hybridauth_window_auth($hybridauth, $provider_id);
   }
   else {
     drupal_set_message(t('There was an error processing your request.'), 'error');
@@ -70,36 +98,43 @@ function _hybridauth_window_close($redirect = TRUE) {
   $GLOBALS['devel_shutdown'] = FALSE;
 
   $destination = drupal_get_destination();
-  $destination = token_replace($destination['destination'], array('user' => $user), array('clear' => TRUE));
-  $destination_error = $_GET['destination_error'];
+  $destination = $destination['destination'];
+  // Check if token replacements are allowed for the destination string.
+  if (_hybridauth_allow_token_replace($destination)) {
+    $destination = token_replace($destination, array('user' => $user), array('clear' => TRUE));
+  }
+  $destination_error = !empty($_GET['destination_error']) ? $_GET['destination_error'] : variable_get('hybridauth_destination_error', '');
 
-  $destination_options = drupal_parse_url($destination) + array('absolute' => TRUE);
-  $destination_error_options = drupal_parse_url($destination_error) + array('absolute' => TRUE);
+  $base_options = array(
+    'absolute' => TRUE,
+    // The redirect target must never be an external URL to prevent open
+    // redirect vulnerabilities.
+    'external' => FALSE,
+  );
+  $destination_options = drupal_parse_url($destination) + $base_options;
+  $destination_error_options = drupal_parse_url($destination_error) + $base_options;
 
   $destination = url($destination_options['path'], $destination_options);
   $destination_error = url($destination_error_options['path'], $destination_error_options);
 
-  drupal_add_js('
-    var redirect = ' . ($redirect ? 'true' : 'false') . ';
-    if (window.opener && redirect) {
-      window.opener.location.href = "' . $destination . '";
-      window.self.close();
-    }
-    else if (window.opener) {
-      window.opener.location.replace(window.opener.location.href);
-      window.self.close();
-    }
-    else if (redirect) {
-      window.location.href = "' . $destination . '";
-    }
-    else {
-      window.location.replace("' . $destination_error . '");
-    }
-  ', 'inline');
+  drupal_add_js(array(
+    'hybridauth'=> array(
+      'redirect' => $redirect ? 1 : 0,
+      'destination' => $destination,
+      'destination_error' => $destination_error,
+    )
+  ), 'setting');
+  drupal_add_js(drupal_get_path('module', 'hybridauth') . '/js/hybridauth.close.js');
+
+  // Make sure that we send the correct content type with charset, otherwise
+  // Firefox might repeat the GET request.
+  // @see https://www.drupal.org/node/2648912
+  drupal_add_http_header('Content-Type', 'text/html; charset=utf-8');
+
   $page = element_info('page');
   // Don't show messages on this closing page, show them later.
   $page['#show_messages'] = FALSE;
-  $page['#children'] = 'Closing...';
+  $page['#children'] = t('Closing...');
   print theme('html', array('page' => $page));
   drupal_exit();
 }
@@ -125,8 +160,22 @@ function _hybridauth_window_auth($hybridauth, $provider_id) {
   else {
     $error_code = $hybridauth;
   }
-  
+
   if (!is_null($error_code)) {
+    // Destroy the session started in hybridauth_window_start() if user is not
+    // logged in.
+    if (!user_is_logged_in()) {
+      // Delete session only if it contains just HybridAuth data.
+      $delete_session = TRUE;
+      foreach ($_SESSION as $key => $value) {
+        if (substr($key, 0, 4) != 'HA::') {
+          $delete_session = FALSE;
+        }
+      }
+      if ($delete_session) {
+        session_destroy();
+      }
+    }
     switch ($error_code) {
       case 5:
         // Authentication failed. The user has canceled the authentication or
@@ -156,11 +205,6 @@ function _hybridauth_window_auth($hybridauth, $provider_id) {
         drupal_set_message(t('There was an error processing your request.'), 'error');
     }
 
-    // Destroy the session started in hybridauth_window_start() if user is not
-    // logged in.
-    if (!user_is_logged_in()) {
-      session_destroy();
-    }
     _hybridauth_window_close(FALSE);
   }
 
@@ -168,7 +212,7 @@ function _hybridauth_window_auth($hybridauth, $provider_id) {
   // Invoke hook_hybridauth_profile_alter().
   drupal_alter('hybridauth_profile', $profile);
   // Process Drupal authentication.
-  _hybridauth_window_process_auth($profile);
+  return _hybridauth_window_process_auth($profile);
 }
 
 /**
@@ -211,7 +255,7 @@ function _hybridauth_window_process_auth($data) {
       $data = unserialize($identity['data']);
       drupal_set_message(t('You need to verify your e-mail address - !email.', array('!email' => $data['email'])), 'error');
       drupal_set_message(t('A welcome message with further instructions has been sent to your e-mail address.'));
-      _user_mail_notify('register_no_approval_required', user_load($identity['uid']));
+      _hybridauth_mail_notify('hybridauth_email_verification', user_load($identity['uid']));
     }
     else {
       $form_state['uid'] = $identity['uid'];
@@ -256,10 +300,20 @@ function _hybridauth_window_process_auth($data) {
   // Create new user account.
   else {
     // Visitors can create accounts.
-    if ((!variable_get('hybridauth_register', 0) && variable_get('user_register', USER_REGISTER_VISITORS_ADMINISTRATIVE_APPROVAL))
-      || variable_get('hybridauth_register', 0) != 3) {
+    if ((variable_get('hybridauth_register', 0) == 0 && variable_get('user_register', USER_REGISTER_VISITORS_ADMINISTRATIVE_APPROVAL))
+      || variable_get('hybridauth_register', 0) == 1 || variable_get('hybridauth_register', 0) == 2) {
+      _hybridauth_invoke_hooks('hybridauth_user_preinsert', $user, $data);
+
       // Check profile information for required fields.
-      _hybridauth_check_additional_info($data);
+      if ($additional_info = _hybridauth_check_additional_info($data)) {
+        return $additional_info;
+      }
+
+      // As we have already checked for the additional info we can unset the plaintext $data['pass'] here.
+      if (isset($data['pass'])) {
+        $user_password = $data['pass'];
+        unset($data['pass']);
+      }
 
       // TODO: remove this global if possible.
       global $_hybridauth_data;
@@ -268,8 +322,8 @@ function _hybridauth_window_process_auth($data) {
       $name = _hybridauth_make_username($data);
       $userinfo = array(
         'name' => $name,
-        'pass' => empty($data['pass']) ? user_password() : $data['pass'],
-        'init' => $name,
+        'pass' => empty($user_password) ? user_password() : $user_password,
+        'init' => $data['email'],
         'status' => 1,
         'access' => REQUEST_TIME,
         'mail' => $data['email'],
@@ -280,7 +334,7 @@ function _hybridauth_window_process_auth($data) {
 
       $admin_approval_required = FALSE;
       // Admin approval is required.
-      if ((!variable_get('hybridauth_register', 0) && variable_get('user_register', USER_REGISTER_VISITORS_ADMINISTRATIVE_APPROVAL) == USER_REGISTER_VISITORS_ADMINISTRATIVE_APPROVAL)
+      if ((variable_get('hybridauth_register', 0) == 0 && variable_get('user_register', USER_REGISTER_VISITORS_ADMINISTRATIVE_APPROVAL) == USER_REGISTER_VISITORS_ADMINISTRATIVE_APPROVAL)
         || variable_get('hybridauth_register', 0) == 2) {
         $userinfo['status'] = 0;
         $admin_approval_required = TRUE;
@@ -303,7 +357,7 @@ function _hybridauth_window_process_auth($data) {
         $photo_url = $data['photoURL'];
         if (valid_url($photo_url)) {
           $photo = drupal_http_request($photo_url);
-          if ($photo->error) {
+          if (isset($photo->error)) {
             watchdog('hybridauth', 'Error while executing drupal_http_request() to %url: %error.', array('%url' => $photo_url, '%error' => $photo->error), WATCHDOG_ERROR);
           }
           else {
@@ -343,7 +397,7 @@ function _hybridauth_window_process_auth($data) {
         $account = user_save($account, $edit);
       }
       if ($user_email_verify_trigger) {
-        _user_mail_notify('register_no_approval_required', $account);
+        _hybridauth_mail_notify('hybridauth_email_verification', $account);
         drupal_set_message(t('A welcome message with further instructions has been sent to your e-mail address.'));
       }
 
@@ -356,7 +410,13 @@ function _hybridauth_window_process_auth($data) {
     }
     // Visitors can't register accounts through HybridAuth.
     elseif (variable_get('hybridauth_register', 0) == 3) {
-      drupal_set_message(t('New account registration is not allowed.'), 'error');
+      if (variable_get('user_register', USER_REGISTER_VISITORS_ADMINISTRATIVE_APPROVAL)) {
+        $message = t('Sorry, you are not allowed to login. Please, <a href="@register">create a new account</a>.', array('@register' => url('user/register')));
+      }
+      else {
+        $message = t('New account registration is not allowed.');
+      }
+      drupal_set_message($message, 'error');
       _hybridauth_window_close(FALSE);
     }
     // Only admin can create accounts.
@@ -395,29 +455,26 @@ function _hybridauth_check_additional_info($data) {
 
   if ($show_form) {
     $form = drupal_get_form('hybridauth_additional_info_form', $data);
-    _hybridauth_window_render_form($form);
+    return _hybridauth_window_render_form($form, $data['provider']);
   }
 }
 
-function _hybridauth_window_render_form($form) {
-  $page = element_info('page');
-  $window_type = variable_get('hybridauth_window_type', 'current');
+function _hybridauth_window_render_form($form, $provider_id) {
+  $window_type = variable_get('hybridauth_provider_' . $provider_id . '_window_type', 'current');
 
-  if ($window_type == 'popup') {
+  if ($window_type == 'current') {
+    return $form;
+  }
+  else { // 'popup' or modal ('colorbox', 'shadowbox', 'fancybox', 'lightbox2')
+    $page = element_info('page');
     $page['#children'] = theme('status_messages') . drupal_render($form);
     print theme('html', array('page' => $page));
-  }
-  elseif ($window_type == 'current') {
-    $page['content']['system_main']['messages'] = array('#type' => 'markup', '#markup' => theme('status_messages'));
-    $page['content']['system_main']['required_info_form'] = $form;
-    print drupal_render($page);
   }
 
   drupal_exit();
 }
 
 function hybridauth_additional_info_form($form, &$form_state, $data) {
-  $form = array();
   $form['data'] = array(
     '#type' => 'value',
     '#value' => $data,
@@ -435,14 +492,18 @@ function hybridauth_additional_info_form($form, &$form_state, $data) {
       '#maxlength' => USERNAME_MAX_LENGTH,
       '#required' => TRUE,
       '#attributes' => array('class' => array('username')),
-      '#default_value' => _hybridauth_make_username($data),
+      '#default_value' => _hybridauth_make_username($data, TRUE),
       '#description' => t('Choose your username.') . ' '
         . t('Spaces are allowed; punctuation is not allowed except for periods, hyphens, apostrophes, and underscores.'),
     );
     if (module_exists('username_check')) {
-      _username_check_load_resources();
+      _username_check_load_resources('auto');
       $form['fset']['username']['#field_suffix'] = '<span id="username-check-informer">&nbsp;</span>';
       $form['fset']['username']['#suffix'] = '<div id="username-check-message"></div>';
+    }
+    elseif (module_exists('friendly_register')) {
+      friendly_register_load_resources();
+      $form['fset']['username']['#attributes']['class'][] = 'friendly-register-name';
     }
   }
   if (variable_get('hybridauth_registration_password', 0)) {
@@ -534,14 +595,15 @@ function hybridauth_additional_info_form_submit($form, &$form_state) {
       $data['manual'][] = 'pass';
     }
   }
-  $data['manual'] = implode(',', $data['manual']);
+
+  if (isset($data['manual']) && is_array($data['manual'])) {
+    $data['manual'] = implode(',', $data['manual']);
+  }
 
   _hybridauth_window_process_auth($data);
 }
 
 function hybridauth_openid_form($form, &$form_state) {
-  $form = array();
-
   $form['openid_identifier'] = array(
     '#type' => 'textfield',
     '#title' => t('OpenID Identity'),
@@ -569,7 +631,7 @@ function hybridauth_openid_form_submit($form, &$form_state) {
 /**
  * Menu callback; manage HybridAuth identities for the specified user.
  */
-function hybridauth_user_identity($form, &$form_state, $account) {
+function hybridauth_user_identity($account) {
   global $user;
   drupal_set_title(format_username($account));
 
@@ -589,9 +651,8 @@ function hybridauth_user_identity($form, &$form_state, $account) {
     );
   }
 
-  $form = array();
-
-  $form['identity'] = array(
+  $build = array();
+  $build['identity'] = array(
     '#theme' => 'table',
     '#header' => $header,
     '#rows' => $rows,
@@ -601,24 +662,27 @@ function hybridauth_user_identity($form, &$form_state, $account) {
 
   // Add more identities.
   if ($account->uid == $user->uid && user_access('use hybridauth')) {
-    $form['hybridauth_widget'] = array(
+    $build['hybridauth_widget'] = array(
       '#type' => 'hybridauth_widget',
       '#title' => t('Add more identities'),
       '#weight' => 10,
       '#hybridauth_widget_type' => 'list',
       '#hybridauth_destination' => '',
+      '#hybridauth_destination_error' => '',
     );
   }
 
-  $connected_providers = hybridauth_get_connected_providers();
-  $form['connected_providers'] = array(
-    '#markup' => t('Currently connected to (session data):') . ' ' . implode(', ', $connected_providers),
-    '#weight' => 15,
-  );
+  if (variable_get('hybridauth_debug', 0)) {
+    $connected_providers = hybridauth_get_connected_providers();
+    $build['connected_providers'] = array(
+      '#markup' => t('Currently connected to (session data):') . ' ' . implode(', ', $connected_providers),
+      '#weight' => 15,
+    );
+  }
 
   // Tokens browser for admins.
   if (user_access('administer site configuration') || user_access('administer users')) {
-    $form['vtabs'] = array(
+    $build['vtabs'] = array(
       '#type' => 'vertical_tabs',
       '#weight' => 20,
     );
@@ -626,7 +690,7 @@ function hybridauth_user_identity($form, &$form_state, $account) {
     $header = array(t('Token'), t('Value'));
     // User tokens.
     if (!empty($account->data['hybridauth'])) {
-      $form['vtabs']['fset_user_tokens'] = array(
+      $build['vtabs']['fset_user_tokens'] = array(
         '#type' => 'fieldset',
         '#title' => t('User tokens'),
       );
@@ -635,7 +699,7 @@ function hybridauth_user_identity($form, &$form_state, $account) {
       foreach ($account->data['hybridauth'] as $key => $value) {
         $rows[] = array('[user:hybridauth:' . $key . ']', $value);
       }
-      $form['vtabs']['fset_user_tokens']['tokens'] = array(
+      $build['vtabs']['fset_user_tokens']['tokens'] = array(
         '#theme' => 'table',
         '#header' => $header,
         '#rows' => $rows,
@@ -645,7 +709,7 @@ function hybridauth_user_identity($form, &$form_state, $account) {
 
     // Data from auth providers.
     foreach ($data_array as $data) {
-      $form['vtabs']['fset_' . $data['provider'] . '_' . $data['identifier']] = array(
+      $build['vtabs']['fset_' . $data['provider'] . '_' . $data['identifier']] = array(
         '#type' => 'fieldset',
         '#title' => $providers[$data['provider']],
       );
@@ -654,7 +718,7 @@ function hybridauth_user_identity($form, &$form_state, $account) {
       foreach ($data as $key => $value) {
         $rows[] = array($key, $value);
       }
-      $form['vtabs']['fset_' . $data['provider'] . '_' . $data['identifier']]['tokens'] = array(
+      $build['vtabs']['fset_' . $data['provider'] . '_' . $data['identifier']]['tokens'] = array(
         '#theme' => 'table',
         '#header' => $header,
         '#rows' => $rows,
@@ -663,7 +727,7 @@ function hybridauth_user_identity($form, &$form_state, $account) {
     }
   }
 
-  return $form;
+  return $build;
 }
 
 function hybridauth_user_identity_delete($form, &$form_state, $account, $id) {
@@ -671,7 +735,7 @@ function hybridauth_user_identity_delete($form, &$form_state, $account, $id) {
   if (!$del_identity || $account->uid != $del_identity['uid']) {
     drupal_set_message(t('You are trying to delete non-existing identity.'), 'error');
     drupal_access_denied();
-    // See https://drupal.org/node/2020351 and 
+    // See https://drupal.org/node/2020351 and
     // https://api.drupal.org/api/drupal/includes%21common.inc/function/drupal_access_denied/7
     drupal_exit();
   }
@@ -732,6 +796,7 @@ function hybridauth_user_identity_delete($form, &$form_state, $account, $id) {
           '#weight' => 10,
           '#hybridauth_widget_type' => 'list',
           '#hybridauth_destination' => '',
+          '#hybridauth_destination_error' => '',
         );
       }
       return $form;
