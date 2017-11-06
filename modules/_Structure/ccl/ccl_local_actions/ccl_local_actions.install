@@ -11,6 +11,17 @@
  */
 function ccl_local_actions_uninstall() {
   db_delete('ccl')
-  ->condition('type', 'local_action')
+  ->condition('type', 'local_actions')
   ->execute();
+}
+
+/**
+ * Implements hook_update_N().
+ * Renames type of links from 'local_action' to 'local_actions'.
+ */
+function ccl_local_actions_update_7100() {
+  db_update('ccl')
+    ->fields(array('type' => 'local_actions'))
+    ->condition('type', 'local_action')
+    ->execute();
 }

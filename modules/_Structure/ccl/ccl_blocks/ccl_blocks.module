@@ -114,6 +114,15 @@ function ccl_blocks_ccl_cache_update() {
     if (isset($block->options['advanced_query'])) {
       $advanced['query'] = $block->options['advanced_query'];
     }
+    if (isset($block->options['advanced_anchor'])) {
+      $advanced['anchor'] = $block->options['advanced_anchor'];
+    }
+    if (isset($block->options['advanced_target']) && $block->options['advanced_target'] != "default") {
+      $advanced['target'] = $block->options['advanced_target'];
+    }
+    if (isset($block->options['advanced_destination'])) {
+      $advanced['destination'] = $block->options['advanced_destination'];
+    }
 
     if ($block->options['block_global']) {
       $block_cache['global'][] = array(

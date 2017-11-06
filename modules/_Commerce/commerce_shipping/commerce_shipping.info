@@ -8,9 +8,11 @@ dependencies[] = list
 dependencies[] = rules
 core = 7.x
 
-; Information added by drupal.org packaging script on 2012-11-15
-version = "7.x-2.0"
+files[] = includes/views/handlers/commerce_shipping_handler_relationship_shipping_line_item_representative.inc
+
+; Information added by Drupal.org packaging script on 2015-04-08
+version = "7.x-2.2"
 core = "7.x"
 project = "commerce_shipping"
-datestamp = "1353011121"
+datestamp = "1428479882"
 

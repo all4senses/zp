@@ -80,13 +80,15 @@ function ccl_features_api() {
 /**
  * Retrieve a link based on it's title.
  */
-function ccl_get_presets($title = NULL) {
+function ccl_get_presets($key = NULL) {
   $presets = array();
-  if ($title) {
-    $results = db_query('SELECT * FROM {ccl} WHERE title = :title;', array(':title' => $title));
+  if ($key) {
+    $key_parts = explode('||ID', $key);
+    $results = db_query('SELECT * FROM {ccl} WHERE clid = :clid AND title = :title',
+      array(':clid' => $key_parts[1], ':title' => $key_parts[0]));
   }
   else {
-    $results = db_query('SELECT * FROM {ccl};');
+    $results = db_query('SELECT * FROM {ccl}');
   }
 
   while ($result = $results->fetchObject()) {
@@ -176,8 +178,15 @@ function _ccl_prepare_link($link, $destination, $node = NULL) {
       $link['attributes']['target'] = explode(" ", $link['advanced']['target']);
     }
 
+    // Add anchor if available
+    if (isset($link['advanced']['anchor'])) {
+      $link['fragment'] = $link['advanced']['anchor'];
+    }
+
     // Add query if available and destination.
-    $link['query'] = $destination;
+    if (!url_is_external($link['href']) && (!isset($link['advanced']['destination']) || $link['advanced']['destination'])) {
+      $link['query'] = $destination;
+    }
     if (isset($link['advanced']['query']) && !empty($link['advanced']['query'])) {
       $query = $node ? token_replace($link['advanced']['query'], array('node' => $node)) : token_replace($link['advanced']['query']);
       $qparts = explode('&', $query);
@@ -206,11 +215,17 @@ function _ccl_update_cache() {
     if (isset($node->options['advanced_css'])) {
       $advanced['class'] = $node->options['advanced_css'];
     }
+    if (isset($node->options['advanced_anchor'])) {
+      $advanced['anchor'] = $node->options['advanced_anchor'];
+    }
     if (isset($node->options['advanced_query'])) {
       $advanced['query'] = $node->options['advanced_query'];
     }
     if (isset($node->options['advanced_target']) && $node->options['advanced_target'] != "default") {
       $advanced['target'] = $node->options['advanced_target'];
+    }
+    if (isset($node->options['advanced_destination'])) {
+      $advanced['destination'] = $node->options['advanced_destination'];
     }
 
     if ($node->options['node_options'] == 'global') {

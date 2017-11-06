@@ -20,14 +20,14 @@ function ccl_local_actions_form_ccl_add_form_alter(&$form, &$form_state, $form_i
   }
 
   // Add blocks as an option for links.
-  $form['options_group']['ccl_type']['#options']['local_action'] = t('Local Action');
+  $form['options_group']['ccl_type']['#options']['local_actions'] = t('Local Action');
 
   $form['options_group']['la_title'] = array(
     '#type' => 'item',
     '#title' => t('Visibility settings'),
     '#states' => array(
       'visible' => array(
-        ':input[name="ccl_type"]' => array('value' => 'local_action'),
+        ':input[name="ccl_type"]' => array('value' => 'local_actions'),
       ),
     ),
   );
@@ -37,7 +37,7 @@ function ccl_local_actions_form_ccl_add_form_alter(&$form, &$form_state, $form_i
     '#type' => 'container',
     '#states' => array(
       'visible' => array(
-        ':input[name="ccl_type"]' => array('value' => 'local_action'),
+        ':input[name="ccl_type"]' => array('value' => 'local_actions'),
       ),
     ),
   );
@@ -177,7 +177,8 @@ function ccl_local_actions_menu_local_tasks_alter(&$data, $router_item, $root_pa
       // we have to adjust the values a bit.
       $processed_link['localized_options'] = array(
         'attributes' => $processed_link['attributes'],
-        'query' => $processed_link['query'],
+        'query' => isset($processed_link['query']) ? $processed_link['query'] : '',
+        'fragment' => isset($processed_link['fragment']) ? $processed_link['fragment'] : '',
       );
       $processed_link['localized_options']['attributes']['title'] = check_plain($processed_link['title']);
 
@@ -194,7 +195,7 @@ function ccl_local_actions_menu_local_tasks_alter(&$data, $router_item, $root_pa
  * Hook function triggered by the chache update routine of the main module.
  */
 function ccl_local_actions_ccl_cache_update() {
-  $actions = db_query("SELECT * FROM {ccl} WHERE type = :type", array(':type' => 'local_action'));
+  $actions = db_query("SELECT * FROM {ccl} WHERE type = :type", array(':type' => 'local_actions'));
   $la_cache = array();
   foreach ($actions as $action) {
     $action->options = unserialize($action->options);
@@ -205,6 +206,16 @@ function ccl_local_actions_ccl_cache_update() {
     if (isset($action->options['advanced_query'])) {
       $advanced['query'] = $action->options['advanced_query'];
     }
+    if (isset($action->options['advanced_anchor'])) {
+      $advanced['anchor'] = $action->options['advanced_anchor'];
+    }
+    if (isset($action->options['advanced_target']) && $action->options['advanced_target'] != "default") {
+      $advanced['target'] = $action->options['advanced_target'];
+    }
+    if (isset($action->options['advanced_destination'])) {
+      $advanced['destination'] = $action->options['advanced_destination'];
+    }
+
     $la_cache[] = array(
       'title' => $action->title,
       'href' => $action->link,
@@ -224,7 +235,7 @@ function ccl_local_actions_ccl_cache_update() {
  * Hook function to provide link option information for the link list page.
  */
 function ccl_local_actions_ccl_link_info($record) {
-  if ($record->type == 'local_action') {
+  if ($record->type == 'local_actions') {
     $options_return = array(
       'desc' => '',
       'op' => l(t('Edit'), 'admin/config/user-interface/ccl/' . $record->clid . '/edit') . ' | ' . l(t('Delete'), 'admin/config/user-interface/ccl/' . $record->clid . '/delete'),

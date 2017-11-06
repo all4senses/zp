@@ -79,8 +79,6 @@ function hierarchical_term_formatter_field_formatter_settings_summary($field, $i
 
   $summary = t('Display: %display as %format', array('%display' => $display_options[$settings['display']], '%format' => $format));
 
-error_log(print_r($settings, true));
-
   if ($settings['wrap'] != 'none') {
     $summary .= '<br />' . t('Wrapper: @wrap', array('@wrap' => $wrap_options[$settings['wrap']]));
   }
@@ -104,7 +102,7 @@ function hierarchical_term_formatter_field_formatter_prepare_view($entity_type, 
  * Implements hook_field_formatter_view().
  */
 function hierarchical_term_formatter_field_formatter_view($entity_type, $entity, $field, $instance, $langcode, $items, $display) {
-  $element = array();
+  $element = $used = array();
   $settings = $display['settings'];
 
   foreach ($items as $delta => $item) {
@@ -123,16 +121,33 @@ function hierarchical_term_formatter_field_formatter_view($entity_type, $entity,
         case 'root':
           $parents = taxonomy_get_parents_all($item['taxonomy_term']->tid);
           $term_tree = array(array_pop($parents)); // Root is the last array item.
+          // Keep track of which root terms have been added to avoid duplicates.
+          if (isset($used[$term_tree[0]->tid])) {
+            $term_tree = array();
+            break;
+          }
+          $used[$term_tree[0]->tid] = TRUE;
           break;
         case 'parents':
           $term_tree = array_reverse(taxonomy_get_parents_all($item['taxonomy_term']->tid));
           array_pop($term_tree); // Get rid of the leaf (last array item).
+          break;
+        case 'nonroot':
+          $term_tree = array();
+          $parents = taxonomy_get_parents_all($item['taxonomy_term']->tid);
+          // If there are 2 or more terms in the parents array keep [0] because
+          // it's not a root term.
+          if (count($parents) > 1) {
+            $term_tree = array(array_shift($parents));
+          }
           break;
         default: // 'all'
           $term_tree = array_reverse(taxonomy_get_parents_all($item['taxonomy_term']->tid));
           break;
       }
 
+      // Remove empty elements caused by discarded items.
+      $term_tree = array_filter($term_tree);
       $terms = array();
 
       foreach ($term_tree as $term) {
@@ -152,28 +167,30 @@ function hierarchical_term_formatter_field_formatter_view($entity_type, $entity,
       }
     }
 
-    // Prepare theme variables.
-    $variables = array(
-      'terms' => $terms,
-      'separator' => $settings['separator']
-    );
-    if ($settings['wrap'] == 'none') {
-      $variables['wrapper'] = $variables['item_wrapper'] = '';
-    }
-    else if (in_array($settings['wrap'], array('ol', 'ul'))) {
-      $variables['wrapper'] = $settings['wrap'];
-      $variables['item_wrapper'] = 'li';
-    }
-    else {
-      $variables['wrapper'] = '';
-      $variables['item_wrapper'] = $settings['wrap'];
-    }
+    // Make sure there are terms before adding to $element.
+    if (count($terms)) {
+      // Prepare theme variables.
+      $variables = array(
+        'terms' => $terms,
+        'separator' => $settings['separator']
+      );
+      if ($settings['wrap'] == 'none') {
+        $variables['wrapper'] = $variables['item_wrapper'] = '';
+      }
+      else if (in_array($settings['wrap'], array('ol', 'ul'))) {
+        $variables['wrapper'] = $settings['wrap'];
+        $variables['item_wrapper'] = 'li';
+      }
+      else {
+        $variables['wrapper'] = '';
+        $variables['item_wrapper'] = $settings['wrap'];
+      }
 
-    $element[$delta] = array(
-      '#markup' => theme('hierarchical_term_formatter', $variables),
-    );
+      $element[$delta] = array(
+        '#markup' => theme('hierarchical_term_formatter', $variables),
+      );
+    }
   }
-
   return $element;
 }
 
@@ -234,6 +251,7 @@ function _hierarchical_term_formatter_display_options() {
     'all' => t('The selected term and all of its parents'),
     'parents' => t('Just the parent terms'),
     'root' => t('Just the topmost/root term'),
+    'nonroot' => t('Any non-topmost/root terms'),
     'leaf' => t('Just the selected term'),
   );
 }

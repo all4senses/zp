@@ -89,7 +89,6 @@ function term_ref_autocomplete_element_info() {
  * Implements theme callback for term_ref_autocomplete 
  */
 function theme_term_ref_autocomplete_field(&$variables) {
-  //dpm($variables);
   $element = $variables['element'];
   $element['#attributes']['type'] = 'text';
   element_set_attributes($element, array('id', 'name', 'value', 'size', 'maxlength'));
@@ -126,7 +125,7 @@ function term_ref_autocomplete_field_widget_info() {
       'field types' => array('taxonomy_term_reference'),
       'settings' => array(
         'size' => 60,
-        'autocomplete_path' => 'term_ref_autocomplete/autocomplete',
+        'select_parents' => 0
       ),
       'behaviors' => array(
         'multiple values' => FIELD_BEHAVIOR_CUSTOM,
@@ -134,11 +133,40 @@ function term_ref_autocomplete_field_widget_info() {
     ),
   );
 }
+/**
+ * Implements hook_field_widget_settings_form().
+ */
+function term_ref_autocomplete_field_widget_settings_form($field, $instance) {
+  $widget = $instance['widget'];
+  $settings = $widget['settings'];
+  $form = array();
+  $form['select_parents'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Select ancestors automatically'),
+    '#description' => t("When turned on, this option causes the widget to automatically select the ancestors of all selected items. The ancestors will be added invisibly to the selected value when the entity is saved.  <em>This option is only valid if an unlimited number of values can be selected.</em>"),
+    '#default_value' => $settings['select_parents'],
+    '#element_validate' => array('_term_ref_autocomplete_select_parents_validate'),
+    '#return_value' => 1,
+  );
+  return $form;
+}
+
+/**
+ * Makes sure that cardinality is unlimited if auto-select parents is enabled.
+ */
+function _term_ref_autocomplete_select_parents_validate($element, &$form_state) {
+  if ($form_state['values']['instance']['widget']['settings']['select_parents'] == 1 && $form_state['values']['field']['cardinality'] != -1) {
+    // This is pretty wonky syntax for the field name in form_set_error, but it's
+    // correct.
+    form_set_error('field][cardinality', t('You must select an Unlimited number of values if Select Ancestors Automatically is enabled.'));
+  }
+}
 
 /**
  * Implements hook_field_widget_form() for widget
  */
 function term_ref_autocomplete_field_widget_form(&$form, &$form_state, $field, $instance, $langcode, $items, $delta, $element) {
+  $settings = $instance['widget']['settings'];
   $tags = array();
   foreach ($items as $item) {
     $tmp_tag = '';
@@ -166,7 +194,8 @@ function term_ref_autocomplete_field_widget_form(&$form, &$form_state, $field, $
   $element['names'] = $el_base + array(
     '#type' => 'term_ref_autocomplete_field',
     '#default_value' => implode(', ', $tags),
-    '#autocomplete_path' => $instance['widget']['settings']['autocomplete_path'] . '/' . $field['field_name'],
+    '#select_parents' => $settings['select_parents'],
+    '#autocomplete_path' => 'term_ref_autocomplete/autocomplete/' . $field['field_name'],
     '#size' => $instance['widget']['settings']['size'],
     '#maxlength' => 1024,
     '#element_validate' => array('term_ref_autocomplete_taxonomy_autocomplete_validate'),
@@ -197,11 +226,29 @@ function term_ref_autocomplete_taxonomy_autocomplete_validate($element, &$form_s
     $terms = taxonomy_term_load_multiple($tids);
     
     // These need to be stored in a zero-indexed array as nested arrays instead of objects
-    foreach ($terms as $term) {
+    foreach ($terms as $key => $term) {
       $values[] = (array)$term;
+      // if 'Include Ancestors' option is selected
+      if($element['#select_parents']){
+        $parents = taxonomy_get_parents_all($term->tid);
+        // taxonomy_get_parents_all() returns all the ancestors chains
+        // (included always the term itself) in flipped order.
+        // For inserting the chain and preserving the hierarchical order,
+        // get rid of the term itself here, it will be added at the end
+        array_pop($values);
+        // Add all the ancestor chain in hierarchical order
+        foreach (array_reverse($parents) as $parent) {
+          // If any ancestor is already selected, just ignore it;
+          // otherwise insert at the end.
+          if (!array_key_exists($parent->tid, $terms)) {
+            $values[] = (array)$parent;
+          }
+        }
+        // Put back the latest descendant term at the end of its ancestors
+        $values[] = (array)$term;
+      }
     }
   }
-  
   // Overwrite the field value here.  This cleans up the 'names' and 'tids' element columns used to get here
   $value_ref = $values;
 }

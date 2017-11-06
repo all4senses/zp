@@ -10,7 +10,8 @@
 function ccl_features_export_options() {
   $presets = array();
   foreach (ccl_get_presets() as $preset) {
-    $presets[$preset->title] = $preset->title;
+    $key = $preset->title . '||ID' . $preset->clid;
+    $presets[$key] = $preset->title . ' [ID: ' . $preset->clid . ']';
   }
   return $presets;
 }
@@ -23,7 +24,8 @@ function ccl_features_export($data, &$export, $module_name = '') {
   $export['dependencies']['ccl'] = 'ccl';
 
   foreach (ccl_get_presets() as $preset) {
-    if (in_array($preset->title, $data)) {
+    $key = $preset->title . '||ID' . $preset->clid;
+    if (in_array($key, $data)) {
 
       // Make the submodule required.
       // A 's' needs to be added to the type for the plural module names.
@@ -31,7 +33,7 @@ function ccl_features_export($data, &$export, $module_name = '') {
         $export['dependencies']['ccl_' . $preset->type . 's'] = 'ccl_' . $preset->type . 's';
       }
 
-      $export['features']['ccl'][$preset->title] = $preset->title;
+      $export['features']['ccl'][$key] = $key;
     }
   }
 
@@ -47,12 +49,13 @@ function ccl_features_export_render($module, $data) {
 
   foreach ($data as $title) {
     foreach ($presets as $preset) {
-      if ($preset->title == $title) {
+      $key = $preset->title . '||ID' . $preset->clid;
+      if ($key == $title) {
         // We don't want to break the entity cache, so we need to clone the
         // presetting before unsetting the id.
         $preset = clone $preset;
         unset($preset->clid);
-        $code[$title] = $preset;
+        $code[$key] = $preset;
       }
     }
   }
@@ -77,7 +80,7 @@ function ccl_features_rebuild($module) {
   foreach ($presets as $key => $preset) {
     $preset = (object) $preset;
 
-    $current_record = current(ccl_get_presets($preset->title));
+    $current_record = current(ccl_get_presets($key));
     if (!empty($current_record)) {
       $preset->clid = $current_record->clid;
       drupal_write_record('ccl', $preset, 'clid');

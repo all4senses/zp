@@ -57,7 +57,7 @@ function ccl_admin() {
 
       // Prepare table row.
       $rows[] = array(
-        $record->title,
+        $record->title . ' <small>[ID: ' . $record->clid . ']</small>',
         $record->link,
         $record->type,
         $options['desc'],
@@ -144,6 +144,14 @@ function ccl_add_form($form, &$form_state, $clid = 0) {
     '#size' => 40,
     '#maxlength' => 255,
   );
+  $form['link_group']['advanced']['advanced_anchor'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Anchor'),
+    '#default_value' => ($clid && isset($link->options['advanced_anchor'])) ? $link->options['advanced_anchor'] : '',
+    '#description' => t('Append an anchor string to the end of the link. Do not use the "#" at the beginning of the string.'),
+    '#size' => 40,
+    '#maxlength' => 255,
+  );
   $form['link_group']['advanced']['advanced_query'] = array(
     '#type' => 'textfield',
     '#title' => t('Query String'),
@@ -152,7 +160,6 @@ function ccl_add_form($form, &$form_state, $clid = 0) {
     '#size' => 40,
     '#maxlength' => 255,
   );
-
   $form['link_group']['advanced']['advanced_target'] = array(
     '#type' => 'select',
     '#title' => t('Link Target'),
@@ -164,7 +171,12 @@ function ccl_add_form($form, &$form_state, $clid = 0) {
     '#default_value' => ($clid && isset($link->options['advanced_target'])) ? $link->options['advanced_target'] : '',
     '#description' => t('Set a target attribute for the link.'),
   );
-
+  $form['link_group']['advanced']['advanced_destination'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Include destination parameter in Link'),
+    '#default_value' => ($clid && isset($link->options['advanced_destination'])) ? $link->options['advanced_destination'] : TRUE,
+    '#description' => t('If checked, the current page path will be added to the link\'s "destination" parameter (which will return the user to this page if they submit a form from the link target).'),
+  );
   $form['link_group']['token_group'] = array(
     '#type' => 'fieldset',
     '#title' => t('Tokens'),
